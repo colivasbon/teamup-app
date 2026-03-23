@@ -5,286 +5,337 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 const provinces = [
-  { id: 'alava', name: 'Álava' },
-  { id: 'albacete', name: 'Albacete' },
-  { id: 'alicante', name: 'Alicante' },
-  { id: 'almeria', name: 'Almería' },
-  { id: 'asturias', name: 'Asturias' },
-  { id: 'avila', name: 'Ávila' },
-  { id: 'badajoz', name: 'Badajoz' },
-  { id: 'barcelona', name: 'Barcelona' },
-  { id: 'burgos', name: 'Burgos' },
-  { id: 'caceres', name: 'Cáceres' },
-  { id: 'cadiz', name: 'Cádiz' },
-  { id: 'cantabria', name: 'Cantabria' },
-  { id: 'castellon', name: 'Castellón' },
-  { id: 'ceuta', name: 'Ceuta' },
-  { id: 'ciudadreal', name: 'Ciudad Real' },
-  { id: 'cordoba', name: 'Córdoba' },
-  { id: 'cuenca', name: 'Cuenca' },
-  { id: 'girona', name: 'Girona' },
-  { id: 'granada', name: 'Granada' },
-  { id: 'guadalajara', name: 'Guadalajara' },
-  { id: 'huelva', name: 'Huelva' },
-  { id: 'huesca', name: 'Huesca' },
-  { id: 'islasbaleares', name: 'Islas Baleares' },
-  { id: 'jaen', name: 'Jaén' },
-  { id: 'lacoruna', name: 'La Coruña' },
-  { id: 'larioja', name: 'La Rioja' },
-  { id: 'laspalmas', name: 'Las Palmas' },
-  { id: 'leon', name: 'León' },
-  { id: 'lleida', name: 'Lleida' },
-  { id: 'lugo', name: 'Lugo' },
-  { id: 'madrid', name: 'Madrid' },
-  { id: 'malaga', name: 'Málaga' },
-  { id: 'melilla', name: 'Melilla' },
-  { id: 'murcia', name: 'Murcia' },
-  { id: 'navarra', name: 'Navarra' },
-  { id: 'ourense', name: 'Ourense' },
-  { id: 'palencia', name: 'Palencia' },
-  { id: 'pontevedra', name: 'Pontevedra' },
-  { id: 'salamanca', name: 'Salamanca' },
-  { id: 'segovia', name: 'Segovia' },
-  { id: 'sevilla', name: 'Sevilla' },
-  { id: 'soria', name: 'Soria' },
-  { id: 'tarragona', name: 'Tarragona' },
-  { id: 'teruel', name: 'Teruel' },
-  { id: 'toledo', name: 'Toledo' },
-  { id: 'valencia', name: 'Valencia' },
-  { id: 'valladolid', name: 'Valladolid' },
-  { id: 'vizcaya', name: 'Vizcaya' },
-  { id: 'zamora', name: 'Zamora' },
-  { id: 'zaragoza', name: 'Zaragoza' },
+  'Álava','Albacete','Alicante','Almería','Asturias','Ávila','Badajoz','Barcelona',
+  'Burgos','Cáceres','Cádiz','Cantabria','Castellón','Ceuta','Ciudad Real','Córdoba',
+  'Cuenca','Girona','Granada','Guadalajara','Huelva','Huesca','Islas Baleares','Jaén',
+  'La Coruña','La Rioja','Las Palmas','León','Lleida','Lugo','Madrid','Málaga',
+  'Melilla','Murcia','Navarra','Ourense','Palencia','Pontevedra','Salamanca','Segovia',
+  'Sevilla','Soria','Tarragona','Teruel','Toledo','Valencia','Valladolid','Vizcaya',
+  'Zamora','Zaragoza',
 ]
 
 const sports = [
-  { id: 'running', name: 'Running', icon: '🏃', color: 'from-blue-500 to-indigo-600' },
-  { id: 'padel', name: 'Pádel', icon: '🎾', color: 'from-green-500 to-emerald-600' },
-  { id: 'senderismo', name: 'Senderismo', icon: '🥾', color: 'from-amber-500 to-orange-600' },
-  { id: 'futbol', name: 'Fútbol', icon: '⚽', color: 'from-red-500 to-rose-600' },
-  { id: 'gimnasio', name: 'Gimnasio', icon: '💪', color: 'from-purple-500 to-pink-600' },
-  { id: 'tenis', name: 'Tenis', icon: '🎾', color: 'from-yellow-500 to-amber-600' },
+  { id: 'running',    name: 'Running',    icon: '🏃', color: '#5b6ef5' },
+  { id: 'padel',      name: 'Pádel',      icon: '🎾', color: '#06d6a0' },
+  { id: 'senderismo', name: 'Senderismo', icon: '🥾', color: '#f59e0b' },
+  { id: 'futbol',     name: 'Fútbol',     icon: '⚽', color: '#ef4444' },
+  { id: 'gimnasio',   name: 'Gimnasio',   icon: '💪', color: '#8b5cf6' },
+  { id: 'tenis',      name: 'Tenis',      icon: '🎾', color: '#fbbf24' },
 ]
 
 const levels = [
-  { id: 'any', name: 'Todos', icon: '🌍' },
-  { id: 'beginner', name: 'Principiante', icon: '🌱' },
-  { id: 'intermediate', name: 'Intermedio', icon: '⭐' },
-  { id: 'advanced', name: 'Avanzado', icon: '🔥' },
+  { id: 'any',          name: 'Todos',        icon: '🌍', desc: 'Sin restricciones' },
+  { id: 'beginner',     name: 'Principiante', icon: '🌱', desc: 'Empezando ahora' },
+  { id: 'intermediate', name: 'Intermedio',   icon: '⭐', desc: 'Con experiencia' },
+  { id: 'advanced',     name: 'Avanzado',     icon: '🔥', desc: 'Alto nivel' },
 ]
+
+const steps = ['Deporte', 'Detalles', 'Opciones']
 
 export default function CreateEvent() {
   const router = useRouter()
+  const [step, setStep] = useState(0)
   const [form, setForm] = useState({
-    sport: '',
-    level: 'any',
-    title: '',
-    description: '',
-    date: '',
-    time: '',
-    location: '',
-    province: '',
-    thirdPlace: false,
-    thirdPlaceLink: '',
-    maxPeople: 10,
-    waitingList: 0
+    sport: '', level: 'any',
+    title: '', description: '',
+    date: '', time: '',
+    location: '', province: '',
+    thirdPlace: false, thirdPlaceLink: '',
+    maxPeople: 10, waitingList: 0,
   })
+
+  const update = (field, value) => setForm(prev => ({ ...prev, [field]: value }))
+
+  const canNext = () => {
+    if (step === 0) return !!form.sport
+    if (step === 1) return form.title && form.date && form.location && form.province
+    return true
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    alert('Evento creado (demo)')
+    alert('¡Evento creado con éxito! (demo)')
     router.push('/')
   }
 
+  const selectedSport = sports.find(s => s.id === form.sport)
+
   return (
-    <div className="min-h-screen bg-[#0f172a] text-[#f8fafc] pb-24 pt-safe">
-      <header className="px-6 pt-12 pb-6">
-        <h1 className="text-2xl font-bold">Crear evento</h1>
-        <p className="text-slate-400 text-sm mt-1">Organiza tu próxima actividad</p>
+    <div className="min-h-screen pb-28">
+      {/* Header */}
+      <header className="px-6 pt-14 pb-4">
+        <div className="flex items-center gap-3 mb-4">
+          <button onClick={() => step > 0 ? setStep(step - 1) : router.back()}
+            className="w-9 h-9 glass rounded-full flex items-center justify-center flex-shrink-0 hover:scale-105 transition-transform">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+          </button>
+          <div>
+            <h1 className="text-lg font-bold">Crear evento</h1>
+            <p className="text-xs mt-0.5" style={{color: 'var(--text-secondary)'}}>Paso {step + 1} de {steps.length} · {steps[step]}</p>
+          </div>
+        </div>
+
+        {/* Step indicator */}
+        <div className="flex gap-1.5">
+          {steps.map((s, i) => (
+            <div key={i} className="h-1 flex-1 rounded-full transition-all duration-300"
+              style={{background: i <= step ? 'var(--primary)' : 'var(--border)'}}/>
+          ))}
+        </div>
       </header>
 
-      <form onSubmit={handleSubmit} className="px-6 space-y-6">
-        {/* Sport */}
-        <div>
-          <label className="block text-sm font-medium text-slate-400 mb-3">Deporte</label>
-          <div className="grid grid-cols-3 gap-3">
-            {sports.map((s) => (
-              <button
-                key={s.id}
-                type="button"
-                onClick={() => setForm({ ...form, sport: s.id })}
-                className={`p-3 rounded-xl border transition-all ${
-                  form.sport === s.id
-                    ? 'border-blue-500 bg-blue-500/20'
-                    : 'border-slate-700 bg-slate-800 hover:border-slate-600'
-                }`}
-              >
-                <span className="text-2xl block mb-1">{s.icon}</span>
-                <span className="text-xs text-slate-400">{s.name}</span>
-              </button>
-            ))}
-          </div>
-        </div>
+      <form onSubmit={handleSubmit} className="px-6">
 
-        {/* Title */}
-        <div>
-          <label className="block text-sm font-medium text-slate-400 mb-2">Título</label>
-          <input
-            type="text"
-            placeholder="Partido de pádel tarde"
-            value={form.title}
-            onChange={(e) => setForm({ ...form, title: e.target.value })}
-            className="w-full p-4 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none transition-all"
-            required
-          />
-        </div>
-
-        {/* Description */}
-        <div>
-          <label className="block text-sm font-medium text-slate-400 mb-2">Descripción</label>
-          <textarea
-            placeholder="Nivel medio, jugadores/as mayores de 25 años..."
-            value={form.description}
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
-            className="w-full p-4 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 h-24 focus:border-blue-500 focus:outline-none transition-all resize-none"
-          />
-        </div>
-
-        {/* Date & Time */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-400 mb-2">Fecha</label>
-            <input
-              type="date"
-              value={form.date}
-              onChange={(e) => setForm({ ...form, date: e.target.value })}
-              className="w-full p-4 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-blue-500 focus:outline-none transition-all"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-400 mb-2">Hora</label>
-            <input
-              type="time"
-              value={form.time}
-              onChange={(e) => setForm({ ...form, time: e.target.value })}
-              className="w-full p-4 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-blue-500 focus:outline-none transition-all"
-            />
-          </div>
-        </div>
-
-        {/* Location */}
-        <div>
-          <label className="block text-sm font-medium text-slate-400 mb-2">Ubicación</label>
-          <input
-            type="text"
-            placeholder="Parque de la Ciudad, Pista 3"
-            value={form.location}
-            onChange={(e) => setForm({ ...form, location: e.target.value })}
-            className="w-full p-4 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none transition-all"
-            required
-          />
-        </div>
-
-        {/* Province */}
-        <div>
-          <label className="block text-sm font-medium text-slate-400 mb-2">Provincia</label>
-          <select
-            value={form.province}
-            onChange={(e) => setForm({ ...form, province: e.target.value })}
-            className="w-full p-4 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-blue-500 focus:outline-none transition-all"
-            required
-          >
-            <option value="">Selecciona provincia</option>
-            {provinces.map((p) => (
-              <option key={p.id} value={p.id}>{p.name}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* Level */}
-        <div>
-          <label className="block text-sm font-medium text-slate-400 mb-3">Nivel requerido</label>
-          <div className="grid grid-cols-4 gap-2">
-            {levels.map((l) => (
-              <button
-                key={l.id}
-                type="button"
-                onClick={() => setForm({ ...form, level: l.id })}
-                className={`p-3 rounded-xl border transition-all flex flex-col items-center gap-1 ${
-                  form.level === l.id
-                    ? 'border-violet-500 bg-violet-500/20'
-                    : 'border-slate-700 bg-slate-800 hover:border-slate-600'
-                }`}
-              >
-                <span className="text-xl">{l.icon}</span>
-                <span className="text-xs text-slate-400">{l.name}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Third Place */}
-        <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-          <label className="flex items-center justify-between cursor-pointer">
-            <div>
-              <span className="font-medium">🍺 Tercer tiempo</span>
-              <p className="text-xs text-slate-400">Añadir ubicación para después del evento</p>
+        {/* Step 0: Sport */}
+        {step === 0 && (
+          <div className="animate-fade-in">
+            <p className="text-base font-medium mb-5">¿Qué deporte vais a practicar?</p>
+            <div className="grid grid-cols-2 gap-3">
+              {sports.map((s) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => update('sport', s.id)}
+                  className="relative p-4 rounded-2xl border-2 transition-all text-left hover:scale-[1.02] active:scale-[0.98]"
+                  style={{
+                    borderColor: form.sport === s.id ? s.color : 'var(--border)',
+                    background: form.sport === s.id ? `${s.color}18` : 'var(--glass-bg)',
+                    backdropFilter: 'blur(12px)',
+                  }}
+                >
+                  <span className="text-3xl block mb-2">{s.icon}</span>
+                  <span className="text-sm font-medium">{s.name}</span>
+                  {form.sport === s.id && (
+                    <div className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full flex items-center justify-center"
+                      style={{background: s.color}}>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                    </div>
+                  )}
+                </button>
+              ))}
             </div>
-            <input
-              type="checkbox"
-              checked={form.thirdPlace}
-              onChange={(e) => setForm({ ...form, thirdPlace: e.target.checked })}
-              className="w-5 h-5 accent-blue-500"
-            />
-          </label>
-          {form.thirdPlace && (
-            <input
-              type="text"
-              placeholder="Link de Google Maps (opcional)"
-              value={form.thirdPlaceLink}
-              onChange={(e) => setForm({ ...form, thirdPlaceLink: e.target.value })}
-              className="w-full p-3 mt-3 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white placeholder-slate-500"
-            />
+          </div>
+        )}
+
+        {/* Step 1: Details */}
+        {step === 1 && (
+          <div className="space-y-4 animate-fade-in">
+            <p className="text-base font-medium mb-1">Cuéntanos los detalles</p>
+
+            {/* Title */}
+            <div>
+              <label className="block text-xs font-medium mb-2" style={{color: 'var(--text-secondary)'}}>TÍTULO DEL EVENTO</label>
+              <input
+                type="text"
+                placeholder={`Ej: Partido de ${selectedSport?.name || 'deporte'} tarde`}
+                value={form.title}
+                onChange={(e) => update('title', e.target.value)}
+                className="input-glass"
+                required
+              />
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block text-xs font-medium mb-2" style={{color: 'var(--text-secondary)'}}>DESCRIPCIÓN (opcional)</label>
+              <textarea
+                placeholder="Nivel, requisitos, qué llevar..."
+                value={form.description}
+                onChange={(e) => update('description', e.target.value)}
+                className="input-glass h-24 resize-none"
+              />
+            </div>
+
+            {/* Date & Time */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-medium mb-2" style={{color: 'var(--text-secondary)'}}>FECHA</label>
+                <input
+                  type="date"
+                  value={form.date}
+                  onChange={(e) => update('date', e.target.value)}
+                  className="input-glass"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium mb-2" style={{color: 'var(--text-secondary)'}}>HORA</label>
+                <input
+                  type="time"
+                  value={form.time}
+                  onChange={(e) => update('time', e.target.value)}
+                  className="input-glass"
+                />
+              </div>
+            </div>
+
+            {/* Location */}
+            <div>
+              <label className="block text-xs font-medium mb-2" style={{color: 'var(--text-secondary)'}}>UBICACIÓN</label>
+              <input
+                type="text"
+                placeholder="Nombre del lugar o dirección"
+                value={form.location}
+                onChange={(e) => update('location', e.target.value)}
+                className="input-glass"
+                required
+              />
+            </div>
+
+            {/* Province */}
+            <div>
+              <label className="block text-xs font-medium mb-2" style={{color: 'var(--text-secondary)'}}>PROVINCIA</label>
+              <select
+                value={form.province}
+                onChange={(e) => update('province', e.target.value)}
+                className="input-glass appearance-none"
+                required
+              >
+                <option value="">Selecciona provincia...</option>
+                {provinces.map((p) => (
+                  <option key={p} value={p.toLowerCase().replace(/\s/g, '')}>{p}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        )}
+
+        {/* Step 2: Options */}
+        {step === 2 && (
+          <div className="space-y-5 animate-fade-in">
+            <p className="text-base font-medium mb-1">Últimos ajustes</p>
+
+            {/* Level */}
+            <div>
+              <label className="block text-xs font-medium mb-3" style={{color: 'var(--text-secondary)'}}>NIVEL REQUERIDO</label>
+              <div className="grid grid-cols-2 gap-2">
+                {levels.map((l) => (
+                  <button
+                    key={l.id}
+                    type="button"
+                    onClick={() => update('level', l.id)}
+                    className="p-3 rounded-xl border-2 text-left transition-all hover:scale-[1.02]"
+                    style={{
+                      borderColor: form.level === l.id ? 'var(--primary)' : 'var(--border)',
+                      background: form.level === l.id ? 'rgba(var(--primary-rgb), 0.12)' : 'var(--glass-bg)',
+                      backdropFilter: 'blur(12px)',
+                    }}
+                  >
+                    <span className="text-xl block mb-1">{l.icon}</span>
+                    <div className="text-sm font-medium">{l.name}</div>
+                    <div className="text-xs mt-0.5" style={{color: 'var(--text-secondary)'}}>{l.desc}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Max people */}
+            <div className="glass rounded-2xl p-4">
+              <div className="flex items-center justify-between mb-3">
+                <label className="text-sm font-medium">Máximo de personas</label>
+                <span className="text-lg font-bold" style={{color: 'var(--primary)'}}>{form.maxPeople}</span>
+              </div>
+              <input
+                type="range" min="2" max="50"
+                value={form.maxPeople}
+                onChange={(e) => update('maxPeople', parseInt(e.target.value))}
+                className="w-full accent-primary"
+              />
+              <div className="flex justify-between text-xs mt-1" style={{color: 'var(--text-secondary)'}}>
+                <span>2</span><span>50</span>
+              </div>
+            </div>
+
+            {/* Waiting list */}
+            <div className="glass rounded-2xl p-4">
+              <div className="flex items-center justify-between mb-3">
+                <label className="text-sm font-medium">Lista de espera</label>
+                <span className="text-lg font-bold" style={{color: 'var(--secondary)'}}>{form.waitingList}</span>
+              </div>
+              <input
+                type="range" min="0" max="20"
+                value={form.waitingList}
+                onChange={(e) => update('waitingList', parseInt(e.target.value))}
+                className="w-full accent-secondary"
+              />
+              <p className="text-xs mt-2" style={{color: 'var(--text-secondary)'}}>
+                Personas que pueden apuntarse si el evento se llena
+              </p>
+            </div>
+
+            {/* Third place */}
+            <div className="glass rounded-2xl p-4">
+              <label className="flex items-center justify-between cursor-pointer">
+                <div>
+                  <div className="font-medium text-sm">🍺 Tercer tiempo</div>
+                  <p className="text-xs mt-0.5" style={{color: 'var(--text-secondary)'}}>¿Habéis pensado en quedar después?</p>
+                </div>
+                <div
+                  onClick={() => update('thirdPlace', !form.thirdPlace)}
+                  className="w-12 h-6 rounded-full transition-all relative cursor-pointer flex-shrink-0"
+                  style={{background: form.thirdPlace ? 'var(--primary)' : 'var(--border)'}}
+                >
+                  <div className="w-5 h-5 bg-white rounded-full absolute top-0.5 transition-all shadow"
+                    style={{left: form.thirdPlace ? '26px' : '2px'}}/>
+                </div>
+              </label>
+              {form.thirdPlace && (
+                <input
+                  type="text"
+                  placeholder="Link de Google Maps (opcional)"
+                  value={form.thirdPlaceLink}
+                  onChange={(e) => update('thirdPlaceLink', e.target.value)}
+                  className="input-glass mt-3 text-sm"
+                />
+              )}
+            </div>
+
+            {/* Summary */}
+            <div className="glass rounded-2xl p-4" style={{borderColor: 'var(--border)'}}>
+              <h3 className="text-xs font-semibold mb-3" style={{color: 'var(--text-secondary)'}}>RESUMEN DEL EVENTO</h3>
+              <div className="space-y-1.5 text-sm">
+                {selectedSport && <div className="flex gap-2"><span>{selectedSport.icon}</span><span>{selectedSport.name}</span></div>}
+                {form.title && <div className="flex gap-2"><span>📌</span><span className="font-medium">{form.title}</span></div>}
+                {form.date && <div className="flex gap-2"><span>📅</span><span>{form.date} {form.time}</span></div>}
+                {form.location && <div className="flex gap-2"><span>📍</span><span>{form.location}</span></div>}
+                <div className="flex gap-2"><span>👥</span><span>Hasta {form.maxPeople} personas</span></div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Navigation buttons */}
+        <div className="fixed bottom-20 left-6 right-6 z-40 flex gap-3">
+          {step < 2 ? (
+            <button
+              type="button"
+              onClick={() => canNext() && setStep(step + 1)}
+              disabled={!canNext()}
+              className="flex-1 py-4 rounded-2xl font-semibold text-white transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
+              style={{
+                background: canNext() ? 'var(--gradient)' : 'var(--border)',
+                boxShadow: canNext() ? '0 6px 24px rgba(91, 110, 245, 0.4)' : 'none',
+              }}
+            >
+              Siguiente →
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className="flex-1 py-4 rounded-2xl font-semibold text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
+              style={{
+                background: 'var(--gradient)',
+                boxShadow: '0 6px 24px rgba(91, 110, 245, 0.4)',
+              }}
+            >
+              ✓ Publicar evento
+            </button>
           )}
         </div>
-
-        {/* Waiting List */}
-        <div>
-          <label className="block text-sm font-medium text-slate-400 mb-3">
-            Lista de espera: <span className="text-blue-400">{form.waitingList} plazas</span>
-          </label>
-          <input
-            type="range"
-            min="0"
-            max="20"
-            value={form.waitingList}
-            onChange={(e) => setForm({ ...form, waitingList: e.target.value })}
-            className="w-full accent-blue-500"
-          />
-          <p className="text-xs text-slate-500 mt-1">Personas que pueden apuntarse si se llena</p>
-        </div>
-
-        {/* Max People */}
-        <div>
-          <label className="block text-sm font-medium text-slate-400 mb-3">
-            Máximo de personas: <span className="text-blue-400">{form.maxPeople}</span>
-          </label>
-          <input
-            type="range"
-            min="2"
-            max="50"
-            value={form.maxPeople}
-            onChange={(e) => setForm({ ...form, maxPeople: e.target.value })}
-            className="w-full accent-blue-500"
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-4 rounded-xl font-semibold mt-4 hover:shadow-lg hover:shadow-blue-500/25 transition-all">
-          Crear evento
-        </button>
       </form>
     </div>
   )

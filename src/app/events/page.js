@@ -10,199 +10,286 @@ const demoEvents = [
     sport: 'running',
     icon: '🏃',
     title: 'Running Dominguero',
-    description: 'Ruta suave por el parque. Todos los niveles bienvenidos!',
-    date: 'Domingo 30',
+    description: 'Ruta suave por el parque. Todos los niveles bienvenidos.',
+    date: 'Dom 30 Mar',
     time: '10:00',
     location: 'Parque de la Ciudad',
     province: 'madrid',
     level: 'any',
+    levelLabel: 'Todos',
     levelIcon: '🌍',
     thirdPlace: true,
+    thirdPlaceLink: 'https://maps.google.com',
     people: 8,
     maxPeople: 15,
     waitingList: 5,
     creator: 'Miguel R.',
-    color: 'from-blue-500 to-indigo-600'
+    creatorAvatar: '🧑‍🦱',
+    color: '#5b6ef5',
+    status: 'open',
   },
   {
     id: 2,
     sport: 'padel',
     icon: '🎾',
     title: 'Partido de Pádel',
-    description: 'Buscamos 2 más para completar. Nivel intermedio.',
-    date: 'Sábado 29',
+    description: 'Buscamos 2 más para completar el cuadro. Nivel intermedio.',
+    date: 'Sáb 29 Mar',
     time: '18:00',
-    location: 'Club de Padel Centro',
+    location: 'Club de Pádel Centro',
     province: 'valencia',
     level: 'intermediate',
+    levelLabel: 'Intermedio',
     levelIcon: '⭐',
     thirdPlace: false,
     people: 2,
     maxPeople: 4,
     waitingList: 2,
     creator: 'Laura M.',
-    color: 'from-green-500 to-emerald-600'
+    creatorAvatar: '👩‍🦳',
+    color: '#06d6a0',
+    status: 'open',
   },
   {
     id: 3,
     sport: 'senderismo',
     icon: '🥾',
     title: 'Senderismo Sierra Norte',
-    description: 'Ruta de 12km, dificultad media. Llevar agua y calzado cómodo.',
-    date: 'Domingo 30',
+    description: 'Ruta de 12 km, dificultad media. Llevar agua y calzado cómodo.',
+    date: 'Dom 30 Mar',
     time: '09:00',
     location: 'Plaza del Pueblo',
     province: 'madrid',
     level: 'advanced',
+    levelLabel: 'Avanzado',
     levelIcon: '🔥',
     thirdPlace: true,
+    thirdPlaceLink: 'https://maps.google.com',
     people: 12,
     maxPeople: 20,
     waitingList: 8,
     creator: 'Carlos A.',
-    color: 'from-amber-500 to-orange-600'
-  }
+    creatorAvatar: '🧔',
+    color: '#f59e0b',
+    status: 'open',
+  },
+  {
+    id: 4,
+    sport: 'futbol',
+    icon: '⚽',
+    title: 'Fútbol 7 tarde',
+    description: 'Partido amistoso, buscamos gente de cualquier nivel para pasar un buen rato.',
+    date: 'Vie 28 Mar',
+    time: '20:00',
+    location: 'Polideportivo Municipal',
+    province: 'sevilla',
+    level: 'any',
+    levelLabel: 'Todos',
+    levelIcon: '🌍',
+    thirdPlace: true,
+    thirdPlaceLink: 'https://maps.google.com',
+    people: 11,
+    maxPeople: 14,
+    waitingList: 3,
+    creator: 'Javi P.',
+    creatorAvatar: '👨‍🦲',
+    color: '#ef4444',
+    status: 'open',
+  },
 ]
 
-const filters = [
-  { id: 'all', label: 'Todos' },
-  { id: 'running', label: '🏃 Running' },
-  { id: 'padel', label: '🎾 Pádel' },
-  { id: 'senderismo', label: '🥾 Senderismo' },
-  { id: 'futbol', label: '⚽ Fútbol' },
+const sportFilters = [
+  { id: 'all',        label: 'Todos',       icon: '✨' },
+  { id: 'running',    label: 'Running',     icon: '🏃' },
+  { id: 'padel',      label: 'Pádel',       icon: '🎾' },
+  { id: 'senderismo', label: 'Senderismo',  icon: '🥾' },
+  { id: 'futbol',     label: 'Fútbol',      icon: '⚽' },
+  { id: 'gimnasio',   label: 'Gimnasio',    icon: '💪' },
 ]
 
 const levelFilters = [
-  { id: 'all', name: 'Todos', icon: '🌍' },
-  { id: 'any', name: 'Abierto', icon: '🌍' },
-  { id: 'beginner', name: '🌱', icon: '🌱' },
-  { id: 'intermediate', name: '⭐', icon: '⭐' },
-  { id: 'advanced', name: '🔥', icon: '🔥' },
+  { id: 'all',          label: 'Todos',        icon: '🌍' },
+  { id: 'beginner',     label: 'Principiante', icon: '🌱' },
+  { id: 'intermediate', label: 'Intermedio',   icon: '⭐' },
+  { id: 'advanced',     label: 'Avanzado',     icon: '🔥' },
 ]
 
 const provinces = [
-  { id: 'all', name: 'Todas' },
-  { id: 'madrid', name: 'Madrid' },
+  { id: 'all',      name: 'Todas' },
+  { id: 'madrid',   name: 'Madrid' },
+  { id: 'barcelona',name: 'Barcelona' },
   { id: 'valencia', name: 'Valencia' },
-  { id: 'barcelona', name: 'Barcelona' },
-  { id: 'sevilla', name: 'Sevilla' },
+  { id: 'sevilla',  name: 'Sevilla' },
+  { id: 'malaga',   name: 'Málaga' },
+  { id: 'alicante', name: 'Alicante' },
+  { id: 'murcia',   name: 'Murcia' },
+  { id: 'vizcaya',  name: 'Vizcaya' },
+  { id: 'cordoba',  name: 'Córdoba' },
+  { id: 'zaragoza', name: 'Zaragoza' },
 ]
 
 export default function Events() {
-  const [filter, setFilter] = useState('all')
+  const [sport, setSport] = useState('all')
   const [province, setProvince] = useState('all')
   const [level, setLevel] = useState('all')
 
-  const filteredEvents = demoEvents.filter(e => {
-    const sportMatch = filter === 'all' || e.sport === filter
+  const filtered = demoEvents.filter(e => {
+    const sportMatch   = sport === 'all'    || e.sport === sport
     const provinceMatch = province === 'all' || e.province === province
-    const levelMatch = level === 'all' || e.level === level || e.level === 'any'
+    const levelMatch   = level === 'all'    || e.level === level || e.level === 'any'
     return sportMatch && provinceMatch && levelMatch
   })
 
+  const fillPct = (ev) => Math.round((ev.people / ev.maxPeople) * 100)
+  const fillColor = (pct) => pct >= 90 ? '#ef4444' : pct >= 70 ? '#f59e0b' : 'var(--primary)'
+
   return (
-    <div className="min-h-screen bg-[#0f172a] text-[#f8fafc] pb-24 pt-safe">
+    <div className="min-h-screen pb-28">
       {/* Header */}
-      <header className="px-6 pt-12 pb-4">
-        <h1 className="text-2xl font-bold">Eventos cerca de ti</h1>
-        <p className="text-slate-400 text-sm mt-1">Únete a la próxima actividad</p>
+      <header className="px-6 pt-14 pb-4">
+        <h1 className="text-xl font-bold">Eventos</h1>
+        <p className="text-sm mt-0.5" style={{color: 'var(--text-secondary)'}}>
+          {filtered.length} evento{filtered.length !== 1 ? 's' : ''} disponibles
+        </p>
       </header>
 
-      {/* Province Filter */}
-      <div className="px-6 pb-3 flex gap-2 overflow-x-auto">
+      {/* Province filter */}
+      <div className="px-6 pb-3 flex gap-2 overflow-x-auto scrollbar-hide">
         {provinces.map((p) => (
           <button
             key={p.id}
             onClick={() => setProvince(p.id)}
-            className={`px-3 py-1.5 rounded-full text-xs whitespace-nowrap transition-all ${
-              province === p.id
-                ? 'bg-violet-600 text-white'
-                : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
-            }`}
+            className={`sport-pill ${province === p.id ? 'active' : 'inactive'}`}
           >
             {p.name}
           </button>
         ))}
       </div>
 
-      {/* Sport Filter */}
-      <div className="px-6 pb-3 flex gap-2 overflow-x-auto">
-        {filters.map((f) => (
+      {/* Sport filter */}
+      <div className="px-6 pb-3 flex gap-2 overflow-x-auto scrollbar-hide">
+        {sportFilters.map((f) => (
           <button
             key={f.id}
-            onClick={() => setFilter(f.id)}
-            className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-all ${
-              filter === f.id
-                ? 'bg-blue-500 text-white'
-                : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
-            }`}
+            onClick={() => setSport(f.id)}
+            className={`sport-pill ${sport === f.id ? 'active' : 'inactive'}`}
           >
-            {f.label}
+            <span>{f.icon}</span>
+            <span>{f.label}</span>
           </button>
         ))}
       </div>
 
-      {/* Level Filter */}
-      <div className="px-6 pb-4 flex gap-2 overflow-x-auto">
+      {/* Level filter */}
+      <div className="px-6 pb-4 flex gap-2 overflow-x-auto scrollbar-hide">
         {levelFilters.map((l) => (
           <button
             key={l.id}
             onClick={() => setLevel(l.id)}
-            className={`px-3 py-1.5 rounded-full text-xs whitespace-nowrap transition-all flex items-center gap-1 ${
-              level === l.id
-                ? 'bg-violet-600 text-white'
-                : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
-            }`}
+            className={`sport-pill ${level === l.id ? 'active' : 'inactive'}`}
+            style={level === l.id ? {background: 'var(--secondary)', boxShadow: '0 2px 12px rgba(139, 92, 246, 0.35)'} : {}}
           >
             <span>{l.icon}</span>
+            <span>{l.label}</span>
           </button>
         ))}
       </div>
 
-      {/* Events List */}
+      {/* Events list */}
       <div className="px-6 space-y-4">
-        {filteredEvents.map((event) => (
-          <div key={event.id} className="bg-slate-800/50 rounded-2xl p-5 border border-slate-700/50 hover:border-slate-600 transition-all">
-            <div className="flex items-start gap-4 mb-3">
-              <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${event.color} flex items-center justify-center text-2xl`}>
-                {event.icon}
-              </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-lg">{event.title}</h3>
-                <p className="text-sm text-slate-400">por {event.creator}</p>
-              </div>
-            </div>
-            
-            <p className="text-sm text-slate-400 mb-4">{event.description}</p>
-            
-            <div className="flex flex-wrap gap-4 text-sm text-slate-400 mb-4">
-              <span className="flex items-center gap-1">📅 {event.date} • {event.time}</span>
-              <span className="flex items-center gap-1">📍 {event.location}</span>
-              <span className="flex items-center gap-1">{event.levelIcon}</span>
-              {event.thirdPlace && (
-                <span className="flex items-center gap-1">🍺 3er tiempo</span>
-              )}
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-28 h-2 bg-slate-700 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-blue-500 rounded-full"
-                    style={{ width: `${(event.people / event.maxPeople) * 100}%` }}
-                  />
+        {filtered.length === 0 && (
+          <div className="glass rounded-2xl p-8 text-center">
+            <div className="text-4xl mb-3">🔍</div>
+            <div className="font-medium">Sin resultados</div>
+            <div className="text-sm mt-1" style={{color: 'var(--text-secondary)'}}>Prueba con otros filtros</div>
+          </div>
+        )}
+
+        {filtered.map((ev, i) => {
+          const pct = fillPct(ev)
+          const barColor = fillColor(pct)
+          return (
+            <Link
+              href={`/events/${ev.id}`}
+              key={ev.id}
+              className={`glass rounded-2xl p-5 block transition-all hover:scale-[1.01] active:scale-[0.99] animate-fade-in-up delay-${Math.min(i + 1, 6)}`}
+              style={{textDecoration: 'none'}}
+            >
+              {/* Top row */}
+              <div className="flex items-start gap-3 mb-3">
+                <div
+                  className="w-13 h-13 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
+                  style={{
+                    background: `${ev.color}22`,
+                    border: `1px solid ${ev.color}44`,
+                    width: '52px',
+                    height: '52px',
+                  }}
+                >
+                  {ev.icon}
                 </div>
-                <span className="text-sm text-slate-400">
-                  {event.people}/{event.maxPeople}
-                  {event.waitingList > 0 && <span className="text-xs text-violet-400 ml-1">+{event.waitingList} espera</span>}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className="font-semibold text-base leading-tight">{ev.title}</h3>
+                    {ev.thirdPlace && (
+                      <span className="level-badge flex-shrink-0" style={{background: 'rgba(251, 191, 36, 0.15)', color: '#f59e0b'}}>
+                        🍺
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs mt-0.5" style={{color: 'var(--text-secondary)'}}>
+                    {ev.creatorAvatar} {ev.creator}
+                  </p>
+                </div>
+              </div>
+
+              {/* Description */}
+              <p className="text-sm mb-3 leading-relaxed" style={{color: 'var(--text-secondary)'}}>{ev.description}</p>
+
+              {/* Meta info */}
+              <div className="flex flex-wrap gap-x-4 gap-y-1.5 mb-4 text-xs" style={{color: 'var(--text-secondary)'}}>
+                <span className="flex items-center gap-1">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  {ev.date} · {ev.time}
+                </span>
+                <span className="flex items-center gap-1">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  {ev.location}
+                </span>
+                <span className="level-badge" style={{background: `${ev.color}22`, color: ev.color, padding: '2px 8px'}}>
+                  {ev.levelIcon} {ev.levelLabel}
                 </span>
               </div>
-              <button className="px-6 py-2.5 bg-blue-500 text-white rounded-xl font-medium text-sm hover:bg-blue-600 transition-all">
-                Unirse
-              </button>
-            </div>
-          </div>
-        ))}
+
+              {/* People progress */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3 flex-1">
+                  <div className="flex-1 max-w-32">
+                    <div className="progress-bar">
+                      <div className="progress-fill" style={{width: `${pct}%`, background: barColor}}/>
+                    </div>
+                  </div>
+                  <span className="text-xs" style={{color: barColor}}>
+                    {ev.people}/{ev.maxPeople} personas
+                    {ev.waitingList > 0 && (
+                      <span style={{color: 'var(--secondary)'}}> · +{ev.waitingList} espera</span>
+                    )}
+                  </span>
+                </div>
+                <button
+                  onClick={(e) => { e.preventDefault(); }}
+                  className="ml-3 px-5 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-95"
+                  style={{
+                    background: `linear-gradient(135deg, ${ev.color}, ${ev.color}cc)`,
+                    boxShadow: `0 2px 10px ${ev.color}44`,
+                  }}
+                >
+                  Unirse
+                </button>
+              </div>
+            </Link>
+          )
+        })}
       </div>
     </div>
   )

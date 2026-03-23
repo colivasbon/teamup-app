@@ -1,102 +1,280 @@
 /* src/app/globals.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@theme {
-  --color-background: var(--background);
-  --color-surface: var(--surface);
-  --color-text: var(--text);
-  --color-text-secondary: var(--text-secondary);
-  --color-border: var(--border);
-  --color-primary: var(--primary);
-  --color-primary-hover: var(--primary-hover);
-  --color-secondary: var(--secondary);
-}
-
 :root {
-  --background: #0f172a;
-  --surface: #1e293b;
-  --text: #f8fafc;
-  --text-secondary: #94a3b8;
-  --border: #334155;
-  --primary: #3b82f6;
-  --primary-hover: #2563eb;
+  /* Light mode */
+  --background: #f0f4ff;
+  --background-2: #e8eeff;
+  --surface: rgba(255, 255, 255, 0.6);
+  --surface-solid: #ffffff;
+  --text: #0f1629;
+  --text-secondary: #5a6785;
+  --border: rgba(99, 120, 255, 0.15);
+  --border-solid: #d4d9f0;
+  --primary: #5b6ef5;
+  --primary-hover: #4355e8;
+  --primary-rgb: 91, 110, 245;
   --secondary: #8b5cf6;
+  --secondary-hover: #7c3aed;
+  --accent: #06d6a0;
+  --accent-hover: #05c490;
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --glass-shadow: 0 8px 32px rgba(91, 110, 245, 0.12);
+  --gradient: linear-gradient(135deg, #5b6ef5, #8b5cf6);
+  --gradient-sport: linear-gradient(135deg, #5b6ef5 0%, #06d6a0 100%);
 }
 
 [data-theme="dark"] {
-  --background: #0f172a;
-  --surface: #1e293b;
-  --text: #f8fafc;
-  --text-secondary: #94a3b8;
-  --border: #334155;
-  --primary: #3b82f6;
-  --primary-hover: #2563eb;
-  --secondary: #8b5cf6;
-}
-
-[data-theme="light"] {
-  --background: #ffffff;
-  --surface: #f8f9fa;
-  --text: #1f2937;
-  --text-secondary: #6b7280;
-  --border: #e5e7eb;
-  --primary: #3b82f6;
-  --primary-hover: #2563eb;
-  --secondary: #8b5cf6;
+  --background: #07091a;
+  --background-2: #0d1128;
+  --surface: rgba(255, 255, 255, 0.05);
+  --surface-solid: #111827;
+  --text: #e8ecff;
+  --text-secondary: #6b7fa8;
+  --border: rgba(107, 127, 246, 0.22);
+  --border-solid: #1a2442;
+  --primary: #7080f6;
+  --primary-hover: #8090ff;
+  --primary-rgb: 112, 128, 246;
+  --secondary: #a78bfa;
+  --secondary-hover: #b89dff;
+  --accent: #06d6a0;
+  --accent-hover: #05c490;
+  --glass-bg: rgba(16, 22, 54, 0.72);
+  --glass-border: rgba(107, 127, 246, 0.2);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.06);
+  --gradient: linear-gradient(135deg, #6b7ff6, #a78bfa);
+  --gradient-sport: linear-gradient(135deg, #6b7ff6 0%, #06d6a0 100%);
 }
 
 [data-theme="system"] {
-  --background: #0f172a;
-  --surface: #1e293b;
-  --text: #f8fafc;
-  --text-secondary: #94a3b8;
-  --border: #334155;
-  --primary: #3b82f6;
-  --primary-hover: #2563eb;
+  --background: #f0f4ff;
+  --background-2: #e8eeff;
+  --surface: rgba(255, 255, 255, 0.6);
+  --surface-solid: #ffffff;
+  --text: #0f1629;
+  --text-secondary: #5a6785;
+  --border: rgba(99, 120, 255, 0.15);
+  --border-solid: #d4d9f0;
+  --primary: #5b6ef5;
+  --primary-hover: #4355e8;
+  --primary-rgb: 91, 110, 245;
   --secondary: #8b5cf6;
+  --secondary-hover: #7c3aed;
+  --accent: #06d6a0;
+  --accent-hover: #05c490;
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --glass-shadow: 0 8px 32px rgba(91, 110, 245, 0.12);
+  --gradient: linear-gradient(135deg, #5b6ef5, #8b5cf6);
+  --gradient-sport: linear-gradient(135deg, #5b6ef5 0%, #06d6a0 100%);
 }
 
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: dark) {
   [data-theme="system"] {
-    --background: #ffffff;
-    --surface: #f8f9fa;
-    --text: #1f2937;
-    --text-secondary: #6b7280;
-    --border: #e5e7eb;
+    --background: #080c1a;
+    --background-2: #0d1225;
+    --surface: rgba(255, 255, 255, 0.04);
+    --surface-solid: #111827;
+    --text: #f0f4ff;
+    --text-secondary: #7b8db0;
+    --border: rgba(99, 120, 255, 0.18);
+    --border-solid: #1e2a45;
+    --primary: #6b7ff6;
+    --primary-hover: #7d8fff;
+    --primary-rgb: 107, 127, 246;
+    --secondary: #a78bfa;
+    --secondary-hover: #b89dff;
+    --accent: #06d6a0;
+    --glass-bg: rgba(255, 255, 255, 0.04);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    --gradient: linear-gradient(135deg, #6b7ff6, #a78bfa);
+    --gradient-sport: linear-gradient(135deg, #6b7ff6 0%, #06d6a0 100%);
   }
 }
 
-/* Animaciones */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+* {
+  -webkit-tap-highlight-color: transparent;
 }
 
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
-  50% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.5); }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--background);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Glassmorphism */
+/* Mesh gradient background */
+.bg-mesh {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 15% 25%, rgba(107, 127, 246, 0.18) 0px, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 85% 75%, rgba(167, 139, 250, 0.14) 0px, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 60% 10%, rgba(6, 214, 160, 0.08) 0px, transparent 50%),
+    radial-gradient(ellipse 35% 25% at 90% 15%, rgba(107, 127, 246, 0.10) 0px, transparent 45%);
+  min-height: 100vh;
+}
+
+/* Glass card */
 .glass {
-  background: rgba(30, 41, 59, 0.8);
-  backdrop-filter: blur(12px);
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Scrollbar personalizada */
-::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+/* Animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
-::-webkit-scrollbar-thumb {
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulse-ring {
+  0%   { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+/* Stagger delays */
+.delay-1 { animation-delay: 0.05s; }
+.delay-2 { animation-delay: 0.10s; }
+.delay-3 { animation-delay: 0.15s; }
+.delay-4 { animation-delay: 0.20s; }
+.delay-5 { animation-delay: 0.25s; }
+.delay-6 { animation-delay: 0.30s; }
+
+/* Input styles */
+.input-glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  color: var(--text);
+  width: 100%;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.input-glass::placeholder {
+  color: var(--text-secondary);
+}
+
+.input-glass:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.15);
+}
+
+/* Scrollbar hide */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Sport badge pill */
+.sport-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.sport-pill.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 2px 12px rgba(var(--primary-rgb), 0.35);
+}
+
+.sport-pill.inactive {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+}
+
+.sport-pill.inactive:hover {
+  color: var(--text);
+  border-color: var(--primary);
+}
+
+/* Progress bar */
+.progress-bar {
+  height: 6px;
   background: var(--border);
-  border-radius: 4px;
+  border-radius: 100px;
+  overflow: hidden;
 }
+
+.progress-fill {
+  height: 100%;
+  background: var(--gradient);
+  border-radius: 100px;
+  transition: width 0.5s ease;
+}
+
+/* Navbar */
+.navbar-glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-top: 1px solid var(--glass-border);
+}
+
+/* Level badge */
+.level-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Status badge */
+.status-open   { background: rgba(6, 214, 160, 0.15); color: #06d6a0; }
+.status-full   { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+.status-wait   { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
