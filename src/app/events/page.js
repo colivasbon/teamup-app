@@ -4,7 +4,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
 
-// Demo data
 const demoEvents = [
   {
     id: 1,
@@ -17,7 +16,8 @@ const demoEvents = [
     location: 'Parque de la Ciudad',
     people: 8,
     maxPeople: 15,
-    creator: 'Miguel R.'
+    creator: 'Miguel R.',
+    color: 'from-orange-500 to-red-500'
   },
   {
     id: 2,
@@ -30,7 +30,8 @@ const demoEvents = [
     location: 'Club de Padel Centro',
     people: 2,
     maxPeople: 4,
-    creator: 'Laura M.'
+    creator: 'Laura M.',
+    color: 'from-green-500 to-emerald-600'
   },
   {
     id: 3,
@@ -43,8 +44,17 @@ const demoEvents = [
     location: 'Plaza del Pueblo',
     people: 12,
     maxPeople: 20,
-    creator: 'Carlos A.'
+    creator: 'Carlos A.',
+    color: 'from-amber-500 to-orange-600'
   }
+]
+
+const filters = [
+  { id: 'all', label: 'Todos' },
+  { id: 'running', label: '🏃 Running' },
+  { id: 'padel', label: '🎾 Pádel' },
+  { id: 'senderismo', label: '🥾 Senderismo' },
+  { id: 'futbol', label: '⚽ Fútbol' },
 ]
 
 export default function Events() {
@@ -55,80 +65,70 @@ export default function Events() {
     : demoEvents.filter(e => e.sport === filter)
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
-      <header className="bg-white shadow-sm sticky top-0">
-        <div className="max-w-md mx-auto px-4 py-4">
-          <h1 className="text-lg font-bold">Eventos cerca de ti</h1>
-        </div>
+    <div className="min-h-screen bg-slate-900 text-white pb-24">
+      {/* Header */}
+      <header className="px-6 pt-12 pb-4">
+        <h1 className="text-2xl font-bold">Eventos cerca de ti</h1>
+        <p className="text-slate-400 text-sm mt-1">Únete a la próxima actividad</p>
       </header>
 
       {/* Filters */}
-      <div className="max-w-md mx-auto px-4 py-3 flex gap-2 overflow-x-auto">
-        {['all', 'running', 'padel', 'senderismo', 'futbol'].map((f) => (
+      <div className="px-6 pb-4 flex gap-2 overflow-x-auto scrollbar-hide">
+        {filters.map((f) => (
           <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`px-4 py-2 rounded-full text-sm whitespace-nowrap ${
-              filter === f
-                ? 'bg-blue-600 text-white'
-                : 'bg-white text-gray-600 border'
+            key={f.id}
+            onClick={() => setFilter(f.id)}
+            className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-all ${
+              filter === f.id
+                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
+                : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
             }`}
           >
-            {f === 'all' ? 'Todos' : f.charAt(0).toUpperCase() + f.slice(1)}
+            {f.label}
           </button>
         ))}
       </div>
 
       {/* Events List */}
-      <div className="max-w-md mx-auto px-4 space-y-4">
+      <div className="px-6 space-y-4">
         {filteredEvents.map((event) => (
-          <div key={event.id} className="bg-white rounded-xl p-4 shadow-sm">
-            <div className="flex items-start justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">{event.icon}</span>
-                <div>
-                  <h3 className="font-semibold text-gray-800">{event.title}</h3>
-                  <p className="text-sm text-gray-500">por {event.creator}</p>
-                </div>
+          <div key={event.id} className="bg-slate-800/50 rounded-2xl p-5 border border-slate-700/50">
+            <div className="flex items-start gap-4 mb-3">
+              <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${event.color} flex items-center justify-center text-2xl`}>
+                {event.icon}
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-lg">{event.title}</h3>
+                <p className="text-sm text-slate-400">por {event.creator}</p>
               </div>
             </div>
             
-            <p className="text-sm text-gray-600 mb-3">{event.description}</p>
+            <p className="text-sm text-slate-300 mb-4">{event.description}</p>
             
-            <div className="flex flex-wrap gap-3 text-sm text-gray-500 mb-3">
-              <span>📅 {event.date} {event.time}</span>
-              <span>📍 {event.location}</span>
+            <div className="flex flex-wrap gap-4 text-sm text-slate-400 mb-4">
+              <span className="flex items-center gap-1">📅 {event.date} • {event.time}</span>
+              <span className="flex items-center gap-1">📍 {event.location}</span>
             </div>
             
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div className="flex items-center gap-3">
+                <div className="w-28 h-2 bg-slate-700 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-blue-500"
+                    className="h-full bg-gradient-to-r from-blue-500 to-purple-500"
                     style={{ width: `${(event.people / event.maxPeople) * 100}%` }}
                   />
                 </div>
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-slate-400">
                   {event.people}/{event.maxPeople}
                 </span>
               </div>
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium">
+              <button className="px-6 py-2.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl font-medium text-sm hover:shadow-lg hover:shadow-purple-500/25 transition-all">
                 Unirse
               </button>
             </div>
           </div>
         ))}
       </div>
-
-      {/* Bottom Nav */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t pb-safe">
-        <div className="max-w-md mx-auto flex justify-around py-3">
-          <Link href="/" className="text-gray-400">🏠</Link>
-          <Link href="/events" className="text-blue-600">🔍</Link>
-          <Link href="/create" className="text-gray-400">➕</Link>
-          <Link href="/profile" className="text-gray-400">👤</Link>
-        </div>
-      </nav>
     </div>
   )
 }
