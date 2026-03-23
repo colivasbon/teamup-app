@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase'
+import { getSupabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 
 export default function Auth() {
@@ -28,39 +28,67 @@ export default function Auth() {
     setError('')
     setSuccess('')
 
+    const sb = getSupabase()
+    if (!sb) { setError('Error de conexión. Recarga la página.'); setLoading(false); return }
+
     if (mode === 'login') {
-      const { error: err } = await supabase.auth.signInWithPassword({
+      const { error: err } = await sb.auth.signInWithPassword({
         email: form.email,
         password: form.password,
       })
       if (err) {
-        setError(err.message === 'Invalid login credentials'
-          ? 'Email o contraseña incorrectos'
-          : err.message)
-      } else {
-        router.replace('/')
+        setError(
+          err.message === 'Invalid login credentials'
+            ? 'Email o contraseña incorrectos'
+            : err.message === 'Email not confirmed'
+            ? 'Confirma tu email antes de entrar. Revisa tu bandeja de entrada.'
+            : err.message
+        )
+        setLoading(false)
       }
+      // Si no hay error, AuthContext detecta la sesión y el useEffect redirige
     } else {
-      if (!form.name.trim()) { setError('Escribe tu nombre'); setLoading(false); return }
+      if (!form.name.trim())      { setError('Escribe tu nombre'); setLoading(false); return }
       if (form.password.length < 6) { setError('La contraseña debe tener al menos 6 caracteres'); setLoading(false); return }
 
-      const { error: err } = await supabase.auth.signUp({
+      const { data, error: err } = await sb.auth.signUp({
         email: form.email,
         password: form.password,
         options: { data: { full_name: form.name } },
       })
+
       if (err) {
         setError(err.message)
+        setLoading(false)
+        return
+      }
+
+      // Supabase puede requerir confirmación o no, según configuración
+      if (data?.session) {
+        // Email confirmation desactivado — sesión creada directamente
+        router.replace('/')
       } else {
-        setSuccess('¡Cuenta creada! Revisa tu email para confirmar. Puedes entrar directamente si la confirmación está desactivada.')
-        // Intentar login directo por si email confirmation está off
-        const { error: loginErr } = await supabase.auth.signInWithPassword({
-          email: form.email, password: form.password,
-        })
-        if (!loginErr) router.replace('/')
+        // Email confirmation activado — avisar y no dejarse pillado en loading
+        setSuccess('¡Cuenta creada! Revisa tu email y confirma tu cuenta para entrar.')
+        setLoading(false)
       }
     }
-    setLoading(false)
+  }
+
+  const loginWithGoogle = async () => {
+    const sb = getSupabase()
+    if (!sb) { setError('Error de conexión.'); return }
+    const { error: err } = await sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin },
+    })
+    if (err) {
+      setError(
+        err.message.includes('provider is not enabled') || err.message.includes('not enabled')
+          ? 'El acceso con Google no está activado aún. Usa email y contraseña.'
+          : err.message
+      )
+    }
   }
 
   return (
@@ -130,7 +158,7 @@ export default function Auth() {
 
           <button type="submit" disabled={loading} className="btn btn-primary" style={{ width:'100%', marginTop:4, fontSize:16 }}>
             {loading ? (
-              <span style={{ display:'flex', alignItems:'center', gap:8 }}>
+              <span style={{ display:'flex', alignItems:'center', gap:8, justifyContent:'center' }}>
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style={{ animation:'spin 0.8s linear infinite' }}>
                   <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.35)" strokeWidth="3"/>
                   <path d="M12 2 A10 10 0 0 1 22 12" stroke="white" strokeWidth="3" strokeLinecap="round"/>
@@ -149,13 +177,7 @@ export default function Auth() {
         </div>
 
         {/* Google */}
-        <button
-          onClick={async()=>{
-            const {error:err}=await supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin}})
-            if(err) setError(err.message)
-          }}
-          className="btn btn-ghost" style={{ width:'100%', gap:10 }}
-        >
+        <button onClick={loginWithGoogle} className="btn btn-ghost" style={{ width:'100%', gap:10 }}>
           <svg width="18" height="18" viewBox="0 0 24 24">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
             <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>

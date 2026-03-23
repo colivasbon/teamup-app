@@ -13,9 +13,9 @@ const SPORTS = [
 ]
 
 const NEARBY = [
-  { id:1, icon:'🏃', title:'Running Matutino',   loc:'Alameda de Córdoba',    time:'Hoy · 07:30',    p:7, max:10, color:'#5b6ef5' },
-  { id:2, icon:'🎾', title:'Torneo Pádel Medio', loc:'Club Pádel Córdoba',    time:'Mañana · 10:00', p:6, max:8,  color:'#06d6a0' },
-  { id:3, icon:'🥾', title:'Ruta Sierra Nevada', loc:'Plaza Mayor, Granada',  time:'Sáb · 08:00',    p:12, max:20, color:'#f59e0b' },
+  { id:'demo-1', icon:'🏃', title:'Running Matutino',   loc:'Alameda de Córdoba',    time:'Hoy · 07:30',    p:7, max:10, color:'#5b6ef5' },
+  { id:'demo-2', icon:'🎾', title:'Torneo Pádel Medio', loc:'Club Pádel Centro',      time:'Mañana · 18:00', p:2, max:4,  color:'#06d6a0' },
+  { id:'demo-4', icon:'⚽', title:'Fútbol 7 tarde',     loc:'Polideportivo Municipal',time:'Vie · 20:00',     p:11, max:14, color:'#ef4444' },
 ]
 
 export default function Home() {

@@ -4,18 +4,19 @@ import { useState, useEffect, useCallback, Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import Navbar from '@/components/Navbar'
-import { supabase } from '@/lib/supabase'
+import { getSupabase } from '@/lib/supabase'
 
 // ─── Datos de fallback mientras no hay BD configurada ──
 const DEMO_EVENTS = [
-  { id:'1', sport:'running', icon:'🏃', title:'Running Matutino', description:'Ruta suave por la Alameda. Todos los niveles bienvenidos.', date:'2026-03-30', time:'07:30:00', location:'Alameda de Córdoba', province:'cordoba', level:'any', max_players:10, price:'Gratis', third_place:false, creator_name:'Carlos O.', participant_count:7, color:'#5b6ef5' },
-  { id:'2', sport:'padel',   icon:'🎾', title:'Torneo Pádel Nivel Medio', description:'Rondas de 20 min con rotación. Raquetas disponibles.', date:'2026-03-29', time:'18:00:00', location:'Club de Pádel Centro', province:'valencia', level:'intermediate', max_players:4, price:'5€/persona', third_place:true, creator_name:'Laura M.', participant_count:2, color:'#06d6a0' },
-  { id:'3', sport:'senderismo', icon:'🥾', title:'Senderismo Sierra Norte', description:'Ruta 12 km, dificultad media. Llevar agua y calzado.', date:'2026-03-30', time:'09:00:00', location:'Plaza del Pueblo', province:'madrid', level:'advanced', max_players:20, price:'Gratis', third_place:true, creator_name:'Javi M.', participant_count:12, color:'#f59e0b' },
-  { id:'4', sport:'futbol', icon:'⚽', title:'Fútbol 7 tarde', description:'Partido amistoso, cualquier nivel. A disfrutar.', date:'2026-03-28', time:'20:00:00', location:'Polideportivo Municipal', province:'sevilla', level:'any', max_players:14, price:'Gratis', third_place:true, creator_name:'Diego R.', participant_count:11, color:'#ef4444' },
-  { id:'5', sport:'gimnasio', icon:'💪', title:'Entreno Funcional Grupal', description:'4 rondas de ejercicios funcionales de alta intensidad.', date:'2026-03-25', time:'19:00:00', location:'Box CrossFit Sur', province:'madrid', level:'intermediate', max_players:12, price:'Gratis', third_place:false, creator_name:'Laura S.', participant_count:8, color:'#8b5cf6' },
+  { id:'demo-1', sport:'running',    icon:'🏃', title:'Running Matutino',         description:'Ruta suave por la Alameda. Todos los niveles bienvenidos.', date:'2026-03-30', time:'07:30:00', location:'Alameda de Córdoba',      province:'cordoba',   level:'any',          max_players:10, price:'Gratis',     third_place:false, creator_name:'Carlos O.', participant_count:7,  color:'#5b6ef5' },
+  { id:'demo-2', sport:'padel',      icon:'🎾', title:'Torneo Pádel Nivel Medio', description:'Rondas de 20 min con rotación. Raquetas disponibles.',         date:'2026-03-29', time:'18:00:00', location:'Club de Pádel Centro',    province:'valencia',  level:'intermediate', max_players:4,  price:'5€/persona', third_place:true,  creator_name:'Laura M.', participant_count:2,  color:'#06d6a0' },
+  { id:'demo-3', sport:'senderismo', icon:'🥾', title:'Senderismo Sierra Norte',  description:'Ruta 12 km, dificultad media. Llevar agua y calzado.',          date:'2026-03-30', time:'09:00:00', location:'Plaza del Pueblo',         province:'madrid',    level:'advanced',     max_players:20, price:'Gratis',     third_place:true,  creator_name:'Javi M.',  participant_count:12, color:'#f59e0b' },
+  { id:'demo-4', sport:'futbol',     icon:'⚽', title:'Fútbol 7 tarde',           description:'Partido amistoso, cualquier nivel. A disfrutar.',               date:'2026-03-28', time:'20:00:00', location:'Polideportivo Municipal',  province:'sevilla',   level:'any',          max_players:14, price:'Gratis',     third_place:true,  creator_name:'Diego R.', participant_count:11, color:'#ef4444' },
+  { id:'demo-5', sport:'gimnasio',   icon:'💪', title:'Entreno Funcional Grupal', description:'4 rondas de ejercicios funcionales de alta intensidad.',         date:'2026-03-25', time:'19:00:00', location:'Box CrossFit Sur',         province:'madrid',    level:'intermediate', max_players:12, price:'Gratis',     third_place:false, creator_name:'Laura S.', participant_count:8,  color:'#8b5cf6' },
+  { id:'demo-6', sport:'tenis',      icon:'🎾', title:'Dobles Tenis Casual',      description:'Partidos de dobles, todos los niveles.',                         date:'2026-04-01', time:'10:00:00', location:'Club de Tenis Parque Sur', province:'malaga',    level:'beginner',     max_players:8,  price:'Gratis',     third_place:false, creator_name:'Ana G.',   participant_count:3,  color:'#fbbf24' },
 ]
 
-const SPORT_ICONS = { running:'🏃', padel:'🎾', senderismo:'🥾', futbol:'⚽', gimnasio:'💪', tenis:'🎾' }
+const SPORT_ICONS  = { running:'🏃', padel:'🎾', senderismo:'🥾', futbol:'⚽', gimnasio:'💪', tenis:'🎾' }
 const SPORT_COLORS = { running:'#5b6ef5', padel:'#06d6a0', senderismo:'#f59e0b', futbol:'#ef4444', gimnasio:'#8b5cf6', tenis:'#fbbf24' }
 
 const SPORT_FILTERS = [
@@ -47,7 +48,38 @@ const PROVINCES = [
   {id:'murcia',name:'Murcia'},
   {id:'zaragoza',name:'Zaragoza'},
   {id:'bilbao',name:'Bilbao'},
+  {id:'cadiz',name:'Cádiz'},
+  {id:'huelva',name:'Huelva'},
+  {id:'jaen',name:'Jaén'},
+  {id:'almeria',name:'Almería'},
 ]
+
+// Coordenadas de capitales de provincia (para calcular distancia)
+const PROV_COORDS = {
+  madrid:    { lat:40.416775, lon:-3.703790 },
+  barcelona: { lat:41.385064, lon:2.173403  },
+  valencia:  { lat:39.469907, lon:-0.376288 },
+  sevilla:   { lat:37.389092, lon:-5.984459 },
+  cordoba:   { lat:37.888175, lon:-4.779383 },
+  granada:   { lat:37.177336, lon:-3.598557 },
+  malaga:    { lat:36.721261, lon:-4.421265 },
+  alicante:  { lat:38.345996, lon:-0.490685 },
+  murcia:    { lat:37.992254, lon:-1.130402 },
+  zaragoza:  { lat:41.648823, lon:-0.889085 },
+  bilbao:    { lat:43.263012, lon:-2.934985 },
+  cadiz:     { lat:36.526700, lon:-6.289640 },
+  huelva:    { lat:37.261421, lon:-6.944722 },
+  jaen:      { lat:37.779751, lon:-3.787602 },
+  almeria:   { lat:36.834047, lon:-2.463713 },
+}
+
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 6371
+  const dLat = (lat2-lat1)*Math.PI/180
+  const dLon = (lon2-lon1)*Math.PI/180
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+}
 
 function formatDate(dateStr) {
   if (!dateStr) return ''
@@ -59,9 +91,7 @@ function formatDate(dateStr) {
   return d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'})
 }
 
-function formatTime(t) {
-  return t ? t.slice(0,5) : ''
-}
+function formatTime(t) { return t ? t.slice(0,5) : '' }
 
 function EventsContent() {
   const searchParams = useSearchParams()
@@ -73,22 +103,53 @@ function EventsContent() {
   const [events,   setEvents]  = useState([])
   const [loading,  setLoading] = useState(true)
   const [fromDB,   setFromDB]  = useState(false)
+  const [geoLabel, setGeoLabel] = useState('')  // e.g. "Cerca de Córdoba"
+  const [geoError, setGeoError] = useState(false)
+
+  // Geolocalización: detectar provincia más cercana y filtrar
+  useEffect(() => {
+    if (!navigator.geolocation) return
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const { latitude: lat, longitude: lon } = pos.coords
+        let closest = null
+        let minDist = Infinity
+        for (const [id, coords] of Object.entries(PROV_COORDS)) {
+          const d = haversine(lat, lon, coords.lat, coords.lon)
+          if (d < minDist) { minDist = d; closest = id }
+        }
+        if (closest && minDist < 200) {
+          const label = PROVINCES.find(p=>p.id===closest)?.name || closest
+          setGeoLabel(`Cerca de ${label}`)
+          setProv(closest)
+        }
+      },
+      () => setGeoError(true),  // usuario denegó, no pasa nada
+      { timeout: 5000 }
+    )
+  }, [])
 
   const load = useCallback(async () => {
     setLoading(true)
-    const { data, error } = await supabase
-      .from('events_with_counts')
-      .select('*')
-      .order('date', { ascending: true })
+    try {
+      const sb = getSupabase()
+      if (sb) {
+        const { data, error } = await sb
+          .from('events_with_counts')
+          .select('*')
+          .order('date', { ascending: true })
 
-    if (!error && data && data.length > 0) {
-      setEvents(data)
-      setFromDB(true)
-    } else {
-      // Fallback a datos demo
-      setEvents(DEMO_EVENTS)
-      setFromDB(false)
-    }
+        if (!error && data && data.length > 0) {
+          setEvents(data)
+          setFromDB(true)
+          setLoading(false)
+          return
+        }
+      }
+    } catch(_) {}
+    // Fallback a datos demo
+    setEvents(DEMO_EVENTS)
+    setFromDB(false)
     setLoading(false)
   }, [])
 
@@ -114,16 +175,31 @@ function EventsContent() {
           <div>
             <h1 style={{ fontSize:24, fontWeight:800, margin:'0 0 3px', letterSpacing:'-0.04em' }}>Eventos</h1>
             <p style={{ fontSize:13, color:'var(--muted)', margin:0 }}>
-              {loading ? 'Cargando...' : `${filtered.length} evento${filtered.length!==1?'s':''} disponibles`}
+              {loading
+                ? 'Cargando...'
+                : geoLabel && prov!=='all'
+                ? `${filtered.length} evento${filtered.length!==1?'s':''} · ${geoLabel}`
+                : `${filtered.length} evento${filtered.length!==1?'s':''} disponibles`}
             </p>
           </div>
           <Link href="/create" className="btn btn-primary" style={{ padding:'10px 16px', fontSize:13 }}>+ Crear</Link>
         </header>
 
+        {/* Banner geolocalización */}
+        {geoLabel && prov!=='all' && (
+          <div className="anim-1" style={{ display:'flex', alignItems:'center', justifyContent:'space-between', background:'rgba(91,110,245,0.10)', border:'1px solid rgba(91,110,245,0.22)', borderRadius:12, padding:'10px 14px', marginBottom:12 }}>
+            <span style={{ fontSize:13, color:'var(--primary)', fontWeight:600 }}>📍 {geoLabel}</span>
+            <button onClick={()=>{ setProv('all'); setGeoLabel('') }}
+              style={{ background:'none', border:'none', fontSize:12, color:'var(--muted)', cursor:'pointer', fontFamily:'inherit', padding:'2px 6px' }}>
+              Ver todos ✕
+            </button>
+          </div>
+        )}
+
         {/* Filtro provincias */}
         <div className="scroll-x" style={{ display:'flex', gap:8, paddingBottom:10 }}>
           {PROVINCES.map(p=>(
-            <button key={p.id} onClick={()=>setProv(p.id)}
+            <button key={p.id} onClick={()=>{ setProv(p.id); if(p.id!==prov) setGeoLabel('') }}
               className={`pill ${prov===p.id?'pill-active':'pill-inactive'}`}>
               {p.name}
             </button>

@@ -3,16 +3,23 @@
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Navbar from '@/components/Navbar'
-import { supabase } from '@/lib/supabase'
+import { getSupabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 
 const S_COLORS = { running:'#5b6ef5', padel:'#06d6a0', senderismo:'#f59e0b', futbol:'#ef4444', gimnasio:'#8b5cf6', tenis:'#fbbf24' }
 const S_ICONS  = { running:'🏃', padel:'🎾', senderismo:'🥾', futbol:'⚽', gimnasio:'💪', tenis:'🎾' }
 
-// Demo data fallback
+// Demo data completo — cubre todos los IDs demo y también fallback de IDs numéricos legacy
 const DEMO = {
-  '1': { id:'1', title:'Running Matutino', sport:'running', level:'any', date:'2026-03-30', time:'07:30:00', location:'Alameda de Córdoba', province:'cordoba', max_players:10, price:'Gratis', third_place:false, description:'Ruta de running matutino por la Alameda y alrededores. Ritmo medio 5:00–5:30/km. Perfecto para empezar la semana con energía. Llevar agua.', creator_name:'Carlos O.', participant_count:7, tags:['Aire libre','Todos los niveles','Grupo pequeño'] },
-  '2': { id:'2', title:'Torneo Pádel Nivel Medio', sport:'padel', level:'intermediate', date:'2026-03-29', time:'18:00:00', location:'Club de Pádel Centro', province:'valencia', max_players:4, price:'5€/persona', third_place:true, description:'Torneo amistoso con rotación de parejas. Raquetas disponibles en el club.', creator_name:'Laura M.', participant_count:2, tags:['Indoor','Mixto','Torneo'] },
+  'demo-1': { id:'demo-1', title:'Running Matutino',         sport:'running',    level:'any',          date:'2026-03-30', time:'07:30:00', location:'Alameda de Córdoba',      province:'Córdoba',  max_players:10, price:'Gratis',     third_place:false, description:'Ruta de running matutino por la Alameda y alrededores. Ritmo medio 5:00–5:30 /km. Perfecto para empezar la semana con energía. Llevar agua.',             creator_name:'Carlos O.', participant_count:7,  tags:['Aire libre','Todos los niveles','Grupo pequeño'] },
+  'demo-2': { id:'demo-2', title:'Torneo Pádel Nivel Medio', sport:'padel',      level:'intermediate', date:'2026-03-29', time:'18:00:00', location:'Club de Pádel Centro',    province:'Valencia', max_players:4,  price:'5€/persona', third_place:true,  description:'Torneo amistoso con rotación de parejas cada 20 minutos. Raquetas disponibles en el club para quien no tenga.',                                         creator_name:'Laura M.', participant_count:2,  tags:['Indoor','Mixto','Torneo'] },
+  'demo-3': { id:'demo-3', title:'Senderismo Sierra Norte',  sport:'senderismo', level:'advanced',     date:'2026-03-30', time:'09:00:00', location:'Plaza del Pueblo',         province:'Madrid',   max_players:20, price:'Gratis',     third_place:true,  description:'Ruta de 12 km por la Sierra Norte de Madrid. Dificultad media-alta. Imprescindible calzado de montaña y llevar mínimo 2 litros de agua.',            creator_name:'Javi M.', participant_count:12, tags:['Montaña','Natural','Tercer tiempo'] },
+  'demo-4': { id:'demo-4', title:'Fútbol 7 tarde',           sport:'futbol',     level:'any',          date:'2026-03-28', time:'20:00:00', location:'Polideportivo Municipal',  province:'Sevilla',  max_players:14, price:'Gratis',     third_place:true,  description:'Partido amistoso de fútbol 7. Todos los niveles son bienvenidos. El objetivo es pasarlo bien. Tercer tiempo en el bar de al lado.',                 creator_name:'Diego R.', participant_count:11, tags:['Fútbol 7','Casual','Tercer tiempo'] },
+  'demo-5': { id:'demo-5', title:'Entreno Funcional Grupal', sport:'gimnasio',   level:'intermediate', date:'2026-03-25', time:'19:00:00', location:'Box CrossFit Sur',         province:'Madrid',   max_players:12, price:'Gratis',     third_place:false, description:'4 rondas de ejercicios funcionales de alta intensidad: sentadillas, burpees, dominadas y carrera. Duración aproximada 50 minutos.',                   creator_name:'Laura S.', participant_count:8,  tags:['HIIT','Fuerza','Grupo'] },
+  'demo-6': { id:'demo-6', title:'Dobles Tenis Casual',      sport:'tenis',      level:'beginner',     date:'2026-04-01', time:'10:00:00', location:'Club de Tenis Parque Sur', province:'Málaga',   max_players:8,  price:'Gratis',     third_place:false, description:'Partidos de dobles de tenis para todos los niveles. Si no tienes raqueta podemos prestarte una. Ambiente muy relajado y divertido.',                  creator_name:'Ana G.',   participant_count:3,  tags:['Pista dura','Casual','Principiantes'] },
+  // IDs legacy por si acaso
+  '1': { id:'demo-1', title:'Running Matutino',         sport:'running',  level:'any',          date:'2026-03-30', time:'07:30:00', location:'Alameda de Córdoba',   province:'Córdoba', max_players:10, price:'Gratis',     third_place:false, description:'Ruta de running matutino por la Alameda.', creator_name:'Carlos O.', participant_count:7,  tags:['Aire libre'] },
+  '2': { id:'demo-2', title:'Torneo Pádel Nivel Medio', sport:'padel',    level:'intermediate', date:'2026-03-29', time:'18:00:00', location:'Club de Pádel Centro', province:'Valencia',max_players:4,  price:'5€/persona', third_place:true,  description:'Torneo amistoso con rotación de parejas.',  creator_name:'Laura M.', participant_count:2,  tags:['Indoor'] },
 }
 
 const TABS = ['Info','Participantes','Chat']
@@ -39,24 +46,43 @@ export default function EventDetail() {
 
   useEffect(()=>{
     const load = async () => {
-      // Intentar de Supabase
-      const {data, error} = await supabase
-        .from('events_with_counts').select('*').eq('id', id).single()
-
-      if (!error && data) {
-        setEv(data)
-        setPCount(data.participant_count || 0)
-        if (user) {
-          const {data: ep} = await supabase
-            .from('event_participants').select('id')
-            .eq('event_id', id).eq('user_id', user.id).single()
-          setJoined(!!ep)
+      // Si es un ID demo, cargar directamente sin tocar la BD
+      if (String(id).startsWith('demo-') || DEMO[id]) {
+        const d = DEMO[id]
+        if (d) {
+          setEv(d)
+          setPCount(d.participant_count || 0)
         }
-      } else {
-        // Fallback demo
-        setEv(DEMO[id] || DEMO['1'])
-        setPCount(DEMO[id]?.participant_count || 7)
+        setLoad(false)
+        return
       }
+
+      // Intentar de Supabase
+      try {
+        const sb = getSupabase()
+        if (sb) {
+          const { data, error } = await sb
+            .from('events_with_counts').select('*').eq('id', id).single()
+
+          if (!error && data) {
+            setEv(data)
+            setPCount(data.participant_count || 0)
+            if (user) {
+              const { data: ep } = await sb
+                .from('event_participants').select('id')
+                .eq('event_id', id).eq('user_id', user.id).single()
+              setJoined(!!ep)
+            }
+            setLoad(false)
+            return
+          }
+        }
+      } catch(_) {}
+
+      // Fallback a demo
+      const fallback = DEMO[id] || DEMO['demo-1']
+      setEv(fallback)
+      setPCount(fallback?.participant_count || 7)
       setLoad(false)
     }
     load()
@@ -65,14 +91,19 @@ export default function EventDetail() {
   const handleJoin = async () => {
     if (!user) { router.push('/auth'); return }
     setJoining(true)
-    if (joined) {
-      await supabase.from('event_participants').delete().eq('event_id', id).eq('user_id', user.id)
-      setJoined(false)
-      setPCount(p => Math.max(0,p-1))
-    } else {
-      const {error} = await supabase.from('event_participants').insert({ event_id:id, user_id:user.id })
-      if (!error) { setJoined(true); setPCount(p=>p+1) }
-    }
+    try {
+      const sb = getSupabase()
+      if (sb) {
+        if (joined) {
+          await sb.from('event_participants').delete().eq('event_id', id).eq('user_id', user.id)
+          setJoined(false)
+          setPCount(p => Math.max(0,p-1))
+        } else {
+          const { error } = await sb.from('event_participants').insert({ event_id:id, user_id:user.id })
+          if (!error) { setJoined(true); setPCount(p=>p+1) }
+        }
+      }
+    } catch(_) {}
     setJoining(false)
   }
 
@@ -93,7 +124,13 @@ export default function EventDetail() {
     </div>
   )
 
-  if (!ev) return null
+  if (!ev) return (
+    <div className="app-shell" style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', minHeight:'100dvh', gap:16 }}>
+      <div style={{ fontSize:48 }}>😕</div>
+      <div style={{ fontWeight:700, fontSize:18 }}>Evento no encontrado</div>
+      <button className="btn btn-primary" onClick={()=>router.push('/events')}>Ver todos los eventos</button>
+    </div>
+  )
 
   const c    = S_COLORS[ev.sport] || '#5b6ef5'
   const icon = S_ICONS[ev.sport]  || '🎯'
@@ -122,10 +159,10 @@ export default function EventDetail() {
         {/* Datos rápidos */}
         <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:10, padding:'16px 18px 0' }}>
           {[
-            {icon:'📅', label:'Fecha',    value:`${fmt(ev.date)}`},
-            {icon:'⏱️', label:'Hora',     value:ev.time?.slice(0,5)||''},
-            {icon:'📍', label:'Lugar',    value:ev.location},
-            {icon:'💶', label:'Precio',   value:ev.price||'Gratis'},
+            {icon:'📅', label:'Fecha',  value:`${fmt(ev.date)}`},
+            {icon:'⏱️', label:'Hora',   value:ev.time?.slice(0,5)||''},
+            {icon:'📍', label:'Lugar',  value:ev.location},
+            {icon:'💶', label:'Precio', value:ev.price||'Gratis'},
           ].map(item=>(
             <div key={item.label} className="card anim-1" style={{ padding:'12px 14px', display:'flex', alignItems:'center', gap:10 }}>
               <span style={{ fontSize:20 }}>{item.icon}</span>
@@ -159,7 +196,7 @@ export default function EventDetail() {
           >
             {joining ? 'Procesando...' : joined ? '✗ Salir del evento' : free>0 ? '✓ Unirme al evento' : '⏳ Lista de espera'}
           </button>
-          {!user && <p style={{ fontSize:12, color:'var(--muted)', textAlign:'center', marginTop:8 }}>Necesitas <Link href="/auth" style={{ color:'var(--primary)', fontWeight:600 }}>iniciar sesión</Link> para unirte</p>}
+          {!user && <p style={{ fontSize:12, color:'var(--muted)', textAlign:'center', marginTop:8 }}>Necesitas <a href="/auth" style={{ color:'var(--primary)', fontWeight:600 }}>iniciar sesión</a> para unirte</p>}
         </div>
 
         {/* Tabs */}
@@ -242,12 +279,13 @@ export default function EventDetail() {
               </div>
             ) : (
               <div style={{ textAlign:'center', padding:'12px 0' }}>
-                <Link href="/auth" style={{ color:'var(--primary)', fontSize:13, fontWeight:600 }}>Inicia sesión para chatear →</Link>
+                <a href="/auth" style={{ color:'var(--primary)', fontSize:13, fontWeight:600 }}>Inicia sesión para chatear →</a>
               </div>
             )}
           </div>
         )}
 
+        <div style={{ height:90 }}/>
       </div>
       <Navbar />
     </>

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
-import { supabase } from '@/lib/supabase'
+import { getSupabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 
 const SPORTS = [
@@ -23,12 +23,60 @@ const LEVELS = [
   {id:'advanced',     label:'Avanzado',     icon:'🔥', desc:'Nivel alto requerido'},
 ]
 
-const PROVINCES = [
-  'Madrid','Barcelona','Valencia','Sevilla','Zaragoza','Málaga',
-  'Murcia','Palma','Las Palmas','Bilbao','Alicante','Córdoba',
-  'Valladolid','Vigo','Gijón','Granada','A Coruña','Vitoria',
-  'Elche','Oviedo','Badalona','Cartagena','Terrassa','Jerez',
-]
+// Provincias y sus municipios principales
+const PROVINCIA_MUNICIPIOS = {
+  'Álava':            ['Vitoria-Gasteiz','Llodio','Amurrio','Salvatierra','Laudio'],
+  'Albacete':         ['Albacete','Hellín','Almansa','Villarrobledo','La Roda'],
+  'Alicante':         ['Alicante','Elche','Torrevieja','Benidorm','Orihuela','Elda','Alcoy','Villajoyosa','Denia','Petrer'],
+  'Almería':          ['Almería','El Ejido','Roquetas de Mar','Adra','Vícar','Níjar'],
+  'Asturias':         ['Oviedo','Gijón','Avilés','Siero','Langreo','Mieres','Castrillón','Corvera'],
+  'Ávila':            ['Ávila','Arenas de San Pedro','Sotillo de la Adrada','Candeleda'],
+  'Badajoz':          ['Badajoz','Mérida','Don Benito','Almendralejo','Villanueva de la Serena'],
+  'Barcelona':        ['Barcelona','Badalona','Terrassa','Sabadell','Hospitalet de Llobregat','Mataró','Santa Coloma de Gramenet','Cornellà','Sant Boi','Rubí','Manresa','Vilanova'],
+  'Burgos':           ['Burgos','Miranda de Ebro','Aranda de Duero','Briviesca'],
+  'Cáceres':          ['Cáceres','Plasencia','Coria','Moraleja','Navalmoral'],
+  'Cádiz':            ['Cádiz','Jerez de la Frontera','Algeciras','San Fernando','El Puerto de Santa María','Chiclana','La Línea','Sanlúcar','Rota'],
+  'Cantabria':        ['Santander','Torrelavega','Castro-Urdiales','Piélagos','Camargo'],
+  'Castellón':        ['Castellón de la Plana','Vila-real','Burriana','Vinaròs','Benicàssim','Oropesa'],
+  'Ciudad Real':      ['Ciudad Real','Puertollano','Tomelloso','Alcázar de San Juan','Valdepeñas','Manzanares'],
+  'Córdoba':          ['Córdoba','Lucena','Montilla','Priego de Córdoba','Cabra','Palma del Río','Peñarroya','Pozoblanco','Rute'],
+  'Cuenca':           ['Cuenca','Tarancón','Motilla del Palancar','San Clemente'],
+  'Girona':           ['Girona','Blanes','Lloret de Mar','Figueres','Roses','Platja d\'Aro','Olot','Salt'],
+  'Granada':          ['Granada','Motril','Almuñécar','Maracena','Armilla','Loja','Guadix','Baza','Salobreña'],
+  'Guadalajara':      ['Guadalajara','Azuqueca de Henares','Alovera','Cabanillas del Campo'],
+  'Guipúzcoa':        ['San Sebastián','Irun','Errenteria','Zarautz','Eibar','Mondragón','Tolosa'],
+  'Huelva':           ['Huelva','Almonte','Lepe','Moguer','Isla Cristina','Ayamonte','Nerva'],
+  'Huesca':           ['Huesca','Barbastro','Monzón','Fraga','Sabiñánigo','Jaca'],
+  'Illes Balears':    ['Palma','Calvià','Manacor','Llucmajor','Ibiza','Maó','Ciutadella'],
+  'Jaén':             ['Jaén','Linares','Andújar','Úbeda','Baeza','Martos','Alcalá la Real'],
+  'La Rioja':         ['Logroño','Calahorra','Arnedo','Haro','Nájera','Alfaro'],
+  'Las Palmas':       ['Las Palmas de Gran Canaria','Telde','Arucas','Arrecife','Santa Lucía','Puerto del Rosario'],
+  'León':             ['León','Ponferrada','San Andrés del Rabanedo','Astorga'],
+  'Lleida':           ['Lleida','Balaguer','Mollerussa','Tàrrega','Igualada'],
+  'Lugo':             ['Lugo','Monforte de Lemos','Sarria','Viveiro','Vilalba'],
+  'Madrid':           ['Madrid','Móstoles','Alcalá de Henares','Fuenlabrada','Leganés','Getafe','Alcorcón','Torrejón de Ardoz','Parla','Alcobendas','Rivas-Vaciamadrid','Las Rozas','Majadahonda','Pozuelo','Tres Cantos'],
+  'Málaga':           ['Málaga','Marbella','Fuengirola','Vélez-Málaga','Torremolinos','Benalmádena','Mijas','Estepona','Ronda','Antequera','Nerja'],
+  'Murcia':           ['Murcia','Cartagena','Lorca','Molina de Segura','Alcantarilla','Totana','Yecla','Mazarrón','San Javier','Torre-Pacheco'],
+  'Navarra':          ['Pamplona','Tudela','Barañáin','Burlada','Estella','Sarriguren'],
+  'Ourense':          ['Ourense','Verín','O Barco de Valdeorras','Xinzo de Limia'],
+  'Palencia':         ['Palencia','Aguilar de Campoo','Guardo','Venta de Baños'],
+  'Pontevedra':       ['Vigo','Pontevedra','Vilagarcía de Arousa','Redondela','Marín','Moaña','Cangas'],
+  'Salamanca':        ['Salamanca','Béjar','Ciudad Rodrigo','Santa Marta de Tormes'],
+  'Santa Cruz de Tenerife': ['Santa Cruz de Tenerife','La Laguna','Arona','Adeje','Granadilla','Los Realejos','Puerto de la Cruz','La Orotava'],
+  'Segovia':          ['Segovia','Cuéllar','El Espinar','Las Navas de la Asunción'],
+  'Sevilla':          ['Sevilla','Dos Hermanas','Alcalá de Guadaíra','Mairena del Aljarafe','Utrera','Camas','San Juan de Aznalfarache','La Rinconada','Écija','Carmona'],
+  'Soria':            ['Soria','Ágreda','El Burgo de Osma','Almazán'],
+  'Tarragona':        ['Tarragona','Reus','Cambrils','Salou','Tortosa','Valls','El Vendrell'],
+  'Teruel':           ['Teruel','Alcañiz','Andorra','Utrillas','Calamocha'],
+  'Toledo':           ['Toledo','Talavera de la Reina','Illescas','Seseña','Torrijos','Madridejos'],
+  'Valencia':         ['Valencia','Torrent','Gandía','Paterna','Sagunto','Mislata','Burjassot','Alzira','Cullera','Sueca','Manises','Xirivella'],
+  'Valladolid':       ['Valladolid','Medina del Campo','Arroyo de la Encomienda','Laguna de Duero','Peñafiel'],
+  'Vizcaya':          ['Bilbao','Barakaldo','Getxo','Basauri','Leioa','Sestao','Santurtzi','Portugalete','Amorebieta'],
+  'Zamora':           ['Zamora','Benavente','Toro','Puebla de Sanabria'],
+  'Zaragoza':         ['Zaragoza','Calatayud','Ejea de los Caballeros','Utebo','Cuarte de Huerva','Tarazona'],
+}
+
+const PROVINCES_LIST = Object.keys(PROVINCIA_MUNICIPIOS).sort()
 
 const STEPS = ['Deporte','Detalles','Confirmar']
 
@@ -42,19 +90,35 @@ export default function Create() {
   const [form,   setForm]   = useState({
     sport:'', level:'any',
     title:'', description:'',
-    date:'', time:'', location:'', province:'',
+    date:'', time:'', location:'', province:'', municipio:'',
     maxPlayers:10, price:'Gratis',
     thirdPlace: false,
   })
   const set = (k, v) => setForm(p=>({...p,[k]:v}))
   const selectedSport = SPORTS.find(s=>s.id===form.sport)
 
+  const municipios = form.province ? (PROVINCIA_MUNICIPIOS[form.province] || []) : []
+
+  const toSlug = str => str
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'')
+    .replace(/\s+/g,'-')
+    .replace(/[^a-z0-9-]/g,'')
+
   const submit = async () => {
     if (!user) { router.push('/auth'); return }
     setSaving(true)
     setError('')
 
-    const { error: err } = await supabase.from('events').insert({
+    const sb = getSupabase()
+    if (!sb) { setError('Error de conexión.'); setSaving(false); return }
+
+    const fullLocation = form.municipio
+      ? `${form.location ? form.location + ', ' : ''}${form.municipio}`
+      : form.location
+
+    const { error: err } = await sb.from('events').insert({
       creator_id:  user.id,
       title:       form.title,
       description: form.description,
@@ -62,16 +126,15 @@ export default function Create() {
       level:       form.level,
       date:        form.date,
       time:        form.time,
-      location:    form.location,
-      province:    form.province.toLowerCase().replace(/\s+/g,'-').normalize('NFD').replace(/[\u0300-\u036f]/g,''),
+      location:    fullLocation,
+      province:    toSlug(form.province),
       max_players: parseInt(form.maxPlayers),
       price:       form.price || 'Gratis',
       third_place: form.thirdPlace,
     })
 
     if (err) {
-      // Si la tabla no existe, mostrar instrucción
-      if (err.code === 'PGRST205' || err.message?.includes('schema cache')) {
+      if (err.code === 'PGRST205' || err.message?.includes('schema cache') || err.message?.includes('relation')) {
         setError('La base de datos aún no está configurada. Ejecuta el SQL del archivo teamup-supabase-setup.sql en tu panel de Supabase.')
       } else {
         setError(err.message)
@@ -176,19 +239,34 @@ export default function Create() {
                 <input className="input" type="time" value={form.time} onChange={e=>set('time',e.target.value)}/>
               </div>
             </div>
-            <div>
-              <label className="label" style={{ marginBottom:8 }}>Lugar / Dirección</label>
-              <input className="input" type="text"
-                placeholder="Parque, polideportivo, dirección exacta..."
-                value={form.location} onChange={e=>set('location',e.target.value)}/>
-            </div>
+
+            {/* Provincia → Municipio */}
             <div>
               <label className="label" style={{ marginBottom:8 }}>Provincia</label>
-              <select className="input" value={form.province} onChange={e=>set('province',e.target.value)}>
+              <select className="input" value={form.province}
+                onChange={e=>{ set('province',e.target.value); set('municipio','') }}>
                 <option value="">Selecciona tu provincia</option>
-                {PROVINCES.map(p=><option key={p} value={p}>{p}</option>)}
+                {PROVINCES_LIST.map(p=><option key={p} value={p}>{p}</option>)}
               </select>
             </div>
+
+            {form.province && (
+              <div className="anim-1">
+                <label className="label" style={{ marginBottom:8 }}>Municipio</label>
+                <select className="input" value={form.municipio} onChange={e=>set('municipio',e.target.value)}>
+                  <option value="">Selecciona el municipio</option>
+                  {municipios.map(m=><option key={m} value={m}>{m}</option>)}
+                </select>
+              </div>
+            )}
+
+            <div>
+              <label className="label" style={{ marginBottom:8 }}>Lugar / Dirección exacta</label>
+              <input className="input" type="text"
+                placeholder="Parque, polideportivo, calle..."
+                value={form.location} onChange={e=>set('location',e.target.value)}/>
+            </div>
+
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
               <div>
                 <label className="label" style={{ marginBottom:8 }}>Plazas máximas</label>
@@ -222,7 +300,7 @@ export default function Create() {
               <button className="btn btn-ghost" style={{ flex:1 }} onClick={()=>setStep(0)}>← Atrás</button>
               <button className="btn btn-primary" style={{ flex:2 }}
                 onClick={()=>setStep(2)}
-                disabled={!form.title||!form.date||!form.time||!form.location||!form.province}>
+                disabled={!form.title||!form.date||!form.time||!form.province}>
                 Revisar →
               </button>
             </div>
@@ -254,7 +332,9 @@ export default function Create() {
                 {form.description && <p style={{ fontSize:13, color:'var(--text2)', lineHeight:1.6, marginBottom:14 }}>{form.description}</p>}
                 <div style={{ display:'flex', flexWrap:'wrap', gap:'6px 16px', fontSize:12, color:'var(--muted)' }}>
                   {form.date && <span>📅 {form.date}{form.time?` · ${form.time}`:''}</span>}
-                  {form.location && <span>📍 {form.location}, {form.province}</span>}
+                  {(form.location || form.municipio) && (
+                    <span>📍 {[form.location, form.municipio, form.province].filter(Boolean).join(', ')}</span>
+                  )}
                   <span>👥 Hasta {form.maxPlayers} personas</span>
                   {form.price && <span>💶 {form.price}</span>}
                   {form.thirdPlace && <span>🍺 Tercer tiempo</span>}
@@ -268,7 +348,7 @@ export default function Create() {
               <button className="btn btn-ghost" style={{ flex:1 }} onClick={()=>setStep(1)}>← Editar</button>
               <button className="btn btn-primary" style={{ flex:2 }} onClick={submit} disabled={saving||!user}>
                 {saving?(
-                  <span style={{ display:'flex', alignItems:'center', gap:8 }}>
+                  <span style={{ display:'flex', alignItems:'center', gap:8, justifyContent:'center' }}>
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style={{ animation:'spin 0.8s linear infinite' }}>
                       <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.35)" strokeWidth="3"/>
                       <path d="M12 2 A10 10 0 0 1 22 12" stroke="white" strokeWidth="3" strokeLinecap="round"/>
