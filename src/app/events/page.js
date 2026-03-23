@@ -14,6 +14,7 @@ const demoEvents = [
     date: 'Domingo 30',
     time: '10:00',
     location: 'Parque de la Ciudad',
+    province: 'madrid',
     people: 8,
     maxPeople: 15,
     creator: 'Miguel R.',
@@ -26,8 +27,9 @@ const demoEvents = [
     title: 'Partido de Pádel',
     description: 'Buscamos 2 más para completar. Nivel intermedio.',
     date: 'Sábado 29',
-    time: &18:00',
+    time: '18:00',
     location: 'Club de Padel Centro',
+    province: 'valencia',
     people: 2,
     maxPeople: 4,
     creator: 'Laura M.',
@@ -42,6 +44,7 @@ const demoEvents = [
     date: 'Domingo 30',
     time: '09:00',
     location: 'Plaza del Pueblo',
+    province: 'madrid',
     people: 12,
     maxPeople: 20,
     creator: 'Carlos A.',
@@ -57,12 +60,32 @@ const filters = [
   { id: 'futbol', label: '⚽ Fútbol' },
 ]
 
+const provinces = [
+  { id: 'all', name: 'Todas' },
+  { id: 'madrid', name: 'Madrid' },
+  { id: 'barcelona', name: 'Barcelona' },
+  { id: 'valencia', name: 'Valencia' },
+  { id: 'sevilla', name: 'Sevilla' },
+  { id: 'malaga', name: 'Málaga' },
+  { id: 'alicante', name: 'Alicante' },
+  { id: 'murcia', name: 'Murcia' },
+  { id: 'vizcaya', name: 'Vizcaya' },
+  { id: 'galicia', name: 'Galicia' },
+  { id: 'castillayleon', name: 'CyL' },
+  { id: 'andalucia', name: 'Andalucía' },
+  { id: 'cataluña', name: 'Cataluña' },
+  { id: 'comunidadvalenciana', name: 'C. Valenciana' },
+]
+
 export default function Events() {
   const [filter, setFilter] = useState('all')
+  const [province, setProvince] = useState('all')
 
-  const filteredEvents = filter === 'all' 
-    ? demoEvents 
-    : demoEvents.filter(e => e.sport === filter)
+  const filteredEvents = demoEvents.filter(e => {
+    const sportMatch = filter === 'all' || e.sport === filter
+    const provinceMatch = province === 'all' || e.province === province
+    return sportMatch && provinceMatch
+  })
 
   return (
     <div className="min-h-screen bg-background text-text pb-24 pt-safe">
@@ -72,7 +95,24 @@ export default function Events() {
         <p className="text-text-secondary text-sm mt-1">Únete a la próxima actividad</p>
       </header>
 
-      {/* Filters */}
+      {/* Province Filter */}
+      <div className="px-6 pb-4 flex gap-2 overflow-x-auto scrollbar-hide">
+        {provinces.map((p) => (
+          <button
+            key={p.id}
+            onClick={() => setProvince(p.id)}
+            className={`px-3 py-1.5 rounded-full text-xs whitespace-nowrap transition-all ${
+              province === p.id
+                ? 'bg-secondary text-white shadow-sm'
+                : 'bg-surface/50 text-text-secondary hover:bg-surface/75'
+            }`}
+          >
+            {p.name}
+          </button>
+        ))}
+      </div>
+
+      {/* Sport Filter */}
       <div className="px-6 pb-4 flex gap-2 overflow-x-auto scrollbar-hide">
         {filters.map((f) => (
           <button

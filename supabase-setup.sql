@@ -20,6 +20,7 @@ CREATE TABLE events (
   date DATE NOT NULL,
   time TIME NOT NULL,
   location TEXT NOT NULL,
+  province TEXT NOT NULL, -- Provincia para evitar duplicados de ubicación
   lat FLOAT,
   lng FLOAT,
   max_people INT DEFAULT 10,

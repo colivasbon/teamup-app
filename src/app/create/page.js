@@ -4,6 +4,59 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
+const provinces = [
+  { id: 'alava', name: 'Álava' },
+  { id: 'albacete', name: 'Albacete' },
+  { id: 'alicante', name: 'Alicante' },
+  { id: 'almeria', name: 'Almería' },
+  { id: 'asturias', name: 'Asturias' },
+  { id: 'avila', name: 'Ávila' },
+  { id: 'badajoz', name: 'Badajoz' },
+  { id: 'barcelona', name: 'Barcelona' },
+  { id: 'burgos', name: 'Burgos' },
+  { id: 'caceres', name: 'Cáceres' },
+  { id: 'cadiz', name: 'Cádiz' },
+  { id: 'cantabria', name: 'Cantabria' },
+  { id: 'castellon', name: 'Castellón' },
+  { id: 'ceuta', name: 'Ceuta' },
+  { id: 'ciudadreal', name: 'Ciudad Real' },
+  { id: 'cordoba', name: 'Córdoba' },
+  { id: 'cuenca', name: 'Cuenca' },
+  { id: 'girona', name: 'Girona' },
+  { id: 'granada', name: 'Granada' },
+  { id: 'guadalajara', name: 'Guadalajara' },
+  { id: 'huelva', name: 'Huelva' },
+  { id: 'huesca', name: 'Huesca' },
+  { id: 'islasbaleares', name: 'Islas Baleares' },
+  { id: 'jaen', name: 'Jaén' },
+  { id: 'lacoruna', name: 'La Coruña' },
+  { id: 'larioja', name: 'La Rioja' },
+  { id: 'laspalmas', name: 'Las Palmas' },
+  { id: 'leon', name: 'León' },
+  { id: 'lleida', name: 'Lleida' },
+  { id: 'lugo', name: 'Lugo' },
+  { id: 'madrid', name: 'Madrid' },
+  { id: 'malaga', name: 'Málaga' },
+  { id: 'melilla', name: 'Melilla' },
+  { id: 'murcia', name: 'Murcia' },
+  { id: 'navarra', name: 'Navarra' },
+  { id: 'ourense', name: 'Ourense' },
+  { id: 'palencia', name: 'Palencia' },
+  { id: 'pontevedra', name: 'Pontevedra' },
+  { id: 'salamanca', name: 'Salamanca' },
+  { id: 'segovia', name: 'Segovia' },
+  { id: 'sevilla', name: 'Sevilla' },
+  { id: 'soria', name: 'Soria' },
+  { id: 'tarragona', name: 'Tarragona' },
+  { id: 'teruel', name: 'Teruel' },
+  { id: 'toledo', name: 'Toledo' },
+  { id: 'valencia', name: 'Valencia' },
+  { id: 'valladolid', name: 'Valladolid' },
+  { id: 'vizcaya', name: 'Vizcaya' },
+  { id: 'zamora', name: 'Zamora' },
+  { id: 'zaragoza', name: 'Zaragoza' },
+]
+
 const sports = [
   { id: 'running', name: 'Running', icon: '🏃', color: 'from-blue-500 to-indigo-600' },
   { id: 'padel', name: 'Pádel', icon: '🎾', color: 'from-green-500 to-emerald-600' },
@@ -22,6 +75,7 @@ export default function CreateEvent() {
     date: '',
     time: '',
     location: '',
+    province: '',
     maxPeople: 10
   })
 
@@ -119,6 +173,22 @@ export default function CreateEvent() {
             className="w-full p-4 bg-surface border border-border rounded-xl text-text placeholder-text-secondary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm hover:shadow-md"
             required
           />
+        </div>
+
+        {/* Province */}
+        <div>
+          <label className="block text-sm font-medium text-text-secondary mb-2">Provincia</label>
+          <select
+            value={form.province}
+            onChange={(e) => setForm({ ...form, province: e.target.value })}
+            className="w-full p-4 bg-surface border border-border rounded-xl text-text focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm hover:shadow-md"
+            required
+          >
+            <option value="">Selecciona provincia</option>
+            {provinces.map((p) => (
+              <option key={p.id} value={p.id}>{p.name}</option>
+            ))}
+          </select>
         </div>
 
         {/* Max People */}
