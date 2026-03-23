@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { getSupabase } from '@/lib/supabase'
 
 const AuthContext = createContext({})
 
@@ -11,25 +11,27 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Sesión inicial
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Este código solo corre en el cliente, donde las env vars sí están disponibles
+    const sb = getSupabase()
+    if (!sb) { setLoading(false); return }
+
+    sb.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
-      if (session?.user) loadProfile(session.user.id)
+      if (session?.user) loadProfile(sb, session.user.id)
       else setLoading(false)
     })
 
-    // Escuchar cambios
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = sb.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
-      if (session?.user) loadProfile(session.user.id)
+      if (session?.user) loadProfile(sb, session.user.id)
       else { setProfile(null); setLoading(false) }
     })
 
     return () => subscription.unsubscribe()
   }, [])
 
-  const loadProfile = async (userId) => {
-    const { data } = await supabase.from('profiles').select('*').eq('id', userId).single()
+  const loadProfile = async (sb, userId) => {
+    const { data } = await sb.from('profiles').select('*').eq('id', userId).single()
     setProfile(data)
     setLoading(false)
   }
