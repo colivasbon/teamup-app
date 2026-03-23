@@ -1,0 +1,6 @@
+{
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "https://kbhidlhdpjcpazkubcvq.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtiaGlkbGhkcGpjcGF6a3ViY3ZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxOTc0NDEsImV4cCI6MjA4OTc3MzQ0MX0.GiYgTOHpc9gWUK7IG2G9piog_R9ONrfxR7dzjvD58vQ"
+  }
+}

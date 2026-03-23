@@ -1,3 +1,4 @@
+// src/components/Navbar.js
 'use client'
 
 import Link from 'next/link'
@@ -9,32 +10,32 @@ export default function Navbar() {
   const isActive = (path) => pathname === path 
   
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-slate-900/90 backdrop-blur-xl border-t border-slate-800 z-50">
+    <nav className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border z-50 animate-fadeInUp">
       <div className="max-w-md mx-auto flex justify-around py-4">
         <Link 
           href="/" 
-          className={`flex flex-col items-center gap-1 transition-colors ${isActive('/') ? 'text-blue-400' : 'text-slate-500 hover:text-slate-300'}`}
+          className={`flex flex-col items-center gap-1 transition-colors ${isActive('/') ? 'text-primary animate-pulse' : 'text-text-secondary hover:text-text'}`}
         >
           <span className="text-xl">🏠</span>
           <span className="text-xs">Inicio</span>
         </Link>
         <Link 
           href="/events" 
-          className={`flex flex-col items-center gap-1 transition-colors ${isActive('/events') ? 'text-blue-400' : 'text-slate-500 hover:text-slate-300'}`}
+          className={`flex flex-col items-center gap-1 transition-colors ${isActive('/events') ? 'text-primary animate-pulse' : 'text-text-secondary hover:text-text'}`}
         >
           <span className="text-xl">🔍</span>
           <span className="text-xs">Eventos</span>
         </Link>
         <Link 
           href="/create" 
-          className={`flex flex-col items-center gap-1 transition-colors ${isActive('/create') ? 'text-blue-400' : 'text-slate-500 hover:text-slate-300'}`}
+          className={`flex flex-col items-center gap-1 transition-colors ${isActive('/create') ? 'text-primary animate-pulse' : 'text-text-secondary hover:text-text'}`}
         >
           <span className="text-xl">➕</span>
           <span className="text-xs">Crear</span>
         </Link>
         <Link 
           href="/profile" 
-          className={`flex flex-col items-center gap-1 transition-colors ${isActive('/profile') ? 'text-blue-400' : 'text-slate-500 hover:text-slate-300'}`}
+          className={`flex flex-col items-center gap-1 transition-colors ${isActive('/profile') ? 'text-primary animate-pulse' : 'text-text-secondary hover:text-text'}`}
         >
           <span className="text-xl">👤</span>
           <span className="text-xs">Perfil</span>

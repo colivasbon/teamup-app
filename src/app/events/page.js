@@ -17,7 +17,7 @@ const demoEvents = [
     people: 8,
     maxPeople: 15,
     creator: 'Miguel R.',
-    color: 'from-orange-500 to-red-500'
+    color: 'from-blue-500 to-indigo-600'
   },
   {
     id: 2,
@@ -26,7 +26,7 @@ const demoEvents = [
     title: 'Partido de Pádel',
     description: 'Buscamos 2 más para completar. Nivel intermedio.',
     date: 'Sábado 29',
-    time: '18:00',
+    time: &18:00',
     location: 'Club de Padel Centro',
     people: 2,
     maxPeople: 4,
@@ -65,11 +65,11 @@ export default function Events() {
     : demoEvents.filter(e => e.sport === filter)
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white pb-24">
+    <div className="min-h-screen bg-background text-text pb-24 pt-safe">
       {/* Header */}
       <header className="px-6 pt-12 pb-4">
         <h1 className="text-2xl font-bold">Eventos cerca de ti</h1>
-        <p className="text-slate-400 text-sm mt-1">Únete a la próxima actividad</p>
+        <p className="text-text-secondary text-sm mt-1">Únete a la próxima actividad</p>
       </header>
 
       {/* Filters */}
@@ -80,8 +80,8 @@ export default function Events() {
             onClick={() => setFilter(f.id)}
             className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-all ${
               filter === f.id
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
-                : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                ? 'bg-primary text-white animate-pulse'
+                : 'bg-surface/50 text-text-secondary hover:bg-surface/75 hover:text-text'
             }`}
           >
             {f.label}
@@ -92,37 +92,37 @@ export default function Events() {
       {/* Events List */}
       <div className="px-6 space-y-4">
         {filteredEvents.map((event) => (
-          <div key={event.id} className="bg-slate-800/50 rounded-2xl p-5 border border-slate-700/50">
+          <div key={event.id} className="bg-surface rounded-2xl p-5 border border-border/50 shadow-sm transition-all hover:shadow-md animate-fadeInUp">
             <div className="flex items-start gap-4 mb-3">
-              <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${event.color} flex items-center justify-center text-2xl`}>
+              <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${event.color} flex items-center justify-center text-2xl animate-slideInLeft`}>
                 {event.icon}
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold text-lg">{event.title}</h3>
-                <p className="text-sm text-slate-400">por {event.creator}</p>
+                <p className="text-sm text-text-secondary">por {event.creator}</p>
               </div>
             </div>
             
-            <p className="text-sm text-slate-300 mb-4">{event.description}</p>
+            <p className="text-sm text-text-secondary mb-4">{event.description}</p>
             
-            <div className="flex flex-wrap gap-4 text-sm text-slate-400 mb-4">
+            <div className="flex flex-wrap gap-4 text-sm text-text-secondary mb-4">
               <span className="flex items-center gap-1">📅 {event.date} • {event.time}</span>
               <span className="flex items-center gap-1">📍 {event.location}</span>
             </div>
             
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-28 h-2 bg-slate-700 rounded-full overflow-hidden">
+                <div className="w-28 h-2 bg-border rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-gradient-to-r from-blue-500 to-purple-500"
+                    className="h-full bg-primary rounded-full transition-width"
                     style={{ width: `${(event.people / event.maxPeople) * 100}%` }}
                   />
                 </div>
-                <span className="text-sm text-slate-400">
+                <span className="text-sm text-text-secondary">
                   {event.people}/{event.maxPeople}
                 </span>
               </div>
-              <button className="px-6 py-2.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl font-medium text-sm hover:shadow-lg hover:shadow-purple-500/25 transition-all">
+              <button className="px-6 py-2.5 bg-primary text-white rounded-xl font-medium text-sm hover:bg-primary-hover shadow-sm hover:shadow-md transition-all animate-pulse">
                 Unirse
               </button>
             </div>
