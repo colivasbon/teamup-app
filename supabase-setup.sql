@@ -15,15 +15,19 @@ CREATE TABLE events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   creator_id UUID REFERENCES profiles(id),
   sport TEXT NOT NULL,
+  level TEXT DEFAULT 'any', -- any, beginner, intermediate, advanced
   title TEXT NOT NULL,
   description TEXT,
   date DATE NOT NULL,
   time TIME NOT NULL,
   location TEXT NOT NULL,
   province TEXT NOT NULL, -- Provincia para evitar duplicados de ubicación
+  third_place BOOLEAN DEFAULT FALSE,
+  third_place_link TEXT,
   lat FLOAT,
   lng FLOAT,
   max_people INT DEFAULT 10,
+  waiting_list INT DEFAULT 0, -- Plazas en lista de espera
   current_people INT DEFAULT 1,
   status TEXT DEFAULT 'open', -- open, full, cancelled, completed
   created_at TIMESTAMPTZ DEFAULT NOW()

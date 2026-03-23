@@ -15,8 +15,13 @@ const demoEvents = [
     time: '10:00',
     location: 'Parque de la Ciudad',
     province: 'madrid',
+    level: 'any',
+    levelIcon: '🌍',
+    thirdPlace: true,
+    thirdPlaceLink: 'https://maps.google.com',
     people: 8,
     maxPeople: 15,
+    waitingList: 5,
     creator: 'Miguel R.',
     color: 'from-blue-500 to-indigo-600'
   },
@@ -30,8 +35,12 @@ const demoEvents = [
     time: '18:00',
     location: 'Club de Padel Centro',
     province: 'valencia',
+    level: 'intermediate',
+    levelIcon: '⭐',
+    thirdPlace: false,
     people: 2,
     maxPeople: 4,
+    waitingList: 2,
     creator: 'Laura M.',
     color: 'from-green-500 to-emerald-600'
   },
@@ -45,11 +54,24 @@ const demoEvents = [
     time: '09:00',
     location: 'Plaza del Pueblo',
     province: 'madrid',
+    level: 'advanced',
+    levelIcon: '🔥',
+    thirdPlace: true,
+    thirdPlaceLink: 'https://maps.google.com',
     people: 12,
     maxPeople: 20,
+    waitingList: 8,
     creator: 'Carlos A.',
     color: 'from-amber-500 to-orange-600'
   }
+]
+
+const levelFilters = [
+  { id: 'all', name: 'Todos', icon: '🌍' },
+  { id: 'any', name: 'Abierto', icon: '🌍' },
+  { id: 'beginner', name: '🌱', icon: '🌱' },
+  { id: 'intermediate', name: '⭐', icon: '⭐' },
+  { id: 'advanced', name: '🔥', icon: '🔥' },
 ]
 
 const filters = [
@@ -80,11 +102,13 @@ const provinces = [
 export default function Events() {
   const [filter, setFilter] = useState('all')
   const [province, setProvince] = useState('all')
+  const [level, setLevel] = useState('all')
 
   const filteredEvents = demoEvents.filter(e => {
     const sportMatch = filter === 'all' || e.sport === filter
     const provinceMatch = province === 'all' || e.province === province
-    return sportMatch && provinceMatch
+    const levelMatch = level === 'all' || e.level === level || e.level === 'any'
+    return sportMatch && provinceMatch && levelMatch
   })
 
   return (
@@ -129,6 +153,24 @@ export default function Events() {
         ))}
       </div>
 
+      {/* Level Filter */}
+      <div className="px-6 pb-2 flex gap-2 overflow-x-auto scrollbar-hide">
+        {levelFilters.map((l) => (
+          <button
+            key={l.id}
+            onClick={() => setLevel(l.id)}
+            className={`px-3 py-1.5 rounded-full text-xs whitespace-nowrap transition-all flex items-center gap-1 ${
+              level === l.id
+                ? 'bg-secondary text-white shadow-sm'
+                : 'bg-surface/50 text-text-secondary hover:bg-surface/75'
+            }`}
+          >
+            <span>{l.icon}</span>
+            <span>{l.name}</span>
+          </button>
+        ))}
+      </div>
+
       {/* Events List */}
       <div className="px-6 space-y-4">
         {filteredEvents.map((event) => (
@@ -148,6 +190,10 @@ export default function Events() {
             <div className="flex flex-wrap gap-4 text-sm text-text-secondary mb-4">
               <span className="flex items-center gap-1">📅 {event.date} • {event.time}</span>
               <span className="flex items-center gap-1">📍 {event.location}</span>
+              <span className="flex items-center gap-1">{event.levelIcon} {event.level}</span>
+              {event.thirdPlace && (
+                <span className="flex items-center gap-1">🍺 3er tiempo</span>
+              )}
             </div>
             
             <div className="flex items-center justify-between">
@@ -160,6 +206,7 @@ export default function Events() {
                 </div>
                 <span className="text-sm text-text-secondary">
                   {event.people}/{event.maxPeople}
+                  {event.waitingList > 0 && <span className="text-xs text-secondary"> +{event.waitingList} espera</span>}
                 </span>
               </div>
               <button className="px-6 py-2.5 bg-primary text-white rounded-xl font-medium text-sm hover:bg-primary-hover shadow-sm hover:shadow-md transition-all">

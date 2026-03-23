@@ -66,17 +66,28 @@ const sports = [
   { id: 'tenis', name: 'Tenis', icon: '🎳', color: 'from-yellow-500 to-amber-600' },
 ]
 
+const levels = [
+  { id: 'any', name: 'Todos', icon: '🌍' },
+  { id: 'beginner', name: 'Principiante', icon: '🌱' },
+  { id: 'intermediate', name: 'Intermedio', icon: '⭐' },
+  { id: 'advanced', name: 'Avanzado', icon: '🔥' },
+]
+
 export default function CreateEvent() {
   const router = useRouter()
   const [form, setForm] = useState({
     sport: '',
+    level: 'any',
     title: '',
     description: '',
     date: '',
     time: '',
     location: '',
     province: '',
-    maxPeople: 10
+    thirdPlace: false,
+    thirdPlaceLink: '',
+    maxPeople: 10,
+    waitingList: 0
   })
 
   const handleSubmit = async (e) => {
@@ -189,6 +200,69 @@ export default function CreateEvent() {
               <option key={p.id} value={p.id}>{p.name}</option>
             ))}
           </select>
+        </div>
+
+        {/* Level */}
+        <div>
+          <label className="block text-sm font-medium text-text-secondary mb-3">Nivel requerido</label>
+          <div className="grid grid-cols-4 gap-2">
+            {levels.map((l) => (
+              <button
+                key={l.id}
+                type="button"
+                onClick={() => setForm({ ...form, level: l.id })}
+                className={`p-3 rounded-xl border transition-all flex flex-col items-center gap-1 ${
+                  form.level === l.id
+                    ? 'border-primary bg-primary/20 shadow-sm'
+                    : 'border-border bg-surface hover:border-border/75'
+                }`}
+              >
+                <span className="text-xl">{l.icon}</span>
+                <span className="text-xs text-text-secondary">{l.name}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Third Place (Tercer Tiempo) */}
+        <div className="bg-surface p-4 rounded-xl border border-border">
+          <label className="flex items-center justify-between cursor-pointer">
+            <div>
+              <span className="font-medium">🍺 Tercer tiempo</span>
+              <p className="text-xs text-text-secondary">Añadir ubicación para después del evento</p>
+            </div>
+            <input
+              type="checkbox"
+              checked={form.thirdPlace}
+              onChange={(e) => setForm({ ...form, thirdPlace: e.target.checked })}
+              className="w-5 h-5 accent-primary"
+            />
+          </label>
+          {form.thirdPlace && (
+            <input
+              type="text"
+              placeholder="Link de Google Maps (opcional)"
+              value={form.thirdPlaceLink}
+              onChange={(e) => setForm({ ...form, thirdPlaceLink: e.target.value })}
+              className="w-full p-3 mt-3 bg-background border border-border rounded-lg text-sm"
+            />
+          )}
+        </div>
+
+        {/* Waiting List */}
+        <div>
+          <label className="block text-sm font-medium text-text-secondary mb-3">
+            Lista de espera: <span className="text-primary">{form.waitingList} plazas</span>
+          </label>
+          <input
+            type="range"
+            min="0"
+            max="20"
+            value={form.waitingList}
+            onChange={(e) => setForm({ ...form, waitingList: e.target.value })}
+            className="w-full accent-primary"
+          />
+          <p className="text-xs text-text-secondary mt-1">Personas que pueden apuntarse si se llena</p>
         </div>
 
         {/* Max People */}
