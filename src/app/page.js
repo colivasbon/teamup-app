@@ -13,24 +13,18 @@ const SPORTS = [
 ]
 
 const NEARBY = [
-  { id:1,  icon:'🏃', title:'Running Matutino',    loc:'Alameda de Córdoba',           time:'Hoy · 07:30',    p:7,  max:10, color:'#5b6ef5' },
-  { id:2,  icon:'🎾', title:'Torneo Pádel Medio',  loc:'Club Pádel Córdoba',           time:'Mañana · 10:00', p:6,  max:8,  color:'#06d6a0' },
-  { id:3,  icon:'🥾', title:'Ruta Sierra Nevada',  loc:'Plaza Mayor, Granada',         time:'Sáb · 08:00',    p:12, max:20, color:'#f59e0b' },
+  { id:1, icon:'🏃', title:'Running Matutino',   loc:'Alameda de Córdoba',    time:'Hoy · 07:30',    p:7, max:10, color:'#5b6ef5' },
+  { id:2, icon:'🎾', title:'Torneo Pádel Medio', loc:'Club Pádel Córdoba',    time:'Mañana · 10:00', p:6, max:8,  color:'#06d6a0' },
+  { id:3, icon:'🥾', title:'Ruta Sierra Nevada', loc:'Plaza Mayor, Granada',  time:'Sáb · 08:00',    p:12, max:20, color:'#f59e0b' },
 ]
 
 export default function Home() {
   return (
     <>
-      <div className="page-wrap" style={{ paddingTop: 0 }}>
+      <div className="page-wrap">
 
-        {/* ── Header ── */}
-        <header style={{
-          paddingTop: 60,
-          paddingBottom: 24,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}>
+        {/* Header */}
+        <header style={{ paddingTop:60, paddingBottom:24, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           <div>
             <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:4 }}>
               <svg width="36" height="36" viewBox="0 0 34 34" fill="none">
@@ -43,11 +37,7 @@ export default function Home() {
                   </linearGradient>
                 </defs>
               </svg>
-              <span style={{
-                fontSize: 23, fontWeight: 800, letterSpacing: '-0.04em',
-                background: 'var(--grad)', WebkitBackgroundClip:'text',
-                WebkitTextFillColor:'transparent', backgroundClip:'text',
-              }}>
+              <span style={{ fontSize:23, fontWeight:800, letterSpacing:'-0.04em', background:'var(--grad)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>
                 TeamUp
               </span>
             </div>
@@ -57,18 +47,12 @@ export default function Home() {
             width:40, height:40, borderRadius:'50%',
             background:'var(--glass)', border:'1px solid var(--border)',
             display:'flex', alignItems:'center', justifyContent:'center',
-            fontSize:20, backdropFilter:'blur(14px)',
-            boxShadow:'var(--shadow-sm)',
-          }}>
-            👤
-          </Link>
+            fontSize:20, backdropFilter:'blur(14px)', boxShadow:'var(--shadow-sm)',
+          }}>👤</Link>
         </header>
 
-        {/* ── Stats banner ── */}
-        <div className="card anim-1" style={{
-          display:'flex', justifyContent:'space-around',
-          padding:'16px 12px', marginBottom:28,
-        }}>
+        {/* Stats */}
+        <div className="card anim-1" style={{ display:'flex', justifyContent:'space-around', padding:'16px 12px', marginBottom:28 }}>
           {[['150+','Eventos activos'],['1.2k','Deportistas'],['47','Provincias']].map(([v,l])=>(
             <div key={l} style={{ textAlign:'center' }}>
               <div style={{ fontSize:22, fontWeight:800, color:'var(--primary)', letterSpacing:'-0.03em', lineHeight:1 }}>{v}</div>
@@ -77,33 +61,22 @@ export default function Home() {
           ))}
         </div>
 
-        {/* ── Sección deportes ── */}
-        <div style={{ marginBottom:18 }}>
-          <h2 style={{ fontSize:19, fontWeight:800, margin:'0 0 4px', letterSpacing:'-0.03em' }}>¿Qué hacemos hoy?</h2>
-          <p style={{ fontSize:13, color:'var(--muted)' }}>Elige un deporte y únete a un evento</p>
-        </div>
+        {/* Deportes */}
+        <h2 style={{ fontSize:19, fontWeight:800, margin:'0 0 4px', letterSpacing:'-0.03em' }}>¿Qué hacemos hoy?</h2>
+        <p style={{ fontSize:13, color:'var(--muted)', marginBottom:16 }}>Elige un deporte y únete a un evento</p>
 
         <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginBottom:32 }}>
-          {SPORTS.map((s, i) => (
-            <Link
-              key={s.id}
-              href={`/events?sport=${s.id}`}
-              className={`anim-${Math.min(i+1,6)}`}
-              style={{
-                display:'block',
-                background:`linear-gradient(140deg,${s.from},${s.to})`,
-                borderRadius:20,
-                padding:'20px 18px',
-                position:'relative', overflow:'hidden',
-                boxShadow:`0 6px 24px ${s.from}44`,
-                transition:'transform 0.22s cubic-bezier(.34,1.56,.64,1), box-shadow 0.22s ease',
-              }}
-              onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-4px) scale(1.02)';e.currentTarget.style.boxShadow=`0 12px 36px ${s.from}66`}}
-              onMouseLeave={e=>{e.currentTarget.style.transform='';e.currentTarget.style.boxShadow=`0 6px 24px ${s.from}44`}}
+          {SPORTS.map((s,i)=>(
+            <Link key={s.id} href={`/events?sport=${s.id}`} className={`anim-${Math.min(i+1,6)}`} style={{
+              display:'block', background:`linear-gradient(140deg,${s.from},${s.to})`,
+              borderRadius:20, padding:'20px 18px', position:'relative', overflow:'hidden',
+              boxShadow:`0 6px 24px ${s.from}44`,
+              transition:'transform 0.22s cubic-bezier(.34,1.56,.64,1), box-shadow 0.22s ease',
+            }}
+            onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-4px) scale(1.02)';e.currentTarget.style.boxShadow=`0 12px 36px ${s.from}66`}}
+            onMouseLeave={e=>{e.currentTarget.style.transform='';e.currentTarget.style.boxShadow=`0 6px 24px ${s.from}44`}}
             >
-              {/* Orbe decorativo */}
               <div style={{ position:'absolute', right:-16, bottom:-16, width:80, height:80, borderRadius:'50%', background:'rgba(255,255,255,0.14)', filter:'blur(18px)', pointerEvents:'none' }}/>
-              {/* Icono faded grande */}
               <div style={{ position:'absolute', right:8, bottom:2, fontSize:52, opacity:0.16, lineHeight:1, pointerEvents:'none', userSelect:'none' }}>{s.icon}</div>
               <div style={{ position:'relative', zIndex:1 }}>
                 <div style={{ fontSize:30, marginBottom:8, lineHeight:1 }}>{s.icon}</div>
@@ -113,24 +86,18 @@ export default function Home() {
           ))}
         </div>
 
-        {/* ── Eventos cercanos ── */}
+        {/* Eventos cercanos */}
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:14 }}>
           <h3 style={{ fontSize:17, fontWeight:700, margin:0, letterSpacing:'-0.02em' }}>Eventos cerca de ti</h3>
           <Link href="/events" style={{ fontSize:13, fontWeight:600, color:'var(--primary)' }}>Ver todos →</Link>
         </div>
 
-        <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
-          {NEARBY.map((ev, i) => (
-            <Link
-              key={ev.id}
-              href={`/events/${ev.id}`}
-              className={`card anim-${i+4}`}
-              style={{
-                display:'flex', alignItems:'center', gap:14,
-                padding:'14px 16px', overflow:'hidden', position:'relative',
-                borderLeft:`3px solid ${ev.color}`,
-              }}
-            >
+        <div style={{ display:'flex', flexDirection:'column', gap:10, marginBottom:20 }}>
+          {NEARBY.map((ev,i)=>(
+            <Link key={ev.id} href={`/events/${ev.id}`} className={`card anim-${i+4}`} style={{
+              display:'flex', alignItems:'center', gap:14, padding:'14px 16px',
+              borderLeft:`3px solid ${ev.color}`,
+            }}>
               <div className="sport-icon" style={{ background:`${ev.color}18`, border:`1.5px solid ${ev.color}30`, borderRadius:16, fontSize:22 }}>
                 {ev.icon}
               </div>
@@ -139,35 +106,24 @@ export default function Home() {
                 <div style={{ fontSize:12, color:'var(--muted)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:8 }}>{ev.loc}</div>
                 <div style={{ display:'flex', alignItems:'center', gap:10 }}>
                   <span style={{ fontSize:11, color:'var(--muted)', whiteSpace:'nowrap' }}>{ev.time}</span>
-                  <div style={{ flex:1 }}>
-                    <div className="pbar"><div className="pbar-fill" style={{ width:`${Math.round((ev.p/ev.max)*100)}%`, background:ev.color }}/></div>
-                  </div>
+                  <div style={{ flex:1 }}><div className="pbar"><div className="pbar-fill" style={{ width:`${Math.round((ev.p/ev.max)*100)}%`, background:ev.color }}/></div></div>
                   <span style={{ fontSize:11, fontWeight:700, color:ev.color, whiteSpace:'nowrap' }}>{ev.p}/{ev.max}</span>
                 </div>
               </div>
-              <div style={{ fontSize:18, color:'var(--muted)' }}>›</div>
+              <div style={{ fontSize:18, color:'var(--muted)', flexShrink:0 }}>›</div>
             </Link>
           ))}
         </div>
 
-        {/* Espacio extra antes del CTA flotante */}
-        <div style={{ height:24 }}/>
-
-      </div>
-
-      {/* ── CTA flotante ── */}
-      <div style={{
-        position:'fixed', bottom:80, left:'50%', transform:'translateX(-50%)',
-        width:'calc(100% - 36px)', maxWidth:444, zIndex:50,
-      }}>
-        <Link href="/create" className="btn btn-primary" style={{ display:'flex', width:'100%', fontSize:16, padding:'15px 24px', borderRadius:16 }}>
+        {/* CTA inline — NO flotante, para evitar solapamientos */}
+        <Link href="/create" className="btn btn-primary" style={{ display:'flex', width:'100%', fontSize:16, padding:'15px 24px', borderRadius:16, marginBottom:8 }}>
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
           </svg>
           Crear evento
         </Link>
-      </div>
 
+      </div>
       <Navbar />
     </>
   )

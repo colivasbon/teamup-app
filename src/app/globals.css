@@ -107,15 +107,48 @@ input, textarea, select { font-family: inherit; }
   margin: 0 auto;
   width: 100%;
   padding: 0 18px;
-  padding-bottom: 96px;
+  padding-bottom: 96px; /* espacio para navbar */
 }
 
-/* Sin padding lateral para elementos que necesitan sangrar */
+/* Sin padding lateral (para elementos que necesitan sangrar al borde) */
 .page-wrap-full {
   max-width: 480px;
   margin: 0 auto;
   width: 100%;
+  padding: 0;
   padding-bottom: 96px;
+}
+
+/* ─── SPINNER ──────────────────────────────────────── */
+.spinner {
+  width: 36px; height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+  margin: 0 auto;
+}
+
+/* ─── MENSAJE DE ERROR ─────────────────────────────── */
+.error-msg {
+  background: rgba(239,68,68,0.10);
+  border: 1px solid rgba(239,68,68,0.25);
+  border-radius: var(--radius-xs);
+  color: #ef4444;
+  font-size: 13px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+}
+
+/* ─── SUCCESS MSG ──────────────────────────────────── */
+.success-msg {
+  background: rgba(6,214,160,0.10);
+  border: 1px solid rgba(6,214,160,0.25);
+  border-radius: var(--radius-sm);
+  color: #06d6a0;
+  font-size: 13px;
+  padding: 10px 14px;
+  text-align: center;
 }
 
 /* ─── GLASSMORPHISM ────────────────────────────────── */
