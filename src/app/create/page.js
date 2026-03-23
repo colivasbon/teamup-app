@@ -63,7 +63,7 @@ const sports = [
   { id: 'senderismo', name: 'Senderismo', icon: '🥾', color: 'from-amber-500 to-orange-600' },
   { id: 'futbol', name: 'Fútbol', icon: '⚽', color: 'from-red-500 to-rose-600' },
   { id: 'gimnasio', name: 'Gimnasio', icon: '💪', color: 'from-purple-500 to-pink-600' },
-  { id: 'tenis', name: 'Tenis', icon: '🎳', color: 'from-yellow-500 to-amber-600' },
+  { id: 'tenis', name: 'Tenis', icon: '🎾', color: 'from-yellow-500 to-amber-600' },
 ]
 
 const levels = [
@@ -97,16 +97,16 @@ export default function CreateEvent() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-text pb-24 pt-safe">
+    <div className="min-h-screen bg-[#0f172a] text-[#f8fafc] pb-24 pt-safe">
       <header className="px-6 pt-12 pb-6">
         <h1 className="text-2xl font-bold">Crear evento</h1>
-        <p className="text-text-secondary text-sm mt-1">Organiza tu próxima actividad</p>
+        <p className="text-slate-400 text-sm mt-1">Organiza tu próxima actividad</p>
       </header>
 
       <form onSubmit={handleSubmit} className="px-6 space-y-6">
         {/* Sport */}
         <div>
-          <label className="block text-sm font-medium text-text-secondary mb-3">Deporte</label>
+          <label className="block text-sm font-medium text-slate-400 mb-3">Deporte</label>
           <div className="grid grid-cols-3 gap-3">
             {sports.map((s) => (
               <button
@@ -115,12 +115,12 @@ export default function CreateEvent() {
                 onClick={() => setForm({ ...form, sport: s.id })}
                 className={`p-3 rounded-xl border transition-all ${
                   form.sport === s.id
-                    ? 'border-primary bg-primary/20 shadow-sm hover:shadow-md'
-                    : 'border-border bg-surface hover:border-border/75 hover:bg-surface/75'
+                    ? 'border-blue-500 bg-blue-500/20'
+                    : 'border-slate-700 bg-slate-800 hover:border-slate-600'
                 }`}
               >
                 <span className="text-2xl block mb-1">{s.icon}</span>
-                <span className="text-xs text-text-secondary">{s.name}</span>
+                <span className="text-xs text-slate-400">{s.name}</span>
               </button>
             ))}
           </div>
@@ -128,71 +128,71 @@ export default function CreateEvent() {
 
         {/* Title */}
         <div>
-          <label className="block text-sm font-medium text-text-secondary mb-2">Título</label>
+          <label className="block text-sm font-medium text-slate-400 mb-2">Título</label>
           <input
             type="text"
             placeholder="Partido de pádel tarde"
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
-            className="w-full p-4 bg-surface border border-border rounded-xl text-text placeholder-text-secondary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm hover:shadow-md"
+            className="w-full p-4 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none transition-all"
             required
           />
         </div>
 
         {/* Description */}
         <div>
-          <label className="block text-sm font-medium text-text-secondary mb-2">Descripción</label>
+          <label className="block text-sm font-medium text-slate-400 mb-2">Descripción</label>
           <textarea
             placeholder="Nivel medio, jugadores/as mayores de 25 años..."
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
-            className="w-full p-4 bg-surface border border-border rounded-xl text-text placeholder-text-secondary h-24 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none shadow-sm hover:shadow-md"
+            className="w-full p-4 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 h-24 focus:border-blue-500 focus:outline-none transition-all resize-none"
           />
         </div>
 
         {/* Date & Time */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-text-secondary mb-2">Fecha</label>
+            <label className="block text-sm font-medium text-slate-400 mb-2">Fecha</label>
             <input
               type="date"
               value={form.date}
               onChange={(e) => setForm({ ...form, date: e.target.value })}
-              className="w-full p-4 bg-surface border border-border rounded-xl text-text focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm hover:shadow-md"
+              className="w-full p-4 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-blue-500 focus:outline-none transition-all"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-text-secondary mb-2">Hora</label>
+            <label className="block text-sm font-medium text-slate-400 mb-2">Hora</label>
             <input
               type="time"
               value={form.time}
               onChange={(e) => setForm({ ...form, time: e.target.value })}
-              className="w-full p-4 bg-surface border border-border rounded-xl text-text focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm hover:shadow-md"
+              className="w-full p-4 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-blue-500 focus:outline-none transition-all"
             />
           </div>
         </div>
 
         {/* Location */}
         <div>
-          <label className="block text-sm font-medium text-text-secondary mb-2">Ubicación</label>
+          <label className="block text-sm font-medium text-slate-400 mb-2">Ubicación</label>
           <input
             type="text"
             placeholder="Parque de la Ciudad, Pista 3"
             value={form.location}
             onChange={(e) => setForm({ ...form, location: e.target.value })}
-            className="w-full p-4 bg-surface border border-border rounded-xl text-text placeholder-text-secondary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm hover:shadow-md"
+            className="w-full p-4 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none transition-all"
             required
           />
         </div>
 
         {/* Province */}
         <div>
-          <label className="block text-sm font-medium text-text-secondary mb-2">Provincia</label>
+          <label className="block text-sm font-medium text-slate-400 mb-2">Provincia</label>
           <select
             value={form.province}
             onChange={(e) => setForm({ ...form, province: e.target.value })}
-            className="w-full p-4 bg-surface border border-border rounded-xl text-text focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm hover:shadow-md"
+            className="w-full p-4 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-blue-500 focus:outline-none transition-all"
             required
           >
             <option value="">Selecciona provincia</option>
@@ -204,7 +204,7 @@ export default function CreateEvent() {
 
         {/* Level */}
         <div>
-          <label className="block text-sm font-medium text-text-secondary mb-3">Nivel requerido</label>
+          <label className="block text-sm font-medium text-slate-400 mb-3">Nivel requerido</label>
           <div className="grid grid-cols-4 gap-2">
             {levels.map((l) => (
               <button
@@ -213,29 +213,29 @@ export default function CreateEvent() {
                 onClick={() => setForm({ ...form, level: l.id })}
                 className={`p-3 rounded-xl border transition-all flex flex-col items-center gap-1 ${
                   form.level === l.id
-                    ? 'border-primary bg-primary/20 shadow-sm'
-                    : 'border-border bg-surface hover:border-border/75'
+                    ? 'border-violet-500 bg-violet-500/20'
+                    : 'border-slate-700 bg-slate-800 hover:border-slate-600'
                 }`}
               >
                 <span className="text-xl">{l.icon}</span>
-                <span className="text-xs text-text-secondary">{l.name}</span>
+                <span className="text-xs text-slate-400">{l.name}</span>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Third Place (Tercer Tiempo) */}
-        <div className="bg-surface p-4 rounded-xl border border-border">
+        {/* Third Place */}
+        <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
           <label className="flex items-center justify-between cursor-pointer">
             <div>
               <span className="font-medium">🍺 Tercer tiempo</span>
-              <p className="text-xs text-text-secondary">Añadir ubicación para después del evento</p>
+              <p className="text-xs text-slate-400">Añadir ubicación para después del evento</p>
             </div>
             <input
               type="checkbox"
               checked={form.thirdPlace}
               onChange={(e) => setForm({ ...form, thirdPlace: e.target.checked })}
-              className="w-5 h-5 accent-primary"
+              className="w-5 h-5 accent-blue-500"
             />
           </label>
           {form.thirdPlace && (
@@ -244,15 +244,15 @@ export default function CreateEvent() {
               placeholder="Link de Google Maps (opcional)"
               value={form.thirdPlaceLink}
               onChange={(e) => setForm({ ...form, thirdPlaceLink: e.target.value })}
-              className="w-full p-3 mt-3 bg-background border border-border rounded-lg text-sm"
+              className="w-full p-3 mt-3 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white placeholder-slate-500"
             />
           )}
         </div>
 
         {/* Waiting List */}
         <div>
-          <label className="block text-sm font-medium text-text-secondary mb-3">
-            Lista de espera: <span className="text-primary">{form.waitingList} plazas</span>
+          <label className="block text-sm font-medium text-slate-400 mb-3">
+            Lista de espera: <span className="text-blue-400">{form.waitingList} plazas</span>
           </label>
           <input
             type="range"
@@ -260,15 +260,15 @@ export default function CreateEvent() {
             max="20"
             value={form.waitingList}
             onChange={(e) => setForm({ ...form, waitingList: e.target.value })}
-            className="w-full accent-primary"
+            className="w-full accent-blue-500"
           />
-          <p className="text-xs text-text-secondary mt-1">Personas que pueden apuntarse si se llena</p>
+          <p className="text-xs text-slate-500 mt-1">Personas que pueden apuntarse si se llena</p>
         </div>
 
         {/* Max People */}
         <div>
-          <label className="block text-sm font-medium text-text-secondary mb-3">
-            Máximo de personas: <span className="text-primary">{form.maxPeople}</span>
+          <label className="block text-sm font-medium text-slate-400 mb-3">
+            Máximo de personas: <span className="text-blue-400">{form.maxPeople}</span>
           </label>
           <input
             type="range"
@@ -276,13 +276,13 @@ export default function CreateEvent() {
             max="50"
             value={form.maxPeople}
             onChange={(e) => setForm({ ...form, maxPeople: e.target.value })}
-            className="w-full accent-primary shadow-sm hover:shadow-md transition-all"
+            className="w-full accent-blue-500"
           />
         </div>
 
         <button
           type="submit"
-          className="w-full bg-primary text-white py-4 rounded-xl font-semibold mt-4 hover:bg-primary-hover shadow-sm hover:shadow-md transition-all">
+          className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-4 rounded-xl font-semibold mt-4 hover:shadow-lg hover:shadow-blue-500/25 transition-all">
           Crear evento
         </button>
       </form>

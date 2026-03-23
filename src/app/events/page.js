@@ -18,7 +18,6 @@ const demoEvents = [
     level: 'any',
     levelIcon: '🌍',
     thirdPlace: true,
-    thirdPlaceLink: 'https://maps.google.com',
     people: 8,
     maxPeople: 15,
     waitingList: 5,
@@ -57,21 +56,12 @@ const demoEvents = [
     level: 'advanced',
     levelIcon: '🔥',
     thirdPlace: true,
-    thirdPlaceLink: 'https://maps.google.com',
     people: 12,
     maxPeople: 20,
     waitingList: 8,
     creator: 'Carlos A.',
     color: 'from-amber-500 to-orange-600'
   }
-]
-
-const levelFilters = [
-  { id: 'all', name: 'Todos', icon: '🌍' },
-  { id: 'any', name: 'Abierto', icon: '🌍' },
-  { id: 'beginner', name: '🌱', icon: '🌱' },
-  { id: 'intermediate', name: '⭐', icon: '⭐' },
-  { id: 'advanced', name: '🔥', icon: '🔥' },
 ]
 
 const filters = [
@@ -82,21 +72,20 @@ const filters = [
   { id: 'futbol', label: '⚽ Fútbol' },
 ]
 
+const levelFilters = [
+  { id: 'all', name: 'Todos', icon: '🌍' },
+  { id: 'any', name: 'Abierto', icon: '🌍' },
+  { id: 'beginner', name: '🌱', icon: '🌱' },
+  { id: 'intermediate', name: '⭐', icon: '⭐' },
+  { id: 'advanced', name: '🔥', icon: '🔥' },
+]
+
 const provinces = [
   { id: 'all', name: 'Todas' },
   { id: 'madrid', name: 'Madrid' },
-  { id: 'barcelona', name: 'Barcelona' },
   { id: 'valencia', name: 'Valencia' },
+  { id: 'barcelona', name: 'Barcelona' },
   { id: 'sevilla', name: 'Sevilla' },
-  { id: 'malaga', name: 'Málaga' },
-  { id: 'alicante', name: 'Alicante' },
-  { id: 'murcia', name: 'Murcia' },
-  { id: 'vizcaya', name: 'Vizcaya' },
-  { id: 'galicia', name: 'Galicia' },
-  { id: 'castillayleon', name: 'CyL' },
-  { id: 'andalucia', name: 'Andalucía' },
-  { id: 'cataluña', name: 'Cataluña' },
-  { id: 'comunidadvalenciana', name: 'C. Valenciana' },
 ]
 
 export default function Events() {
@@ -112,23 +101,23 @@ export default function Events() {
   })
 
   return (
-    <div className="min-h-screen bg-background text-text pb-24 pt-safe">
+    <div className="min-h-screen bg-[#0f172a] text-[#f8fafc] pb-24 pt-safe">
       {/* Header */}
       <header className="px-6 pt-12 pb-4">
         <h1 className="text-2xl font-bold">Eventos cerca de ti</h1>
-        <p className="text-text-secondary text-sm mt-1">Únete a la próxima actividad</p>
+        <p className="text-slate-400 text-sm mt-1">Únete a la próxima actividad</p>
       </header>
 
       {/* Province Filter */}
-      <div className="px-6 pb-4 flex gap-2 overflow-x-auto scrollbar-hide">
+      <div className="px-6 pb-3 flex gap-2 overflow-x-auto">
         {provinces.map((p) => (
           <button
             key={p.id}
             onClick={() => setProvince(p.id)}
             className={`px-3 py-1.5 rounded-full text-xs whitespace-nowrap transition-all ${
               province === p.id
-                ? 'bg-secondary text-white shadow-sm'
-                : 'bg-surface/50 text-text-secondary hover:bg-surface/75'
+                ? 'bg-violet-600 text-white'
+                : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
             }`}
           >
             {p.name}
@@ -137,15 +126,15 @@ export default function Events() {
       </div>
 
       {/* Sport Filter */}
-      <div className="px-6 pb-4 flex gap-2 overflow-x-auto scrollbar-hide">
+      <div className="px-6 pb-3 flex gap-2 overflow-x-auto">
         {filters.map((f) => (
           <button
             key={f.id}
             onClick={() => setFilter(f.id)}
             className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-all ${
               filter === f.id
-                ? 'bg-primary text-white shadow-sm hover:shadow-md'
-                : 'bg-surface/50 text-text-secondary hover:bg-surface/75 hover:text-text'
+                ? 'bg-blue-500 text-white'
+                : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
             }`}
           >
             {f.label}
@@ -154,19 +143,18 @@ export default function Events() {
       </div>
 
       {/* Level Filter */}
-      <div className="px-6 pb-2 flex gap-2 overflow-x-auto scrollbar-hide">
+      <div className="px-6 pb-4 flex gap-2 overflow-x-auto">
         {levelFilters.map((l) => (
           <button
             key={l.id}
             onClick={() => setLevel(l.id)}
             className={`px-3 py-1.5 rounded-full text-xs whitespace-nowrap transition-all flex items-center gap-1 ${
               level === l.id
-                ? 'bg-secondary text-white shadow-sm'
-                : 'bg-surface/50 text-text-secondary hover:bg-surface/75'
+                ? 'bg-violet-600 text-white'
+                : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
             }`}
           >
             <span>{l.icon}</span>
-            <span>{l.name}</span>
           </button>
         ))}
       </div>
@@ -174,23 +162,23 @@ export default function Events() {
       {/* Events List */}
       <div className="px-6 space-y-4">
         {filteredEvents.map((event) => (
-          <div key={event.id} className="bg-surface rounded-2xl p-5 border border-border/50 shadow-sm transition-all hover:shadow-md">
+          <div key={event.id} className="bg-slate-800/50 rounded-2xl p-5 border border-slate-700/50 hover:border-slate-600 transition-all">
             <div className="flex items-start gap-4 mb-3">
               <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${event.color} flex items-center justify-center text-2xl`}>
                 {event.icon}
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold text-lg">{event.title}</h3>
-                <p className="text-sm text-text-secondary">por {event.creator}</p>
+                <p className="text-sm text-slate-400">por {event.creator}</p>
               </div>
             </div>
             
-            <p className="text-sm text-text-secondary mb-4">{event.description}</p>
+            <p className="text-sm text-slate-400 mb-4">{event.description}</p>
             
-            <div className="flex flex-wrap gap-4 text-sm text-text-secondary mb-4">
+            <div className="flex flex-wrap gap-4 text-sm text-slate-400 mb-4">
               <span className="flex items-center gap-1">📅 {event.date} • {event.time}</span>
               <span className="flex items-center gap-1">📍 {event.location}</span>
-              <span className="flex items-center gap-1">{event.levelIcon} {event.level}</span>
+              <span className="flex items-center gap-1">{event.levelIcon}</span>
               {event.thirdPlace && (
                 <span className="flex items-center gap-1">🍺 3er tiempo</span>
               )}
@@ -198,18 +186,18 @@ export default function Events() {
             
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-28 h-2 bg-border rounded-full overflow-hidden">
+                <div className="w-28 h-2 bg-slate-700 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-primary rounded-full transition-width"
+                    className="h-full bg-blue-500 rounded-full"
                     style={{ width: `${(event.people / event.maxPeople) * 100}%` }}
                   />
                 </div>
-                <span className="text-sm text-text-secondary">
+                <span className="text-sm text-slate-400">
                   {event.people}/{event.maxPeople}
-                  {event.waitingList > 0 && <span className="text-xs text-secondary"> +{event.waitingList} espera</span>}
+                  {event.waitingList > 0 && <span className="text-xs text-violet-400 ml-1">+{event.waitingList} espera</span>}
                 </span>
               </div>
-              <button className="px-6 py-2.5 bg-primary text-white rounded-xl font-medium text-sm hover:bg-primary-hover shadow-sm hover:shadow-md transition-all">
+              <button className="px-6 py-2.5 bg-blue-500 text-white rounded-xl font-medium text-sm hover:bg-blue-600 transition-all">
                 Unirse
               </button>
             </div>

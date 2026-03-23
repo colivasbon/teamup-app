@@ -11,6 +11,12 @@ const inter = Inter({ subsets: ['latin'] })
 export default function RootLayout({ children }) {
   const [theme, setTheme] = useState('dark')
   
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('teamup-theme') || 'dark'
+    setTheme(savedTheme)
+    document.documentElement.setAttribute('data-theme', savedTheme)
+  }, [])
+
   const toggleTheme = () => {
     const themes = ['dark', 'light', 'system']
     const currentIndex = themes.indexOf(theme)
@@ -19,14 +25,6 @@ export default function RootLayout({ children }) {
     document.documentElement.setAttribute('data-theme', newTheme)
     localStorage.setItem('teamup-theme', newTheme)
   }
-  
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const savedTheme = localStorage.getItem('teamup-theme') || 'dark'
-      setTheme(savedTheme)
-      document.documentElement.setAttribute('data-theme', savedTheme)
-    }
-  }, [])
 
   const getThemeIcon = () => {
     if (theme === 'system') return '💻'
@@ -34,18 +32,20 @@ export default function RootLayout({ children }) {
   }
 
   return (
-    <html lang="es" data-theme={theme}>
-      <body className={inter.className}>
-        {children}
-        <Navbar />
+    <html lang="es" data-theme={theme} className="dark">
+      <body className={`${inter.className} bg-background text-text min-h-screen`}>
         
+        {/* Theme Toggle Button */}
         <button
           onClick={toggleTheme}
-          className="fixed top-6 right-6 z-50 w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110"
-          title={theme === 'system' ? 'Sistema' : theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+          className="fixed top-4 right-4 z-50 w-10 h-10 rounded-full bg-surface/80 backdrop-blur-md border border-border flex items-center justify-center text-lg shadow-lg hover:scale-105 transition-transform"
+          title={`Tema: ${theme}`}
         >
-          <span className="text-xl">{getThemeIcon()}</span>
+          {getThemeIcon()}
         </button>
+
+        {children}
+        <Navbar />
       </body>
     </html>
   )
