@@ -43,13 +43,12 @@ export default function Home() {
             <Link
               key={sport.id}
               href={`/events?sport=${sport.id}`}
-              className={`relative overflow-hidden rounded-2xl p-5 bg-gradient-to-br ${sport.color} group animate-fadeInUp`}
-            >
+              className="relative overflow-hidden rounded-2xl p-5 bg-gradient-to-br from-primary to-primary-hover group cursor-pointer transition-all hover:scale-105 hover:shadow-lg hover:shadow-primary/25">
               <div className="relative z-10">
                 <span className="text-4xl block mb-2">{sport.icon}</span>
                 <span className="font-semibold text-white">{sport.name}</span>
               </div>
-              <div className="absolute -right-2 -bottom-2 text-6xl opacity-20 group-hover:opacity-30 transition-opacity animate-slideInLeft">
+              <div className="absolute -right-2 -bottom-2 text-6xl opacity-20 group-hover:opacity-30 transition-opacity">
                 {sport.icon}
               </div>
             </Link>
@@ -79,8 +78,7 @@ export default function Home() {
       <div className="fixed bottom-6 left-6 right-6">
         <Link
           href="/create"
-          className="block w-full bg-gradient-to-r from-primary to-primary-hover text-white text-center py-4 rounded-xl font-semibold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all hover:scale-[1.02] animate-fadeInUp"
-        >
+          className="block w-full bg-gradient-to-r from-primary to-primary-hover text-white text-center py-4 rounded-xl font-semibold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all hover:scale-[1.02]">
           + Crear evento
         </Link>
       </div>

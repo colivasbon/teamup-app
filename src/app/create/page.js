@@ -50,11 +50,11 @@ export default function CreateEvent() {
                 onClick={() => setForm({ ...form, sport: s.id })}
                 className={`p-3 rounded-xl border transition-all ${
                   form.sport === s.id
-                    ? 'border-primary bg-primary/20 animate-pulse'
-                    : 'border-border bg-surface hover:border-surface/75 hover:bg-surface/75'
+                    ? 'border-primary bg-primary/20 shadow-sm hover:shadow-md'
+                    : 'border-border bg-surface hover:border-border/75 hover:bg-surface/75'
                 }`}
               >
-                <span className="text-2xl block mb-1 animate-fadeInUp">{s.icon}</span>
+                <span className="text-2xl block mb-1">{s.icon}</span>
                 <span className="text-xs text-text-secondary">{s.name}</span>
               </button>
             ))}
@@ -69,7 +69,7 @@ export default function CreateEvent() {
             placeholder="Partido de pádel tarde"
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
-            className="w-full p-4 bg-surface border border-border rounded-xl text-text placeholder-text-secondary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all animate-fadeInUp"
+            className="w-full p-4 bg-surface border border-border rounded-xl text-text placeholder-text-secondary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm hover:shadow-md"
             required
           />
         </div>
@@ -81,7 +81,7 @@ export default function CreateEvent() {
             placeholder="Nivel medio, jugadores/as mayores de 25 años..."
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
-            className="w-full p-4 bg-surface border border-border rounded-xl text-text placeholder-text-secondary h-24 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none animate-fadeInUp"
+            className="w-full p-4 bg-surface border border-border rounded-xl text-text placeholder-text-secondary h-24 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none shadow-sm hover:shadow-md"
           />
         </div>
 
@@ -93,7 +93,7 @@ export default function CreateEvent() {
               type="date"
               value={form.date}
               onChange={(e) => setForm({ ...form, date: e.target.value })}
-              className="w-full p-4 bg-surface border border-border rounded-xl text-text focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all animate-fadeInUp"
+              className="w-full p-4 bg-surface border border-border rounded-xl text-text focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm hover:shadow-md"
               required
             />
           </div>
@@ -103,8 +103,7 @@ export default function CreateEvent() {
               type="time"
               value={form.time}
               onChange={(e) => setForm({ ...form, time: e.target.value })}
-              className="w-full p-4 bg-surface border border-border rounded-xl text-text focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all animate-fadeInUp"
-              required
+              className="w-full p-4 bg-surface border border-border rounded-xl text-text focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm hover:shadow-md">
             />
           </div>
         </div>
@@ -117,7 +116,7 @@ export default function CreateEvent() {
             placeholder="Parque de la Ciudad, Pista 3"
             value={form.location}
             onChange={(e) => setForm({ ...form, location: e.target.value })}
-            className="w-full p-4 bg-surface border border-border rounded-xl text-text placeholder-text-secondary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all animate-fadeInUp"
+            className="w-full p-4 bg-surface border border-border rounded-xl text-text placeholder-text-secondary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm hover:shadow-md"
             required
           />
         </div>
@@ -133,13 +132,13 @@ export default function CreateEvent() {
             max="50"
             value={form.maxPeople}
             onChange={(e) => setForm({ ...form, maxPeople: e.target.value })}
-            className="w-full accent-primary animate-fadeInUp"
+            className="w-full accent-primary shadow-sm hover:shadow-md transition-all"
           />
         </div>
 
         <button
           type="submit"
-          className="w-full bg-primary text-white py-4 rounded-xl font-semibold mt-4 hover:bg-primary-hover shadow-sm hover:shadow-md transition-all animate-pulse">
+          className="w-full bg-primary text-white py-4 rounded-xl font-semibold mt-4 hover:bg-primary-hover shadow-sm hover:shadow-md transition-all">
           Crear evento
         </button>
       </form>

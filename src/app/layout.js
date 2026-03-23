@@ -2,7 +2,7 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
 import Navbar from '@/components/Navbar'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -17,11 +17,13 @@ export default function RootLayout({ children }) {
   }
   
   // Apply saved theme on mount
-  if (typeof window !== 'undefined') {
-    const savedTheme = localStorage.getItem('teamup-theme') || 'dark'
-    setTheme(savedTheme)
-    document.documentElement.setAttribute('data-theme', savedTheme)
-  }
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem('teamup-theme') || 'dark'
+      setTheme(savedTheme)
+      document.documentElement.setAttribute('data-theme', savedTheme)
+    }
+  }, [])
 
   return (
     <html lang="es" data-theme={theme}>
@@ -41,7 +43,7 @@ export default function RootLayout({ children }) {
             </svg>
             :
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 14.354l-1.414-1.414c-.03-.029-.062-.059-.1-.083A10.003 10.003 0 018.5 21a8.005 8.005 0 100-16 10.003 10.003 0 015.894 9.446.997.997 0 001.414 0 2.003 2.003 0 112.83-2.83l1.414 1.414A2.003 2.003 0 0019 21a2.003 2.003 0 01-2.828-2.829z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 14.354l-1.414-1.414c-.03-.029-.062-.059-.1-.083A10.003 10.003 0 018.5 21a8.005 8.005 0 100-16 10.003 10.003 0 055.894 9.446.997.997 0 001.414 0 2.003 2.003 0 112.83-2.83l1.414 1.414A2.003 2.003 0 0019 21a2.003 2.003 0 01-2.828-2.829z" />
             </svg>
           }
         </button>

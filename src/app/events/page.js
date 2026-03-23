@@ -80,7 +80,7 @@ export default function Events() {
             onClick={() => setFilter(f.id)}
             className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-all ${
               filter === f.id
-                ? 'bg-primary text-white animate-pulse'
+                ? 'bg-primary text-white shadow-sm hover:shadow-md'
                 : 'bg-surface/50 text-text-secondary hover:bg-surface/75 hover:text-text'
             }`}
           >
@@ -92,9 +92,9 @@ export default function Events() {
       {/* Events List */}
       <div className="px-6 space-y-4">
         {filteredEvents.map((event) => (
-          <div key={event.id} className="bg-surface rounded-2xl p-5 border border-border/50 shadow-sm transition-all hover:shadow-md animate-fadeInUp">
+          <div key={event.id} className="bg-surface rounded-2xl p-5 border border-border/50 shadow-sm transition-all hover:shadow-md">
             <div className="flex items-start gap-4 mb-3">
-              <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${event.color} flex items-center justify-center text-2xl animate-slideInLeft`}>
+              <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${event.color} flex items-center justify-center text-2xl`}>
                 {event.icon}
               </div>
               <div className="flex-1">
@@ -122,7 +122,7 @@ export default function Events() {
                   {event.people}/{event.maxPeople}
                 </span>
               </div>
-              <button className="px-6 py-2.5 bg-primary text-white rounded-xl font-medium text-sm hover:bg-primary-hover shadow-sm hover:shadow-md transition-all animate-pulse">
+              <button className="px-6 py-2.5 bg-primary text-white rounded-xl font-medium text-sm hover:bg-primary-hover shadow-sm hover:shadow-md transition-all">
                 Unirse
               </button>
             </div>

@@ -10,7 +10,7 @@ export default function Navbar() {
   const isActive = (path) => pathname === path 
   
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border z-50 animate-fadeInUp">
+    <nav className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border z-50 shadow-sm">
       <div className="max-w-md mx-auto flex justify-around py-4">
         <Link 
           href="/" 
