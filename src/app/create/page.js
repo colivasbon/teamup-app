@@ -2,228 +2,310 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Navbar from '@/components/Navbar'
 
-const provinces = [
-  'Álava','Albacete','Alicante','Almería','Asturias','Ávila','Badajoz','Barcelona',
-  'Burgos','Cáceres','Cádiz','Cantabria','Castellón','Ceuta','Ciudad Real','Córdoba',
-  'Cuenca','Girona','Granada','Guadalajara','Huelva','Huesca','Islas Baleares','Jaén',
-  'La Coruña','La Rioja','Las Palmas','León','Lleida','Lugo','Madrid','Málaga',
-  'Melilla','Murcia','Navarra','Ourense','Palencia','Pontevedra','Salamanca','Segovia',
-  'Sevilla','Soria','Tarragona','Teruel','Toledo','Valencia','Valladolid','Vizcaya',
-  'Zamora','Zaragoza',
+const SPORTS = [
+  { id:'running',    label:'Running',    icon:'🏃', color:'#5b6ef5' },
+  { id:'padel',      label:'Pádel',      icon:'🎾', color:'#06d6a0' },
+  { id:'senderismo', label:'Senderismo', icon:'🥾', color:'#f59e0b' },
+  { id:'futbol',     label:'Fútbol',     icon:'⚽', color:'#ef4444' },
+  { id:'gimnasio',   label:'Gimnasio',   icon:'💪', color:'#8b5cf6' },
+  { id:'tenis',      label:'Tenis',      icon:'🎾', color:'#fbbf24' },
 ]
-const sports = [
-  {id:'running',name:'Running',icon:'🏃',color:'#5b6ef5'},
-  {id:'padel',name:'Pádel',icon:'🎾',color:'#06d6a0'},
-  {id:'senderismo',name:'Senderismo',icon:'🥾',color:'#f59e0b'},
-  {id:'futbol',name:'Fútbol',icon:'⚽',color:'#ef4444'},
-  {id:'gimnasio',name:'Gimnasio',icon:'💪',color:'#8b5cf6'},
-  {id:'tenis',name:'Tenis',icon:'🎾',color:'#fbbf24'},
-]
-const levels = [
-  {id:'any',name:'Todos',icon:'🌍',desc:'Sin restricción'},
-  {id:'beginner',name:'Principiante',icon:'🌱',desc:'Empezando'},
-  {id:'intermediate',name:'Intermedio',icon:'⭐',desc:'Con experiencia'},
-  {id:'advanced',name:'Avanzado',icon:'🔥',desc:'Alto nivel'},
-]
-const steps = ['Deporte','Detalles','Opciones']
 
-const LabelInput = ({label, children}) => (
-  <div style={{marginBottom:16}}>
-    <div className="label" style={{marginBottom:8}}>{label}</div>
-    {children}
-  </div>
-)
+const LEVELS = [
+  { id:'any',          label:'Todos',        icon:'🌍', desc:'Cualquier nivel bienvenido' },
+  { id:'beginner',     label:'Principiante', icon:'🌱', desc:'Sin experiencia previa' },
+  { id:'intermediate', label:'Intermedio',   icon:'⭐', desc:'Con algo de experiencia' },
+  { id:'advanced',     label:'Avanzado',     icon:'🔥', desc:'Nivel alto requerido' },
+]
 
-export default function CreateEvent() {
+const STEPS = ['Deporte', 'Detalles', 'Confirmar']
+
+export default function Create() {
   const router = useRouter()
   const [step, setStep] = useState(0)
+  const [saving, setSaving] = useState(false)
   const [form, setForm] = useState({
-    sport:'',level:'any',title:'',description:'',
-    date:'',time:'',location:'',province:'',
-    thirdPlace:false,thirdPlaceLink:'',maxPeople:10,waitingList:0,
+    sport: '', level: 'any',
+    title: '', description: '',
+    date: '', time: '', location: '',
+    maxPlayers: 10, price: '',
+    thirdPlace: false,
   })
-  const set = (k,v) => setForm(p=>({...p,[k]:v}))
+  const set = (k, v) => setForm(p => ({ ...p, [k]: v }))
 
-  const canNext = step===0 ? !!form.sport
-    : step===1 ? !!(form.title&&form.date&&form.location&&form.province)
-    : true
+  const selectedSport = SPORTS.find(s => s.id===form.sport)
 
-  const sel = sports.find(s=>s.id===form.sport)
+  const submit = async () => {
+    setSaving(true)
+    await new Promise(r => setTimeout(r, 1400))
+    setSaving(false)
+    router.push('/events')
+  }
 
   return (
-    <div style={{ paddingBottom:100 }}>
-      <div className="page-wrap" style={{ padding:'0 20px' }}>
+    <>
+      <div className="page-wrap" style={{ paddingTop:0 }}>
 
         {/* Header */}
-        <header style={{ paddingTop:56, paddingBottom:24 }}>
-          <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:16 }}>
-            <button className="btn-icon" onClick={()=>step>0?setStep(s=>s-1):router.back()}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
-            </button>
-            <div>
-              <h1 style={{ fontSize:20, fontWeight:800, margin:0, letterSpacing:'-0.03em' }}>Crear evento</h1>
-              <p style={{ fontSize:13, color:'var(--muted)', margin:0 }}>Paso {step+1}/{steps.length} · {steps[step]}</p>
-            </div>
-          </div>
-          {/* Progress */}
-          <div style={{ display:'flex', gap:6 }}>
-            {steps.map((_,i)=>(
-              <div key={i} className="step-bar" style={{ flex:1, background: i<=step?'var(--primary)':'var(--border)' }}/>
-            ))}
-          </div>
+        <header style={{ paddingTop:60, paddingBottom:24 }}>
+          <h1 style={{ fontSize:24, fontWeight:800, margin:'0 0 4px', letterSpacing:'-0.04em' }}>Crear evento</h1>
+          <p style={{ fontSize:14, color:'var(--muted)' }}>
+            {step===0 ? 'Elige el deporte' : step===1 ? 'Rellena los detalles' : 'Revisa y publica'}
+          </p>
         </header>
 
-        <form onSubmit={e=>{e.preventDefault();alert('¡Evento creado! (demo)');router.push('/')}}>
+        {/* Barra de pasos */}
+        <div style={{ display:'flex', gap:6, marginBottom:28 }}>
+          {STEPS.map((s, i) => (
+            <div key={s} style={{ flex:1, display:'flex', flexDirection:'column', gap:6 }}>
+              <div className="step-bar" style={{
+                background: i<=step ? 'var(--grad)' : 'var(--border)',
+                height: 4,
+              }}/>
+              <span style={{
+                fontSize:11, fontWeight:600,
+                color: i<=step ? 'var(--primary)' : 'var(--muted)',
+              }}>
+                {s}
+              </span>
+            </div>
+          ))}
+        </div>
 
-          {/* STEP 0 */}
-          {step===0 && (
-            <div className="fade-in">
-              <p style={{ fontSize:16, fontWeight:600, marginBottom:20 }}>¿Qué deporte vais a practicar?</p>
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
-                {sports.map(s=>(
-                  <button key={s.id} type="button" onClick={()=>set('sport',s.id)}
+        {/* ── PASO 0: Elegir deporte ── */}
+        {step===0 && (
+          <div className="anim-1">
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+              {SPORTS.map(s => (
+                <button
+                  key={s.id}
+                  onClick={() => set('sport', s.id)}
+                  style={{
+                    background: form.sport===s.id
+                      ? `linear-gradient(140deg,${s.color},${s.color}bb)`
+                      : 'var(--glass)',
+                    backdropFilter: 'blur(14px)',
+                    border: form.sport===s.id ? 'none' : '1.5px solid var(--border)',
+                    borderRadius:18, padding:'20px 16px',
+                    cursor:'pointer', textAlign:'left',
+                    boxShadow: form.sport===s.id ? `0 6px 22px ${s.color}40` : 'none',
+                    transition:'all 0.20s cubic-bezier(.34,1.56,.64,1)',
+                    transform: form.sport===s.id ? 'scale(1.03)' : '',
+                    fontFamily:'inherit',
+                  }}
+                >
+                  <div style={{ fontSize:30, marginBottom:8 }}>{s.icon}</div>
+                  <div style={{
+                    fontSize:14, fontWeight:700,
+                    color: form.sport===s.id ? 'white' : 'var(--text)',
+                  }}>
+                    {s.label}
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <div style={{ marginTop:28 }}>
+              <span className="label" style={{ marginBottom:14 }}>Nivel de los participantes</span>
+              <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
+                {LEVELS.map(lv => (
+                  <button
+                    key={lv.id}
+                    onClick={() => set('level', lv.id)}
                     style={{
-                      padding:'18px 14px', borderRadius:18, textAlign:'left',
-                      border:`2px solid ${form.sport===s.id?s.color:'var(--border)'}`,
-                      background: form.sport===s.id?`${s.color}14`:'var(--glass)',
-                      backdropFilter:'blur(12px)',
-                      cursor:'pointer', position:'relative',
-                      transition:'all 0.15s ease',
-                    }}>
-                    <div style={{ fontSize:28, marginBottom:8, lineHeight:1 }}>{s.icon}</div>
-                    <div style={{ fontSize:14, fontWeight:600, color:'var(--text)' }}>{s.name}</div>
-                    {form.sport===s.id && (
-                      <div style={{ position:'absolute', top:10, right:10, width:20, height:20, borderRadius:'50%', background:s.color, display:'flex', alignItems:'center', justifyContent:'center' }}>
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-                      </div>
+                      display:'flex', alignItems:'center', gap:14,
+                      background: form.level===lv.id ? 'var(--surface)' : 'var(--glass)',
+                      backdropFilter:'blur(14px)',
+                      border: form.level===lv.id ? '2px solid var(--primary)' : '1.5px solid var(--border)',
+                      borderRadius:14, padding:'14px 16px',
+                      cursor:'pointer', textAlign:'left',
+                      transition:'all 0.18s ease',
+                      fontFamily:'inherit',
+                    }}
+                  >
+                    <span style={{ fontSize:22 }}>{lv.icon}</span>
+                    <div>
+                      <div style={{ fontSize:14, fontWeight:700, color:'var(--text)' }}>{lv.label}</div>
+                      <div style={{ fontSize:12, color:'var(--muted)' }}>{lv.desc}</div>
+                    </div>
+                    {form.level===lv.id && (
+                      <div style={{ marginLeft:'auto', color:'var(--primary)', fontSize:18 }}>✓</div>
                     )}
                   </button>
                 ))}
               </div>
             </div>
-          )}
 
-          {/* STEP 1 */}
-          {step===1 && (
-            <div className="fade-in" style={{ display:'flex', flexDirection:'column', gap:0 }}>
-              <LabelInput label="Título del evento">
-                <input className="input" type="text" placeholder={`Ej: ${sel?.name||'Deporte'} tarde relajado`}
-                  value={form.title} onChange={e=>set('title',e.target.value)} required/>
-              </LabelInput>
-              <LabelInput label="Descripción (opcional)">
-                <textarea className="input" placeholder="Nivel, requisitos, qué llevar..." rows={3}
-                  value={form.description} onChange={e=>set('description',e.target.value)}/>
-              </LabelInput>
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginBottom:16 }}>
-                <div>
-                  <div className="label" style={{marginBottom:8}}>Fecha</div>
-                  <input className="input" type="date" value={form.date} onChange={e=>set('date',e.target.value)} required/>
-                </div>
-                <div>
-                  <div className="label" style={{marginBottom:8}}>Hora</div>
-                  <input className="input" type="time" value={form.time} onChange={e=>set('time',e.target.value)}/>
-                </div>
-              </div>
-              <LabelInput label="Ubicación">
-                <input className="input" type="text" placeholder="Nombre del lugar o dirección"
-                  value={form.location} onChange={e=>set('location',e.target.value)} required/>
-              </LabelInput>
-              <LabelInput label="Provincia">
-                <select className="input" value={form.province} onChange={e=>set('province',e.target.value)} required>
-                  <option value="">Selecciona...</option>
-                  {provinces.map(p=><option key={p} value={p.toLowerCase().replace(/\s/g,'')}>{p}</option>)}
-                </select>
-              </LabelInput>
-            </div>
-          )}
-
-          {/* STEP 2 */}
-          {step===2 && (
-            <div className="fade-in">
-              {/* Level */}
-              <div className="label" style={{marginBottom:12}}>Nivel requerido</div>
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginBottom:20 }}>
-                {levels.map(l=>(
-                  <button key={l.id} type="button" onClick={()=>set('level',l.id)}
-                    style={{
-                      padding:'14px 12px', borderRadius:16, textAlign:'left',
-                      border:`2px solid ${form.level===l.id?'var(--primary)':'var(--border)'}`,
-                      background: form.level===l.id?'rgba(var(--primary-rgb),0.10)':'var(--glass)',
-                      backdropFilter:'blur(12px)', cursor:'pointer', transition:'all 0.15s ease',
-                    }}>
-                    <div style={{ fontSize:22, marginBottom:6 }}>{l.icon}</div>
-                    <div style={{ fontSize:13, fontWeight:700 }}>{l.name}</div>
-                    <div style={{ fontSize:11, color:'var(--muted)', marginTop:2 }}>{l.desc}</div>
-                  </button>
-                ))}
-              </div>
-
-              {/* Sliders */}
-              {[
-                {key:'maxPeople',label:'Máximo de personas',min:2,max:50,color:'var(--primary)'},
-                {key:'waitingList',label:'Lista de espera',min:0,max:20,color:'var(--violet)'},
-              ].map(({key,label,min,max,color})=>(
-                <div key={key} className="card" style={{ padding:'16px 18px', marginBottom:12, borderRadius:'var(--radius-sm)' }}>
-                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10 }}>
-                    <div style={{ fontSize:14, fontWeight:600 }}>{label}</div>
-                    <div style={{ fontSize:20, fontWeight:800, color, letterSpacing:'-0.02em' }}>{form[key]}</div>
-                  </div>
-                  <input type="range" min={min} max={max} value={form[key]}
-                    onChange={e=>set(key,parseInt(e.target.value))}
-                    style={{ width:'100%', accentColor:color }}/>
-                </div>
-              ))}
-
-              {/* Third place */}
-              <div className="card" style={{ padding:'16px 18px', borderRadius:'var(--radius-sm)', marginBottom:16 }}>
-                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-                  <div>
-                    <div style={{ fontSize:14, fontWeight:600 }}>🍺 Tercer tiempo</div>
-                    <div style={{ fontSize:12, color:'var(--muted)', marginTop:2 }}>¿Quedáis después?</div>
-                  </div>
-                  <div className="toggle" onClick={()=>set('thirdPlace',!form.thirdPlace)}
-                    style={{ background: form.thirdPlace?'var(--primary)':'var(--border2)' }}>
-                    <div className="toggle-thumb" style={{ left: form.thirdPlace?'23px':'3px' }}/>
-                  </div>
-                </div>
-                {form.thirdPlace && (
-                  <input className="input" type="text" placeholder="Link Google Maps (opcional)"
-                    value={form.thirdPlaceLink} onChange={e=>set('thirdPlaceLink',e.target.value)}
-                    style={{ marginTop:12 }}/>
-                )}
-              </div>
-
-              {/* Summary */}
-              <div className="card" style={{ padding:'16px 18px', borderRadius:'var(--radius-sm)' }}>
-                <div className="label" style={{marginBottom:12}}>Resumen</div>
-                <div style={{ display:'flex', flexDirection:'column', gap:8, fontSize:13 }}>
-                  {sel && <div style={{display:'flex',gap:8}}><span>{sel.icon}</span><span>{sel.name}</span></div>}
-                  {form.title && <div style={{display:'flex',gap:8}}><span>📌</span><span style={{fontWeight:600}}>{form.title}</span></div>}
-                  {form.date && <div style={{display:'flex',gap:8}}><span>📅</span><span>{form.date} {form.time}</span></div>}
-                  {form.location && <div style={{display:'flex',gap:8}}><span>📍</span><span>{form.location}</span></div>}
-                  <div style={{display:'flex',gap:8}}><span>👥</span><span>Hasta {form.maxPeople} personas</span></div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Nav buttons */}
-          <div style={{ position:'fixed', bottom:76, left:'50%', transform:'translateX(-50%)', width:'calc(100% - 40px)', maxWidth:440, zIndex:50 }}>
-            {step<2 ? (
-              <button type="button" onClick={()=>canNext&&setStep(s=>s+1)}
-                disabled={!canNext}
-                className="btn-primary" style={{ width:'100%' }}>
-                Siguiente →
-              </button>
-            ):(
-              <button type="submit" className="btn-primary" style={{ width:'100%' }}>
-                ✓ Publicar evento
-              </button>
-            )}
+            <button
+              className="btn btn-primary"
+              style={{ width:'100%', marginTop:28, fontSize:16 }}
+              onClick={() => setStep(1)}
+              disabled={!form.sport}
+            >
+              Siguiente →
+            </button>
           </div>
-        </form>
+        )}
+
+        {/* ── PASO 1: Detalles ── */}
+        {step===1 && (
+          <div className="anim-1" style={{ display:'flex', flexDirection:'column', gap:18 }}>
+
+            <div>
+              <label className="label" style={{ marginBottom:8 }}>Título del evento</label>
+              <input
+                className="input" type="text"
+                placeholder={`${selectedSport?.icon||''} Ej: Running matutino por la Alameda`}
+                value={form.title}
+                onChange={e=>set('title',e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="label" style={{ marginBottom:8 }}>Descripción</label>
+              <textarea
+                className="input" rows={3}
+                placeholder="Cuéntales a los participantes qué pueden esperar..."
+                value={form.description}
+                onChange={e=>set('description',e.target.value)}
+              />
+            </div>
+
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+              <div>
+                <label className="label" style={{ marginBottom:8 }}>Fecha</label>
+                <input className="input" type="date" value={form.date} onChange={e=>set('date',e.target.value)}/>
+              </div>
+              <div>
+                <label className="label" style={{ marginBottom:8 }}>Hora</label>
+                <input className="input" type="time" value={form.time} onChange={e=>set('time',e.target.value)}/>
+              </div>
+            </div>
+
+            <div>
+              <label className="label" style={{ marginBottom:8 }}>Ubicación</label>
+              <input
+                className="input" type="text"
+                placeholder="Parque, polideportivo, dirección..."
+                value={form.location}
+                onChange={e=>set('location',e.target.value)}
+              />
+            </div>
+
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+              <div>
+                <label className="label" style={{ marginBottom:8 }}>Plazas máximas</label>
+                <input
+                  className="input" type="number" min={2} max={100}
+                  value={form.maxPlayers}
+                  onChange={e=>set('maxPlayers',parseInt(e.target.value)||10)}
+                />
+              </div>
+              <div>
+                <label className="label" style={{ marginBottom:8 }}>Precio (€)</label>
+                <input
+                  className="input" type="text"
+                  placeholder="Gratis / 5€ / ..."
+                  value={form.price}
+                  onChange={e=>set('price',e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* Tercer tiempo */}
+            <div style={{
+              display:'flex', alignItems:'center', justifyContent:'space-between',
+              background:'var(--glass)', backdropFilter:'blur(14px)',
+              border:'1px solid var(--border)', borderRadius:14, padding:'14px 18px',
+            }}>
+              <div>
+                <div style={{ fontWeight:600, fontSize:14, color:'var(--text)' }}>🍺 Tercer tiempo</div>
+                <div style={{ fontSize:12, color:'var(--muted)', marginTop:2 }}>Quedada post-evento</div>
+              </div>
+              <button
+                onClick={()=>set('thirdPlace',!form.thirdPlace)}
+                className="toggle"
+                style={{ background: form.thirdPlace ? 'var(--primary)' : 'var(--border)' }}
+              >
+                <div className="toggle-thumb" style={{ left: form.thirdPlace ? '23px' : '3px' }}/>
+              </button>
+            </div>
+
+            <div style={{ display:'flex', gap:12, marginTop:8 }}>
+              <button className="btn btn-ghost" style={{ flex:1 }} onClick={()=>setStep(0)}>← Atrás</button>
+              <button
+                className="btn btn-primary"
+                style={{ flex:2 }}
+                onClick={()=>setStep(2)}
+                disabled={!form.title||!form.date||!form.location}
+              >
+                Revisar →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── PASO 2: Confirmar ── */}
+        {step===2 && (
+          <div className="anim-1">
+            {/* Preview card */}
+            <div className="card" style={{ overflow:'hidden', marginBottom:20 }}>
+              <div style={{ height:4, background: selectedSport ? `linear-gradient(90deg,${selectedSport.color},${selectedSport.color}55)` : 'var(--grad)' }}/>
+              <div style={{ padding:'18px 20px' }}>
+                <div style={{ display:'flex', gap:12, alignItems:'flex-start', marginBottom:12 }}>
+                  <div className="sport-icon" style={{
+                    background: selectedSport ? `${selectedSport.color}20` : 'var(--surface)',
+                    border: `1.5px solid ${selectedSport?.color||'var(--border)'}30`,
+                    borderRadius:16, fontSize:22
+                  }}>
+                    {selectedSport?.icon||'🎯'}
+                  </div>
+                  <div>
+                    <div style={{ fontSize:16, fontWeight:700, color:'var(--text)', marginBottom:2 }}>
+                      {form.title||'Sin título'}
+                    </div>
+                    <div style={{ fontSize:12, color:'var(--muted)' }}>por Carlos O.</div>
+                  </div>
+                </div>
+                {form.description && (
+                  <p style={{ fontSize:13, color:'var(--text2)', lineHeight:1.6, marginBottom:14 }}>{form.description}</p>
+                )}
+                <div style={{ display:'flex', flexWrap:'wrap', gap:'6px 16px', fontSize:12, color:'var(--muted)' }}>
+                  {form.date && <span>📅 {form.date}{form.time?` · ${form.time}`:''}</span>}
+                  {form.location && <span>📍 {form.location}</span>}
+                  <span>👥 Hasta {form.maxPlayers} personas</span>
+                  {form.price && <span>💶 {form.price}</span>}
+                  {form.thirdPlace && <span>🍺 Tercer tiempo</span>}
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display:'flex', gap:12 }}>
+              <button className="btn btn-ghost" style={{ flex:1 }} onClick={()=>setStep(1)}>← Editar</button>
+              <button
+                className="btn btn-primary"
+                style={{ flex:2 }}
+                onClick={submit}
+                disabled={saving}
+              >
+                {saving ? (
+                  <span style={{ display:'flex', alignItems:'center', gap:8 }}>
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style={{ animation:'spin 0.8s linear infinite' }}>
+                      <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.4)" strokeWidth="3"/>
+                      <path d="M12 2 A10 10 0 0 1 22 12" stroke="white" strokeWidth="3" strokeLinecap="round"/>
+                    </svg>
+                    Publicando...
+                  </span>
+                ) : '🚀 Publicar evento'}
+              </button>
+            </div>
+          </div>
+        )}
+
       </div>
-    </div>
+      <Navbar />
+    </>
   )
 }
