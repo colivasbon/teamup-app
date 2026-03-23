@@ -1,184 +1,376 @@
-// src/app/profile/page.js
-'use client'
+'use client';
+import { useState } from 'react';
+import Navbar from '@/components/Navbar';
 
-import { useState } from 'react'
-import Link from 'next/link'
+const SPORT_COLORS = {
+  Running: '#5b6ef5',
+  Pádel: '#06d6a0',
+  Senderismo: '#f59e0b',
+  Fútbol: '#ef4444',
+  Gimnasio: '#8b5cf6',
+  Tenis: '#fbbf24',
+};
 
-const userProfile = {
-  name: 'Carlos Olivas',
-  username: '@colivasbon',
-  avatar: '🧔',
-  bio: 'Apasionado del running y el senderismo. Córdoba 📍',
-  sports: ['running', 'senderismo', 'futbol'],
-  level: 'intermediate',
-  karma: 4.8,
-  karmaCount: 24,
-  eventsCreated: 7,
-  eventsJoined: 31,
-  since: 'Marzo 2025',
-}
+const SPORT_ICONS = {
+  Running: '🏃',
+  Pádel: '🎾',
+  Senderismo: '🥾',
+  Fútbol: '⚽',
+  Gimnasio: '💪',
+  Tenis: '🎾',
+};
 
-const myEvents = [
-  { id: 1, icon: '🏃', title: 'Running Dominguero', date: 'Dom 30 Mar', sport: 'running', color: '#5b6ef5', status: 'open' },
-  { id: 2, icon: '🥾', title: 'Senderismo por Los Pedroches', date: 'Sáb 5 Abr', sport: 'senderismo', color: '#f59e0b', status: 'open' },
-]
+const TABS = ['Actividad', 'Logros', 'Karma'];
+
+const recentEvents = [
+  { id: 1, title: 'Running Matutino', sport: 'Running', date: '20 Mar', role: 'Asistente', result: 'Completado' },
+  { id: 2, title: 'Ruta Sierra Nevada', sport: 'Senderismo', date: '15 Mar', role: 'Organizador', result: 'Completado' },
+  { id: 3, title: 'Fútbol 7 Miércoles', sport: 'Fútbol', date: '12 Mar', role: 'Asistente', result: 'Completado' },
+  { id: 4, title: 'Trail Urbano 5K', sport: 'Running', date: '8 Mar', role: 'Asistente', result: 'Completado' },
+];
+
+const achievements = [
+  { icon: '🏅', label: 'Primer evento', desc: 'Asististe a tu primer evento', earned: true },
+  { icon: '⭐', label: 'Organizador', desc: 'Creaste tu primer evento', earned: true },
+  { icon: '🔥', label: 'Racha de 7', desc: '7 eventos en 7 días', earned: true },
+  { icon: '🤝', label: 'Social', desc: '10 personas conocidas', earned: true },
+  { icon: '🏆', label: 'Top Karma', desc: 'Karma por encima de 4.5', earned: true },
+  { icon: '🌟', label: 'Veterano', desc: '50 eventos asistidos', earned: false },
+  { icon: '👑', label: 'Leyenda', desc: '100 eventos completados', earned: false },
+  { icon: '💎', label: 'Élite', desc: 'Karma perfecto durante 1 mes', earned: false },
+];
 
 const reviews = [
-  { user: 'Ana G.', avatar: '👩', rating: 5, text: 'Muy buen organizador, puntual y majo.', date: 'Mar 2026' },
-  { user: 'Pedro L.', avatar: '👨‍🦱', rating: 5, text: 'Excelente ruta, repetiría.', date: 'Feb 2026' },
-  { user: 'Lucía M.', avatar: '👩‍🦰', rating: 4, text: 'Todo bien, muy buen ambiente.', date: 'Ene 2026' },
-]
+  { author: 'María G.', avatar: '👩', sport: 'Running', stars: 5, text: 'Carlos es un compañero increíble, siempre puntual y con muy buen rollo.', date: '18 Mar' },
+  { author: 'Javi M.', avatar: '👨', sport: 'Senderismo', stars: 5, text: 'Organizó la ruta perfectamente, con todos los detalles previstos.', date: '10 Mar' },
+  { author: 'Lucía P.', avatar: '👩‍🦱', sport: 'Fútbol', stars: 4, text: 'Muy buen ambiente, repetiría sin dudarlo.', date: '5 Mar' },
+];
 
-const sportIcons = {
-  running: '🏃', padel: '🎾', senderismo: '🥾',
-  futbol: '⚽', gimnasio: '💪', tenis: '🎾',
-}
+export default function ProfilePage() {
+  const [activeTab, setActiveTab] = useState('Actividad');
+  const [editMode, setEditMode] = useState(false);
+  const [bio, setBio] = useState('Apasionado del running y el senderismo. Córdoba 📍');
+  const [bioInput, setBioInput] = useState(bio);
 
-const sportNames = {
-  running: 'Running', padel: 'Pádel', senderismo: 'Senderismo',
-  futbol: 'Fútbol', gimnasio: 'Gimnasio', tenis: 'Tenis',
-}
-
-export default function Profile() {
-  const [tab, setTab] = useState('eventos')
+  const userSports = ['Running', 'Senderismo', 'Fútbol'];
 
   return (
-    <div className="min-h-screen pb-28">
-      {/* Header */}
-      <header className="px-6 pt-14 pb-4 flex items-center justify-between">
-        <h1 className="text-lg font-bold">Mi perfil</h1>
-        <Link href="/auth"
-          className="w-9 h-9 glass rounded-full flex items-center justify-center hover:scale-105 transition-transform">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-            <polyline points="16 17 21 12 16 7"/>
-            <line x1="21" y1="12" x2="9" y2="12"/>
-          </svg>
-        </Link>
-      </header>
+    <div className="app-shell">
+      <div className="page-wrap" style={{ paddingTop: '0', paddingBottom: '100px' }}>
 
-      {/* Profile card */}
-      <div className="px-6 mb-5">
-        <div className="glass rounded-3xl p-5">
-          <div className="flex items-center gap-4 mb-4">
-            {/* Avatar */}
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0"
-              style={{background: 'linear-gradient(135deg, #5b6ef522, #8b5cf622)', border: '2px solid rgba(91,110,245,0.3)'}}>
-              {userProfile.avatar}
-            </div>
-            <div className="flex-1">
-              <h2 className="font-bold text-lg leading-tight">{userProfile.name}</h2>
-              <p className="text-sm" style={{color: 'var(--text-secondary)'}}>{userProfile.username}</p>
-              <p className="text-xs mt-1" style={{color: 'var(--text-secondary)'}}>{userProfile.bio}</p>
-            </div>
-          </div>
+        {/* Header con gradiente */}
+        <div style={{
+          background: 'var(--grad)',
+          borderRadius: '0 0 28px 28px',
+          padding: '52px 24px 32px',
+          position: 'relative',
+          overflow: 'hidden',
+        }}>
+          {/* Decoración de fondo */}
+          <div style={{
+            position: 'absolute', top: -40, right: -40,
+            width: 180, height: 180,
+            borderRadius: '50%',
+            background: 'rgba(255,255,255,0.08)',
+          }} />
+          <div style={{
+            position: 'absolute', bottom: -20, left: -20,
+            width: 120, height: 120,
+            borderRadius: '50%',
+            background: 'rgba(255,255,255,0.06)',
+          }} />
 
-          {/* Karma */}
-          <div className="flex items-center gap-2 mb-4 p-3 rounded-xl" style={{background: 'rgba(91,110,245,0.08)'}}>
-            <div className="flex">
-              {[1,2,3,4,5].map((s) => (
-                <svg key={s} width="14" height="14" viewBox="0 0 24 24" fill={s <= Math.round(userProfile.karma) ? '#f59e0b' : 'none'}
-                  stroke="#f59e0b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                </svg>
-              ))}
-            </div>
-            <span className="font-bold text-sm">{userProfile.karma}</span>
-            <span className="text-xs" style={{color: 'var(--text-secondary)'}}>{userProfile.karmaCount} valoraciones</span>
-          </div>
+          {/* Botón editar */}
+          <button
+            onClick={() => setEditMode(!editMode)}
+            style={{
+              position: 'absolute', top: 16, right: 16,
+              background: 'rgba(255,255,255,0.18)',
+              border: '1px solid rgba(255,255,255,0.28)',
+              borderRadius: 12,
+              color: '#fff',
+              fontSize: 13,
+              fontWeight: 600,
+              padding: '6px 14px',
+              cursor: 'pointer',
+            }}
+          >
+            {editMode ? 'Guardar' : 'Editar'}
+          </button>
 
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-2 mb-4">
-            {[
-              { value: userProfile.eventsCreated, label: 'Creados' },
-              { value: userProfile.eventsJoined, label: 'Asistidos' },
-              { value: `${userProfile.since.split(' ')[1]}`, label: 'Miembro' },
-            ].map((s) => (
-              <div key={s.label} className="text-center p-2 rounded-xl" style={{background: 'var(--glass-bg)', border: '1px solid var(--glass-border)'}}>
-                <div className="font-bold text-base" style={{color: 'var(--primary)'}}>{s.value}</div>
-                <div className="text-xs mt-0.5" style={{color: 'var(--text-secondary)'}}>{s.label}</div>
+          {/* Avatar */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, position: 'relative' }}>
+            <div style={{
+              width: 88, height: 88,
+              borderRadius: '50%',
+              background: 'rgba(255,255,255,0.2)',
+              border: '3px solid rgba(255,255,255,0.5)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 40,
+              boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
+            }}>
+              🧔
+            </div>
+
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ color: '#fff', fontWeight: 800, fontSize: 22, letterSpacing: '-0.3px' }}>
+                Carlos Olivas
               </div>
-            ))}
-          </div>
+              <div style={{ color: 'rgba(255,255,255,0.75)', fontSize: 14, marginTop: 2 }}>
+                @colivasbon
+              </div>
+            </div>
 
-          {/* Sports */}
-          <div>
-            <p className="text-xs font-medium mb-2" style={{color: 'var(--text-secondary)'}}>DEPORTES FAVORITOS</p>
-            <div className="flex flex-wrap gap-2">
-              {userProfile.sports.map((s) => (
-                <span key={s} className="flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium"
-                  style={{background: 'rgba(91,110,245,0.12)', color: 'var(--primary)'}}>
-                  {sportIcons[s]} {sportNames[s]}
+            {/* Bio */}
+            {editMode ? (
+              <textarea
+                value={bioInput}
+                onChange={e => setBioInput(e.target.value)}
+                onBlur={() => { setBio(bioInput); setEditMode(false); }}
+                style={{
+                  background: 'rgba(255,255,255,0.18)',
+                  border: '1px solid rgba(255,255,255,0.3)',
+                  borderRadius: 12,
+                  color: '#fff',
+                  fontSize: 14,
+                  padding: '8px 12px',
+                  width: '100%',
+                  textAlign: 'center',
+                  resize: 'none',
+                  outline: 'none',
+                  fontFamily: 'Inter, sans-serif',
+                }}
+                rows={2}
+              />
+            ) : (
+              <div style={{ color: 'rgba(255,255,255,0.88)', fontSize: 14, textAlign: 'center', maxWidth: 280 }}>
+                {bio}
+              </div>
+            )}
+
+            {/* Deportes */}
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
+              {userSports.map(s => (
+                <span key={s} style={{
+                  background: 'rgba(255,255,255,0.18)',
+                  border: '1px solid rgba(255,255,255,0.28)',
+                  borderRadius: 20,
+                  color: '#fff',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  padding: '4px 12px',
+                }}>
+                  {SPORT_ICONS[s]} {s}
                 </span>
               ))}
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Edit button */}
-      <div className="px-6 mb-5">
-        <button className="w-full py-3 rounded-xl text-sm font-medium transition-all hover:scale-[1.01] active:scale-[0.99]"
-          style={{background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', backdropFilter: 'blur(12px)'}}>
-          ✏️ Editar perfil
-        </button>
-      </div>
-
-      {/* Tabs */}
-      <div className="px-6 mb-4 flex gap-1 p-1 rounded-xl" style={{background: 'var(--border)', margin: '0 24px 16px'}}>
-        {['eventos', 'valoraciones'].map((t) => (
-          <button key={t} onClick={() => setTab(t)}
-            className="flex-1 py-2 rounded-lg text-sm font-medium capitalize transition-all"
-            style={{
-              background: tab === t ? 'var(--surface-solid)' : 'transparent',
-              color: tab === t ? 'var(--text)' : 'var(--text-secondary)',
-              boxShadow: tab === t ? '0 1px 4px rgba(0,0,0,0.15)' : 'none',
-            }}>
-            {t === 'eventos' ? 'Mis eventos' : 'Valoraciones'}
-          </button>
-        ))}
-      </div>
-
-      {/* Tab content */}
-      <div className="px-6 space-y-3">
-        {tab === 'eventos' && myEvents.map((ev, i) => (
-          <Link key={ev.id} href={`/events/${ev.id}`}
-            className={`glass rounded-2xl p-4 flex items-center gap-3 block transition-all hover:scale-[1.01] animate-fade-in-up delay-${i+1}`}>
-            <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
-              style={{background: `${ev.color}22`, border: `1px solid ${ev.color}33`}}>
-              {ev.icon}
+        {/* Stats */}
+        <div style={{
+          display: 'grid', gridTemplateColumns: 'repeat(3,1fr)',
+          gap: 10, padding: '20px 16px 0',
+        }}>
+          {[
+            { label: 'Karma', value: '4.8', icon: '⭐', color: '#f59e0b' },
+            { label: 'Organizados', value: '7', icon: '📅', color: '#5b6ef5' },
+            { label: 'Asistidos', value: '31', icon: '🎯', color: '#06d6a0' },
+          ].map(stat => (
+            <div key={stat.label} className="card anim-1" style={{ textAlign: 'center', padding: '16px 8px' }}>
+              <div style={{ fontSize: 22, marginBottom: 4 }}>{stat.icon}</div>
+              <div style={{ fontSize: 22, fontWeight: 800, color: stat.color, lineHeight: 1 }}>{stat.value}</div>
+              <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 3, fontWeight: 500 }}>{stat.label}</div>
             </div>
-            <div className="flex-1 min-w-0">
-              <div className="font-medium text-sm">{ev.title}</div>
-              <div className="text-xs mt-0.5" style={{color: 'var(--text-secondary)'}}>{ev.date}</div>
-            </div>
-            <span className="text-xs px-2 py-1 rounded-full" style={{background: '#06d6a015', color: '#06d6a0'}}>
-              Activo
-            </span>
-          </Link>
-        ))}
+          ))}
+        </div>
 
-        {tab === 'valoraciones' && reviews.map((r, i) => (
-          <div key={i} className={`glass rounded-2xl p-4 animate-fade-in-up delay-${i+1}`}>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-xl">{r.avatar}</span>
-              <div className="flex-1">
-                <div className="text-sm font-medium">{r.user}</div>
-                <div className="flex items-center gap-1">
-                  {[1,2,3,4,5].map((s) => (
-                    <svg key={s} width="10" height="10" viewBox="0 0 24 24"
-                      fill={s <= r.rating ? '#f59e0b' : 'none'} stroke="#f59e0b" strokeWidth="2">
-                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                    </svg>
-                  ))}
-                </div>
-              </div>
-              <span className="text-xs" style={{color: 'var(--text-secondary)'}}>{r.date}</span>
-            </div>
-            <p className="text-sm" style={{color: 'var(--text-secondary)'}}>{r.text}</p>
+        {/* Miembro desde */}
+        <div style={{ padding: '12px 16px 0', textAlign: 'center' }}>
+          <span style={{ fontSize: 12, color: 'var(--muted)' }}>Miembro desde Marzo 2025</span>
+        </div>
+
+        {/* Tabs */}
+        <div style={{ padding: '20px 16px 0' }}>
+          <div style={{
+            display: 'flex', gap: 6,
+            background: 'var(--surface)',
+            borderRadius: 14,
+            padding: 4,
+            border: '1px solid var(--border)',
+          }}>
+            {TABS.map(tab => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                style={{
+                  flex: 1,
+                  padding: '9px 0',
+                  borderRadius: 10,
+                  border: 'none',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.18s',
+                  background: activeTab === tab ? 'var(--grad)' : 'transparent',
+                  color: activeTab === tab ? '#fff' : 'var(--muted)',
+                }}
+              >
+                {tab}
+              </button>
+            ))}
           </div>
-        ))}
+        </div>
+
+        {/* Tab: Actividad */}
+        {activeTab === 'Actividad' && (
+          <div style={{ padding: '16px 16px 0', display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {recentEvents.map((ev, i) => (
+              <div key={ev.id} className={`card anim-${i + 1}`} style={{
+                display: 'flex', alignItems: 'center', gap: 12,
+                padding: '14px 16px',
+                borderLeft: `3px solid ${SPORT_COLORS[ev.sport]}`,
+              }}>
+                <div style={{
+                  width: 40, height: 40, borderRadius: 12,
+                  background: `${SPORT_COLORS[ev.sport]}22`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 20, flexShrink: 0,
+                }}>
+                  {SPORT_ICONS[ev.sport]}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {ev.title}
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 2 }}>
+                    {ev.date} · {ev.role}
+                  </div>
+                </div>
+                <span style={{
+                  fontSize: 11, fontWeight: 700,
+                  color: '#06d6a0',
+                  background: 'rgba(6,214,160,0.12)',
+                  borderRadius: 8,
+                  padding: '3px 8px',
+                  flexShrink: 0,
+                }}>
+                  {ev.result}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Tab: Logros */}
+        {activeTab === 'Logros' && (
+          <div style={{ padding: '16px 16px 0' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10 }}>
+              {achievements.map((ach, i) => (
+                <div key={ach.label} className={`card anim-${(i % 6) + 1}`} style={{
+                  padding: '16px 14px',
+                  opacity: ach.earned ? 1 : 0.4,
+                  textAlign: 'center',
+                  position: 'relative',
+                  overflow: 'hidden',
+                }}>
+                  {ach.earned && (
+                    <div style={{
+                      position: 'absolute', top: 8, right: 8,
+                      width: 8, height: 8, borderRadius: '50%',
+                      background: '#06d6a0',
+                      boxShadow: '0 0 6px #06d6a0',
+                    }} />
+                  )}
+                  <div style={{ fontSize: 28, marginBottom: 6 }}>{ach.icon}</div>
+                  <div style={{ fontWeight: 700, fontSize: 13, color: 'var(--text)' }}>{ach.label}</div>
+                  <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 3, lineHeight: 1.4 }}>{ach.desc}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ textAlign: 'center', marginTop: 16, fontSize: 12, color: 'var(--muted)' }}>
+              5 de 8 logros desbloqueados
+            </div>
+          </div>
+        )}
+
+        {/* Tab: Karma */}
+        {activeTab === 'Karma' && (
+          <div style={{ padding: '16px 16px 0', display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {/* Resumen karma */}
+            <div className="card anim-1" style={{ padding: '20px 18px', textAlign: 'center' }}>
+              <div style={{ fontSize: 48, fontWeight: 900, background: 'var(--grad)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                4.8
+              </div>
+              <div style={{ color: 'var(--muted)', fontSize: 13, marginTop: 2 }}>24 valoraciones</div>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 3, marginTop: 10 }}>
+                {[1,2,3,4,5].map(s => (
+                  <span key={s} style={{ fontSize: 22, color: s <= 5 ? '#f59e0b' : 'var(--border)' }}>★</span>
+                ))}
+              </div>
+              {/* Barras de distribución */}
+              <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {[
+                  { stars: 5, pct: 80 },
+                  { stars: 4, pct: 15 },
+                  { stars: 3, pct: 5 },
+                  { stars: 2, pct: 0 },
+                  { stars: 1, pct: 0 },
+                ].map(row => (
+                  <div key={row.stars} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 11, color: 'var(--muted)', width: 10, textAlign: 'right' }}>{row.stars}</span>
+                    <span style={{ fontSize: 11, color: '#f59e0b' }}>★</span>
+                    <div className="pbar" style={{ flex: 1 }}>
+                      <div className="pbar-fill" style={{ width: `${row.pct}%` }} />
+                    </div>
+                    <span style={{ fontSize: 11, color: 'var(--muted)', width: 28, textAlign: 'right' }}>{row.pct}%</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Reviews */}
+            {reviews.map((rev, i) => (
+              <div key={rev.author} className={`card anim-${i + 2}`} style={{ padding: '14px 16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                  <div style={{
+                    width: 36, height: 36, borderRadius: '50%',
+                    background: 'var(--surface2)',
+                    border: '1px solid var(--border)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 18,
+                  }}>
+                    {rev.avatar}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: 700, fontSize: 13, color: 'var(--text)' }}>{rev.author}</div>
+                    <div style={{ fontSize: 11, color: 'var(--muted)' }}>{rev.sport} · {rev.date}</div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 1 }}>
+                    {[1,2,3,4,5].map(s => (
+                      <span key={s} style={{ fontSize: 13, color: s <= rev.stars ? '#f59e0b' : 'var(--border)' }}>★</span>
+                    ))}
+                  </div>
+                </div>
+                <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.5, margin: 0 }}>{rev.text}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Botón cerrar sesión */}
+        <div style={{ padding: '24px 16px 0' }}>
+          <button className="btn-ghost" style={{
+            width: '100%',
+            color: '#ef4444',
+            borderColor: 'rgba(239,68,68,0.25)',
+          }}>
+            Cerrar sesión
+          </button>
+        </div>
+
       </div>
+      <Navbar active="profile" />
     </div>
-  )
+  );
 }

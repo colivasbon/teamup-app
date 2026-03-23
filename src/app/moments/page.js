@@ -1,199 +1,307 @@
-// src/app/moments/page.js
-'use client'
+'use client';
+import { useState } from 'react';
+import Navbar from '@/components/Navbar';
 
-import { useState } from 'react'
+const SPORT_COLORS = {
+  Running: '#5b6ef5',
+  Pádel: '#06d6a0',
+  Senderismo: '#f59e0b',
+  Fútbol: '#ef4444',
+  Gimnasio: '#8b5cf6',
+  Tenis: '#fbbf24',
+};
 
 const moments = [
   {
-    id: 1, user: 'Miguel R.', avatar: '🧑‍🦱', sport: 'running', icon: '🏃',
-    title: 'Running Dominguero',
-    caption: 'Qué buena ruta por el parque hoy. Ya ganas de la próxima 💪',
-    emoji: '😮‍💨',
-    color: '#5b6ef5',
-    time: 'Hace 2h',
-    likes: 12, liked: false,
+    id: 1,
+    author: 'Carlos O.',
+    avatar: '🧔',
+    sport: 'Running',
+    time: 'Hace 15 min',
+    event: 'Running Matutino — Alameda',
+    text: 'Empezando el día con energía en la Alameda 🌅 Mejor compañía imposible, gracias a todos los que se animaron.',
+    emoji: '🏃‍♂️',
+    likes: 12,
     comments: 3,
-    bg: 'linear-gradient(135deg, #5b6ef522, #818cf811)',
+    liked: false,
+    image: null,
+    stats: { distancia: '5.2 km', tiempo: '28 min', ritmo: '5:23/km' },
   },
   {
-    id: 2, user: 'Laura M.', avatar: '👩‍🦳', sport: 'padel', icon: '🎾',
-    title: 'Partido de Pádel',
-    caption: 'Partido épico hoy en el club 🎾 Perdimos pero nos reímos mogollón. Tercer tiempo obligatorio 🍺',
-    emoji: '🤣',
-    color: '#06d6a0',
-    time: 'Hace 4h',
-    likes: 8, liked: false,
+    id: 2,
+    author: 'María G.',
+    avatar: '👩',
+    sport: 'Pádel',
+    time: 'Hace 1 h',
+    event: 'Torneo Pádel Nivel Medio',
+    text: 'Partido épico esta mañana. Ganamos en el tercer set 6-4, pero sobre todo disfrutamos mogollón 🎾',
+    emoji: '🎾',
+    likes: 24,
+    comments: 8,
+    liked: true,
+    image: null,
+    stats: null,
+  },
+  {
+    id: 3,
+    author: 'Javi M.',
+    avatar: '👨',
+    sport: 'Senderismo',
+    time: 'Hace 3 h',
+    event: 'Ruta Sierra Nevada',
+    text: 'Las vistas desde los 2.800m no tienen precio. Ruta completada con éxito, todos llegamos y nadie se perdió 🥾✨',
+    emoji: '🥾',
+    likes: 41,
+    comments: 12,
+    liked: false,
+    image: null,
+    stats: { distancia: '14 km', desnivel: '+890 m', duración: '5h 20min' },
+  },
+  {
+    id: 4,
+    author: 'Laura S.',
+    avatar: '👩‍🦰',
+    sport: 'Gimnasio',
+    time: 'Hace 5 h',
+    event: 'Entreno Funcional Grupal',
+    text: 'Sesión de funcional increíble hoy. El coach nos destruyó pero de la mejor manera posible 💪🔥',
+    emoji: '💪',
+    likes: 18,
     comments: 5,
-    bg: 'linear-gradient(135deg, #06d6a022, #0891b211)',
+    liked: false,
+    image: null,
+    stats: { series: '4 rondas', ejercicios: '8', descanso: '45 seg' },
   },
   {
-    id: 3, user: 'Carlos A.', avatar: '🧔', sport: 'senderismo', icon: '🥾',
-    title: 'Senderismo Sierra Norte',
-    caption: 'Vistas increíbles desde lo alto. 12 km que valen cada paso. Hasta la próxima aventura ⛰️',
-    emoji: '😍',
-    color: '#f59e0b',
+    id: 5,
+    author: 'Diego R.',
+    avatar: '👦',
+    sport: 'Fútbol',
     time: 'Ayer',
-    likes: 24, liked: true,
-    comments: 7,
-    bg: 'linear-gradient(135deg, #f59e0b22, #ef444411)',
+    event: 'Fútbol 7 — Polideportivo',
+    text: 'Derrota 3-5 pero qué partido más divertido. Metí dos goles y el equipo luchó hasta el final ⚽',
+    emoji: '⚽',
+    likes: 33,
+    comments: 15,
+    liked: true,
+    image: null,
+    stats: { goles: '3 — 5', duración: '60 min', jugadores: '14' },
   },
-  {
-    id: 4, user: 'Javi P.', avatar: '👨‍🦲', sport: 'futbol', icon: '⚽',
-    title: 'Fútbol 7 tarde',
-    caption: 'Gol en el último minuto 🔥 Eso es TeamUp. Nos vemos el próximo viernes.',
-    emoji: '🥳',
-    color: '#ef4444',
-    time: 'Hace 2 días',
-    likes: 19, liked: false,
-    comments: 11,
-    bg: 'linear-gradient(135deg, #ef444422, #dc262611)',
-  },
-]
+];
 
-export default function Moments() {
-  const [feed, setFeed] = useState(moments)
-  const [posting, setPosting] = useState(false)
-  const [newCaption, setNewCaption] = useState('')
+const FILTERS = ['Todos', 'Running', 'Pádel', 'Senderismo', 'Fútbol', 'Gimnasio'];
+
+export default function MomentsPage() {
+  const [filter, setFilter] = useState('Todos');
+  const [likedMap, setLikedMap] = useState({});
+  const [showCompose, setShowCompose] = useState(false);
+  const [composeText, setComposeText] = useState('');
 
   const toggleLike = (id) => {
-    setFeed(feed.map(m => m.id === id
-      ? { ...m, liked: !m.liked, likes: m.liked ? m.likes - 1 : m.likes + 1 }
-      : m
-    ))
-  }
+    setLikedMap(prev => ({ ...prev, [id]: !prev[id] }));
+  };
 
-  const handlePost = (e) => {
-    e.preventDefault()
-    if (!newCaption.trim()) return
-    setFeed([{
-      id: Date.now(), user: 'Tú', avatar: '😊', sport: 'running', icon: '🏃',
-      title: 'Mi momento', caption: newCaption, emoji: '🌟', color: '#5b6ef5',
-      time: 'Ahora', likes: 0, liked: false, comments: 0,
-      bg: 'linear-gradient(135deg, #5b6ef522, #818cf811)',
-    }, ...feed])
-    setNewCaption('')
-    setPosting(false)
-  }
+  const filtered = filter === 'Todos' ? moments : moments.filter(m => m.sport === filter);
 
   return (
-    <div className="min-h-screen pb-28">
-      {/* Header */}
-      <header className="px-6 pt-14 pb-4 flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold">Momentos</h1>
-          <p className="text-sm mt-0.5" style={{color: 'var(--text-secondary)'}}>Lo que pasó después del partido</p>
-        </div>
-        <button
-          onClick={() => setPosting(!posting)}
-          className="w-9 h-9 rounded-full flex items-center justify-center text-white transition-all hover:scale-110 active:scale-95"
-          style={{background: 'var(--gradient)', boxShadow: '0 2px 12px rgba(91,110,245,0.4)'}}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
-            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-          </svg>
-        </button>
-      </header>
+    <div className="app-shell">
+      <div className="page-wrap" style={{ paddingBottom: '100px' }}>
 
-      {/* Post composer */}
-      {posting && (
-        <div className="px-6 mb-5 animate-fade-in-up">
-          <form onSubmit={handlePost} className="glass rounded-2xl p-4">
-            <div className="flex items-start gap-3 mb-3">
-              <span className="text-2xl">😊</span>
-              <textarea
-                placeholder="¿Cómo fue el evento? Comparte el momento..."
-                value={newCaption}
-                onChange={(e) => setNewCaption(e.target.value)}
-                className="input-glass flex-1 h-20 resize-none text-sm"
-                autoFocus
-              />
+        {/* Header */}
+        <div style={{ padding: '52px 16px 0' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+            <div>
+              <h1 style={{ fontSize: 26, fontWeight: 800, color: 'var(--text)', margin: 0, letterSpacing: '-0.5px' }}>
+                Momentos
+              </h1>
+              <p style={{ fontSize: 13, color: 'var(--muted)', margin: '2px 0 0' }}>
+                Lo mejor de hoy en la comunidad
+              </p>
             </div>
-            <div className="flex gap-2 justify-end">
-              <button type="button" onClick={() => setPosting(false)}
-                className="px-4 py-2 rounded-xl text-sm font-medium transition-all hover:scale-[1.02]"
-                style={{background: 'var(--border)', color: 'var(--text-secondary)'}}>
-                Cancelar
-              </button>
-              <button type="submit"
-                className="px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:scale-[1.02]"
-                style={{background: 'var(--gradient)'}}>
-                Publicar
-              </button>
-            </div>
-          </form>
+            <button
+              onClick={() => setShowCompose(!showCompose)}
+              className="btn-primary"
+              style={{ padding: '10px 16px', fontSize: 13 }}
+            >
+              + Publicar
+            </button>
+          </div>
         </div>
-      )}
 
-      {/* Feed */}
-      <div className="px-6 space-y-4">
-        {feed.map((moment, i) => (
-          <div key={moment.id}
-            className={`glass rounded-2xl overflow-hidden animate-fade-in-up delay-${Math.min(i + 1, 6)}`}>
-            
-            {/* Colored top band */}
-            <div className="h-1.5" style={{background: `linear-gradient(90deg, ${moment.color}, ${moment.color}66)`}}/>
-            
-            <div className="p-4">
-              {/* User row */}
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-2xl">{moment.avatar}</span>
-                <div className="flex-1">
-                  <div className="font-semibold text-sm">{moment.user}</div>
-                  <div className="flex items-center gap-1 text-xs" style={{color: 'var(--text-secondary)'}}>
-                    <span>{moment.icon}</span>
-                    <span>{moment.title}</span>
-                    <span>·</span>
-                    <span>{moment.time}</span>
-                  </div>
-                </div>
-                <span className="text-2xl">{moment.emoji}</span>
+        {/* Composer */}
+        {showCompose && (
+          <div className="card anim-1" style={{ margin: '16px 16px 0', padding: '16px' }}>
+            <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+              <div style={{
+                width: 36, height: 36, borderRadius: '50%',
+                background: 'var(--grad)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 18, flexShrink: 0,
+              }}>
+                🧔
               </div>
-
-              {/* Caption */}
-              <p className="text-sm leading-relaxed mb-4">{moment.caption}</p>
-
-              {/* Photo placeholder with gradient */}
-              <div className="rounded-xl h-32 mb-4 flex items-center justify-center"
-                style={{background: moment.bg, border: `1px solid ${moment.color}22`}}>
-                <div className="text-center">
-                  <div className="text-3xl mb-1">{moment.icon}</div>
-                  <div className="text-xs" style={{color: 'var(--text-secondary)'}}>📷 Foto del momento</div>
+              <div style={{ flex: 1 }}>
+                <textarea
+                  value={composeText}
+                  onChange={e => setComposeText(e.target.value)}
+                  placeholder="¿Qué tal fue el entreno de hoy?"
+                  className="input"
+                  style={{ resize: 'none', minHeight: 80, fontSize: 14, lineHeight: 1.5 }}
+                />
+                <div style={{ display: 'flex', gap: 8, marginTop: 10, justifyContent: 'flex-end' }}>
+                  <button className="btn-ghost" style={{ fontSize: 13, padding: '8px 14px' }} onClick={() => setShowCompose(false)}>
+                    Cancelar
+                  </button>
+                  <button className="btn-primary" style={{ fontSize: 13, padding: '8px 16px' }}>
+                    Publicar
+                  </button>
                 </div>
-              </div>
-
-              {/* Actions */}
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={() => toggleLike(moment.id)}
-                  className="flex items-center gap-1.5 transition-all hover:scale-110 active:scale-95"
-                  style={{color: moment.liked ? '#ef4444' : 'var(--text-secondary)'}}>
-                  <svg width="18" height="18" viewBox="0 0 24 24"
-                    fill={moment.liked ? '#ef4444' : 'none'}
-                    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                  </svg>
-                  <span className="text-sm font-medium">{moment.likes}</span>
-                </button>
-
-                <button className="flex items-center gap-1.5 transition-all hover:scale-110"
-                  style={{color: 'var(--text-secondary)'}}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                  </svg>
-                  <span className="text-sm">{moment.comments}</span>
-                </button>
-
-                <button className="flex items-center gap-1.5 transition-all hover:scale-110 ml-auto"
-                  style={{color: 'var(--text-secondary)'}}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-                  </svg>
-                </button>
               </div>
             </div>
           </div>
-        ))}
+        )}
+
+        {/* Filtros horizontales */}
+        <div style={{ padding: '16px 0 0', overflowX: 'auto', scrollbarWidth: 'none' }}>
+          <div style={{ display: 'flex', gap: 8, paddingLeft: 16, paddingRight: 16, width: 'max-content' }}>
+            {FILTERS.map(f => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={filter === f ? 'pill pill-active' : 'pill pill-inactive'}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Feed */}
+        <div style={{ padding: '14px 16px 0', display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {filtered.map((moment, i) => {
+            const isLiked = likedMap[moment.id] !== undefined ? likedMap[moment.id] : moment.liked;
+            const likeCount = moment.likes + (likedMap[moment.id] !== undefined
+              ? (likedMap[moment.id] ? 1 : 0) - (moment.liked ? 1 : 0)
+              : 0);
+
+            return (
+              <div key={moment.id} className={`card anim-${(i % 6) + 1}`} style={{ padding: 0, overflow: 'hidden' }}>
+                {/* Barra de color por deporte */}
+                <div style={{ height: 3, background: SPORT_COLORS[moment.sport] }} />
+
+                <div style={{ padding: '14px 16px 0' }}>
+                  {/* Autor */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+                    <div style={{
+                      width: 38, height: 38, borderRadius: '50%',
+                      background: `${SPORT_COLORS[moment.sport]}22`,
+                      border: `2px solid ${SPORT_COLORS[moment.sport]}44`,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 20, flexShrink: 0,
+                    }}>
+                      {moment.avatar}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)' }}>{moment.author}</div>
+                      <div style={{ fontSize: 11, color: 'var(--muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {moment.event}
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+                      <span style={{
+                        fontSize: 10, fontWeight: 700,
+                        color: SPORT_COLORS[moment.sport],
+                        background: `${SPORT_COLORS[moment.sport]}18`,
+                        borderRadius: 8,
+                        padding: '3px 8px',
+                      }}>
+                        {moment.sport}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Texto */}
+                  <p style={{
+                    fontSize: 14, color: 'var(--text)',
+                    lineHeight: 1.55, margin: '0 0 12px',
+                  }}>
+                    {moment.text}
+                  </p>
+
+                  {/* Stats del entreno si existen */}
+                  {moment.stats && (
+                    <div style={{
+                      display: 'flex', gap: 8,
+                      background: 'var(--surface2)',
+                      borderRadius: 12,
+                      padding: '10px 12px',
+                      marginBottom: 12,
+                      border: '1px solid var(--border)',
+                    }}>
+                      {Object.entries(moment.stats).map(([key, val]) => (
+                        <div key={key} style={{ flex: 1, textAlign: 'center' }}>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{val}</div>
+                          <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 1, textTransform: 'capitalize' }}>{key}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Acciones */}
+                <div style={{
+                  display: 'flex', alignItems: 'center',
+                  padding: '10px 16px 14px',
+                  borderTop: '1px solid var(--border)',
+                  gap: 16,
+                }}>
+                  <button
+                    onClick={() => toggleLike(moment.id)}
+                    style={{
+                      background: 'none', border: 'none', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', gap: 5,
+                      color: isLiked ? '#ef4444' : 'var(--muted)',
+                      fontSize: 13, fontWeight: 600,
+                      transition: 'all 0.15s',
+                      transform: isLiked ? 'scale(1.08)' : 'scale(1)',
+                      padding: 0,
+                    }}
+                  >
+                    <span style={{ fontSize: 17 }}>{isLiked ? '❤️' : '🤍'}</span>
+                    {likeCount}
+                  </button>
+                  <button style={{
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', gap: 5,
+                    color: 'var(--muted)', fontSize: 13, fontWeight: 600,
+                    padding: 0,
+                  }}>
+                    <span style={{ fontSize: 17 }}>💬</span>
+                    {moment.comments}
+                  </button>
+                  <button style={{
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', gap: 5,
+                    color: 'var(--muted)', fontSize: 13, fontWeight: 600,
+                    marginLeft: 'auto',
+                    padding: 0,
+                  }}>
+                    <span style={{ fontSize: 17 }}>↗️</span>
+                  </button>
+                  <span style={{ fontSize: 11, color: 'var(--muted)' }}>{moment.time}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Footer discreto */}
+        <div style={{ textAlign: 'center', padding: '20px 0 0' }}>
+          <span style={{ fontSize: 12, color: 'var(--muted)' }}>Has llegado al final del feed ✨</span>
+        </div>
+
       </div>
+      <Navbar active="moments" />
     </div>
-  )
+  );
 }

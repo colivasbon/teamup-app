@@ -1,4 +1,3 @@
-// src/app/create/page.js
 'use client'
 
 import { useState } from 'react'
@@ -13,330 +12,218 @@ const provinces = [
   'Sevilla','Soria','Tarragona','Teruel','Toledo','Valencia','Valladolid','Vizcaya',
   'Zamora','Zaragoza',
 ]
-
 const sports = [
-  { id: 'running',    name: 'Running',    icon: '🏃', color: '#5b6ef5' },
-  { id: 'padel',      name: 'Pádel',      icon: '🎾', color: '#06d6a0' },
-  { id: 'senderismo', name: 'Senderismo', icon: '🥾', color: '#f59e0b' },
-  { id: 'futbol',     name: 'Fútbol',     icon: '⚽', color: '#ef4444' },
-  { id: 'gimnasio',   name: 'Gimnasio',   icon: '💪', color: '#8b5cf6' },
-  { id: 'tenis',      name: 'Tenis',      icon: '🎾', color: '#fbbf24' },
+  {id:'running',name:'Running',icon:'🏃',color:'#5b6ef5'},
+  {id:'padel',name:'Pádel',icon:'🎾',color:'#06d6a0'},
+  {id:'senderismo',name:'Senderismo',icon:'🥾',color:'#f59e0b'},
+  {id:'futbol',name:'Fútbol',icon:'⚽',color:'#ef4444'},
+  {id:'gimnasio',name:'Gimnasio',icon:'💪',color:'#8b5cf6'},
+  {id:'tenis',name:'Tenis',icon:'🎾',color:'#fbbf24'},
 ]
-
 const levels = [
-  { id: 'any',          name: 'Todos',        icon: '🌍', desc: 'Sin restricciones' },
-  { id: 'beginner',     name: 'Principiante', icon: '🌱', desc: 'Empezando ahora' },
-  { id: 'intermediate', name: 'Intermedio',   icon: '⭐', desc: 'Con experiencia' },
-  { id: 'advanced',     name: 'Avanzado',     icon: '🔥', desc: 'Alto nivel' },
+  {id:'any',name:'Todos',icon:'🌍',desc:'Sin restricción'},
+  {id:'beginner',name:'Principiante',icon:'🌱',desc:'Empezando'},
+  {id:'intermediate',name:'Intermedio',icon:'⭐',desc:'Con experiencia'},
+  {id:'advanced',name:'Avanzado',icon:'🔥',desc:'Alto nivel'},
 ]
+const steps = ['Deporte','Detalles','Opciones']
 
-const steps = ['Deporte', 'Detalles', 'Opciones']
+const LabelInput = ({label, children}) => (
+  <div style={{marginBottom:16}}>
+    <div className="label" style={{marginBottom:8}}>{label}</div>
+    {children}
+  </div>
+)
 
 export default function CreateEvent() {
   const router = useRouter()
   const [step, setStep] = useState(0)
   const [form, setForm] = useState({
-    sport: '', level: 'any',
-    title: '', description: '',
-    date: '', time: '',
-    location: '', province: '',
-    thirdPlace: false, thirdPlaceLink: '',
-    maxPeople: 10, waitingList: 0,
+    sport:'',level:'any',title:'',description:'',
+    date:'',time:'',location:'',province:'',
+    thirdPlace:false,thirdPlaceLink:'',maxPeople:10,waitingList:0,
   })
+  const set = (k,v) => setForm(p=>({...p,[k]:v}))
 
-  const update = (field, value) => setForm(prev => ({ ...prev, [field]: value }))
+  const canNext = step===0 ? !!form.sport
+    : step===1 ? !!(form.title&&form.date&&form.location&&form.province)
+    : true
 
-  const canNext = () => {
-    if (step === 0) return !!form.sport
-    if (step === 1) return form.title && form.date && form.location && form.province
-    return true
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    alert('¡Evento creado con éxito! (demo)')
-    router.push('/')
-  }
-
-  const selectedSport = sports.find(s => s.id === form.sport)
+  const sel = sports.find(s=>s.id===form.sport)
 
   return (
-    <div className="min-h-screen pb-28">
-      {/* Header */}
-      <header className="px-6 pt-14 pb-4">
-        <div className="flex items-center gap-3 mb-4">
-          <button onClick={() => step > 0 ? setStep(step - 1) : router.back()}
-            className="w-9 h-9 glass rounded-full flex items-center justify-center flex-shrink-0 hover:scale-105 transition-transform">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6"/>
-            </svg>
-          </button>
-          <div>
-            <h1 className="text-lg font-bold">Crear evento</h1>
-            <p className="text-xs mt-0.5" style={{color: 'var(--text-secondary)'}}>Paso {step + 1} de {steps.length} · {steps[step]}</p>
-          </div>
-        </div>
+    <div style={{ paddingBottom:100 }}>
+      <div className="page-wrap" style={{ padding:'0 20px' }}>
 
-        {/* Step indicator */}
-        <div className="flex gap-1.5">
-          {steps.map((s, i) => (
-            <div key={i} className="h-1 flex-1 rounded-full transition-all duration-300"
-              style={{background: i <= step ? 'var(--primary)' : 'var(--border)'}}/>
-          ))}
-        </div>
-      </header>
-
-      <form onSubmit={handleSubmit} className="px-6">
-
-        {/* Step 0: Sport */}
-        {step === 0 && (
-          <div className="animate-fade-in">
-            <p className="text-base font-medium mb-5">¿Qué deporte vais a practicar?</p>
-            <div className="grid grid-cols-2 gap-3">
-              {sports.map((s) => (
-                <button
-                  key={s.id}
-                  type="button"
-                  onClick={() => update('sport', s.id)}
-                  className="relative p-4 rounded-2xl border-2 transition-all text-left hover:scale-[1.02] active:scale-[0.98]"
-                  style={{
-                    borderColor: form.sport === s.id ? s.color : 'var(--border)',
-                    background: form.sport === s.id ? `${s.color}18` : 'var(--glass-bg)',
-                    backdropFilter: 'blur(12px)',
-                  }}
-                >
-                  <span className="text-3xl block mb-2">{s.icon}</span>
-                  <span className="text-sm font-medium">{s.name}</span>
-                  {form.sport === s.id && (
-                    <div className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full flex items-center justify-center"
-                      style={{background: s.color}}>
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="20 6 9 17 4 12"/>
-                      </svg>
-                    </div>
-                  )}
-                </button>
-              ))}
+        {/* Header */}
+        <header style={{ paddingTop:56, paddingBottom:24 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:16 }}>
+            <button className="btn-icon" onClick={()=>step>0?setStep(s=>s-1):router.back()}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <div>
+              <h1 style={{ fontSize:20, fontWeight:800, margin:0, letterSpacing:'-0.03em' }}>Crear evento</h1>
+              <p style={{ fontSize:13, color:'var(--muted)', margin:0 }}>Paso {step+1}/{steps.length} · {steps[step]}</p>
             </div>
           </div>
-        )}
-
-        {/* Step 1: Details */}
-        {step === 1 && (
-          <div className="space-y-4 animate-fade-in">
-            <p className="text-base font-medium mb-1">Cuéntanos los detalles</p>
-
-            {/* Title */}
-            <div>
-              <label className="block text-xs font-medium mb-2" style={{color: 'var(--text-secondary)'}}>TÍTULO DEL EVENTO</label>
-              <input
-                type="text"
-                placeholder={`Ej: Partido de ${selectedSport?.name || 'deporte'} tarde`}
-                value={form.title}
-                onChange={(e) => update('title', e.target.value)}
-                className="input-glass"
-                required
-              />
-            </div>
-
-            {/* Description */}
-            <div>
-              <label className="block text-xs font-medium mb-2" style={{color: 'var(--text-secondary)'}}>DESCRIPCIÓN (opcional)</label>
-              <textarea
-                placeholder="Nivel, requisitos, qué llevar..."
-                value={form.description}
-                onChange={(e) => update('description', e.target.value)}
-                className="input-glass h-24 resize-none"
-              />
-            </div>
-
-            {/* Date & Time */}
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs font-medium mb-2" style={{color: 'var(--text-secondary)'}}>FECHA</label>
-                <input
-                  type="date"
-                  value={form.date}
-                  onChange={(e) => update('date', e.target.value)}
-                  className="input-glass"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium mb-2" style={{color: 'var(--text-secondary)'}}>HORA</label>
-                <input
-                  type="time"
-                  value={form.time}
-                  onChange={(e) => update('time', e.target.value)}
-                  className="input-glass"
-                />
-              </div>
-            </div>
-
-            {/* Location */}
-            <div>
-              <label className="block text-xs font-medium mb-2" style={{color: 'var(--text-secondary)'}}>UBICACIÓN</label>
-              <input
-                type="text"
-                placeholder="Nombre del lugar o dirección"
-                value={form.location}
-                onChange={(e) => update('location', e.target.value)}
-                className="input-glass"
-                required
-              />
-            </div>
-
-            {/* Province */}
-            <div>
-              <label className="block text-xs font-medium mb-2" style={{color: 'var(--text-secondary)'}}>PROVINCIA</label>
-              <select
-                value={form.province}
-                onChange={(e) => update('province', e.target.value)}
-                className="input-glass appearance-none"
-                required
-              >
-                <option value="">Selecciona provincia...</option>
-                {provinces.map((p) => (
-                  <option key={p} value={p.toLowerCase().replace(/\s/g, '')}>{p}</option>
-                ))}
-              </select>
-            </div>
+          {/* Progress */}
+          <div style={{ display:'flex', gap:6 }}>
+            {steps.map((_,i)=>(
+              <div key={i} className="step-bar" style={{ flex:1, background: i<=step?'var(--primary)':'var(--border)' }}/>
+            ))}
           </div>
-        )}
+        </header>
 
-        {/* Step 2: Options */}
-        {step === 2 && (
-          <div className="space-y-5 animate-fade-in">
-            <p className="text-base font-medium mb-1">Últimos ajustes</p>
+        <form onSubmit={e=>{e.preventDefault();alert('¡Evento creado! (demo)');router.push('/')}}>
 
-            {/* Level */}
-            <div>
-              <label className="block text-xs font-medium mb-3" style={{color: 'var(--text-secondary)'}}>NIVEL REQUERIDO</label>
-              <div className="grid grid-cols-2 gap-2">
-                {levels.map((l) => (
-                  <button
-                    key={l.id}
-                    type="button"
-                    onClick={() => update('level', l.id)}
-                    className="p-3 rounded-xl border-2 text-left transition-all hover:scale-[1.02]"
+          {/* STEP 0 */}
+          {step===0 && (
+            <div className="fade-in">
+              <p style={{ fontSize:16, fontWeight:600, marginBottom:20 }}>¿Qué deporte vais a practicar?</p>
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+                {sports.map(s=>(
+                  <button key={s.id} type="button" onClick={()=>set('sport',s.id)}
                     style={{
-                      borderColor: form.level === l.id ? 'var(--primary)' : 'var(--border)',
-                      background: form.level === l.id ? 'rgba(var(--primary-rgb), 0.12)' : 'var(--glass-bg)',
-                      backdropFilter: 'blur(12px)',
-                    }}
-                  >
-                    <span className="text-xl block mb-1">{l.icon}</span>
-                    <div className="text-sm font-medium">{l.name}</div>
-                    <div className="text-xs mt-0.5" style={{color: 'var(--text-secondary)'}}>{l.desc}</div>
+                      padding:'18px 14px', borderRadius:18, textAlign:'left',
+                      border:`2px solid ${form.sport===s.id?s.color:'var(--border)'}`,
+                      background: form.sport===s.id?`${s.color}14`:'var(--glass)',
+                      backdropFilter:'blur(12px)',
+                      cursor:'pointer', position:'relative',
+                      transition:'all 0.15s ease',
+                    }}>
+                    <div style={{ fontSize:28, marginBottom:8, lineHeight:1 }}>{s.icon}</div>
+                    <div style={{ fontSize:14, fontWeight:600, color:'var(--text)' }}>{s.name}</div>
+                    {form.sport===s.id && (
+                      <div style={{ position:'absolute', top:10, right:10, width:20, height:20, borderRadius:'50%', background:s.color, display:'flex', alignItems:'center', justifyContent:'center' }}>
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      </div>
+                    )}
                   </button>
                 ))}
               </div>
             </div>
-
-            {/* Max people */}
-            <div className="glass rounded-2xl p-4">
-              <div className="flex items-center justify-between mb-3">
-                <label className="text-sm font-medium">Máximo de personas</label>
-                <span className="text-lg font-bold" style={{color: 'var(--primary)'}}>{form.maxPeople}</span>
-              </div>
-              <input
-                type="range" min="2" max="50"
-                value={form.maxPeople}
-                onChange={(e) => update('maxPeople', parseInt(e.target.value))}
-                className="w-full accent-primary"
-              />
-              <div className="flex justify-between text-xs mt-1" style={{color: 'var(--text-secondary)'}}>
-                <span>2</span><span>50</span>
-              </div>
-            </div>
-
-            {/* Waiting list */}
-            <div className="glass rounded-2xl p-4">
-              <div className="flex items-center justify-between mb-3">
-                <label className="text-sm font-medium">Lista de espera</label>
-                <span className="text-lg font-bold" style={{color: 'var(--secondary)'}}>{form.waitingList}</span>
-              </div>
-              <input
-                type="range" min="0" max="20"
-                value={form.waitingList}
-                onChange={(e) => update('waitingList', parseInt(e.target.value))}
-                className="w-full accent-secondary"
-              />
-              <p className="text-xs mt-2" style={{color: 'var(--text-secondary)'}}>
-                Personas que pueden apuntarse si el evento se llena
-              </p>
-            </div>
-
-            {/* Third place */}
-            <div className="glass rounded-2xl p-4">
-              <label className="flex items-center justify-between cursor-pointer">
-                <div>
-                  <div className="font-medium text-sm">🍺 Tercer tiempo</div>
-                  <p className="text-xs mt-0.5" style={{color: 'var(--text-secondary)'}}>¿Habéis pensado en quedar después?</p>
-                </div>
-                <div
-                  onClick={() => update('thirdPlace', !form.thirdPlace)}
-                  className="w-12 h-6 rounded-full transition-all relative cursor-pointer flex-shrink-0"
-                  style={{background: form.thirdPlace ? 'var(--primary)' : 'var(--border)'}}
-                >
-                  <div className="w-5 h-5 bg-white rounded-full absolute top-0.5 transition-all shadow"
-                    style={{left: form.thirdPlace ? '26px' : '2px'}}/>
-                </div>
-              </label>
-              {form.thirdPlace && (
-                <input
-                  type="text"
-                  placeholder="Link de Google Maps (opcional)"
-                  value={form.thirdPlaceLink}
-                  onChange={(e) => update('thirdPlaceLink', e.target.value)}
-                  className="input-glass mt-3 text-sm"
-                />
-              )}
-            </div>
-
-            {/* Summary */}
-            <div className="glass rounded-2xl p-4" style={{borderColor: 'var(--border)'}}>
-              <h3 className="text-xs font-semibold mb-3" style={{color: 'var(--text-secondary)'}}>RESUMEN DEL EVENTO</h3>
-              <div className="space-y-1.5 text-sm">
-                {selectedSport && <div className="flex gap-2"><span>{selectedSport.icon}</span><span>{selectedSport.name}</span></div>}
-                {form.title && <div className="flex gap-2"><span>📌</span><span className="font-medium">{form.title}</span></div>}
-                {form.date && <div className="flex gap-2"><span>📅</span><span>{form.date} {form.time}</span></div>}
-                {form.location && <div className="flex gap-2"><span>📍</span><span>{form.location}</span></div>}
-                <div className="flex gap-2"><span>👥</span><span>Hasta {form.maxPeople} personas</span></div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Navigation buttons */}
-        <div className="fixed bottom-20 left-6 right-6 z-40 flex gap-3">
-          {step < 2 ? (
-            <button
-              type="button"
-              onClick={() => canNext() && setStep(step + 1)}
-              disabled={!canNext()}
-              className="flex-1 py-4 rounded-2xl font-semibold text-white transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
-              style={{
-                background: canNext() ? 'var(--gradient)' : 'var(--border)',
-                boxShadow: canNext() ? '0 6px 24px rgba(91, 110, 245, 0.4)' : 'none',
-              }}
-            >
-              Siguiente →
-            </button>
-          ) : (
-            <button
-              type="submit"
-              className="flex-1 py-4 rounded-2xl font-semibold text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
-              style={{
-                background: 'var(--gradient)',
-                boxShadow: '0 6px 24px rgba(91, 110, 245, 0.4)',
-              }}
-            >
-              ✓ Publicar evento
-            </button>
           )}
-        </div>
-      </form>
+
+          {/* STEP 1 */}
+          {step===1 && (
+            <div className="fade-in" style={{ display:'flex', flexDirection:'column', gap:0 }}>
+              <LabelInput label="Título del evento">
+                <input className="input" type="text" placeholder={`Ej: ${sel?.name||'Deporte'} tarde relajado`}
+                  value={form.title} onChange={e=>set('title',e.target.value)} required/>
+              </LabelInput>
+              <LabelInput label="Descripción (opcional)">
+                <textarea className="input" placeholder="Nivel, requisitos, qué llevar..." rows={3}
+                  value={form.description} onChange={e=>set('description',e.target.value)}/>
+              </LabelInput>
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginBottom:16 }}>
+                <div>
+                  <div className="label" style={{marginBottom:8}}>Fecha</div>
+                  <input className="input" type="date" value={form.date} onChange={e=>set('date',e.target.value)} required/>
+                </div>
+                <div>
+                  <div className="label" style={{marginBottom:8}}>Hora</div>
+                  <input className="input" type="time" value={form.time} onChange={e=>set('time',e.target.value)}/>
+                </div>
+              </div>
+              <LabelInput label="Ubicación">
+                <input className="input" type="text" placeholder="Nombre del lugar o dirección"
+                  value={form.location} onChange={e=>set('location',e.target.value)} required/>
+              </LabelInput>
+              <LabelInput label="Provincia">
+                <select className="input" value={form.province} onChange={e=>set('province',e.target.value)} required>
+                  <option value="">Selecciona...</option>
+                  {provinces.map(p=><option key={p} value={p.toLowerCase().replace(/\s/g,'')}>{p}</option>)}
+                </select>
+              </LabelInput>
+            </div>
+          )}
+
+          {/* STEP 2 */}
+          {step===2 && (
+            <div className="fade-in">
+              {/* Level */}
+              <div className="label" style={{marginBottom:12}}>Nivel requerido</div>
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginBottom:20 }}>
+                {levels.map(l=>(
+                  <button key={l.id} type="button" onClick={()=>set('level',l.id)}
+                    style={{
+                      padding:'14px 12px', borderRadius:16, textAlign:'left',
+                      border:`2px solid ${form.level===l.id?'var(--primary)':'var(--border)'}`,
+                      background: form.level===l.id?'rgba(var(--primary-rgb),0.10)':'var(--glass)',
+                      backdropFilter:'blur(12px)', cursor:'pointer', transition:'all 0.15s ease',
+                    }}>
+                    <div style={{ fontSize:22, marginBottom:6 }}>{l.icon}</div>
+                    <div style={{ fontSize:13, fontWeight:700 }}>{l.name}</div>
+                    <div style={{ fontSize:11, color:'var(--muted)', marginTop:2 }}>{l.desc}</div>
+                  </button>
+                ))}
+              </div>
+
+              {/* Sliders */}
+              {[
+                {key:'maxPeople',label:'Máximo de personas',min:2,max:50,color:'var(--primary)'},
+                {key:'waitingList',label:'Lista de espera',min:0,max:20,color:'var(--violet)'},
+              ].map(({key,label,min,max,color})=>(
+                <div key={key} className="card" style={{ padding:'16px 18px', marginBottom:12, borderRadius:'var(--radius-sm)' }}>
+                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10 }}>
+                    <div style={{ fontSize:14, fontWeight:600 }}>{label}</div>
+                    <div style={{ fontSize:20, fontWeight:800, color, letterSpacing:'-0.02em' }}>{form[key]}</div>
+                  </div>
+                  <input type="range" min={min} max={max} value={form[key]}
+                    onChange={e=>set(key,parseInt(e.target.value))}
+                    style={{ width:'100%', accentColor:color }}/>
+                </div>
+              ))}
+
+              {/* Third place */}
+              <div className="card" style={{ padding:'16px 18px', borderRadius:'var(--radius-sm)', marginBottom:16 }}>
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                  <div>
+                    <div style={{ fontSize:14, fontWeight:600 }}>🍺 Tercer tiempo</div>
+                    <div style={{ fontSize:12, color:'var(--muted)', marginTop:2 }}>¿Quedáis después?</div>
+                  </div>
+                  <div className="toggle" onClick={()=>set('thirdPlace',!form.thirdPlace)}
+                    style={{ background: form.thirdPlace?'var(--primary)':'var(--border2)' }}>
+                    <div className="toggle-thumb" style={{ left: form.thirdPlace?'23px':'3px' }}/>
+                  </div>
+                </div>
+                {form.thirdPlace && (
+                  <input className="input" type="text" placeholder="Link Google Maps (opcional)"
+                    value={form.thirdPlaceLink} onChange={e=>set('thirdPlaceLink',e.target.value)}
+                    style={{ marginTop:12 }}/>
+                )}
+              </div>
+
+              {/* Summary */}
+              <div className="card" style={{ padding:'16px 18px', borderRadius:'var(--radius-sm)' }}>
+                <div className="label" style={{marginBottom:12}}>Resumen</div>
+                <div style={{ display:'flex', flexDirection:'column', gap:8, fontSize:13 }}>
+                  {sel && <div style={{display:'flex',gap:8}}><span>{sel.icon}</span><span>{sel.name}</span></div>}
+                  {form.title && <div style={{display:'flex',gap:8}}><span>📌</span><span style={{fontWeight:600}}>{form.title}</span></div>}
+                  {form.date && <div style={{display:'flex',gap:8}}><span>📅</span><span>{form.date} {form.time}</span></div>}
+                  {form.location && <div style={{display:'flex',gap:8}}><span>📍</span><span>{form.location}</span></div>}
+                  <div style={{display:'flex',gap:8}}><span>👥</span><span>Hasta {form.maxPeople} personas</span></div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Nav buttons */}
+          <div style={{ position:'fixed', bottom:76, left:'50%', transform:'translateX(-50%)', width:'calc(100% - 40px)', maxWidth:440, zIndex:50 }}>
+            {step<2 ? (
+              <button type="button" onClick={()=>canNext&&setStep(s=>s+1)}
+                disabled={!canNext}
+                className="btn-primary" style={{ width:'100%' }}>
+                Siguiente →
+              </button>
+            ):(
+              <button type="submit" className="btn-primary" style={{ width:'100%' }}>
+                ✓ Publicar evento
+              </button>
+            )}
+          </div>
+        </form>
+      </div>
     </div>
   )
 }
