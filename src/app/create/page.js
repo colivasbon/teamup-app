@@ -168,7 +168,7 @@ export default function CreateEvent() {
               type="time"
               value={form.time}
               onChange={(e) => setForm({ ...form, time: e.target.value })}
-              className="w-full p-4 bg-surface border border-border rounded-xl text-text focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm hover:shadow-md">
+              className="w-full p-4 bg-surface border border-border rounded-xl text-text focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm hover:shadow-md"
             />
           </div>
         </div>
