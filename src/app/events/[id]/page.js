@@ -340,37 +340,11 @@ export default function EventDetail() {
   }
 
   // ── Seleccionar imagen ───────────────────────────────────
-  // Comprimir imagen con Canvas (máx 1200px, calidad 0.75)
-  const compressImage = (file) => new Promise((resolve) => {
-    const MAX_PX  = 1200
-    const QUALITY = 0.75
-    const reader  = new FileReader()
-    reader.onload = (ev) => {
-      const img = new Image()
-      img.onload = () => {
-        const ratio  = Math.min(MAX_PX / img.width, MAX_PX / img.height, 1)
-        const canvas = document.createElement('canvas')
-        canvas.width  = Math.round(img.width  * ratio)
-        canvas.height = Math.round(img.height * ratio)
-        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height)
-        canvas.toBlob(
-          (blob) => resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' })),
-          'image/jpeg', QUALITY
-        )
-      }
-      img.src = ev.target.result
-    }
-    reader.readAsDataURL(file)
-  })
-
-  const handleImageSelect = async (e) => {
+  const handleImageSelect = (e) => {
     const file = e.target.files?.[0]
     if (!file) return
-    // Preview inmediato con el archivo original
-    setNewMoment(p => ({ ...p, imageFile: file, imagePreview: URL.createObjectURL(file) }))
-    // Comprimir en segundo plano y reemplazar el file antes de subir
-    const compressed = await compressImage(file)
-    setNewMoment(p => ({ ...p, imageFile: compressed }))
+    const preview = URL.createObjectURL(file)
+    setNewMoment(p => ({ ...p, imageFile: file, imagePreview: preview }))
   }
 
   function fmtTime(iso) {
