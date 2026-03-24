@@ -16,12 +16,9 @@ const DEMO = {
   'demo-4': { id:'demo-4', title:'Fútbol 7 tarde',           sport:'futbol',     level:'any',          date:'2026-03-28', time:'20:00:00', location:'Polideportivo Municipal',  province:'Sevilla',  max_players:14, price:'Gratis',     third_place:true,  description:'Partido amistoso de fútbol 7. Todos los niveles bienvenidos. Tercer tiempo en el bar de al lado.',                     creator_name:'Diego R.', participant_count:11, tags:['Fútbol 7','Casual','Tercer tiempo'] },
   'demo-5': { id:'demo-5', title:'Entreno Funcional Grupal', sport:'gimnasio',   level:'intermediate', date:'2026-03-25', time:'19:00:00', location:'Box CrossFit Sur',         province:'Madrid',   max_players:12, price:'Gratis',     third_place:false, description:'4 rondas de ejercicios funcionales: sentadillas, burpees, dominadas y carrera. Duración ~50 minutos.',                creator_name:'Laura S.', participant_count:8,  tags:['HIIT','Fuerza','Grupo'] },
   'demo-6': { id:'demo-6', title:'Dobles Tenis Casual',      sport:'tenis',      level:'beginner',     date:'2026-04-01', time:'10:00:00', location:'Club de Tenis Parque Sur', province:'Málaga',   max_players:8,  price:'Gratis',     third_place:false, description:'Partidos de dobles de tenis para todos los niveles. Ambiente muy relajado.',                                            creator_name:'Ana G.',   participant_count:3,  tags:['Pista dura','Casual','Principiantes'] },
-  '1': { id:'demo-1', title:'Running Matutino', sport:'running', level:'any', date:'2026-03-30', time:'07:30:00', location:'Alameda de Córdoba', province:'Córdoba', max_players:10, price:'Gratis', third_place:false, description:'Ruta matutina.', creator_name:'Carlos O.', participant_count:7, tags:[] },
-  '2': { id:'demo-2', title:'Torneo Pádel',     sport:'padel',   level:'intermediate', date:'2026-03-29', time:'18:00:00', location:'Club Pádel', province:'Valencia', max_players:4, price:'5€', third_place:true, description:'Torneo.', creator_name:'Laura M.', participant_count:2, tags:[] },
 }
 
 const TABS = ['Info','Participantes','Chat']
-
 const isDemo = (id) => String(id).startsWith('demo-') || !!DEMO[id]
 
 function fmt(dateStr) {
@@ -33,161 +30,125 @@ export default function EventDetail() {
   const { id }   = useParams()
   const router   = useRouter()
   const { user } = useAuth()
-  const chatRef  = useRef(null)
+  const chatRef     = useRef(null)
   const chatPollRef = useRef(null)
+  const prevMsgCount = useRef(0)
 
-  const [ev,           setEv]       = useState(null)
-  const [pCount,       setPCount]   = useState(0)
-  const [participants, setParticipants] = useState([])
-  const [loading,      setLoad]     = useState(true)
-  const [tab,          setTab]      = useState('Info')
-  const [joined,       setJoined]   = useState(false)
-  const [joining,      setJoining]  = useState(false)
-  const [messages,     setMessages] = useState([])
-  const [chatMsg,      setChat]     = useState('')
-  const [sendingMsg,   setSending]  = useState(false)
-  const [loadingChat,  setLoadChat] = useState(false)
-  const [lastMsgId,    setLastMsgId] = useState(null)
+  const [ev,          setEv]        = useState(null)
+  const [pCount,      setPCount]    = useState(0)
+  const [participants,setParticipants] = useState([])
+  const [loading,     setLoad]      = useState(true)
+  const [tab,         setTab]       = useState('Info')
+  const [joined,      setJoined]    = useState(false)
+  const [joining,     setJoining]   = useState(false)
+  const [messages,    setMessages]  = useState([])
+  const [chatMsg,     setChat]      = useState('')
+  const [sendingMsg,  setSending]   = useState(false)
+  const [loadingChat, setLoadChat]  = useState(false)
+  const [chatError,   setChatError] = useState('')
 
-  // ── Carga inicial del evento ──────────────────────────────
+  // ── Carga inicial ────────────────────────────────────────
   useEffect(() => {
     const load = async () => {
       if (isDemo(id)) {
         const d = DEMO[id]
         if (d) { setEv(d); setPCount(d.participant_count || 0) }
-        setLoad(false)
-        return
+        setLoad(false); return
       }
       try {
         const sb = getSupabase()
         if (sb) {
           const { data, error } = await sb.from('events_with_counts').select('*').eq('id', id).single()
           if (!error && data) {
-            setEv(data)
-            setPCount(data.participant_count || 0)
+            setEv(data); setPCount(data.participant_count || 0)
             if (user) {
-              const { data: ep } = await sb.from('event_participants').select('id').eq('event_id', id).eq('user_id', user.id).single()
+              const { data: ep } = await sb.from('event_participants')
+                .select('id, status').eq('event_id', id).eq('user_id', user.id).maybeSingle()
               setJoined(!!ep)
             }
-            setLoad(false)
-            return
+            setLoad(false); return
           }
         }
       } catch(_) {}
       const fallback = DEMO[id] || DEMO['demo-1']
-      setEv(fallback)
-      setPCount(fallback?.participant_count || 7)
-      setLoad(false)
+      setEv(fallback); setPCount(fallback?.participant_count || 7); setLoad(false)
     }
     load()
   }, [id, user])
 
-  // ── Participantes (carga al entrar en pestaña) ────────────
+  // ── Participantes ────────────────────────────────────────
   useEffect(() => {
     if (tab !== 'Participantes') return
-    const loadParticipants = async () => {
-      const sb = getSupabase()
-      if (!sb || isDemo(id)) {
+    const loadP = async () => {
+      if (isDemo(id)) {
         setParticipants([
           { id:'p1', full_name:'Carlos O.', username:'carlosO', avatar_url:null },
           { id:'p2', full_name:'Laura M.',  username:'lauraM',  avatar_url:null },
           { id:'p3', full_name:'Javi R.',   username:'javiR',   avatar_url:null },
-        ])
-        return
+        ]); return
       }
       try {
-        // status puede ser 'joined' o 'confirmed' — buscamos ambos
+        const sb = getSupabase()
+        if (!sb) return
         const { data } = await sb.from('event_participants')
           .select('user_id, profiles(id, full_name, username, avatar_url)')
           .eq('event_id', id)
-          .in('status', ['joined', 'confirmed'])
         if (data) setParticipants(data.map(d => d.profiles).filter(Boolean))
       } catch(_) {}
     }
-    loadParticipants()
+    loadP()
   }, [tab, id])
 
-  // ── Chat: función de carga de mensajes ────────────────────
+  // ── Fetch mensajes ───────────────────────────────────────
   const fetchMessages = useCallback(async (showSpinner = false) => {
     const sb = getSupabase()
     if (!sb || isDemo(id)) return
-
     if (showSpinner) setLoadChat(true)
     try {
-      const { data } = await sb.from('event_messages')
-        .select('id, user_id, text, created_at, profiles(full_name)')
+      const { data, error } = await sb.from('event_messages')
+        .select('id, user_id, text, created_at, profiles(full_name, avatar_url)')
         .eq('event_id', id)
         .order('created_at', { ascending: true })
         .limit(100)
 
+      if (error) { console.error('fetchMessages error:', error); return }
       if (data) {
         setMessages(prev => {
-          // Evitar re-renders innecesarios si no hay cambios
           const newIds = data.map(m => m.id).join(',')
           const oldIds = prev.filter(m => !m.id.startsWith('temp-')).map(m => m.id).join(',')
           if (newIds === oldIds) return prev
-
-          // Conservar mensajes temporales (optimistic) que aún no llegaron de BD
           const realIds = new Set(data.map(m => m.id))
           const temps   = prev.filter(m => m.id.startsWith('temp-') && !realIds.has(m.id))
-
-          const real = data.map(m => ({
-            id:         m.id,
-            user_id:    m.user_id,
-            author:     m.profiles?.full_name || 'Usuario',
-            text:       m.text,
-            created_at: m.created_at,
-            me:         m.user_id === user?.id,
+          const real    = data.map(m => ({
+            id: m.id, user_id: m.user_id,
+            author: m.profiles?.full_name || 'Usuario',
+            avatar: m.profiles?.avatar_url || null,
+            text: m.text, created_at: m.created_at,
+            me: m.user_id === user?.id,
           }))
           return [...real, ...temps]
         })
-        if (data.length > 0) setLastMsgId(data[data.length - 1].id)
       }
-    } catch(_) {}
+    } catch(e) { console.error('fetchMessages exception:', e) }
     if (showSpinner) setLoadChat(false)
   }, [id, user])
 
-  // ── Chat: demo cuando es evento de muestra ────────────────
-  const loadDemoChat = useCallback(() => {
-    setMessages([
-      { id:'m1', user_id:'u1', author:'Carlos O.', text:'¡Quedan 3 plazas! Animaos 💪', created_at: new Date(Date.now()-3600000).toISOString(), me:false },
-      { id:'m2', user_id:'u2', author:'Laura M.',  text:'Yo llevo raqueta de repuesto si alguien necesita', created_at: new Date(Date.now()-1800000).toISOString(), me:false },
-    ])
-  }, [])
-
-  // ── Chat: activar/desactivar polling según pestaña ────────
+  // ── Polling chat ─────────────────────────────────────────
   useEffect(() => {
-    // Limpiar intervalo anterior siempre
-    if (chatPollRef.current) {
-      clearInterval(chatPollRef.current)
-      chatPollRef.current = null
-    }
-
+    if (chatPollRef.current) { clearInterval(chatPollRef.current); chatPollRef.current = null }
     if (tab !== 'Chat' || !joined) return
-
     if (isDemo(id)) {
-      loadDemoChat()
-      return
+      setMessages([
+        { id:'m1', user_id:'u1', author:'Carlos O.', avatar:null, text:'¡Quedan 3 plazas! Animaos 💪', created_at: new Date(Date.now()-3600000).toISOString(), me:false },
+        { id:'m2', user_id:'u2', author:'Laura M.',  avatar:null, text:'Yo llevo raqueta de repuesto si alguien necesita', created_at: new Date(Date.now()-1800000).toISOString(), me:false },
+      ]); return
     }
-
-    // Primera carga con spinner
     fetchMessages(true)
+    chatPollRef.current = setInterval(() => fetchMessages(false), 4000)
+    return () => { if (chatPollRef.current) { clearInterval(chatPollRef.current); chatPollRef.current = null } }
+  }, [tab, joined, id, fetchMessages])
 
-    // Polling cada 4 segundos mientras el chat está abierto
-    chatPollRef.current = setInterval(() => {
-      fetchMessages(false)
-    }, 4000)
-
-    return () => {
-      if (chatPollRef.current) {
-        clearInterval(chatPollRef.current)
-        chatPollRef.current = null
-      }
-    }
-  }, [tab, joined, id, fetchMessages, loadDemoChat])
-
-  // ── Auto-scroll al final solo cuando hay mensajes nuevos ──
-  const prevMsgCount = useRef(0)
+  // ── Auto-scroll ──────────────────────────────────────────
   useEffect(() => {
     if (messages.length > prevMsgCount.current) {
       if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight
@@ -195,7 +156,7 @@ export default function EventDetail() {
     }
   }, [messages])
 
-  // ── Unirse / salir ────────────────────────────────────────
+  // ── Unirse / salir ───────────────────────────────────────
   const handleJoin = async () => {
     if (!user) { router.push('/auth'); return }
     setJoining(true)
@@ -206,7 +167,9 @@ export default function EventDetail() {
           await sb.from('event_participants').delete().eq('event_id', id).eq('user_id', user.id)
           setJoined(false); setPCount(p => Math.max(0, p-1))
         } else {
-          const { error } = await sb.from('event_participants').insert({ event_id:id, user_id:user.id, status:'joined' })
+          // status:'joined' es obligatorio — la RLS del chat lo comprueba
+          const { error } = await sb.from('event_participants')
+            .insert({ event_id:id, user_id:user.id, status:'joined' })
           if (!error) { setJoined(true); setPCount(p => p+1) }
         }
       }
@@ -214,21 +177,20 @@ export default function EventDetail() {
     setJoining(false)
   }
 
-  // ── Enviar mensaje ────────────────────────────────────────
+  // ── Enviar mensaje ───────────────────────────────────────
   const sendMsg = async () => {
     if (!chatMsg.trim() || !user || !joined) return
     setSending(true)
+    setChatError('')
     const text = chatMsg.trim()
     setChat('')
 
-    // Optimistic: añadir el mensaje al instante
     const temp = {
       id: 'temp-' + Date.now(),
       user_id: user.id,
       author: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Tú',
-      text,
-      created_at: new Date().toISOString(),
-      me: true,
+      avatar: null,
+      text, created_at: new Date().toISOString(), me: true,
     }
     setMessages(p => [...p, temp])
     prevMsgCount.current += 1
@@ -236,18 +198,28 @@ export default function EventDetail() {
     try {
       const sb = getSupabase()
       if (sb && !isDemo(id)) {
-        await sb.from('event_messages').insert({ event_id: id, user_id: user.id, text })
-        // Recargar inmediatamente tras enviar para sustituir el temporal
-        fetchMessages(false)
+        const { error } = await sb.from('event_messages')
+          .insert({ event_id: id, user_id: user.id, text })
+        if (error) {
+          console.error('sendMsg error:', error)
+          setChatError('No se pudo enviar. Asegúrate de estar apuntado al evento.')
+          // Quitar el temporal si falló
+          setMessages(p => p.filter(m => m.id !== temp.id))
+        } else {
+          // Recargar para obtener el mensaje real con datos completos
+          setTimeout(() => fetchMessages(false), 500)
+        }
       }
-    } catch(_) {}
+    } catch(e) {
+      console.error('sendMsg exception:', e)
+      setChatError('Error de conexión al enviar el mensaje.')
+      setMessages(p => p.filter(m => m.id !== temp.id))
+    }
     setSending(false)
   }
 
   function fmtTime(iso) {
-    const d = new Date(iso)
-    const now = new Date()
-    const diffH = (now - d) / 3600000
+    const d = new Date(iso); const now = new Date(); const diffH = (now - d) / 3600000
     if (diffH < 1)  return `Hace ${Math.round((now-d)/60000)} min`
     if (diffH < 24) return `Hace ${Math.round(diffH)} h`
     return d.toLocaleDateString('es-ES', { day:'numeric', month:'short' })
@@ -258,7 +230,6 @@ export default function EventDetail() {
       <div className="spinner"/>
     </div>
   )
-
   if (!ev) return (
     <div className="app-shell" style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', minHeight:'100dvh', gap:16 }}>
       <div style={{ fontSize:48 }}>😕</div>
@@ -287,26 +258,34 @@ export default function EventDetail() {
               {ev.level && ev.level!=='any' && <><span style={{ color:'rgba(255,255,255,0.6)' }}>·</span><span style={{ color:'rgba(255,255,255,0.88)', fontSize:12, textTransform:'capitalize' }}>{ev.level}</span></>}
             </div>
             <h1 style={{ color:'white', fontWeight:900, fontSize:26, margin:'0 0 6px', letterSpacing:'-0.05em', lineHeight:1.2 }}>{ev.title}</h1>
-            <div style={{ color:'rgba(255,255,255,0.80)', fontSize:13 }}>por {ev.creator_name || 'Organizador'}</div>
+            <div style={{ color:'rgba(255,255,255,0.80)', fontSize:13 }}>
+              por{' '}
+              {ev.creator_id
+                ? <a href={`/profile/${ev.creator_id}`} style={{ color:'white', fontWeight:700, textDecoration:'underline', textDecorationColor:'rgba(255,255,255,0.4)' }}>{ev.creator_name || 'Organizador'}</a>
+                : <span>{ev.creator_name || 'Organizador'}</span>
+              }
+            </div>
           </div>
         </div>
 
-        {/* Info rápida */}
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:10, padding:'16px 18px 0' }}>
-          {[
-            { icon:'📅', label:'Fecha',  value:fmt(ev.date) },
-            { icon:'⏱️', label:'Hora',   value:ev.time?.slice(0,5)||'' },
-            { icon:'📍', label:'Lugar',  value:ev.location },
-            { icon:'💶', label:'Precio', value:ev.price||'Gratis' },
-          ].map(item=>(
-            <div key={item.label} className="card anim-1" style={{ padding:'12px 14px', display:'flex', alignItems:'center', gap:10 }}>
-              <span style={{ fontSize:20 }}>{item.icon}</span>
-              <div style={{ minWidth:0 }}>
-                <div className="label" style={{ marginBottom:2 }}>{item.label}</div>
-                <div style={{ fontSize:13, fontWeight:700, color:'var(--text)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{item.value}</div>
+        {/* Info rápida — scroll horizontal para nombres largos */}
+        <div style={{ overflowX:'auto', padding:'16px 18px 0' }}>
+          <div style={{ display:'flex', gap:10, minWidth:'max-content' }}>
+            {[
+              { icon:'📅', label:'Fecha',  value: fmt(ev.date) },
+              { icon:'⏱️', label:'Hora',   value: ev.time?.slice(0,5)||'' },
+              { icon:'📍', label:'Lugar',  value: ev.location },
+              { icon:'💶', label:'Precio', value: ev.price||'Gratis' },
+            ].map(item=>(
+              <div key={item.label} className="card" style={{ padding:'12px 14px', display:'flex', alignItems:'center', gap:10, minWidth:140, maxWidth:200 }}>
+                <span style={{ fontSize:20, flexShrink:0 }}>{item.icon}</span>
+                <div style={{ minWidth:0 }}>
+                  <div className="label" style={{ marginBottom:2 }}>{item.label}</div>
+                  <div style={{ fontSize:13, fontWeight:700, color:'var(--text)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{item.value}</div>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
         {/* Plazas */}
@@ -339,7 +318,6 @@ export default function EventDetail() {
                 background: tab===t ? c : 'transparent',
                 color: tab===t ? 'white' : 'var(--muted)',
                 transition:'all 0.18s ease',
-                position:'relative',
               }}>
                 {t}
                 {t==='Chat' && <span style={{ marginLeft:4, fontSize:10, background: joined?c:'var(--muted)', color:'white', borderRadius:100, padding:'1px 5px', opacity: joined?1:0.6 }}>{joined?'🔓':'🔒'}</span>}
@@ -380,14 +358,9 @@ export default function EventDetail() {
         {tab==='Participantes' && (
           <div style={{ padding:'16px 18px 0', display:'flex', flexDirection:'column', gap:10 }}>
             <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:4 }}>
-              <span style={{ fontSize:13, color:'var(--muted)' }}>
-                {pCount} persona{pCount!==1?'s':''} apuntada{pCount!==1?'s':''}
-              </span>
-              {!joined && user && (
-                <span style={{ fontSize:12, color:c, fontWeight:600 }}>Únete para ver más</span>
-              )}
+              <span style={{ fontSize:13, color:'var(--muted)' }}>{pCount} persona{pCount!==1?'s':''} apuntada{pCount!==1?'s':''}</span>
+              {!joined && user && <span style={{ fontSize:12, color:c, fontWeight:600 }}>Únete para ver más</span>}
             </div>
-
             {participants.length === 0 ? (
               <div className="card" style={{ padding:'28px 20px', textAlign:'center' }}>
                 <div style={{ fontSize:36, marginBottom:8 }}>👥</div>
@@ -395,7 +368,8 @@ export default function EventDetail() {
               </div>
             ) : (
               participants.slice(0, joined ? undefined : 3).map((p, i) => (
-                <div key={p.id} className={`card anim-${(i%6)+1}`} style={{ padding:'12px 16px', display:'flex', alignItems:'center', gap:12 }}>
+                <a key={p.id} href={`/profile/${p.id}`} className={`card anim-${(i%6)+1}`}
+                  style={{ padding:'12px 16px', display:'flex', alignItems:'center', gap:12, textDecoration:'none' }}>
                   <div style={{ width:42, height:42, borderRadius:'50%', overflow:'hidden', flexShrink:0, background:`${c}20`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:20 }}>
                     {p.avatar_url ? <img src={p.avatar_url} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }}/> : '👤'}
                   </div>
@@ -403,11 +377,13 @@ export default function EventDetail() {
                     <div style={{ fontWeight:700, fontSize:14, color:'var(--text)' }}>{p.full_name || 'Usuario'}</div>
                     {p.username && <div style={{ fontSize:12, color:'var(--muted)' }}>@{p.username}</div>}
                   </div>
-                  {p.id === user?.id && <span style={{ fontSize:11, color:c, fontWeight:700, background:`${c}18`, borderRadius:8, padding:'3px 8px' }}>Tú ✓</span>}
-                </div>
+                  {p.id === user?.id
+                    ? <span style={{ fontSize:11, color:c, fontWeight:700, background:`${c}18`, borderRadius:8, padding:'3px 8px' }}>Tú ✓</span>
+                    : <span style={{ fontSize:16, color:'var(--muted)' }}>›</span>
+                  }
+                </a>
               ))
             )}
-
             {!joined && participants.length > 3 && (
               <div className="card" style={{ padding:'16px 18px', textAlign:'center' }}>
                 <div style={{ fontSize:13, color:'var(--muted)', marginBottom:12 }}>
@@ -428,9 +404,7 @@ export default function EventDetail() {
               <div className="chat-locked">
                 <div style={{ fontSize:40, marginBottom:12 }}>🔒</div>
                 <div style={{ fontWeight:700, fontSize:16, color:'var(--text)', marginBottom:8 }}>Chat privado</div>
-                <p style={{ fontSize:13, color:'var(--muted)', marginBottom:18, lineHeight:1.6 }}>
-                  El chat es exclusivo para los participantes del evento. Inicia sesión y únete para acceder.
-                </p>
+                <p style={{ fontSize:13, color:'var(--muted)', marginBottom:18, lineHeight:1.6 }}>El chat es exclusivo para los participantes del evento.</p>
                 <a href="/auth" className="btn btn-primary" style={{ fontSize:14, display:'inline-flex' }}>Entrar / Registrarse</a>
               </div>
             ) : !joined ? (
@@ -446,30 +420,26 @@ export default function EventDetail() {
                   ))}
                 </div>
                 <button className="btn btn-primary" style={{ width:'100%', fontSize:14 }} onClick={handleJoin} disabled={joining}>
-                  {joining ? 'Uniéndote...' : `✓ Unirme y acceder al chat`}
+                  {joining ? 'Uniéndote...' : '✓ Unirme y acceder al chat'}
                 </button>
-                {free === 0 && (
-                  <p style={{ fontSize:12, color:'var(--muted)', marginTop:10 }}>El evento está lleno — puedes apuntarte a la lista de espera</p>
-                )}
               </div>
             ) : (
               <div style={{ display:'flex', flexDirection:'column', padding:'0 18px' }}>
                 <div style={{ fontSize:12, color:'var(--muted)', textAlign:'center', marginBottom:14, padding:'6px 12px', background:'var(--surface2)', borderRadius:100, display:'inline-block', alignSelf:'center' }}>
-                  🔒 Solo visible para participantes · se actualiza cada 4s
+                  🔒 Solo visible para participantes
                 </div>
 
-                {/* Mensajes */}
                 <div ref={chatRef} style={{ display:'flex', flexDirection:'column', gap:10, maxHeight:340, overflowY:'auto', marginBottom:14, paddingRight:2 }}>
                   {loadingChat ? (
                     <div style={{ textAlign:'center', padding:'20px 0' }}><div className="spinner" style={{ width:24, height:24, borderWidth:2 }}/></div>
                   ) : messages.length === 0 ? (
-                    <div style={{ textAlign:'center', padding:'30px 0', color:'var(--muted)', fontSize:13 }}>
-                      Ningún mensaje aún. ¡Sé el primero en escribir!
-                    </div>
-                  ) : messages.map((m, i) => (
+                    <div style={{ textAlign:'center', padding:'30px 0', color:'var(--muted)', fontSize:13 }}>Ningún mensaje aún. ¡Sé el primero en escribir!</div>
+                  ) : messages.map((m) => (
                     <div key={m.id} style={{ display:'flex', flexDirection: m.me?'row-reverse':'row', alignItems:'flex-end', gap:8 }}>
                       {!m.me && (
-                        <div style={{ width:28, height:28, borderRadius:'50%', background:`${c}20`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:14, flexShrink:0 }}>👤</div>
+                        <div style={{ width:28, height:28, borderRadius:'50%', background:`${c}20`, overflow:'hidden', display:'flex', alignItems:'center', justifyContent:'center', fontSize:14, flexShrink:0 }}>
+                          {m.avatar ? <img src={m.avatar} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }}/> : '👤'}
+                        </div>
                       )}
                       <div style={{ maxWidth:'72%' }}>
                         {!m.me && <div style={{ fontSize:10, color:'var(--muted)', marginBottom:3, marginLeft:4 }}>{m.author}</div>}
@@ -477,10 +447,10 @@ export default function EventDetail() {
                           background: m.me ? `linear-gradient(135deg,${c},${c}bb)` : 'var(--surface)',
                           border: m.me ? 'none' : '1px solid var(--border)',
                           borderRadius: m.me ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-                          padding:'10px 14px',
-                          color: m.me ? 'white' : 'var(--text)',
+                          padding:'10px 14px', color: m.me ? 'white' : 'var(--text)',
                           fontSize:13, lineHeight:1.45,
-                          opacity: m.id.startsWith('temp-') ? 0.65 : 1,
+                          opacity: m.id.startsWith('temp-') ? 0.6 : 1,
+                          transition:'opacity 0.3s',
                         }}>{m.text}</div>
                         <div style={{ fontSize:10, color:'var(--muted)', marginTop:3, textAlign: m.me?'right':'left' }}>
                           {m.id.startsWith('temp-') ? 'Enviando...' : fmtTime(m.created_at)}
@@ -490,7 +460,12 @@ export default function EventDetail() {
                   ))}
                 </div>
 
-                {/* Input */}
+                {chatError && (
+                  <div style={{ fontSize:12, color:'#ef4444', background:'rgba(239,68,68,0.10)', border:'1px solid rgba(239,68,68,0.25)', borderRadius:10, padding:'8px 12px', marginBottom:10 }}>
+                    {chatError}
+                  </div>
+                )}
+
                 <div style={{ display:'flex', gap:8, alignItems:'center', background:'var(--surface)', border:'1px solid var(--border)', borderRadius:16, padding:'6px 6px 6px 14px', marginBottom:4 }}>
                   <input
                     value={chatMsg}

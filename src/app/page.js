@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useAuth } from '@/contexts/AuthContext'
 import Navbar from '@/components/Navbar'
 
 const SPORTS = [
@@ -13,12 +14,17 @@ const SPORTS = [
 ]
 
 const NEARBY = [
-  { id:'demo-1', icon:'🏃', title:'Running Matutino',   loc:'Alameda de Córdoba',    time:'Hoy · 07:30',    p:7, max:10, color:'#5b6ef5' },
-  { id:'demo-2', icon:'🎾', title:'Torneo Pádel Medio', loc:'Club Pádel Centro',      time:'Mañana · 18:00', p:2, max:4,  color:'#06d6a0' },
-  { id:'demo-4', icon:'⚽', title:'Fútbol 7 tarde',     loc:'Polideportivo Municipal',time:'Vie · 20:00',     p:11, max:14, color:'#ef4444' },
+  { id:'demo-1', icon:'🏃', title:'Running Matutino',   loc:'Alameda de Córdoba',     time:'Hoy · 07:30',    p:7,  max:10, color:'#5b6ef5' },
+  { id:'demo-2', icon:'🎾', title:'Torneo Pádel Medio', loc:'Club Pádel Centro',       time:'Mañana · 18:00', p:2,  max:4,  color:'#06d6a0' },
+  { id:'demo-4', icon:'⚽', title:'Fútbol 7 tarde',     loc:'Polideportivo Municipal', time:'Vie · 20:00',    p:11, max:14, color:'#ef4444' },
 ]
 
 export default function Home() {
+  const { user, profile } = useAuth()
+
+  const avatarUrl   = profile?.avatar_url || null
+  const displayName = profile?.full_name || user?.user_metadata?.full_name || null
+
   return (
     <>
       <div className="page-wrap">
@@ -43,12 +49,22 @@ export default function Home() {
             </div>
             <p style={{ fontSize:14, color:'var(--muted)', margin:0 }}>Haz deporte, conoce gente</p>
           </div>
+
+          {/* Avatar real del usuario */}
           <Link href="/profile" style={{
             width:40, height:40, borderRadius:'50%',
-            background:'var(--glass)', border:'1px solid var(--border)',
+            background: avatarUrl ? 'transparent' : 'var(--glass)',
+            border:'2px solid var(--border)',
             display:'flex', alignItems:'center', justifyContent:'center',
-            fontSize:20, backdropFilter:'blur(14px)', boxShadow:'var(--shadow-sm)',
-          }}>👤</Link>
+            fontSize:18, backdropFilter:'blur(14px)',
+            overflow:'hidden', flexShrink:0,
+            boxShadow:'var(--shadow-sm)',
+          }}>
+            {avatarUrl
+              ? <img src={avatarUrl} alt={displayName || 'Perfil'} style={{ width:'100%', height:'100%', objectFit:'cover' }}/>
+              : <span>👤</span>
+            }
+          </Link>
         </header>
 
         {/* Stats */}
@@ -92,7 +108,7 @@ export default function Home() {
           <Link href="/events" style={{ fontSize:13, fontWeight:600, color:'var(--primary)' }}>Ver todos →</Link>
         </div>
 
-        <div style={{ display:'flex', flexDirection:'column', gap:10, marginBottom:20 }}>
+        <div style={{ display:'flex', flexDirection:'column', gap:10, marginBottom:24 }}>
           {NEARBY.map((ev,i)=>(
             <Link key={ev.id} href={`/events/${ev.id}`} className={`card anim-${i+4}`} style={{
               display:'flex', alignItems:'center', gap:14, padding:'14px 16px',
@@ -115,8 +131,8 @@ export default function Home() {
           ))}
         </div>
 
-        {/* CTA inline — NO flotante, para evitar solapamientos */}
-        <Link href="/create" className="btn btn-primary" style={{ display:'flex', width:'100%', fontSize:16, padding:'15px 24px', borderRadius:16, marginBottom:8 }}>
+        {/* CTA crear evento — margen generoso antes del navbar */}
+        <Link href="/create" className="btn btn-primary" style={{ display:'flex', width:'100%', fontSize:16, padding:'15px 24px', borderRadius:16, marginBottom:32, justifyContent:'center', gap:8 }}>
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
           </svg>
