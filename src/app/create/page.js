@@ -14,6 +14,12 @@ const SPORTS = [
   {id:'futbol',     label:'Fútbol',     icon:'⚽', color:'#ef4444'},
   {id:'gimnasio',   label:'Gimnasio',   icon:'💪', color:'#8b5cf6'},
   {id:'tenis',      label:'Tenis',      icon:'🎾', color:'#fbbf24'},
+  {id:'natacion',   label:'Natación',   icon:'🏊', color:'#0ea5e9'},
+  {id:'ciclismo',   label:'Ciclismo',   icon:'🚴', color:'#f97316'},
+  {id:'yoga',       label:'Yoga',       icon:'🧘', color:'#ec4899'},
+  {id:'baloncesto', label:'Baloncesto', icon:'🏀', color:'#f59e0b'},
+  {id:'voleibol',   label:'Voleibol',   icon:'🏐', color:'#06d6a0'},
+  {id:'badminton',  label:'Bádminton',  icon:'🏸', color:'#8b5cf6'},
 ]
 
 const LEVELS = [

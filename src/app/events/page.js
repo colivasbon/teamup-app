@@ -16,8 +16,8 @@ const DEMO_EVENTS = [
   { id:'demo-6', sport:'tenis',      icon:'🎾', title:'Dobles Tenis Casual',      description:'Partidos de dobles, todos los niveles.',                         date:'2026-04-01', time:'10:00:00', location:'Club de Tenis Parque Sur', province:'malaga',    level:'beginner',     max_players:8,  price:'Gratis',     third_place:false, creator_name:'Ana G.',   participant_count:3,  color:'#fbbf24' },
 ]
 
-const SPORT_ICONS  = { running:'🏃', padel:'🎾', senderismo:'🥾', futbol:'⚽', gimnasio:'💪', tenis:'🎾' }
-const SPORT_COLORS = { running:'#5b6ef5', padel:'#06d6a0', senderismo:'#f59e0b', futbol:'#ef4444', gimnasio:'#8b5cf6', tenis:'#fbbf24' }
+const SPORT_ICONS  = { running:'🏃', padel:'🎾', senderismo:'🥾', futbol:'⚽', gimnasio:'💪', tenis:'🎾', natacion:'🏊', ciclismo:'🚴', yoga:'🧘', baloncesto:'🏀', voleibol:'🏐', badminton:'🏸' }
+const SPORT_COLORS = { running:'#5b6ef5', padel:'#06d6a0', senderismo:'#f59e0b', futbol:'#ef4444', gimnasio:'#8b5cf6', tenis:'#fbbf24', natacion:'#0ea5e9', ciclismo:'#f97316', yoga:'#ec4899', baloncesto:'#f59e0b', voleibol:'#06d6a0', badminton:'#8b5cf6' }
 
 const SPORT_FILTERS = [
   {id:'all',label:'Todos',icon:'✨'},
@@ -26,6 +26,13 @@ const SPORT_FILTERS = [
   {id:'senderismo',label:'Senderismo',icon:'🥾'},
   {id:'futbol',label:'Fútbol',icon:'⚽'},
   {id:'gimnasio',label:'Gimnasio',icon:'💪'},
+  {id:'tenis',label:'Tenis',icon:'🎾'},
+  {id:'natacion',label:'Natación',icon:'🏊'},
+  {id:'ciclismo',label:'Ciclismo',icon:'🚴'},
+  {id:'yoga',label:'Yoga',icon:'🧘'},
+  {id:'baloncesto',label:'Baloncesto',icon:'🏀'},
+  {id:'voleibol',label:'Voleibol',icon:'🏐'},
+  {id:'badminton',label:'Bádminton',icon:'🏸'},
 ]
 
 const LEVEL_FILTERS = [

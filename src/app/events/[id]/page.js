@@ -1,76 +1,67 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import { getSupabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 
-const S_COLORS = { running:'#5b6ef5', padel:'#06d6a0', senderismo:'#f59e0b', futbol:'#ef4444', gimnasio:'#8b5cf6', tenis:'#fbbf24' }
-const S_ICONS  = { running:'🏃', padel:'🎾', senderismo:'🥾', futbol:'⚽', gimnasio:'💪', tenis:'🎾' }
+const S_COLORS = { running:'#5b6ef5', padel:'#06d6a0', senderismo:'#f59e0b', futbol:'#ef4444', gimnasio:'#8b5cf6', tenis:'#fbbf24', natacion:'#0ea5e9', ciclismo:'#f97316', yoga:'#ec4899', baloncesto:'#f59e0b', voleibol:'#06d6a0', badminton:'#8b5cf6' }
+const S_ICONS  = { running:'🏃', padel:'🎾', senderismo:'🥾', futbol:'⚽', gimnasio:'💪', tenis:'🎾', natacion:'🏊', ciclismo:'🚴', yoga:'🧘', baloncesto:'🏀', voleibol:'🏐', badminton:'🏸' }
 
-// Demo data completo — cubre todos los IDs demo y también fallback de IDs numéricos legacy
 const DEMO = {
-  'demo-1': { id:'demo-1', title:'Running Matutino',         sport:'running',    level:'any',          date:'2026-03-30', time:'07:30:00', location:'Alameda de Córdoba',      province:'Córdoba',  max_players:10, price:'Gratis',     third_place:false, description:'Ruta de running matutino por la Alameda y alrededores. Ritmo medio 5:00–5:30 /km. Perfecto para empezar la semana con energía. Llevar agua.',             creator_name:'Carlos O.', participant_count:7,  tags:['Aire libre','Todos los niveles','Grupo pequeño'] },
-  'demo-2': { id:'demo-2', title:'Torneo Pádel Nivel Medio', sport:'padel',      level:'intermediate', date:'2026-03-29', time:'18:00:00', location:'Club de Pádel Centro',    province:'Valencia', max_players:4,  price:'5€/persona', third_place:true,  description:'Torneo amistoso con rotación de parejas cada 20 minutos. Raquetas disponibles en el club para quien no tenga.',                                         creator_name:'Laura M.', participant_count:2,  tags:['Indoor','Mixto','Torneo'] },
-  'demo-3': { id:'demo-3', title:'Senderismo Sierra Norte',  sport:'senderismo', level:'advanced',     date:'2026-03-30', time:'09:00:00', location:'Plaza del Pueblo',         province:'Madrid',   max_players:20, price:'Gratis',     third_place:true,  description:'Ruta de 12 km por la Sierra Norte de Madrid. Dificultad media-alta. Imprescindible calzado de montaña y llevar mínimo 2 litros de agua.',            creator_name:'Javi M.', participant_count:12, tags:['Montaña','Natural','Tercer tiempo'] },
-  'demo-4': { id:'demo-4', title:'Fútbol 7 tarde',           sport:'futbol',     level:'any',          date:'2026-03-28', time:'20:00:00', location:'Polideportivo Municipal',  province:'Sevilla',  max_players:14, price:'Gratis',     third_place:true,  description:'Partido amistoso de fútbol 7. Todos los niveles son bienvenidos. El objetivo es pasarlo bien. Tercer tiempo en el bar de al lado.',                 creator_name:'Diego R.', participant_count:11, tags:['Fútbol 7','Casual','Tercer tiempo'] },
-  'demo-5': { id:'demo-5', title:'Entreno Funcional Grupal', sport:'gimnasio',   level:'intermediate', date:'2026-03-25', time:'19:00:00', location:'Box CrossFit Sur',         province:'Madrid',   max_players:12, price:'Gratis',     third_place:false, description:'4 rondas de ejercicios funcionales de alta intensidad: sentadillas, burpees, dominadas y carrera. Duración aproximada 50 minutos.',                   creator_name:'Laura S.', participant_count:8,  tags:['HIIT','Fuerza','Grupo'] },
-  'demo-6': { id:'demo-6', title:'Dobles Tenis Casual',      sport:'tenis',      level:'beginner',     date:'2026-04-01', time:'10:00:00', location:'Club de Tenis Parque Sur', province:'Málaga',   max_players:8,  price:'Gratis',     third_place:false, description:'Partidos de dobles de tenis para todos los niveles. Si no tienes raqueta podemos prestarte una. Ambiente muy relajado y divertido.',                  creator_name:'Ana G.',   participant_count:3,  tags:['Pista dura','Casual','Principiantes'] },
-  // IDs legacy por si acaso
-  '1': { id:'demo-1', title:'Running Matutino',         sport:'running',  level:'any',          date:'2026-03-30', time:'07:30:00', location:'Alameda de Córdoba',   province:'Córdoba', max_players:10, price:'Gratis',     third_place:false, description:'Ruta de running matutino por la Alameda.', creator_name:'Carlos O.', participant_count:7,  tags:['Aire libre'] },
-  '2': { id:'demo-2', title:'Torneo Pádel Nivel Medio', sport:'padel',    level:'intermediate', date:'2026-03-29', time:'18:00:00', location:'Club de Pádel Centro', province:'Valencia',max_players:4,  price:'5€/persona', third_place:true,  description:'Torneo amistoso con rotación de parejas.',  creator_name:'Laura M.', participant_count:2,  tags:['Indoor'] },
+  'demo-1': { id:'demo-1', title:'Running Matutino',         sport:'running',    level:'any',          date:'2026-03-30', time:'07:30:00', location:'Alameda de Córdoba',      province:'Córdoba',  max_players:10, price:'Gratis',     third_place:false, description:'Ruta de running matutino por la Alameda. Ritmo medio 5:00–5:30/km. Todos los niveles bienvenidos. Llevar agua.',             creator_name:'Carlos O.', participant_count:7,  tags:['Aire libre','Todos los niveles','Grupo pequeño'] },
+  'demo-2': { id:'demo-2', title:'Torneo Pádel Nivel Medio', sport:'padel',      level:'intermediate', date:'2026-03-29', time:'18:00:00', location:'Club de Pádel Centro',    province:'Valencia', max_players:4,  price:'5€/persona', third_place:true,  description:'Torneo amistoso con rotación de parejas. Raquetas disponibles en el club.',                                              creator_name:'Laura M.', participant_count:2,  tags:['Indoor','Mixto','Torneo'] },
+  'demo-3': { id:'demo-3', title:'Senderismo Sierra Norte',  sport:'senderismo', level:'advanced',     date:'2026-03-30', time:'09:00:00', location:'Plaza del Pueblo',         province:'Madrid',   max_players:20, price:'Gratis',     third_place:true,  description:'Ruta de 12 km por la Sierra Norte. Imprescindible calzado de montaña y llevar mínimo 2 litros de agua.',               creator_name:'Javi M.', participant_count:12, tags:['Montaña','Natural','Tercer tiempo'] },
+  'demo-4': { id:'demo-4', title:'Fútbol 7 tarde',           sport:'futbol',     level:'any',          date:'2026-03-28', time:'20:00:00', location:'Polideportivo Municipal',  province:'Sevilla',  max_players:14, price:'Gratis',     third_place:true,  description:'Partido amistoso de fútbol 7. Todos los niveles bienvenidos. Tercer tiempo en el bar de al lado.',                     creator_name:'Diego R.', participant_count:11, tags:['Fútbol 7','Casual','Tercer tiempo'] },
+  'demo-5': { id:'demo-5', title:'Entreno Funcional Grupal', sport:'gimnasio',   level:'intermediate', date:'2026-03-25', time:'19:00:00', location:'Box CrossFit Sur',         province:'Madrid',   max_players:12, price:'Gratis',     third_place:false, description:'4 rondas de ejercicios funcionales: sentadillas, burpees, dominadas y carrera. Duración ~50 minutos.',                creator_name:'Laura S.', participant_count:8,  tags:['HIIT','Fuerza','Grupo'] },
+  'demo-6': { id:'demo-6', title:'Dobles Tenis Casual',      sport:'tenis',      level:'beginner',     date:'2026-04-01', time:'10:00:00', location:'Club de Tenis Parque Sur', province:'Málaga',   max_players:8,  price:'Gratis',     third_place:false, description:'Partidos de dobles de tenis para todos los niveles. Ambiente muy relajado.',                                            creator_name:'Ana G.',   participant_count:3,  tags:['Pista dura','Casual','Principiantes'] },
+  '1': { id:'demo-1', title:'Running Matutino', sport:'running', level:'any', date:'2026-03-30', time:'07:30:00', location:'Alameda de Córdoba', province:'Córdoba', max_players:10, price:'Gratis', third_place:false, description:'Ruta matutina.', creator_name:'Carlos O.', participant_count:7, tags:[] },
+  '2': { id:'demo-2', title:'Torneo Pádel',     sport:'padel',   level:'intermediate', date:'2026-03-29', time:'18:00:00', location:'Club Pádel', province:'Valencia', max_players:4, price:'5€', third_place:true, description:'Torneo.', creator_name:'Laura M.', participant_count:2, tags:[] },
 }
 
 const TABS = ['Info','Participantes','Chat']
 
 function fmt(dateStr) {
   if (!dateStr) return ''
-  const d = new Date(dateStr+'T00:00:00')
-  return d.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'})
+  return new Date(dateStr+'T00:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'})
 }
 
 export default function EventDetail() {
-  const { id }    = useParams()
-  const router    = useRouter()
-  const { user }  = useAuth()
+  const { id }   = useParams()
+  const router   = useRouter()
+  const { user } = useAuth()
+  const chatRef  = useRef(null)
 
-  const [ev,      setEv]     = useState(null)
-  const [pCount,  setPCount] = useState(0)
-  const [loading, setLoad]   = useState(true)
-  const [tab,     setTab]    = useState('Info')
-  const [joined,  setJoined] = useState(false)
-  const [joining, setJoining]= useState(false)
-  const [msgs,    setMsgs]   = useState([])
-  const [chatMsg, setChat]   = useState('')
+  const [ev,           setEv]       = useState(null)
+  const [pCount,       setPCount]   = useState(0)
+  const [participants, setParticipants] = useState([])
+  const [loading,      setLoad]     = useState(true)
+  const [tab,          setTab]      = useState('Info')
+  const [joined,       setJoined]   = useState(false)
+  const [joining,      setJoining]  = useState(false)
+  const [messages,     setMessages] = useState([])
+  const [chatMsg,      setChat]     = useState('')
+  const [sendingMsg,   setSending]  = useState(false)
+  const [loadingChat,  setLoadChat] = useState(false)
 
-  useEffect(()=>{
+  useEffect(() => {
     const load = async () => {
-      // Si es un ID demo, cargar directamente sin tocar la BD
       if (String(id).startsWith('demo-') || DEMO[id]) {
         const d = DEMO[id]
-        if (d) {
-          setEv(d)
-          setPCount(d.participant_count || 0)
-        }
+        if (d) { setEv(d); setPCount(d.participant_count || 0) }
         setLoad(false)
         return
       }
-
-      // Intentar de Supabase
       try {
         const sb = getSupabase()
         if (sb) {
-          const { data, error } = await sb
-            .from('events_with_counts').select('*').eq('id', id).single()
-
+          const { data, error } = await sb.from('events_with_counts').select('*').eq('id', id).single()
           if (!error && data) {
             setEv(data)
             setPCount(data.participant_count || 0)
             if (user) {
-              const { data: ep } = await sb
-                .from('event_participants').select('id')
-                .eq('event_id', id).eq('user_id', user.id).single()
+              const { data: ep } = await sb.from('event_participants').select('id').eq('event_id', id).eq('user_id', user.id).single()
               setJoined(!!ep)
             }
             setLoad(false)
@@ -78,8 +69,6 @@ export default function EventDetail() {
           }
         }
       } catch(_) {}
-
-      // Fallback a demo
       const fallback = DEMO[id] || DEMO['demo-1']
       setEv(fallback)
       setPCount(fallback?.participant_count || 7)
@@ -87,6 +76,72 @@ export default function EventDetail() {
     }
     load()
   }, [id, user])
+
+  // Cargar participantes cuando se entra en esa pestaña
+  useEffect(() => {
+    if (tab !== 'Participantes') return
+    const loadParticipants = async () => {
+      const sb = getSupabase()
+      if (!sb || String(id).startsWith('demo-') || DEMO[id]) {
+        // Demo: participantes ficticios
+        setParticipants([
+          { id:'p1', full_name:'Carlos O.', username:'carlosO', avatar_url:null },
+          { id:'p2', full_name:'Laura M.',  username:'lauraM',  avatar_url:null },
+          { id:'p3', full_name:'Javi R.',   username:'javiR',   avatar_url:null },
+        ])
+        return
+      }
+      try {
+        const { data } = await sb.from('event_participants')
+          .select('user_id, profiles(id, full_name, username, avatar_url)')
+          .eq('event_id', id)
+          .eq('status', 'confirmed')
+        if (data) setParticipants(data.map(d => d.profiles).filter(Boolean))
+      } catch(_) {}
+    }
+    loadParticipants()
+  }, [tab, id])
+
+  // Cargar mensajes del chat cuando se entra en esa pestaña
+  useEffect(() => {
+    if (tab !== 'Chat' || !joined) return
+    const loadMessages = async () => {
+      setLoadChat(true)
+      const sb = getSupabase()
+      if (!sb || String(id).startsWith('demo-') || DEMO[id]) {
+        setMessages([
+          { id:'m1', user_id:'u1', author:'Carlos O.', text:'¡Quedan 3 plazas! Animaos 💪', created_at: new Date(Date.now()-3600000).toISOString(), me:false },
+          { id:'m2', user_id:'u2', author:'Laura M.',  text:'Yo llevo raqueta de repuesto si alguien necesita', created_at: new Date(Date.now()-1800000).toISOString(), me:false },
+        ])
+        setLoadChat(false)
+        return
+      }
+      try {
+        const { data } = await sb.from('event_messages')
+          .select('id, user_id, text, created_at, profiles(full_name)')
+          .eq('event_id', id)
+          .order('created_at', { ascending: true })
+          .limit(100)
+        if (data) {
+          setMessages(data.map(m => ({
+            id: m.id,
+            user_id: m.user_id,
+            author: m.profiles?.full_name || 'Usuario',
+            text: m.text,
+            created_at: m.created_at,
+            me: m.user_id === user?.id,
+          })))
+        }
+      } catch(_) {}
+      setLoadChat(false)
+    }
+    loadMessages()
+  }, [tab, joined, id, user])
+
+  // Auto-scroll al final del chat
+  useEffect(() => {
+    if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight
+  }, [messages])
 
   const handleJoin = async () => {
     if (!user) { router.push('/auth'); return }
@@ -96,26 +151,49 @@ export default function EventDetail() {
       if (sb) {
         if (joined) {
           await sb.from('event_participants').delete().eq('event_id', id).eq('user_id', user.id)
-          setJoined(false)
-          setPCount(p => Math.max(0,p-1))
+          setJoined(false); setPCount(p => Math.max(0, p-1))
         } else {
           const { error } = await sb.from('event_participants').insert({ event_id:id, user_id:user.id })
-          if (!error) { setJoined(true); setPCount(p=>p+1) }
+          if (!error) { setJoined(true); setPCount(p => p+1) }
         }
       }
     } catch(_) {}
     setJoining(false)
   }
 
-  const sendMsg = () => {
-    if (!chatMsg.trim()) return
-    setMsgs(p=>[...p,{
-      author: user ? (user.user_metadata?.full_name || user.email?.split('@')[0]) : 'Tú',
-      text: chatMsg.trim(),
-      time: new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}),
-      me: true,
-    }])
+  const sendMsg = async () => {
+    if (!chatMsg.trim() || !user || !joined) return
+    setSending(true)
+    const text = chatMsg.trim()
     setChat('')
+
+    // Optimistic UI
+    const temp = {
+      id: 'temp-' + Date.now(),
+      user_id: user.id,
+      author: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Tú',
+      text,
+      created_at: new Date().toISOString(),
+      me: true,
+    }
+    setMessages(p => [...p, temp])
+
+    try {
+      const sb = getSupabase()
+      if (sb && !String(id).startsWith('demo-') && !DEMO[id]) {
+        await sb.from('event_messages').insert({ event_id: id, user_id: user.id, text })
+      }
+    } catch(_) {}
+    setSending(false)
+  }
+
+  function fmtTime(iso) {
+    const d = new Date(iso)
+    const now = new Date()
+    const diffH = (now - d) / 3600000
+    if (diffH < 1)  return `Hace ${Math.round((now-d)/60000)} min`
+    if (diffH < 24) return `Hace ${Math.round(diffH)} h`
+    return d.toLocaleDateString('es-ES', { day:'numeric', month:'short' })
   }
 
   if (loading) return (
@@ -134,7 +212,7 @@ export default function EventDetail() {
 
   const c    = S_COLORS[ev.sport] || '#5b6ef5'
   const icon = S_ICONS[ev.sport]  || '🎯'
-  const pct  = ev.max_players>0 ? Math.round((pCount/ev.max_players)*100) : 0
+  const pct  = ev.max_players > 0 ? Math.round((pCount/ev.max_players)*100) : 0
   const free = ev.max_players - pCount
 
   return (
@@ -156,13 +234,13 @@ export default function EventDetail() {
           </div>
         </div>
 
-        {/* Datos rápidos */}
+        {/* Info rápida */}
         <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:10, padding:'16px 18px 0' }}>
           {[
-            {icon:'📅', label:'Fecha',  value:`${fmt(ev.date)}`},
-            {icon:'⏱️', label:'Hora',   value:ev.time?.slice(0,5)||''},
-            {icon:'📍', label:'Lugar',  value:ev.location},
-            {icon:'💶', label:'Precio', value:ev.price||'Gratis'},
+            { icon:'📅', label:'Fecha',  value:fmt(ev.date) },
+            { icon:'⏱️', label:'Hora',   value:ev.time?.slice(0,5)||'' },
+            { icon:'📍', label:'Lugar',  value:ev.location },
+            { icon:'💶', label:'Precio', value:ev.price||'Gratis' },
           ].map(item=>(
             <div key={item.label} className="card anim-1" style={{ padding:'12px 14px', display:'flex', alignItems:'center', gap:10 }}>
               <span style={{ fontSize:20 }}>{item.icon}</span>
@@ -174,7 +252,7 @@ export default function EventDetail() {
           ))}
         </div>
 
-        {/* Barra plazas */}
+        {/* Plazas */}
         <div className="card anim-2" style={{ margin:'10px 18px 0', padding:'14px 18px' }}>
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8 }}>
             <span style={{ fontSize:13, fontWeight:600, color:'var(--text)' }}>Plazas</span>
@@ -182,18 +260,13 @@ export default function EventDetail() {
           </div>
           <div className="pbar"><div className="pbar-fill" style={{ width:`${pct}%`, background:c }}/></div>
           <div style={{ fontSize:11, color:'var(--muted)', marginTop:6 }}>
-            {free>0?`${free} plaza${free>1?'s':''} disponible${free>1?'s':''}`:'Evento completo'}
+            {free>0 ? `${free} plaza${free>1?'s':''} disponible${free>1?'s':''}` : 'Evento completo'}
           </div>
         </div>
 
         {/* CTA */}
         <div style={{ padding:'14px 18px 0' }}>
-          <button
-            className="btn btn-primary"
-            style={{ width:'100%', fontSize:16, background: joined?'rgba(239,68,68,0.85)':undefined }}
-            onClick={handleJoin}
-            disabled={joining}
-          >
+          <button className="btn btn-primary" style={{ width:'100%', fontSize:16, background: joined?'rgba(239,68,68,0.85)':undefined }} onClick={handleJoin} disabled={joining}>
             {joining ? 'Procesando...' : joined ? '✗ Salir del evento' : free>0 ? '✓ Unirme al evento' : '⏳ Lista de espera'}
           </button>
           {!user && <p style={{ fontSize:12, color:'var(--muted)', textAlign:'center', marginTop:8 }}>Necesitas <a href="/auth" style={{ color:'var(--primary)', fontWeight:600 }}>iniciar sesión</a> para unirte</p>}
@@ -202,13 +275,23 @@ export default function EventDetail() {
         {/* Tabs */}
         <div style={{ padding:'20px 18px 0' }}>
           <div style={{ display:'flex', gap:4, padding:4, background:'var(--surface)', border:'1px solid var(--border)', borderRadius:16 }}>
-            {TABS.map(t=>(
-              <button key={t} onClick={()=>setTab(t)} style={{ flex:1, padding:'10px 0', borderRadius:12, border:'none', fontSize:13, fontWeight:600, cursor:'pointer', fontFamily:'inherit', background:tab===t?c:'transparent', color:tab===t?'white':'var(--muted)', transition:'all 0.18s ease' }}>{t}</button>
+            {TABS.map(t => (
+              <button key={t} onClick={()=>setTab(t)} style={{
+                flex:1, padding:'10px 0', borderRadius:12, border:'none', fontSize:13, fontWeight:600,
+                cursor:'pointer', fontFamily:'inherit',
+                background: tab===t ? c : 'transparent',
+                color: tab===t ? 'white' : 'var(--muted)',
+                transition:'all 0.18s ease',
+                position:'relative',
+              }}>
+                {t}
+                {t==='Chat' && <span style={{ marginLeft:4, fontSize:10, background: joined?c:'var(--muted)', color:'white', borderRadius:100, padding:'1px 5px', opacity: joined?1:0.6 }}>{joined?'🔓':'🔒'}</span>}
+              </button>
             ))}
           </div>
         </div>
 
-        {/* Tab: Info */}
+        {/* ── Tab: Info ── */}
         {tab==='Info' && (
           <div style={{ padding:'16px 18px 0', display:'flex', flexDirection:'column', gap:12 }}>
             <div className="card anim-1" style={{ padding:'16px 18px' }}>
@@ -226,7 +309,7 @@ export default function EventDetail() {
                 </a>
               </div>
             </div>
-            {ev.tags?.length>0 && (
+            {ev.tags?.length > 0 && (
               <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
                 {ev.tags.map(tag=>(
                   <span key={tag} style={{ background:`${c}14`, border:`1px solid ${c}30`, borderRadius:10, color:c, fontSize:12, fontWeight:600, padding:'5px 12px' }}>{tag}</span>
@@ -236,50 +319,141 @@ export default function EventDetail() {
           </div>
         )}
 
-        {/* Tab: Participantes */}
+        {/* ── Tab: Participantes ── */}
         {tab==='Participantes' && (
-          <div style={{ padding:'16px 18px 0', display:'flex', flexDirection:'column', gap:8 }}>
-            <div style={{ textAlign:'center', padding:'20px', color:'var(--muted)', fontSize:13 }}>
-              {pCount > 0 ? `${pCount} persona${pCount>1?'s':''} apuntada${pCount>1?'s':''}` : 'Sé el primero en apuntarte'}
+          <div style={{ padding:'16px 18px 0', display:'flex', flexDirection:'column', gap:10 }}>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:4 }}>
+              <span style={{ fontSize:13, color:'var(--muted)' }}>
+                {pCount} persona{pCount!==1?'s':''} apuntada{pCount!==1?'s':''}
+              </span>
+              {!joined && user && (
+                <span style={{ fontSize:12, color:c, fontWeight:600 }}>Únete para ver más</span>
+              )}
             </div>
-            {joined && (
-              <div className="card" style={{ padding:'14px 16px', display:'flex', alignItems:'center', gap:12 }}>
-                <div style={{ width:42, height:42, borderRadius:'50%', background:'var(--grad)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:20, flexShrink:0 }}>👤</div>
-                <div>
-                  <div style={{ fontWeight:700, fontSize:14, color:'var(--text)' }}>{user?.user_metadata?.full_name || 'Tú'}</div>
-                  <div style={{ fontSize:11, color:'var(--primary)' }}>Apuntado ✓</div>
+
+            {participants.length === 0 ? (
+              <div className="card" style={{ padding:'28px 20px', textAlign:'center' }}>
+                <div style={{ fontSize:36, marginBottom:8 }}>👥</div>
+                <div style={{ fontSize:14, color:'var(--muted)' }}>Sé el primero en apuntarte</div>
+              </div>
+            ) : (
+              participants.slice(0, joined ? undefined : 3).map((p, i) => (
+                <div key={p.id} className={`card anim-${(i%6)+1}`} style={{ padding:'12px 16px', display:'flex', alignItems:'center', gap:12 }}>
+                  <div style={{ width:42, height:42, borderRadius:'50%', overflow:'hidden', flexShrink:0, background:`${c}20`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:20 }}>
+                    {p.avatar_url ? <img src={p.avatar_url} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }}/> : '👤'}
+                  </div>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ fontWeight:700, fontSize:14, color:'var(--text)' }}>{p.full_name || 'Usuario'}</div>
+                    {p.username && <div style={{ fontSize:12, color:'var(--muted)' }}>@{p.username}</div>}
+                  </div>
+                  {p.id === user?.id && <span style={{ fontSize:11, color:c, fontWeight:700, background:`${c}18`, borderRadius:8, padding:'3px 8px' }}>Tú ✓</span>}
                 </div>
+              ))
+            )}
+
+            {/* Si no estás apuntado y hay más de 3 */}
+            {!joined && participants.length > 3 && (
+              <div className="card" style={{ padding:'16px 18px', textAlign:'center' }}>
+                <div style={{ fontSize:13, color:'var(--muted)', marginBottom:12 }}>
+                  +{participants.length - 3} participante{participants.length-3!==1?'s':''} más. Únete para ver la lista completa.
+                </div>
+                <button className="btn btn-primary" style={{ fontSize:13, padding:'10px 20px' }} onClick={handleJoin} disabled={joining}>
+                  ✓ Unirme al evento
+                </button>
               </div>
             )}
           </div>
         )}
 
-        {/* Tab: Chat */}
+        {/* ── Tab: Chat ── */}
         {tab==='Chat' && (
-          <div style={{ padding:'16px 18px 0' }}>
-            {msgs.length===0 && (
-              <div style={{ textAlign:'center', padding:'30px 0', color:'var(--muted)', fontSize:13 }}>Sin mensajes aún. ¡Sé el primero!</div>
-            )}
-            <div style={{ display:'flex', flexDirection:'column', gap:12, marginBottom:14 }}>
-              {msgs.map((m,i)=>(
-                <div key={i} style={{ display:'flex', flexDirection:m.me?'row-reverse':'row', alignItems:'flex-end', gap:8 }}>
-                  <div style={{ maxWidth:'75%' }}>
-                    <div style={{ background:m.me?c:'var(--surface)', border:m.me?'none':'1px solid var(--border)', borderRadius:m.me?'16px 16px 4px 16px':'16px 16px 16px 4px', padding:'10px 14px', color:m.me?'white':'var(--text)', fontSize:13, lineHeight:1.45 }}>{m.text}</div>
-                    <div style={{ fontSize:10, color:'var(--muted)', marginTop:3, textAlign:m.me?'right':'left' }}>{m.time}</div>
-                  </div>
+          <div style={{ padding:'16px 0 0' }}>
+            {!user ? (
+              // No logueado
+              <div className="chat-locked">
+                <div style={{ fontSize:40, marginBottom:12 }}>🔒</div>
+                <div style={{ fontWeight:700, fontSize:16, color:'var(--text)', marginBottom:8 }}>Chat privado</div>
+                <p style={{ fontSize:13, color:'var(--muted)', marginBottom:18, lineHeight:1.6 }}>
+                  El chat es exclusivo para los participantes del evento. Inicia sesión y únete para acceder.
+                </p>
+                <a href="/auth" className="btn btn-primary" style={{ fontSize:14, display:'inline-flex' }}>Entrar / Registrarse</a>
+              </div>
+            ) : !joined ? (
+              // Logueado pero no apuntado — CTA con engagement
+              <div className="chat-locked">
+                <div style={{ fontSize:40, marginBottom:12 }}>💬</div>
+                <div style={{ fontWeight:700, fontSize:16, color:'var(--text)', marginBottom:8 }}>Chat del evento</div>
+                <p style={{ fontSize:13, color:'var(--muted)', marginBottom:6, lineHeight:1.6 }}>
+                  Los {pCount} participantes ya están coordinando. Horarios, puntos de encuentro, equipación...
+                </p>
+                <div style={{ display:'flex', gap:8, justifyContent:'center', margin:'12px 0 18px', flexWrap:'wrap' }}>
+                  {['📍 Punto de encuentro','⏰ Hora exacta','👟 Qué llevar'].map(t=>(
+                    <span key={t} style={{ fontSize:12, color:c, background:`${c}14`, border:`1px solid ${c}28`, borderRadius:100, padding:'4px 12px', fontWeight:600 }}>{t}</span>
+                  ))}
                 </div>
-              ))}
-            </div>
-            {user ? (
-              <div style={{ display:'flex', gap:8, alignItems:'center', background:'var(--surface)', border:'1px solid var(--border)', borderRadius:16, padding:'6px 6px 6px 14px' }}>
-                <input value={chatMsg} onChange={e=>setChat(e.target.value)} onKeyDown={e=>e.key==='Enter'&&sendMsg()}
-                  placeholder="Escribe un mensaje…"
-                  style={{ flex:1, background:'none', border:'none', outline:'none', color:'var(--text)', fontSize:14, fontFamily:'inherit' }}/>
-                <button onClick={sendMsg} style={{ width:36, height:36, borderRadius:12, border:'none', flexShrink:0, background:chatMsg.trim()?c:'var(--surface2)', cursor:chatMsg.trim()?'pointer':'default', display:'flex', alignItems:'center', justifyContent:'center', fontSize:15, color:chatMsg.trim()?'white':'var(--muted)', transition:'all 0.15s ease' }}>➤</button>
+                <button className="btn btn-primary" style={{ width:'100%', fontSize:14 }} onClick={handleJoin} disabled={joining}>
+                  {joining ? 'Uniéndote...' : `✓ Unirme y acceder al chat`}
+                </button>
+                {free === 0 && (
+                  <p style={{ fontSize:12, color:'var(--muted)', marginTop:10 }}>El evento está lleno — puedes apuntarte a la lista de espera</p>
+                )}
               </div>
             ) : (
-              <div style={{ textAlign:'center', padding:'12px 0' }}>
-                <a href="/auth" style={{ color:'var(--primary)', fontSize:13, fontWeight:600 }}>Inicia sesión para chatear →</a>
+              // Participante — chat completo
+              <div style={{ display:'flex', flexDirection:'column', padding:'0 18px' }}>
+                <div style={{ fontSize:12, color:'var(--muted)', textAlign:'center', marginBottom:14, padding:'6px 12px', background:'var(--surface2)', borderRadius:100, display:'inline-block', alignSelf:'center' }}>
+                  🔒 Solo visible para participantes
+                </div>
+
+                {/* Mensajes */}
+                <div ref={chatRef} style={{ display:'flex', flexDirection:'column', gap:10, maxHeight:340, overflowY:'auto', marginBottom:14, paddingRight:2 }}>
+                  {loadingChat ? (
+                    <div style={{ textAlign:'center', padding:'20px 0' }}><div className="spinner" style={{ width:24, height:24, borderWidth:2 }}/></div>
+                  ) : messages.length === 0 ? (
+                    <div style={{ textAlign:'center', padding:'30px 0', color:'var(--muted)', fontSize:13 }}>
+                      Ningún mensaje aún. ¡Sé el primero en escribir!
+                    </div>
+                  ) : messages.map((m, i) => (
+                    <div key={m.id} style={{ display:'flex', flexDirection: m.me?'row-reverse':'row', alignItems:'flex-end', gap:8 }}>
+                      {!m.me && (
+                        <div style={{ width:28, height:28, borderRadius:'50%', background:`${c}20`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:14, flexShrink:0 }}>👤</div>
+                      )}
+                      <div style={{ maxWidth:'72%' }}>
+                        {!m.me && <div style={{ fontSize:10, color:'var(--muted)', marginBottom:3, marginLeft:4 }}>{m.author}</div>}
+                        <div style={{
+                          background: m.me ? `linear-gradient(135deg,${c},${c}bb)` : 'var(--surface)',
+                          border: m.me ? 'none' : '1px solid var(--border)',
+                          borderRadius: m.me ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
+                          padding:'10px 14px',
+                          color: m.me ? 'white' : 'var(--text)',
+                          fontSize:13, lineHeight:1.45,
+                        }}>{m.text}</div>
+                        <div style={{ fontSize:10, color:'var(--muted)', marginTop:3, textAlign: m.me?'right':'left' }}>
+                          {fmtTime(m.created_at)}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Input */}
+                <div style={{ display:'flex', gap:8, alignItems:'center', background:'var(--surface)', border:'1px solid var(--border)', borderRadius:16, padding:'6px 6px 6px 14px', marginBottom:4 }}>
+                  <input
+                    value={chatMsg}
+                    onChange={e=>setChat(e.target.value)}
+                    onKeyDown={e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendMsg() } }}
+                    placeholder="Escribe un mensaje…"
+                    style={{ flex:1, background:'none', border:'none', outline:'none', color:'var(--text)', fontSize:14, fontFamily:'inherit' }}
+                  />
+                  <button onClick={sendMsg} disabled={!chatMsg.trim() || sendingMsg} style={{
+                    width:36, height:36, borderRadius:12, border:'none', flexShrink:0,
+                    background: chatMsg.trim() ? `linear-gradient(135deg,${c},${c}bb)` : 'var(--surface2)',
+                    cursor: chatMsg.trim() ? 'pointer' : 'default',
+                    display:'flex', alignItems:'center', justifyContent:'center',
+                    fontSize:15, color: chatMsg.trim() ? 'white' : 'var(--muted)',
+                    transition:'all 0.15s ease',
+                  }}>➤</button>
+                </div>
               </div>
             )}
           </div>

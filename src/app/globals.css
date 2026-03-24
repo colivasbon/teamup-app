@@ -71,6 +71,13 @@
 html {
   scroll-behavior: smooth;
   height: 100%;
+  /* Fix pantalla pequeña en móvil */
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Fix iOS overscroll */
+body {
+  overscroll-behavior-y: none;
 }
 
 body {
@@ -80,9 +87,12 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100dvh;
+  min-height: -webkit-fill-available;
   line-height: 1.5;
   font-size: 15px;
   overflow-x: hidden;
+  /* Ocupa siempre el 100% de la pantalla visible */
+  width: 100%;
 }
 
 a { text-decoration: none; color: inherit; }
@@ -482,3 +492,71 @@ select.input   { appearance: none; cursor: pointer; }
 
 /* ─── STAR RATING ──────────────────────────────────── */
 .stars { display: inline-flex; gap: 2px; }
+
+/* ─── AVATAR UPLOAD ────────────────────────────────── */
+.avatar-wrap {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  flex-shrink: 0;
+}
+.avatar-wrap img,
+.avatar-wrap .avatar-placeholder {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255,255,255,0.55);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+}
+.avatar-edit-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--primary);
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 13px;
+  color: white;
+  transition: transform 0.16s ease;
+}
+.avatar-edit-btn:hover { transform: scale(1.12); }
+
+/* ─── CHAT BUBBLE ──────────────────────────────────── */
+.chat-locked {
+  background: var(--glass);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 22px;
+  text-align: center;
+  margin: 0 18px;
+}
+
+/* ─── SAFE AREA BOTTOM ─────────────────────────────── */
+.navbar {
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
+}
+
+/* ─── SPORT TAG ────────────────────────────────────── */
+.sport-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1.5px solid transparent;
+  font-family: inherit;
+  white-space: nowrap;
+}

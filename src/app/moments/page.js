@@ -1,31 +1,188 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Navbar from '@/components/Navbar'
+import { getSupabase } from '@/lib/supabase'
+import { useAuth } from '@/contexts/AuthContext'
 
 const S_COLORS = {
-  Running:'#5b6ef5', Pádel:'#06d6a0', Senderismo:'#f59e0b', Fútbol:'#ef4444', Gimnasio:'#8b5cf6',
+  running:'#5b6ef5', padel:'#06d6a0', senderismo:'#f59e0b', futbol:'#ef4444',
+  gimnasio:'#8b5cf6', tenis:'#fbbf24', natacion:'#0ea5e9', ciclismo:'#f97316',
+  yoga:'#ec4899', baloncesto:'#f59e0b', voleibol:'#06d6a0', badminton:'#8b5cf6',
 }
 
-const MOMENTS = [
-  { id:1, author:'Carlos O.', avatar:'🧔', sport:'Running',    time:'Hace 15 min', event:'Running Matutino — Alameda',     text:'Empezando el día con energía en la Alameda 🌅 Mejor compañía imposible, gracias a todos los que se animaron.', likes:12, comments:3, liked:false, stats:{ Distancia:'5.2 km', Tiempo:'28 min', Ritmo:'5:23/km' } },
-  { id:2, author:'María G.', avatar:'👩',  sport:'Pádel',      time:'Hace 1 h',    event:'Torneo Pádel Nivel Medio',       text:'Partido épico esta mañana. Ganamos en el tercer set 6-4, pero sobre todo disfrutamos mogollón 🎾', likes:24, comments:8, liked:true,  stats:null },
-  { id:3, author:'Javi M.',  avatar:'👨',  sport:'Senderismo', time:'Hace 3 h',    event:'Ruta Sierra Nevada',             text:'Las vistas desde los 2.800m no tienen precio. Ruta completada con éxito, todos llegamos y nadie se perdió 🥾✨', likes:41, comments:12, liked:false, stats:{ Distancia:'14 km', Desnivel:'+890 m', Duración:'5h 20min' } },
-  { id:4, author:'Laura S.', avatar:'👩‍🦰', sport:'Gimnasio',   time:'Hace 5 h',    event:'Entreno Funcional Grupal',       text:'Sesión de funcional increíble hoy. El coach nos destruyó pero de la mejor manera posible 💪🔥', likes:18, comments:5, liked:false, stats:{ Series:'4 rondas', Ejercicios:'8', Descanso:'45 seg' } },
-  { id:5, author:'Diego R.', avatar:'👦',  sport:'Fútbol',     time:'Ayer',        event:'Fútbol 7 — Polideportivo',       text:'Derrota 3-5 pero qué partido más divertido. Metí dos goles y el equipo luchó hasta el final ⚽', likes:33, comments:15, liked:true,  stats:{ Resultado:'3 — 5', Duración:'60 min', Jugadores:'14' } },
+const SPORT_LABELS = {
+  running:'Running', padel:'Pádel', senderismo:'Senderismo', futbol:'Fútbol',
+  gimnasio:'Gimnasio', tenis:'Tenis', natacion:'Natación', ciclismo:'Ciclismo',
+  yoga:'Yoga', baloncesto:'Baloncesto', voleibol:'Voleibol', badminton:'Bádminton',
+}
+
+// Demo feed para cuando no hay BD
+const DEMO_MOMENTS = [
+  { id:'m1', author:'Carlos O.', username:'carlosO', avatar_url:null, sport:'running',    created_at: new Date(Date.now()-900000).toISOString(),   text:'Empezando el día con energía en la Alameda 🌅 Mejor compañía imposible, gracias a todos los que se animaron.', likes:12, liked:false, image_url:null },
+  { id:'m2', author:'María G.', username:'mariaG',  avatar_url:null, sport:'padel',      created_at: new Date(Date.now()-3600000).toISOString(),  text:'Partido épico esta mañana. Ganamos en el tercer set 6-4, pero sobre todo disfrutamos mogollón 🎾', likes:24, liked:true, image_url:null },
+  { id:'m3', author:'Javi M.',  username:'javiM',   avatar_url:null, sport:'senderismo', created_at: new Date(Date.now()-10800000).toISOString(), text:'Las vistas desde los 2.800m no tienen precio. Ruta completada con éxito 🥾✨', likes:41, liked:false, image_url:null },
+  { id:'m4', author:'Laura S.', username:'lauraS',  avatar_url:null, sport:'gimnasio',   created_at: new Date(Date.now()-18000000).toISOString(), text:'Sesión de funcional increíble hoy. El coach nos destruyó pero de la mejor manera 💪🔥', likes:18, liked:false, image_url:null },
+  { id:'m5', author:'Diego R.', username:'diegoR',  avatar_url:null, sport:'futbol',     created_at: new Date(Date.now()-86400000).toISOString(), text:'Derrota 3-5 pero qué partido más divertido. Metí dos goles y el equipo luchó hasta el final ⚽', likes:33, liked:true, image_url:null },
 ]
 
-const FILTERS = ['Todos','Running','Pádel','Senderismo','Fútbol','Gimnasio']
+const FILTERS = [
+  { id:'all', label:'Todos' },
+  { id:'running', label:'Running' },
+  { id:'padel', label:'Pádel' },
+  { id:'senderismo', label:'Senderismo' },
+  { id:'futbol', label:'Fútbol' },
+  { id:'gimnasio', label:'Gimnasio' },
+  { id:'natacion', label:'Natación' },
+  { id:'ciclismo', label:'Ciclismo' },
+]
+
+const SPORTS_SELECT = [
+  { id:'running', label:'Running 🏃' },
+  { id:'padel', label:'Pádel 🎾' },
+  { id:'senderismo', label:'Senderismo 🥾' },
+  { id:'futbol', label:'Fútbol ⚽' },
+  { id:'gimnasio', label:'Gimnasio 💪' },
+  { id:'tenis', label:'Tenis 🎾' },
+  { id:'natacion', label:'Natación 🏊' },
+  { id:'ciclismo', label:'Ciclismo 🚴' },
+  { id:'yoga', label:'Yoga 🧘' },
+  { id:'baloncesto', label:'Baloncesto 🏀' },
+]
+
+function fmtTime(iso) {
+  const d = new Date(iso)
+  const now = new Date()
+  const diff = (now - d) / 1000
+  if (diff < 60)   return 'Ahora mismo'
+  if (diff < 3600) return `Hace ${Math.round(diff/60)} min`
+  if (diff < 86400) return `Hace ${Math.round(diff/3600)} h`
+  return d.toLocaleDateString('es-ES', { day:'numeric', month:'short' })
+}
 
 export default function Moments() {
-  const [filter,    setFilter]   = useState('Todos')
-  const [liked,     setLiked]    = useState({})
-  const [compose,   setCompose]  = useState(false)
-  const [msg,       setMsg]      = useState('')
+  const { user, profile } = useAuth()
+  const fileRef = useRef(null)
 
-  const feed = filter==='Todos' ? MOMENTS : MOMENTS.filter(m=>m.sport===filter)
+  const [filter,    setFilter]  = useState('all')
+  const [moments,   setMoments] = useState([])
+  const [liked,     setLiked]   = useState({})
+  const [fromDB,    setFromDB]  = useState(false)
+  const [loading,   setLoading] = useState(true)
+  const [compose,   setCompose] = useState(false)
+  const [posting,   setPosting] = useState(false)
 
-  const toggleLike = id => setLiked(p=>({...p,[id]:!p[id]}))
+  const [newPost, setNewPost] = useState({ text:'', sport:'running', image_url:'' })
+  const setP = (k, v) => setNewPost(p => ({ ...p, [k]: v }))
+
+  // Cargar momentos
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true)
+      try {
+        const sb = getSupabase()
+        if (sb) {
+          const { data, error } = await sb
+            .from('moments')
+            .select('id, text, sport, image_url, created_at, user_id, profiles(full_name, username, avatar_url), moment_likes(count)')
+            .order('created_at', { ascending: false })
+            .limit(30)
+          if (!error && data && data.length > 0) {
+            const formatted = data.map(m => ({
+              id:        m.id,
+              author:    m.profiles?.full_name || 'Usuario',
+              username:  m.profiles?.username || 'usuario',
+              avatar_url: m.profiles?.avatar_url || null,
+              sport:     m.sport,
+              text:      m.text,
+              image_url: m.image_url,
+              created_at: m.created_at,
+              likes:     m.moment_likes?.[0]?.count || 0,
+              liked:     false,
+              user_id:   m.user_id,
+            }))
+            setMoments(formatted)
+            setFromDB(true)
+            setLoading(false)
+            return
+          }
+        }
+      } catch(_) {}
+      setMoments(DEMO_MOMENTS)
+      setFromDB(false)
+      setLoading(false)
+    }
+    load()
+  }, [])
+
+  const toggleLike = async (id) => {
+    setLiked(p => ({ ...p, [id]: !p[id] }))
+    if (!fromDB || !user) return
+    try {
+      const sb = getSupabase()
+      if (!sb) return
+      const isLiked = liked[id]
+      if (isLiked) {
+        await sb.from('moment_likes').delete().eq('moment_id', id).eq('user_id', user.id)
+      } else {
+        await sb.from('moment_likes').insert({ moment_id: id, user_id: user.id })
+      }
+    } catch(_) {}
+  }
+
+  const publish = async () => {
+    if (!newPost.text.trim() || !user) return
+    setPosting(true)
+    try {
+      const sb = getSupabase()
+      if (sb && fromDB) {
+        const { data, error } = await sb.from('moments').insert({
+          user_id:   user.id,
+          text:      newPost.text.trim(),
+          sport:     newPost.sport,
+          image_url: newPost.image_url || null,
+        }).select('id, text, sport, image_url, created_at, user_id').single()
+
+        if (!error && data) {
+          const optimistic = {
+            id: data.id,
+            author: profile?.full_name || user.email?.split('@')[0] || 'Tú',
+            username: profile?.username || 'tú',
+            avatar_url: profile?.avatar_url || null,
+            sport: data.sport,
+            text: data.text,
+            image_url: data.image_url,
+            created_at: data.created_at,
+            likes: 0,
+            liked: false,
+            user_id: user.id,
+          }
+          setMoments(p => [optimistic, ...p])
+        }
+      } else {
+        // Sin BD — añadir optimistamente al demo
+        const optimistic = {
+          id: 'local-' + Date.now(),
+          author: profile?.full_name || user.email?.split('@')[0] || 'Tú',
+          username: profile?.username || 'tú',
+          avatar_url: profile?.avatar_url || null,
+          sport: newPost.sport,
+          text: newPost.text.trim(),
+          image_url: null,
+          created_at: new Date().toISOString(),
+          likes: 0,
+          liked: false,
+          user_id: user.id,
+        }
+        setMoments(p => [optimistic, ...p])
+      }
+    } catch(_) {}
+    setNewPost({ text:'', sport:'running', image_url:'' })
+    setCompose(false)
+    setPosting(false)
+  }
+
+  const feed = filter === 'all' ? moments : moments.filter(m => m.sport === filter)
 
   return (
     <>
@@ -37,113 +194,147 @@ export default function Moments() {
             <h1 style={{ fontSize:24, fontWeight:800, margin:'0 0 3px', letterSpacing:'-0.04em' }}>Momentos</h1>
             <p style={{ fontSize:13, color:'var(--muted)', margin:0 }}>Lo mejor de hoy en la comunidad</p>
           </div>
-          <button onClick={()=>setCompose(!compose)} className="btn btn-primary" style={{ padding:'10px 16px', fontSize:13 }}>
-            + Publicar
-          </button>
+          {user && (
+            <button onClick={()=>setCompose(!compose)} className="btn btn-primary" style={{ padding:'10px 16px', fontSize:13 }}>
+              + Publicar
+            </button>
+          )}
         </header>
 
         {/* Composer */}
-        {compose && (
-          <div className="card anim-1" style={{ padding:'16px', marginBottom:14 }}>
+        {compose && user && (
+          <div className="card anim-1" style={{ padding:'16px', marginBottom:16 }}>
             <div style={{ display:'flex', gap:10, alignItems:'flex-start' }}>
-              <div style={{ width:36, height:36, borderRadius:'50%', background:'var(--grad)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:18, flexShrink:0 }}>🧔</div>
-              <div style={{ flex:1 }}>
+              <div style={{ width:38, height:38, borderRadius:'50%', overflow:'hidden', background:'var(--grad)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:18, flexShrink:0 }}>
+                {profile?.avatar_url ? <img src={profile.avatar_url} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }}/> : '👤'}
+              </div>
+              <div style={{ flex:1, display:'flex', flexDirection:'column', gap:10 }}>
                 <textarea
-                  value={msg} onChange={e=>setMsg(e.target.value)}
-                  placeholder="¿Qué tal fue el entreno de hoy?"
+                  value={newPost.text}
+                  onChange={e=>setP('text',e.target.value)}
+                  placeholder="¿Qué tal fue el entreno de hoy? Cuéntaselo a la comunidad..."
                   className="input"
-                  style={{ resize:'none', minHeight:76, fontSize:14, lineHeight:1.5 }}
+                  style={{ resize:'none', minHeight:80, fontSize:14, lineHeight:1.5 }}
+                  autoFocus
                 />
-                <div style={{ display:'flex', gap:8, marginTop:10, justifyContent:'flex-end' }}>
+                {/* Selector deporte */}
+                <select className="input" value={newPost.sport} onChange={e=>setP('sport',e.target.value)} style={{ fontSize:13 }}>
+                  {SPORTS_SELECT.map(s=><option key={s.id} value={s.id}>{s.label}</option>)}
+                </select>
+                <div style={{ display:'flex', gap:8, justifyContent:'flex-end' }}>
                   <button className="btn btn-ghost" style={{ fontSize:13, padding:'8px 14px' }} onClick={()=>setCompose(false)}>Cancelar</button>
-                  <button className="btn btn-primary" style={{ fontSize:13, padding:'8px 16px' }}>Publicar</button>
+                  <button className="btn btn-primary" style={{ fontSize:13, padding:'8px 16px' }} onClick={publish} disabled={!newPost.text.trim()||posting}>
+                    {posting ? 'Publicando...' : 'Publicar'}
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         )}
 
+        {/* CTA login si no hay sesión */}
+        {!user && (
+          <div className="card anim-1" style={{ padding:'16px 18px', marginBottom:16, display:'flex', alignItems:'center', gap:14 }}>
+            <div style={{ fontSize:32 }}>✍️</div>
+            <div style={{ flex:1 }}>
+              <div style={{ fontWeight:700, fontSize:14, color:'var(--text)', marginBottom:3 }}>Comparte tu momento</div>
+              <div style={{ fontSize:12, color:'var(--muted)' }}>Inicia sesión para publicar en el feed</div>
+            </div>
+            <a href="/auth" className="btn btn-primary" style={{ fontSize:13, padding:'9px 16px', flexShrink:0 }}>Entrar</a>
+          </div>
+        )}
+
         {/* Filtros */}
         <div className="scroll-x" style={{ display:'flex', gap:8, paddingBottom:14 }}>
           {FILTERS.map(f=>(
-            <button key={f} onClick={()=>setFilter(f)} className={`pill ${filter===f?'pill-active':'pill-inactive'}`}>
-              {f}
+            <button key={f.id} onClick={()=>setFilter(f.id)} className={`pill ${filter===f.id?'pill-active':'pill-inactive'}`}>
+              {f.label}
             </button>
           ))}
         </div>
 
-        {/* Feed */}
-        <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
-          {feed.map((m, i)=>{
-            const isLiked = liked[m.id]!==undefined ? liked[m.id] : m.liked
-            const count   = m.likes + (liked[m.id]!==undefined ? (liked[m.id]?1:0)-(m.liked?1:0) : 0)
-            const c       = S_COLORS[m.sport]
-            return (
-              <div key={m.id} className={`card anim-${(i%6)+1}`} style={{ padding:0, overflow:'hidden' }}>
-                {/* Barra de color */}
-                <div style={{ height:3, background:c }}/>
+        {/* Loading */}
+        {loading && (
+          <div style={{ padding:'40px 0', textAlign:'center' }}>
+            <div className="spinner"/>
+            <p style={{ fontSize:13, color:'var(--muted)', marginTop:12 }}>Cargando momentos...</p>
+          </div>
+        )}
 
-                <div style={{ padding:'14px 16px 0' }}>
-                  {/* Autor */}
-                  <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10 }}>
-                    <div style={{ width:38, height:38, borderRadius:'50%', background:`${c}20`, border:`2px solid ${c}40`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:20, flexShrink:0 }}>
-                      {m.avatar}
+        {/* Feed */}
+        {!loading && (
+          <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
+            {feed.length === 0 ? (
+              <div className="card" style={{ padding:'40px 24px', textAlign:'center' }}>
+                <div style={{ fontSize:44, marginBottom:12 }}>🏅</div>
+                <div style={{ fontWeight:700, fontSize:16, marginBottom:6 }}>Sin momentos aún</div>
+                <div style={{ fontSize:13, color:'var(--muted)' }}>Sé el primero en publicar algo</div>
+              </div>
+            ) : feed.map((m, i) => {
+              const isLiked = liked[m.id] !== undefined ? liked[m.id] : m.liked
+              const likeCount = m.likes + (liked[m.id] !== undefined ? (liked[m.id]?1:0)-(m.liked?1:0) : 0)
+              const c = S_COLORS[m.sport] || '#5b6ef5'
+              const sportLabel = SPORT_LABELS[m.sport] || m.sport
+
+              return (
+                <div key={m.id} className={`card anim-${(i%6)+1}`} style={{ padding:0, overflow:'hidden' }}>
+                  <div style={{ height:3, background:`linear-gradient(90deg,${c},${c}66)` }}/>
+
+                  <div style={{ padding:'14px 16px' }}>
+                    {/* Autor */}
+                    <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:12 }}>
+                      <div style={{ width:40, height:40, borderRadius:'50%', overflow:'hidden', background:`${c}20`, border:`2px solid ${c}40`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:20, flexShrink:0 }}>
+                        {m.avatar_url ? <img src={m.avatar_url} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }}/> : '👤'}
+                      </div>
+                      <div style={{ flex:1, minWidth:0 }}>
+                        <div style={{ fontWeight:700, fontSize:14, color:'var(--text)' }}>{m.author}</div>
+                        <div style={{ fontSize:11, color:'var(--muted)' }}>@{m.username} · {fmtTime(m.created_at)}</div>
+                      </div>
+                      <span style={{ fontSize:11, fontWeight:700, color:c, background:`${c}18`, borderRadius:100, padding:'3px 10px', flexShrink:0 }}>
+                        {sportLabel}
+                      </span>
                     </div>
-                    <div style={{ flex:1, minWidth:0 }}>
-                      <div style={{ fontWeight:700, fontSize:14, color:'var(--text)' }}>{m.author}</div>
-                      <div style={{ fontSize:11, color:'var(--muted)', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{m.event}</div>
-                    </div>
-                    <span style={{ fontSize:10, fontWeight:700, color:c, background:`${c}18`, borderRadius:8, padding:'3px 9px', flexShrink:0 }}>{m.sport}</span>
+
+                    {/* Texto */}
+                    <p style={{ fontSize:14, color:'var(--text)', lineHeight:1.6, margin:'0 0 12px' }}>{m.text}</p>
+
+                    {/* Imagen */}
+                    {m.image_url && (
+                      <img src={m.image_url} alt="" style={{ width:'100%', borderRadius:12, marginBottom:12, objectFit:'cover', maxHeight:260 }}/>
+                    )}
                   </div>
 
-                  {/* Texto */}
-                  <p style={{ fontSize:14, color:'var(--text)', lineHeight:1.55, margin:'0 0 12px' }}>{m.text}</p>
-
-                  {/* Stats */}
-                  {m.stats && (
-                    <div style={{
-                      display:'flex', gap:0,
-                      background:'var(--surface2)', borderRadius:12,
-                      border:'1px solid var(--border)', marginBottom:12, overflow:'hidden',
+                  {/* Acciones */}
+                  <div style={{ display:'flex', alignItems:'center', padding:'10px 16px 14px', borderTop:'1px solid var(--border)', gap:20 }}>
+                    <button onClick={()=>toggleLike(m.id)} style={{
+                      background:'none', border:'none', cursor:'pointer',
+                      display:'flex', alignItems:'center', gap:5,
+                      color: isLiked ? '#ef4444' : 'var(--muted)',
+                      fontSize:13, fontWeight:600, padding:0, fontFamily:'inherit',
+                      transition:'all 0.15s ease',
+                      transform: isLiked ? 'scale(1.1)' : 'scale(1)',
                     }}>
-                      {Object.entries(m.stats).map(([k,v], idx)=>(
-                        <div key={k} style={{
-                          flex:1, textAlign:'center', padding:'10px 8px',
-                          borderRight: idx<Object.keys(m.stats).length-1 ? '1px solid var(--border)' : 'none',
-                        }}>
-                          <div style={{ fontSize:13, fontWeight:700, color:'var(--text)' }}>{v}</div>
-                          <div style={{ fontSize:10, color:'var(--muted)', marginTop:2 }}>{k}</div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                      <span style={{ fontSize:17 }}>{isLiked?'❤️':'🤍'}</span> {likeCount}
+                    </button>
 
-                {/* Acciones */}
-                <div style={{ display:'flex', alignItems:'center', padding:'10px 16px 14px', borderTop:'1px solid var(--border)', gap:16 }}>
-                  <button onClick={()=>toggleLike(m.id)} style={{
-                    background:'none', border:'none', cursor:'pointer',
-                    display:'flex', alignItems:'center', gap:5,
-                    color: isLiked ? '#ef4444' : 'var(--muted)',
-                    fontSize:13, fontWeight:600, padding:0, fontFamily:'inherit',
-                    transition:'all 0.15s', transform: isLiked ? 'scale(1.08)' : 'scale(1)',
-                  }}>
-                    <span style={{ fontSize:17 }}>{isLiked?'❤️':'🤍'}</span> {count}
-                  </button>
-                  <button style={{ background:'none', border:'none', cursor:'pointer', display:'flex', alignItems:'center', gap:5, color:'var(--muted)', fontSize:13, fontWeight:600, padding:0, fontFamily:'inherit' }}>
-                    <span style={{ fontSize:17 }}>💬</span> {m.comments}
-                  </button>
-                  <button style={{ marginLeft:'auto', background:'none', border:'none', cursor:'pointer', color:'var(--muted)', fontSize:16, padding:0 }}>↗</button>
-                  <span style={{ fontSize:11, color:'var(--muted)' }}>{m.time}</span>
+                    {/* Compartir */}
+                    <button
+                      onClick={()=>{ if(navigator.share){ navigator.share({ title:'TeamUp', text:m.text, url: window.location.origin }) } }}
+                      style={{ marginLeft:'auto', background:'none', border:'none', cursor:'pointer', color:'var(--muted)', fontSize:13, fontWeight:600, padding:0, fontFamily:'inherit', display:'flex', alignItems:'center', gap:4 }}>
+                      <span style={{ fontSize:15 }}>↗</span> Compartir
+                    </button>
+                  </div>
                 </div>
+              )
+            })}
+
+            {!loading && feed.length > 0 && (
+              <div style={{ textAlign:'center', padding:'10px 0' }}>
+                <span style={{ fontSize:12, color:'var(--muted)' }}>Has llegado al final del feed ✨</span>
               </div>
-            )
-          })}
-        </div>
-
-        <div style={{ textAlign:'center', padding:'20px 0 0' }}>
-          <span style={{ fontSize:12, color:'var(--muted)' }}>Has llegado al final del feed ✨</span>
-        </div>
+            )}
+          </div>
+        )}
 
       </div>
       <Navbar />
