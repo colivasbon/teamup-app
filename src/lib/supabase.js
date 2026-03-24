@@ -1,18 +1,17 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Inicialización lazy: el cliente se crea la primera vez que se llama,
-// nunca durante el pre-render en servidor donde las env vars no están disponibles.
+// Valores hardcodeados — la anon key de Supabase es pública por diseño,
+// no contiene ningún secreto y puede estar en el código del cliente.
+const SUPABASE_URL = 'https://kbhidlhdpjcpazkubcvq.supabase.co'
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtiaGlkbGhkcGpjcGF6a3ViY3ZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxOTc0NDEsImV4cCI6MjA4OTc3MzQ0MX0.GiYgTOHpc9gWUK7IG2G9piog_R9ONrfxR7dzjvD58vQ'
+
 let _client = null
 
 export function getSupabase() {
   if (_client) return _client
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  if (!url || !key) {
-    // Durante SSR en build time, devolvemos un objeto vacío seguro
-    return null
-  }
-  _client = createClient(url, key, {
+  // Solo crear el cliente en el navegador (no durante SSR)
+  if (typeof window === 'undefined') return null
+  _client = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: {
       persistSession:     true,
       autoRefreshToken:   true,
@@ -22,20 +21,18 @@ export function getSupabase() {
   return _client
 }
 
-// Alias para compatibilidad con código existente
+// Proxy para compatibilidad con imports existentes (supabase.auth, supabase.from, etc.)
 export const supabase = new Proxy({}, {
   get(_target, prop) {
     const client = getSupabase()
     if (!client) {
-      // Devuelve funciones que no hacen nada durante SSR
-      return () => Promise.resolve({ data: null, error: { message: 'Supabase not initialized' } })
+      return () => Promise.resolve({ data: null, error: { message: 'SSR context' } })
     }
     const value = client[prop]
     return typeof value === 'function' ? value.bind(client) : value
   }
 })
 
-// ─── Helpers de Auth ─────────────────────────────────
 export const signUp = (email, password, fullName) => {
   const sb = getSupabase()
   if (!sb) return Promise.resolve({ error: { message: 'Not initialized' } })
