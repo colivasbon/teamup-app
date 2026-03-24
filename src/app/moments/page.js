@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Navbar from '@/components/Navbar'
 import { getSupabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
@@ -35,19 +35,25 @@ const FILTERS = [
   { id:'gimnasio', label:'Gimnasio' },
   { id:'natacion', label:'Natación' },
   { id:'ciclismo', label:'Ciclismo' },
+  { id:'yoga', label:'Yoga' },
+  { id:'baloncesto', label:'Baloncesto' },
+  { id:'voleibol', label:'Voleibol' },
+  { id:'badminton', label:'Bádminton' },
 ]
 
 const SPORTS_SELECT = [
-  { id:'running', label:'Running 🏃' },
-  { id:'padel', label:'Pádel 🎾' },
+  { id:'running',    label:'Running 🏃' },
+  { id:'padel',      label:'Pádel 🎾' },
   { id:'senderismo', label:'Senderismo 🥾' },
-  { id:'futbol', label:'Fútbol ⚽' },
-  { id:'gimnasio', label:'Gimnasio 💪' },
-  { id:'tenis', label:'Tenis 🎾' },
-  { id:'natacion', label:'Natación 🏊' },
-  { id:'ciclismo', label:'Ciclismo 🚴' },
-  { id:'yoga', label:'Yoga 🧘' },
+  { id:'futbol',     label:'Fútbol ⚽' },
+  { id:'gimnasio',   label:'Gimnasio 💪' },
+  { id:'tenis',      label:'Tenis 🎾' },
+  { id:'natacion',   label:'Natación 🏊' },
+  { id:'ciclismo',   label:'Ciclismo 🚴' },
+  { id:'yoga',       label:'Yoga 🧘' },
   { id:'baloncesto', label:'Baloncesto 🏀' },
+  { id:'voleibol',   label:'Voleibol 🏐' },
+  { id:'badminton',  label:'Bádminton 🏸' },
 ]
 
 function fmtTime(iso) {
@@ -62,7 +68,7 @@ function fmtTime(iso) {
 
 export default function Moments() {
   const { user, profile } = useAuth()
-  const fileRef = useRef(null)
+  const pollRef = useRef(null)
 
   const [filter,    setFilter]  = useState('all')
   const [moments,   setMoments] = useState([])
@@ -75,61 +81,85 @@ export default function Moments() {
   const [newPost, setNewPost] = useState({ text:'', sport:'running', image_url:'' })
   const setP = (k, v) => setNewPost(p => ({ ...p, [k]: v }))
 
-  // Cargar momentos
-  useEffect(() => {
-    const load = async () => {
-      setLoading(true)
-      try {
-        const sb = getSupabase()
-        if (sb) {
-          const { data, error } = await sb
-            .from('moments')
-            .select('id, text, sport, image_url, created_at, user_id, profiles(full_name, username, avatar_url), moment_likes(count)')
-            .order('created_at', { ascending: false })
-            .limit(30)
-          if (!error && data && data.length > 0) {
-            const formatted = data.map(m => ({
-              id:        m.id,
-              author:    m.profiles?.full_name || 'Usuario',
-              username:  m.profiles?.username || 'usuario',
+  // ── Función de carga/refresco del feed ───────────────────
+  const fetchMoments = useCallback(async (showSpinner = false) => {
+    try {
+      const sb = getSupabase()
+      if (!sb) throw new Error('no sb')
+
+      if (showSpinner) setLoading(true)
+
+      const { data, error } = await sb
+        .from('moments')
+        .select('id, text, sport, image_url, created_at, user_id, profiles(full_name, username, avatar_url), moment_likes(count)')
+        .order('created_at', { ascending: false })
+        .limit(30)
+
+      if (!error && data && data.length > 0) {
+        setMoments(prev => {
+          // Mantener estado de likes locales para IDs que ya existen
+          return data.map(m => {
+            const existing = prev.find(p => p.id === m.id)
+            return {
+              id:         m.id,
+              author:     m.profiles?.full_name || 'Usuario',
+              username:   m.profiles?.username  || 'usuario',
               avatar_url: m.profiles?.avatar_url || null,
-              sport:     m.sport,
-              text:      m.text,
-              image_url: m.image_url,
+              sport:      m.sport,
+              text:       m.text,
+              image_url:  m.image_url,
               created_at: m.created_at,
-              likes:     m.moment_likes?.[0]?.count || 0,
-              liked:     false,
-              user_id:   m.user_id,
-            }))
-            setMoments(formatted)
-            setFromDB(true)
-            setLoading(false)
-            return
-          }
-        }
-      } catch(_) {}
+              likes:      m.moment_likes?.[0]?.count || 0,
+              liked:      existing?.liked ?? false,
+              user_id:    m.user_id,
+            }
+          })
+        })
+        setFromDB(true)
+        if (showSpinner) setLoading(false)
+        return
+      }
+    } catch(_) {}
+
+    // Fallback demo (solo la primera vez)
+    if (showSpinner) {
       setMoments(DEMO_MOMENTS)
       setFromDB(false)
       setLoading(false)
     }
-    load()
   }, [])
 
-  const toggleLike = async (id) => {
-    setLiked(p => ({ ...p, [id]: !p[id] }))
+  // ── Primera carga + polling cada 15 segundos ─────────────
+  useEffect(() => {
+    fetchMoments(true)
+
+    pollRef.current = setInterval(() => {
+      fetchMoments(false)
+    }, 15000)
+
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current)
+    }
+  }, [fetchMoments])
+
+  // ── Like ─────────────────────────────────────────────────
+  const toggleLike = async (momentId) => {
+    const isCurrentlyLiked = liked[momentId] !== undefined ? liked[momentId] : moments.find(m=>m.id===momentId)?.liked
+    setLiked(p => ({ ...p, [momentId]: !isCurrentlyLiked }))
+
     if (!fromDB || !user) return
     try {
       const sb = getSupabase()
       if (!sb) return
-      const isLiked = liked[id]
-      if (isLiked) {
-        await sb.from('moment_likes').delete().eq('moment_id', id).eq('user_id', user.id)
+      if (isCurrentlyLiked) {
+        await sb.from('moment_likes').delete().eq('moment_id', momentId).eq('user_id', user.id)
       } else {
-        await sb.from('moment_likes').insert({ moment_id: id, user_id: user.id })
+        await sb.from('moment_likes').insert({ moment_id: momentId, user_id: user.id })
       }
     } catch(_) {}
   }
 
+  // ── Publicar momento ─────────────────────────────────────
   const publish = async () => {
     if (!newPost.text.trim() || !user) return
     setPosting(true)
@@ -145,34 +175,36 @@ export default function Moments() {
 
         if (!error && data) {
           const optimistic = {
-            id: data.id,
-            author: profile?.full_name || user.email?.split('@')[0] || 'Tú',
-            username: profile?.username || 'tú',
+            id:         data.id,
+            author:     profile?.full_name || user.email?.split('@')[0] || 'Tú',
+            username:   profile?.username  || 'tú',
             avatar_url: profile?.avatar_url || null,
-            sport: data.sport,
-            text: data.text,
-            image_url: data.image_url,
+            sport:      data.sport,
+            text:       data.text,
+            image_url:  data.image_url,
             created_at: data.created_at,
-            likes: 0,
-            liked: false,
-            user_id: user.id,
+            likes:      0,
+            liked:      false,
+            user_id:    user.id,
           }
           setMoments(p => [optimistic, ...p])
+          // Refrescar el feed tras publicar para obtener datos reales
+          setTimeout(() => fetchMoments(false), 1000)
         }
       } else {
-        // Sin BD — añadir optimistamente al demo
+        // Sin BD — optimistic al demo
         const optimistic = {
-          id: 'local-' + Date.now(),
-          author: profile?.full_name || user.email?.split('@')[0] || 'Tú',
-          username: profile?.username || 'tú',
+          id:         'local-' + Date.now(),
+          author:     profile?.full_name || user.email?.split('@')[0] || 'Tú',
+          username:   profile?.username  || 'tú',
           avatar_url: profile?.avatar_url || null,
-          sport: newPost.sport,
-          text: newPost.text.trim(),
-          image_url: null,
+          sport:      newPost.sport,
+          text:       newPost.text.trim(),
+          image_url:  null,
           created_at: new Date().toISOString(),
-          likes: 0,
-          liked: false,
-          user_id: user.id,
+          likes:      0,
+          liked:      false,
+          user_id:    user.id,
         }
         setMoments(p => [optimistic, ...p])
       }
@@ -217,7 +249,6 @@ export default function Moments() {
                   style={{ resize:'none', minHeight:80, fontSize:14, lineHeight:1.5 }}
                   autoFocus
                 />
-                {/* Selector deporte */}
                 <select className="input" value={newPost.sport} onChange={e=>setP('sport',e.target.value)} style={{ fontSize:13 }}>
                   {SPORTS_SELECT.map(s=><option key={s.id} value={s.id}>{s.label}</option>)}
                 </select>
@@ -271,9 +302,9 @@ export default function Moments() {
                 <div style={{ fontSize:13, color:'var(--muted)' }}>Sé el primero en publicar algo</div>
               </div>
             ) : feed.map((m, i) => {
-              const isLiked = liked[m.id] !== undefined ? liked[m.id] : m.liked
+              const isLiked   = liked[m.id] !== undefined ? liked[m.id] : m.liked
               const likeCount = m.likes + (liked[m.id] !== undefined ? (liked[m.id]?1:0)-(m.liked?1:0) : 0)
-              const c = S_COLORS[m.sport] || '#5b6ef5'
+              const c         = S_COLORS[m.sport] || '#5b6ef5'
               const sportLabel = SPORT_LABELS[m.sport] || m.sport
 
               return (
@@ -317,7 +348,6 @@ export default function Moments() {
                       <span style={{ fontSize:17 }}>{isLiked?'❤️':'🤍'}</span> {likeCount}
                     </button>
 
-                    {/* Compartir */}
                     <button
                       onClick={()=>{ if(navigator.share){ navigator.share({ title:'TeamUp', text:m.text, url: window.location.origin }) } }}
                       style={{ marginLeft:'auto', background:'none', border:'none', cursor:'pointer', color:'var(--muted)', fontSize:13, fontWeight:600, padding:0, fontFamily:'inherit', display:'flex', alignItems:'center', gap:4 }}>

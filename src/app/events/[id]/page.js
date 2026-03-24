@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import { getSupabase } from '@/lib/supabase'
@@ -22,6 +22,8 @@ const DEMO = {
 
 const TABS = ['Info','Participantes','Chat']
 
+const isDemo = (id) => String(id).startsWith('demo-') || !!DEMO[id]
+
 function fmt(dateStr) {
   if (!dateStr) return ''
   return new Date(dateStr+'T00:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'})
@@ -32,6 +34,7 @@ export default function EventDetail() {
   const router   = useRouter()
   const { user } = useAuth()
   const chatRef  = useRef(null)
+  const chatPollRef = useRef(null)
 
   const [ev,           setEv]       = useState(null)
   const [pCount,       setPCount]   = useState(0)
@@ -44,10 +47,12 @@ export default function EventDetail() {
   const [chatMsg,      setChat]     = useState('')
   const [sendingMsg,   setSending]  = useState(false)
   const [loadingChat,  setLoadChat] = useState(false)
+  const [lastMsgId,    setLastMsgId] = useState(null)
 
+  // ── Carga inicial del evento ──────────────────────────────
   useEffect(() => {
     const load = async () => {
-      if (String(id).startsWith('demo-') || DEMO[id]) {
+      if (isDemo(id)) {
         const d = DEMO[id]
         if (d) { setEv(d); setPCount(d.participant_count || 0) }
         setLoad(false)
@@ -77,13 +82,12 @@ export default function EventDetail() {
     load()
   }, [id, user])
 
-  // Cargar participantes cuando se entra en esa pestaña
+  // ── Participantes (carga al entrar en pestaña) ────────────
   useEffect(() => {
     if (tab !== 'Participantes') return
     const loadParticipants = async () => {
       const sb = getSupabase()
-      if (!sb || String(id).startsWith('demo-') || DEMO[id]) {
-        // Demo: participantes ficticios
+      if (!sb || isDemo(id)) {
         setParticipants([
           { id:'p1', full_name:'Carlos O.', username:'carlosO', avatar_url:null },
           { id:'p2', full_name:'Laura M.',  username:'lauraM',  avatar_url:null },
@@ -92,57 +96,106 @@ export default function EventDetail() {
         return
       }
       try {
+        // status puede ser 'joined' o 'confirmed' — buscamos ambos
         const { data } = await sb.from('event_participants')
           .select('user_id, profiles(id, full_name, username, avatar_url)')
           .eq('event_id', id)
-          .eq('status', 'confirmed')
+          .in('status', ['joined', 'confirmed'])
         if (data) setParticipants(data.map(d => d.profiles).filter(Boolean))
       } catch(_) {}
     }
     loadParticipants()
   }, [tab, id])
 
-  // Cargar mensajes del chat cuando se entra en esa pestaña
-  useEffect(() => {
-    if (tab !== 'Chat' || !joined) return
-    const loadMessages = async () => {
-      setLoadChat(true)
-      const sb = getSupabase()
-      if (!sb || String(id).startsWith('demo-') || DEMO[id]) {
-        setMessages([
-          { id:'m1', user_id:'u1', author:'Carlos O.', text:'¡Quedan 3 plazas! Animaos 💪', created_at: new Date(Date.now()-3600000).toISOString(), me:false },
-          { id:'m2', user_id:'u2', author:'Laura M.',  text:'Yo llevo raqueta de repuesto si alguien necesita', created_at: new Date(Date.now()-1800000).toISOString(), me:false },
-        ])
-        setLoadChat(false)
-        return
-      }
-      try {
-        const { data } = await sb.from('event_messages')
-          .select('id, user_id, text, created_at, profiles(full_name)')
-          .eq('event_id', id)
-          .order('created_at', { ascending: true })
-          .limit(100)
-        if (data) {
-          setMessages(data.map(m => ({
-            id: m.id,
-            user_id: m.user_id,
-            author: m.profiles?.full_name || 'Usuario',
-            text: m.text,
-            created_at: m.created_at,
-            me: m.user_id === user?.id,
-          })))
-        }
-      } catch(_) {}
-      setLoadChat(false)
-    }
-    loadMessages()
-  }, [tab, joined, id, user])
+  // ── Chat: función de carga de mensajes ────────────────────
+  const fetchMessages = useCallback(async (showSpinner = false) => {
+    const sb = getSupabase()
+    if (!sb || isDemo(id)) return
 
-  // Auto-scroll al final del chat
+    if (showSpinner) setLoadChat(true)
+    try {
+      const { data } = await sb.from('event_messages')
+        .select('id, user_id, text, created_at, profiles(full_name)')
+        .eq('event_id', id)
+        .order('created_at', { ascending: true })
+        .limit(100)
+
+      if (data) {
+        setMessages(prev => {
+          // Evitar re-renders innecesarios si no hay cambios
+          const newIds = data.map(m => m.id).join(',')
+          const oldIds = prev.filter(m => !m.id.startsWith('temp-')).map(m => m.id).join(',')
+          if (newIds === oldIds) return prev
+
+          // Conservar mensajes temporales (optimistic) que aún no llegaron de BD
+          const realIds = new Set(data.map(m => m.id))
+          const temps   = prev.filter(m => m.id.startsWith('temp-') && !realIds.has(m.id))
+
+          const real = data.map(m => ({
+            id:         m.id,
+            user_id:    m.user_id,
+            author:     m.profiles?.full_name || 'Usuario',
+            text:       m.text,
+            created_at: m.created_at,
+            me:         m.user_id === user?.id,
+          }))
+          return [...real, ...temps]
+        })
+        if (data.length > 0) setLastMsgId(data[data.length - 1].id)
+      }
+    } catch(_) {}
+    if (showSpinner) setLoadChat(false)
+  }, [id, user])
+
+  // ── Chat: demo cuando es evento de muestra ────────────────
+  const loadDemoChat = useCallback(() => {
+    setMessages([
+      { id:'m1', user_id:'u1', author:'Carlos O.', text:'¡Quedan 3 plazas! Animaos 💪', created_at: new Date(Date.now()-3600000).toISOString(), me:false },
+      { id:'m2', user_id:'u2', author:'Laura M.',  text:'Yo llevo raqueta de repuesto si alguien necesita', created_at: new Date(Date.now()-1800000).toISOString(), me:false },
+    ])
+  }, [])
+
+  // ── Chat: activar/desactivar polling según pestaña ────────
   useEffect(() => {
-    if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight
+    // Limpiar intervalo anterior siempre
+    if (chatPollRef.current) {
+      clearInterval(chatPollRef.current)
+      chatPollRef.current = null
+    }
+
+    if (tab !== 'Chat' || !joined) return
+
+    if (isDemo(id)) {
+      loadDemoChat()
+      return
+    }
+
+    // Primera carga con spinner
+    fetchMessages(true)
+
+    // Polling cada 4 segundos mientras el chat está abierto
+    chatPollRef.current = setInterval(() => {
+      fetchMessages(false)
+    }, 4000)
+
+    return () => {
+      if (chatPollRef.current) {
+        clearInterval(chatPollRef.current)
+        chatPollRef.current = null
+      }
+    }
+  }, [tab, joined, id, fetchMessages, loadDemoChat])
+
+  // ── Auto-scroll al final solo cuando hay mensajes nuevos ──
+  const prevMsgCount = useRef(0)
+  useEffect(() => {
+    if (messages.length > prevMsgCount.current) {
+      if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight
+      prevMsgCount.current = messages.length
+    }
   }, [messages])
 
+  // ── Unirse / salir ────────────────────────────────────────
   const handleJoin = async () => {
     if (!user) { router.push('/auth'); return }
     setJoining(true)
@@ -153,7 +206,7 @@ export default function EventDetail() {
           await sb.from('event_participants').delete().eq('event_id', id).eq('user_id', user.id)
           setJoined(false); setPCount(p => Math.max(0, p-1))
         } else {
-          const { error } = await sb.from('event_participants').insert({ event_id:id, user_id:user.id })
+          const { error } = await sb.from('event_participants').insert({ event_id:id, user_id:user.id, status:'joined' })
           if (!error) { setJoined(true); setPCount(p => p+1) }
         }
       }
@@ -161,13 +214,14 @@ export default function EventDetail() {
     setJoining(false)
   }
 
+  // ── Enviar mensaje ────────────────────────────────────────
   const sendMsg = async () => {
     if (!chatMsg.trim() || !user || !joined) return
     setSending(true)
     const text = chatMsg.trim()
     setChat('')
 
-    // Optimistic UI
+    // Optimistic: añadir el mensaje al instante
     const temp = {
       id: 'temp-' + Date.now(),
       user_id: user.id,
@@ -177,11 +231,14 @@ export default function EventDetail() {
       me: true,
     }
     setMessages(p => [...p, temp])
+    prevMsgCount.current += 1
 
     try {
       const sb = getSupabase()
-      if (sb && !String(id).startsWith('demo-') && !DEMO[id]) {
+      if (sb && !isDemo(id)) {
         await sb.from('event_messages').insert({ event_id: id, user_id: user.id, text })
+        // Recargar inmediatamente tras enviar para sustituir el temporal
+        fetchMessages(false)
       }
     } catch(_) {}
     setSending(false)
@@ -351,7 +408,6 @@ export default function EventDetail() {
               ))
             )}
 
-            {/* Si no estás apuntado y hay más de 3 */}
             {!joined && participants.length > 3 && (
               <div className="card" style={{ padding:'16px 18px', textAlign:'center' }}>
                 <div style={{ fontSize:13, color:'var(--muted)', marginBottom:12 }}>
@@ -369,7 +425,6 @@ export default function EventDetail() {
         {tab==='Chat' && (
           <div style={{ padding:'16px 0 0' }}>
             {!user ? (
-              // No logueado
               <div className="chat-locked">
                 <div style={{ fontSize:40, marginBottom:12 }}>🔒</div>
                 <div style={{ fontWeight:700, fontSize:16, color:'var(--text)', marginBottom:8 }}>Chat privado</div>
@@ -379,7 +434,6 @@ export default function EventDetail() {
                 <a href="/auth" className="btn btn-primary" style={{ fontSize:14, display:'inline-flex' }}>Entrar / Registrarse</a>
               </div>
             ) : !joined ? (
-              // Logueado pero no apuntado — CTA con engagement
               <div className="chat-locked">
                 <div style={{ fontSize:40, marginBottom:12 }}>💬</div>
                 <div style={{ fontWeight:700, fontSize:16, color:'var(--text)', marginBottom:8 }}>Chat del evento</div>
@@ -399,10 +453,9 @@ export default function EventDetail() {
                 )}
               </div>
             ) : (
-              // Participante — chat completo
               <div style={{ display:'flex', flexDirection:'column', padding:'0 18px' }}>
                 <div style={{ fontSize:12, color:'var(--muted)', textAlign:'center', marginBottom:14, padding:'6px 12px', background:'var(--surface2)', borderRadius:100, display:'inline-block', alignSelf:'center' }}>
-                  🔒 Solo visible para participantes
+                  🔒 Solo visible para participantes · se actualiza cada 4s
                 </div>
 
                 {/* Mensajes */}
@@ -427,9 +480,10 @@ export default function EventDetail() {
                           padding:'10px 14px',
                           color: m.me ? 'white' : 'var(--text)',
                           fontSize:13, lineHeight:1.45,
+                          opacity: m.id.startsWith('temp-') ? 0.65 : 1,
                         }}>{m.text}</div>
                         <div style={{ fontSize:10, color:'var(--muted)', marginTop:3, textAlign: m.me?'right':'left' }}>
-                          {fmtTime(m.created_at)}
+                          {m.id.startsWith('temp-') ? 'Enviando...' : fmtTime(m.created_at)}
                         </div>
                       </div>
                     </div>
