@@ -124,7 +124,7 @@ export default function Create() {
       ? `${form.location ? form.location + ', ' : ''}${form.municipio}`
       : form.location
 
-    const { error: err } = await sb.from('events').insert({
+    const { data: evData, error: err } = await sb.from('events').insert({
       creator_id:  user.id,
       title:       form.title,
       description: form.description,
@@ -137,7 +137,7 @@ export default function Create() {
       max_players: parseInt(form.maxPlayers),
       price:       form.price || 'Gratis',
       third_place: form.thirdPlace,
-    })
+    }).select('id').single()
 
     if (err) {
       if (err.code === 'PGRST205' || err.message?.includes('schema cache') || err.message?.includes('relation')) {
@@ -147,7 +147,15 @@ export default function Create() {
       }
       setSaving(false)
     } else {
-      router.push('/events')
+      // Apuntar al creador automáticamente como participante
+      if (evData?.id) {
+        await sb.from('event_participants').insert({
+          event_id: evData.id,
+          user_id:  user.id,
+          status:   'joined',
+        })
+      }
+      router.push(`/events/${evData?.id || ''}`)
     }
   }
 
