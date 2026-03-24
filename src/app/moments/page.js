@@ -17,14 +17,14 @@ const SPORT_LABELS = {
 }
 
 const DEMO_MOMENTS = [
-  { id:'m1', author:'Carlos O.', username:'carlosO', avatar_url:null, sport:'running',    created_at: new Date(Date.now()-900000).toISOString(),   text:'Empezando el día con energía en la Alameda 🌅 Mejor compañía imposible.', likes:12, liked:false, image_url:null },
-  { id:'m2', author:'María G.',  username:'mariaG',  avatar_url:null, sport:'padel',      created_at: new Date(Date.now()-3600000).toISOString(),  text:'Partido épico esta mañana. Ganamos en el tercer set 6-4 🎾', likes:24, liked:true,  image_url:null },
-  { id:'m3', author:'Javi M.',   username:'javiM',   avatar_url:null, sport:'senderismo', created_at: new Date(Date.now()-10800000).toISOString(), text:'Las vistas desde los 2.800m no tienen precio 🥾✨', likes:41, liked:false, image_url:null },
-  { id:'m4', author:'Laura S.',  username:'lauraS',  avatar_url:null, sport:'gimnasio',   created_at: new Date(Date.now()-18000000).toISOString(), text:'Sesión de funcional increíble hoy 💪🔥', likes:18, liked:false, image_url:null },
-  { id:'m5', author:'Diego R.',  username:'diegoR',  avatar_url:null, sport:'futbol',     created_at: new Date(Date.now()-86400000).toISOString(), text:'Derrota 3-5 pero qué partido más divertido ⚽', likes:33, liked:true,  image_url:null },
+  { id:'m1', author:'Carlos O.', username:'carlosO', avatar_url:null, sport:'running',    province:'cordoba',  created_at: new Date(Date.now()-900000).toISOString(),   text:'Empezando el día con energía en la Alameda 🌅 Mejor compañía imposible.', likes:12, liked:false },
+  { id:'m2', author:'María G.',  username:'mariaG',  avatar_url:null, sport:'padel',      province:'madrid',   created_at: new Date(Date.now()-3600000).toISOString(),  text:'Partido épico esta mañana. Ganamos en el tercer set 6-4 🎾', likes:24, liked:true  },
+  { id:'m3', author:'Javi M.',   username:'javiM',   avatar_url:null, sport:'senderismo', province:'madrid',   created_at: new Date(Date.now()-10800000).toISOString(), text:'Las vistas desde los 2.800m no tienen precio 🥾✨', likes:41, liked:false },
+  { id:'m4', author:'Laura S.',  username:'lauraS',  avatar_url:null, sport:'gimnasio',   province:'sevilla',  created_at: new Date(Date.now()-18000000).toISOString(), text:'Sesión de funcional increíble hoy 💪🔥', likes:18, liked:false },
+  { id:'m5', author:'Diego R.',  username:'diegoR',  avatar_url:null, sport:'futbol',     province:'valencia', created_at: new Date(Date.now()-86400000).toISOString(), text:'Derrota 3-5 pero qué partido más divertido ⚽', likes:33, liked:true  },
 ]
 
-const FILTERS = [
+const SPORT_FILTERS = [
   { id:'all', label:'Todos' }, { id:'running', label:'Running' }, { id:'padel', label:'Pádel' },
   { id:'senderismo', label:'Senderismo' }, { id:'futbol', label:'Fútbol' }, { id:'gimnasio', label:'Gimnasio' },
   { id:'natacion', label:'Natación' }, { id:'ciclismo', label:'Ciclismo' },
@@ -41,6 +41,14 @@ const SPORTS_SELECT = [
   { id:'voleibol', label:'Voleibol 🏐' }, { id:'badminton', label:'Bádminton 🏸' },
 ]
 
+// Provincias para el filtro de localidad
+const PROVINCE_LABELS = {
+  madrid:'Madrid', barcelona:'Barcelona', valencia:'Valencia', sevilla:'Sevilla',
+  cordoba:'Córdoba', granada:'Granada', malaga:'Málaga', alicante:'Alicante',
+  murcia:'Murcia', zaragoza:'Zaragoza', bilbao:'País Vasco', cadiz:'Cádiz',
+  huelva:'Huelva', jaen:'Jaén', almeria:'Almería',
+}
+
 function fmtTime(iso) {
   const d = new Date(iso); const now = new Date(); const diff = (now - d) / 1000
   if (diff < 60)    return 'Ahora mismo'
@@ -53,57 +61,78 @@ export default function Moments() {
   const { user, profile } = useAuth()
   const pollRef = useRef(null)
 
-  const [filter,  setFilter]  = useState('all')
-  const [moments, setMoments] = useState([])
-  const [liked,   setLiked]   = useState({})       // { [momentId]: bool }
-  const [likeCounts, setLikeCounts] = useState({}) // { [momentId]: number }
-  const [fromDB,  setFromDB]  = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [compose, setCompose] = useState(false)
-  const [posting, setPosting] = useState(false)
-  const [newPost, setNewPost] = useState({ text:'', sport:'running' })
+  const [sportFilter, setSportFilter] = useState('all')
+  const [localFilter, setLocalFilter] = useState('all')  // provincia o 'all'
+  const [moments,     setMoments]     = useState([])
+  const [liked,       setLiked]       = useState({})
+  const [likeCounts,  setLikeCounts]  = useState({})
+  const [fromDB,      setFromDB]      = useState(false)
+  const [loading,     setLoading]     = useState(true)
+  const [compose,     setCompose]     = useState(false)
+  const [posting,     setPosting]     = useState(false)
+  const [myProvince,  setMyProvince]  = useState(null)  // provincia detectada por geoloc
+  const [newPost,     setNewPost]     = useState({ text:'', sport:'running' })
   const setP = (k, v) => setNewPost(p => ({ ...p, [k]: v }))
 
-  // ── Fetch del feed ───────────────────────────────────────
-  // Nota: moment_likes(count) no funciona como agregado en Supabase JS.
-  // Hacemos dos queries separadas: una para momentos y otra para contar likes.
+  // ── Geolocalización para sugerir provincia ───────────────
+  useEffect(() => {
+    if (profile?.location) {
+      // Intentar extraer provincia del perfil
+      const loc = profile.location.toLowerCase()
+      const found = Object.keys(PROVINCE_LABELS).find(k => loc.includes(k))
+      if (found) { setMyProvince(found); setLocalFilter(found) }
+    }
+  }, [profile])
+
+  // ── Fetch del feed (queries separadas para evitar RLS join) ──
   const fetchMoments = useCallback(async (showSpinner = false) => {
     try {
       const sb = getSupabase()
       if (!sb) throw new Error('no client')
       if (showSpinner) setLoading(true)
 
-      // 1. Traer momentos con perfil del autor
+      // 1. Traer momentos SIN join — evita bloqueos RLS en foreign key joins
       const { data: mData, error: mErr } = await sb
         .from('moments')
-        .select('id, text, sport, image_url, created_at, user_id, profiles(full_name, username, avatar_url)')
+        .select('id, text, sport, image_url, created_at, user_id, province')
         .order('created_at', { ascending: false })
-        .limit(30)
+        .limit(50)
 
-      if (mErr || !mData || mData.length === 0) throw new Error('no data')
+      if (mErr) { console.error('moments error:', mErr); throw new Error('moments error') }
+      if (!mData || mData.length === 0) throw new Error('no moments')
 
-      // 2. Contar likes por momento (group by en supabase no está en el cliente JS — usamos una query por cada momento sería lento, así que traemos todos los likes y los contamos en cliente)
+      // 2. Traer perfiles de los autores por separado
+      const userIds = [...new Set(mData.map(m => m.user_id))]
+      let profilesMap = {}
+      if (userIds.length > 0) {
+        const { data: pData } = await sb
+          .from('profiles')
+          .select('id, full_name, username, avatar_url')
+          .in('id', userIds)
+        if (pData) pData.forEach(p => { profilesMap[p.id] = p })
+      }
+
+      // 3. Traer likes
       const momentIds = mData.map(m => m.id)
       const { data: likesData } = await sb
         .from('moment_likes')
         .select('moment_id, user_id')
         .in('moment_id', momentIds)
 
-      // Agrupar en cliente
-      const countsMap = {}
-      const myLikesMap = {}
+      const countsMap = {}; const myLikesMap = {}
       for (const l of (likesData || [])) {
-        countsMap[l.moment_id]  = (countsMap[l.moment_id]  || 0) + 1
+        countsMap[l.moment_id] = (countsMap[l.moment_id] || 0) + 1
         if (l.user_id === user?.id) myLikesMap[l.moment_id] = true
       }
 
       const formatted = mData.map(m => ({
         id:         m.id,
-        author:     m.profiles?.full_name || 'Usuario',
-        username:   m.profiles?.username  || 'usuario',
-        avatar_url: m.profiles?.avatar_url || null,
+        author:     profilesMap[m.user_id]?.full_name || 'Usuario',
+        username:   profilesMap[m.user_id]?.username  || 'usuario',
+        avatar_url: profilesMap[m.user_id]?.avatar_url || null,
         user_id:    m.user_id,
         sport:      m.sport,
+        province:   m.province || null,
         text:       m.text,
         image_url:  m.image_url,
         created_at: m.created_at,
@@ -111,33 +140,25 @@ export default function Moments() {
 
       setMoments(formatted)
       setLikeCounts(countsMap)
-      // Solo inicializar myLikes si el usuario está logueado — no sobreescribir cambios locales
       if (user) {
-        setLiked(prev => {
-          const merged = { ...myLikesMap }
-          // Mantener cambios locales que aún no se han reflejado en BD
-          for (const [id, val] of Object.entries(prev)) {
-            merged[id] = val
-          }
-          return merged
-        })
+        setLiked(prev => ({ ...myLikesMap, ...prev }))
       }
       setFromDB(true)
       if (showSpinner) setLoading(false)
       return
 
-    } catch(_) {}
+    } catch(e) {
+      console.error('fetchMoments failed:', e)
+    }
 
     if (showSpinner) {
-      setMoments(DEMO_MOMENTS)
       const counts = {}; const lk = {}
       DEMO_MOMENTS.forEach(m => { counts[m.id] = m.likes; lk[m.id] = m.liked })
-      setLikeCounts(counts); setLiked(lk)
+      setMoments(DEMO_MOMENTS); setLikeCounts(counts); setLiked(lk)
       setFromDB(false); setLoading(false)
     }
   }, [user])
 
-  // Primera carga + polling cada 15s
   useEffect(() => {
     fetchMoments(true)
     pollRef.current = setInterval(() => fetchMoments(false), 15000)
@@ -147,10 +168,8 @@ export default function Moments() {
   // ── Like ─────────────────────────────────────────────────
   const toggleLike = async (momentId) => {
     const isLiked = !!liked[momentId]
-    // Optimistic
     setLiked(p  => ({ ...p, [momentId]: !isLiked }))
     setLikeCounts(p => ({ ...p, [momentId]: Math.max(0, (p[momentId]||0) + (isLiked ? -1 : 1)) }))
-
     if (!fromDB || !user) return
     try {
       const sb = getSupabase(); if (!sb) return
@@ -168,41 +187,59 @@ export default function Moments() {
     setPosting(true)
     try {
       const sb = getSupabase()
+      // Provincia del usuario para el momento
+      const province = profile?.location
+        ? Object.keys(PROVINCE_LABELS).find(k => profile.location.toLowerCase().includes(k)) || null
+        : null
+
       if (sb && fromDB) {
         const { data, error } = await sb.from('moments').insert({
-          user_id: user.id, text: newPost.text.trim(), sport: newPost.sport,
-        }).select('id, text, sport, image_url, created_at, user_id').single()
+          user_id: user.id,
+          text: newPost.text.trim(),
+          sport: newPost.sport,
+          province: province,
+        }).select('id, text, sport, image_url, created_at, user_id, province').single()
 
         if (!error && data) {
           const optimistic = {
-            id: data.id,
+            id: data.id, user_id: user.id,
             author: profile?.full_name || user.email?.split('@')[0] || 'Tú',
             username: profile?.username || 'tú',
             avatar_url: profile?.avatar_url || null,
-            user_id: user.id, sport: data.sport,
+            sport: data.sport, province: data.province,
             text: data.text, image_url: null,
             created_at: data.created_at,
           }
           setMoments(p => [optimistic, ...p])
           setLikeCounts(p => ({ ...p, [data.id]: 0 }))
-          setTimeout(() => fetchMoments(false), 1000)
+          setTimeout(() => fetchMoments(false), 1500)
+        } else {
+          console.error('publish error:', error)
         }
       } else {
         const optimistic = {
-          id: 'local-' + Date.now(),
+          id: 'local-' + Date.now(), user_id: user.id,
           author: profile?.full_name || user.email?.split('@')[0] || 'Tú',
           username: profile?.username || 'tú', avatar_url: profile?.avatar_url || null,
-          user_id: user.id, sport: newPost.sport, text: newPost.text.trim(),
-          image_url: null, created_at: new Date().toISOString(),
+          sport: newPost.sport, province: province,
+          text: newPost.text.trim(), image_url: null, created_at: new Date().toISOString(),
         }
         setMoments(p => [optimistic, ...p])
         setLikeCounts(p => ({ ...p, [optimistic.id]: 0 }))
       }
-    } catch(_) {}
+    } catch(e) { console.error('publish exception:', e) }
     setNewPost({ text:'', sport:'running' }); setCompose(false); setPosting(false)
   }
 
-  const feed = filter === 'all' ? moments : moments.filter(m => m.sport === filter)
+  // ── Filtrado ─────────────────────────────────────────────
+  const feed = moments.filter(m => {
+    const bySport = sportFilter === 'all' || m.sport === sportFilter
+    const byLocal = localFilter === 'all' || m.province === localFilter
+    return bySport && byLocal
+  })
+
+  // Provincias disponibles en el feed actual (solo las que tienen momentos)
+  const availableProvinces = [...new Set(moments.map(m => m.province).filter(Boolean))]
 
   return (
     <>
@@ -211,11 +248,15 @@ export default function Moments() {
         <header style={{ paddingTop:60, paddingBottom:16, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           <div>
             <h1 style={{ fontSize:24, fontWeight:800, margin:'0 0 3px', letterSpacing:'-0.04em' }}>Momentos</h1>
-            <p style={{ fontSize:13, color:'var(--muted)', margin:0 }}>Lo mejor de hoy en la comunidad</p>
+            <p style={{ fontSize:13, color:'var(--muted)', margin:0 }}>
+              {localFilter !== 'all'
+                ? `${PROVINCE_LABELS[localFilter] || localFilter} · comunidad local`
+                : 'Lo mejor de hoy en la comunidad'}
+            </p>
           </div>
           {user && (
             <button onClick={()=>setCompose(!compose)} className="btn btn-primary" style={{ padding:'10px 16px', fontSize:13 }}>
-              {compose ? '✕ Cancelar' : '+ Publicar'}
+              {compose ? '✕' : '+ Publicar'}
             </button>
           )}
         </header>
@@ -261,10 +302,35 @@ export default function Moments() {
           </div>
         )}
 
-        {/* Filtros */}
+        {/* Filtro localidad */}
+        {(availableProvinces.length > 0 || fromDB) && (
+          <div className="scroll-x" style={{ display:'flex', gap:8, paddingBottom:10 }}>
+            <button onClick={()=>setLocalFilter('all')}
+              className={`pill ${localFilter==='all'?'pill-active':'pill-inactive'}`}
+              style={localFilter==='all'?{background:'linear-gradient(135deg,#06d6a0,#0ea5e9)'}:{}}>
+              📍 Toda España
+            </button>
+            {myProvince && (
+              <button onClick={()=>setLocalFilter(myProvince)}
+                className={`pill ${localFilter===myProvince?'pill-active':'pill-inactive'}`}
+                style={localFilter===myProvince?{background:'linear-gradient(135deg,#06d6a0,#0ea5e9)'}:{}}>
+                ⭐ {PROVINCE_LABELS[myProvince] || myProvince}
+              </button>
+            )}
+            {availableProvinces.filter(p => p !== myProvince).map(p => (
+              <button key={p} onClick={()=>setLocalFilter(p)}
+                className={`pill ${localFilter===p?'pill-active':'pill-inactive'}`}>
+                {PROVINCE_LABELS[p] || p}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Filtro deporte */}
         <div className="scroll-x" style={{ display:'flex', gap:8, paddingBottom:14 }}>
-          {FILTERS.map(f=>(
-            <button key={f.id} onClick={()=>setFilter(f.id)} className={`pill ${filter===f.id?'pill-active':'pill-inactive'}`}>
+          {SPORT_FILTERS.map(f=>(
+            <button key={f.id} onClick={()=>setSportFilter(f.id)}
+              className={`pill ${sportFilter===f.id?'pill-active':'pill-inactive'}`}>
               {f.label}
             </button>
           ))}
@@ -282,13 +348,22 @@ export default function Moments() {
             {feed.length === 0 ? (
               <div className="card" style={{ padding:'40px 24px', textAlign:'center' }}>
                 <div style={{ fontSize:44, marginBottom:12 }}>🏅</div>
-                <div style={{ fontWeight:700, fontSize:16, marginBottom:6 }}>Sin momentos aún</div>
-                <div style={{ fontSize:13, color:'var(--muted)' }}>Sé el primero en publicar algo</div>
+                <div style={{ fontWeight:700, fontSize:16, marginBottom:6 }}>
+                  {localFilter !== 'all' ? `Nada en ${PROVINCE_LABELS[localFilter] || localFilter} aún` : 'Sin momentos aún'}
+                </div>
+                <div style={{ fontSize:13, color:'var(--muted)', marginBottom: localFilter!=='all'?16:0 }}>
+                  {localFilter !== 'all' ? 'Sé el primero de tu zona en publicar algo' : 'Sé el primero en publicar algo'}
+                </div>
+                {localFilter !== 'all' && (
+                  <button className="btn btn-ghost" style={{ fontSize:13 }} onClick={()=>setLocalFilter('all')}>
+                    Ver toda España
+                  </button>
+                )}
               </div>
             ) : feed.map((m, i) => {
-              const isLiked   = !!liked[m.id]
-              const likeCount = likeCounts[m.id] || 0
-              const c         = S_COLORS[m.sport] || '#5b6ef5'
+              const isLiked    = !!liked[m.id]
+              const likeCount  = likeCounts[m.id] || 0
+              const c          = S_COLORS[m.sport] || '#5b6ef5'
               const sportLabel = SPORT_LABELS[m.sport] || m.sport
 
               return (
@@ -305,7 +380,12 @@ export default function Moments() {
                         <a href={`/profile/${m.user_id}`} style={{ textDecoration:'none' }}>
                           <div style={{ fontWeight:700, fontSize:14, color:'var(--text)' }}>{m.author}</div>
                         </a>
-                        <div style={{ fontSize:11, color:'var(--muted)' }}>@{m.username} · {fmtTime(m.created_at)}</div>
+                        <div style={{ fontSize:11, color:'var(--muted)' }}>
+                          @{m.username} · {fmtTime(m.created_at)}
+                          {m.province && PROVINCE_LABELS[m.province] && (
+                            <span style={{ marginLeft:4 }}>· 📍 {PROVINCE_LABELS[m.province]}</span>
+                          )}
+                        </div>
                       </div>
                       <span style={{ fontSize:11, fontWeight:700, color:c, background:`${c}18`, borderRadius:100, padding:'3px 10px', flexShrink:0 }}>
                         {sportLabel}

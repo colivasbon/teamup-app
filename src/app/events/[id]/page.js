@@ -105,24 +105,36 @@ export default function EventDetail() {
     if (!sb || isDemo(id)) return
     if (showSpinner) setLoadChat(true)
     try {
-      const { data, error } = await sb.from('event_messages')
-        .select('id, user_id, text, created_at, profiles(full_name, avatar_url)')
+      // Traer mensajes sin join a profiles para evitar bloqueos RLS
+      const { data: msgData, error } = await sb.from('event_messages')
+        .select('id, user_id, text, created_at')
         .eq('event_id', id)
         .order('created_at', { ascending: true })
         .limit(100)
 
-      if (error) { console.error('fetchMessages error:', error); return }
-      if (data) {
+      if (error) { console.error('fetchMessages error:', error) }
+      else if (msgData) {
+        // Traer nombres de los autores por separado
+        const userIds = [...new Set(msgData.map(m => m.user_id))]
+        let namesMap = {}
+        if (userIds.length > 0) {
+          const { data: profiles } = await sb
+            .from('profiles')
+            .select('id, full_name, avatar_url')
+            .in('id', userIds)
+          if (profiles) profiles.forEach(p => { namesMap[p.id] = p })
+        }
+
         setMessages(prev => {
-          const newIds = data.map(m => m.id).join(',')
+          const newIds = msgData.map(m => m.id).join(',')
           const oldIds = prev.filter(m => !m.id.startsWith('temp-')).map(m => m.id).join(',')
           if (newIds === oldIds) return prev
-          const realIds = new Set(data.map(m => m.id))
+          const realIds = new Set(msgData.map(m => m.id))
           const temps   = prev.filter(m => m.id.startsWith('temp-') && !realIds.has(m.id))
-          const real    = data.map(m => ({
+          const real    = msgData.map(m => ({
             id: m.id, user_id: m.user_id,
-            author: m.profiles?.full_name || 'Usuario',
-            avatar: m.profiles?.avatar_url || null,
+            author: namesMap[m.user_id]?.full_name || 'Usuario',
+            avatar: namesMap[m.user_id]?.avatar_url || null,
             text: m.text, created_at: m.created_at,
             me: m.user_id === user?.id,
           }))
@@ -130,6 +142,7 @@ export default function EventDetail() {
         })
       }
     } catch(e) { console.error('fetchMessages exception:', e) }
+    // Siempre apagar el spinner al terminar
     if (showSpinner) setLoadChat(false)
   }, [id, user])
 
