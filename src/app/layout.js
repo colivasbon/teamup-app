@@ -54,7 +54,7 @@ export default function RootLayout({ children }) {
     <html lang="es" data-theme="dark">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-        <meta name="theme-color" content="#07091c" />
+        <meta name="theme-color" content="#1a2028" />
         <title>TeamUp — Haz deporte, conoce gente</title>
       </head>
       <body>

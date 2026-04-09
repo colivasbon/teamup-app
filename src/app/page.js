@@ -4,24 +4,42 @@ import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import Navbar from '@/components/Navbar'
 
+// Logo SVG inline — azul en claro (#586875), crema en oscuro (#f6eddc)
+// Se controla con currentColor sobre cada grupo
+function LogoTeamUp({ height = 32 }) {
+  const w = Math.round(height * (800/320))
+  return (
+    <svg width={w} height={height} viewBox="0 0 800 320" xmlns="http://www.w3.org/2000/svg" aria-label="TeamUp">
+      {/* Letras principales */}
+      <g fill="currentColor">
+        <path d="M149.49,25.61v37.21c0,6.22-5.04,11.26-11.26,11.26h-29.11c-.78,0-1.41.63-1.41,1.41v170.35c0,6.22-5.04,11.26-11.26,11.26h-29.37c-6.22,0-11.26-5.04-11.26-11.26V75.49c0-.78-.63-1.41-1.41-1.41h-29.11c-6.22,0-11.26-5.04-11.26-11.26V25.61c0-6.22,5.04-11.26,11.26-11.26h112.92c6.22,0,11.26,5.04,11.26,11.26Z"/>
+        <path d="M234.83,25.22v220.23c0,6.22,5.04,11.26,11.26,11.26h29.37c6.22,0,11.26-5.04,11.26-11.26v-79.73c0-1.79,1.45-3.24,3.24-3.24h0c1.79,0,3.24,1.45,3.24,3.24v79.73c0,6.22,5.04,11.26,11.26,11.26h29.37c6.22,0,11.26-5.04,11.26-11.26V25.22c0-6.22-5.04-11.26-11.26-11.26h-87.76c-6.22,0-11.26,5.04-11.26,11.26ZM286.72,107.34v-30.4c0-1.79,1.45-3.24,3.24-3.24h0c1.79,0,3.24,1.45,3.24,3.24v30.4c0,1.79-1.45,3.24-3.24,3.24h0c-1.79,0-3.24-1.45-3.24-3.24Z"/>
+        <path d="M518.32,25.48v220.36c0,6.22-5.04,11.26-11.26,11.26h-29.37c-6.22,0-11.26-5.04-11.26-11.26V77.2c0-1.79-1.45-3.24-3.24-3.24h0c-1.79,0-3.24,1.45-3.24,3.24v168.64c0,6.22-5.04,11.26-11.26,11.26h-29.37c-6.22,0-11.26-5.04-11.26-11.26V77.37c0-1.89-1.53-3.41-3.41-3.41h0c-1.89,0-3.41,1.53-3.41,3.41v168.47c0,6.22-5.04,11.26-11.26,11.26h-29.37c-6.22,0-11.26-5.04-11.26-11.26V56.45c0-23.32,18.9-42.22,42.22-42.22h115.51c6.22,0,11.26,5.04,11.26,11.26Z"/>
+        <path d="M204.2,75.49v35.48h5.17c6.22,0,11.26,5.04,11.26,11.26v29.37c0,6.22-5.04,11.26-11.26,11.26h-5.17v33.09c0,.78.63,1.41,1.41,1.41h15.14c6.22,0,11.26,5.04,11.26,11.26v37.21c0,6.22-5.04,11.26-11.26,11.26h-57.19c-6.22,0-11.26-5.04-11.26-11.26V25.48c0-6.22,5.04-11.26,11.26-11.26h40.63v.13h16.55c6.22,0,11.26,5.04,11.26,11.26v37.21c0,6.22-5.04,11.26-11.26,11.26h-15.14c-.78,0-1.41.63-1.41,1.41Z"/>
+        <path d="M730.13,13.79v.11h-50.26c-6.22,0-11.26,5.04-11.26,11.26v220.46c0,6.22,5.04,11.26,11.26,11.26h32.46c6.22,0,11.26-5.04,11.26-11.26v-97.34c0-.78.63-1.41,1.41-1.41h5.14c30.83,0,55.82-24.99,55.82-55.82v-21.44c0-30.83-24.99-55.82-55.82-55.82h0ZM723.59,90.35v-26.11c0-1.81,1.47-3.27,3.27-3.27h0c1.81,0,3.27,1.47,3.27,3.27v26.11c0,1.81-1.47,3.27-3.27,3.27h0c-1.81,0-3.27-1.47-3.27-3.27Z"/>
+        <path d="M617.53,25.17v168.64c0,1.79-1.45,3.24-3.24,3.24h0c-1.79,0-3.24-1.45-3.24-3.24V25.17c0-6.22-5.04-11.26-11.26-11.26h-29.43c-6.22,0-11.26,5.04-11.26,11.26v220.35c0,6.22,5.04,11.26,11.26,11.26h81.27c6.22,0,11.26-5.04,11.26-11.26V25.17c0-6.22-5.04-11.26-11.26-11.26h-22.83c-6.22,0-11.26,5.04-11.26,11.26Z"/>
+      </g>
+    </svg>
+  )
+}
+
 const SPORTS = [
-  { id:'running',    name:'Running',    icon:'🏃', from:'#5b6ef5', to:'#818cf8' },
-  { id:'padel',      name:'Pádel',      icon:'🎾', from:'#06b6d4', to:'#06d6a0' },
-  { id:'senderismo', name:'Senderismo', icon:'🥾', from:'#f59e0b', to:'#f97316' },
-  { id:'futbol',     name:'Fútbol',     icon:'⚽', from:'#ef4444', to:'#dc2626' },
-  { id:'gimnasio',   name:'Gimnasio',   icon:'💪', from:'#8b5cf6', to:'#d946ef' },
-  { id:'tenis',      name:'Tenis',      icon:'🎾', from:'#fbbf24', to:'#f59e0b' },
+  { id:'running',    name:'Running',    icon:'🏃', from:'#586875', to:'#3f4f5a' },
+  { id:'padel',      name:'Pádel',      icon:'🎾', from:'#7a9a8a', to:'#5a7a6a' },
+  { id:'senderismo', name:'Senderismo', icon:'🥾', from:'#a07840', to:'#c8a96e' },
+  { id:'futbol',     name:'Fútbol',     icon:'⚽', from:'#5a6870', to:'#3a4850' },
+  { id:'gimnasio',   name:'Gimnasio',   icon:'💪', from:'#7a6858', to:'#5a4838' },
+  { id:'tenis',      name:'Tenis',      icon:'🎾', from:'#8a9878', to:'#6a7858' },
 ]
 
 const NEARBY = [
-  { id:'demo-1', icon:'🏃', title:'Running Matutino',   loc:'Alameda de Córdoba',     time:'Hoy · 07:30',    p:7,  max:10, color:'#5b6ef5' },
-  { id:'demo-2', icon:'🎾', title:'Torneo Pádel Medio', loc:'Club Pádel Centro',       time:'Mañana · 18:00', p:2,  max:4,  color:'#06d6a0' },
-  { id:'demo-4', icon:'⚽', title:'Fútbol 7 tarde',     loc:'Polideportivo Municipal', time:'Vie · 20:00',    p:11, max:14, color:'#ef4444' },
+  { id:'demo-1', icon:'🏃', title:'Running Matutino',   loc:'Alameda de Córdoba',     time:'Hoy · 07:30',    p:7,  max:10, color:'#586875' },
+  { id:'demo-2', icon:'🎾', title:'Torneo Pádel Medio', loc:'Club Pádel Centro',       time:'Mañana · 18:00', p:2,  max:4,  color:'#c8a96e' },
+  { id:'demo-4', icon:'⚽', title:'Fútbol 7 tarde',     loc:'Polideportivo Municipal', time:'Vie · 20:00',    p:11, max:14, color:'#7a9a8a' },
 ]
 
 export default function Home() {
   const { user, profile } = useAuth()
-
   const avatarUrl   = profile?.avatar_url || null
   const displayName = profile?.full_name || user?.user_metadata?.full_name || null
 
@@ -30,27 +48,17 @@ export default function Home() {
       <div className="page-wrap">
 
         {/* Header */}
-        <header style={{ paddingTop:60, paddingBottom:24, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-          <div>
-            <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:4 }}>
-              <svg width="36" height="36" viewBox="0 0 34 34" fill="none">
-                <rect width="34" height="34" rx="11" fill="url(#hg1)"/>
-                <path d="M11 17L17 11L23 17L17 23Z" fill="white" opacity="0.92"/>
-                <circle cx="17" cy="17" r="3.5" fill="white"/>
-                <defs>
-                  <linearGradient id="hg1" x1="0" y1="0" x2="34" y2="34" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#5b6ef5"/><stop offset="1" stopColor="#8b5cf6"/>
-                  </linearGradient>
-                </defs>
-              </svg>
-              <span style={{ fontSize:23, fontWeight:800, letterSpacing:'-0.04em', background:'var(--grad)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>
-                TeamUp
-              </span>
-            </div>
-            <p style={{ fontSize:14, color:'var(--muted)', margin:0 }}>Haz deporte, conoce gente</p>
-          </div>
+        <header style={{ paddingTop:58, paddingBottom:24, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+          {/* Logo real SVG — cambia de color con el tema */}
+          <Link href="/" style={{ color:'#586875' }} className="logo-link">
+            {/* En modo oscuro el logo es crema */}
+            <style>{`
+              [data-theme="dark"] .logo-link { color: #f6eddc !important; }
+            `}</style>
+            <LogoTeamUp height={28} />
+          </Link>
 
-          {/* Avatar real del usuario */}
+          {/* Avatar */}
           <Link href="/profile" style={{
             width:40, height:40, borderRadius:'50%',
             background: avatarUrl ? 'transparent' : 'var(--glass)',
@@ -84,19 +92,20 @@ export default function Home() {
         <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginBottom:32 }}>
           {SPORTS.map((s,i)=>(
             <Link key={s.id} href={`/events?sport=${s.id}`} className={`anim-${Math.min(i+1,6)}`} style={{
-              display:'block', background:`linear-gradient(140deg,${s.from},${s.to})`,
+              display:'block',
+              background:`linear-gradient(140deg,${s.from},${s.to})`,
               borderRadius:20, padding:'20px 18px', position:'relative', overflow:'hidden',
-              boxShadow:`0 6px 24px ${s.from}44`,
+              boxShadow:`0 6px 24px ${s.from}55`,
               transition:'transform 0.22s cubic-bezier(.34,1.56,.64,1), box-shadow 0.22s ease',
             }}
-            onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-4px) scale(1.02)';e.currentTarget.style.boxShadow=`0 12px 36px ${s.from}66`}}
-            onMouseLeave={e=>{e.currentTarget.style.transform='';e.currentTarget.style.boxShadow=`0 6px 24px ${s.from}44`}}
+            onMouseEnter={e=>{ e.currentTarget.style.transform='translateY(-4px) scale(1.02)'; e.currentTarget.style.boxShadow=`0 12px 36px ${s.from}77` }}
+            onMouseLeave={e=>{ e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=`0 6px 24px ${s.from}55` }}
             >
-              <div style={{ position:'absolute', right:-16, bottom:-16, width:80, height:80, borderRadius:'50%', background:'rgba(255,255,255,0.14)', filter:'blur(18px)', pointerEvents:'none' }}/>
-              <div style={{ position:'absolute', right:8, bottom:2, fontSize:52, opacity:0.16, lineHeight:1, pointerEvents:'none', userSelect:'none' }}>{s.icon}</div>
+              <div style={{ position:'absolute', right:-16, bottom:-16, width:80, height:80, borderRadius:'50%', background:'rgba(246,237,220,0.12)', filter:'blur(18px)', pointerEvents:'none' }}/>
+              <div style={{ position:'absolute', right:8, bottom:2, fontSize:52, opacity:0.14, lineHeight:1, pointerEvents:'none', userSelect:'none' }}>{s.icon}</div>
               <div style={{ position:'relative', zIndex:1 }}>
                 <div style={{ fontSize:30, marginBottom:8, lineHeight:1 }}>{s.icon}</div>
-                <div style={{ fontSize:15, fontWeight:700, color:'white', letterSpacing:'-0.02em' }}>{s.name}</div>
+                <div style={{ fontSize:15, fontWeight:700, color:'#f6eddc', letterSpacing:'-0.02em' }}>{s.name}</div>
               </div>
             </Link>
           ))}
@@ -131,7 +140,7 @@ export default function Home() {
           ))}
         </div>
 
-        {/* CTA crear evento — margen generoso antes del navbar */}
+        {/* CTA */}
         <Link href="/create" className="btn btn-primary" style={{ display:'flex', width:'100%', fontSize:16, padding:'15px 24px', borderRadius:16, marginBottom:32, justifyContent:'center', gap:8 }}>
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
