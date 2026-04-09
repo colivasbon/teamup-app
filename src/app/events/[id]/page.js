@@ -111,10 +111,17 @@ export default function EventDetail() {
       }
       try {
         const sb = getSupabase(); if (!sb) return
-        const { data } = await sb.from('event_participants')
-          .select('user_id, profiles(id, full_name, username, avatar_url)')
+        // Paso 1: obtener los user_ids de los participantes
+        const { data: epData } = await sb.from('event_participants')
+          .select('user_id')
           .eq('event_id', id)
-        if (data) setParticipants(data.map(d => d.profiles).filter(Boolean))
+        if (!epData || epData.length === 0) { setParticipants([]); return }
+        // Paso 2: obtener sus perfiles por separado (evita bloqueos RLS en join)
+        const uids = epData.map(e => e.user_id)
+        const { data: pData } = await sb.from('profiles')
+          .select('id, full_name, username, avatar_url')
+          .in('id', uids)
+        setParticipants(pData || [])
       } catch(_) {}
     }
     loadP()
@@ -752,7 +759,7 @@ export default function EventDetail() {
                 <div style={{ fontSize:12, color:'var(--muted)', textAlign:'center', marginBottom:14, padding:'6px 12px', background:'var(--surface2)', borderRadius:100, display:'inline-block', alignSelf:'center' }}>
                   🔒 Solo visible para participantes
                 </div>
-                <div ref={chatRef} style={{ display:'flex', flexDirection:'column', gap:10, maxHeight:340, overflowY:'auto', marginBottom:14, paddingRight:2 }}>
+                <div ref={chatRef} style={{ display:'flex', flexDirection:'column', gap:10, maxHeight:340, overflowY:'auto', marginBottom:14, padding:'12px 10px 12px 4px', background:'var(--surface2)', borderRadius:16, border:'1px solid var(--border)' }}>
                   {loadingChat ? (
                     <div style={{ textAlign:'center', padding:'20px 0' }}><div className="spinner" style={{ width:24, height:24, borderWidth:2 }}/></div>
                   ) : messages.length === 0 ? (
