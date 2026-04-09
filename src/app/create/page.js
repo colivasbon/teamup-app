@@ -124,7 +124,8 @@ export default function Create() {
       ? `${form.location ? form.location + ', ' : ''}${form.municipio}`
       : form.location
 
-    const { data: evData, error: err } = await sb.from('events').insert({
+    // INSERT del evento
+    const { error: err } = await sb.from('events').insert({
       creator_id:  user.id,
       title:       form.title,
       description: form.description,
@@ -137,7 +138,7 @@ export default function Create() {
       max_players: parseInt(form.maxPlayers),
       price:       form.price || 'Gratis',
       third_place: form.thirdPlace,
-    }).select('id').single()
+    })
 
     if (err) {
       if (err.code === 'PGRST205' || err.message?.includes('schema cache') || err.message?.includes('relation')) {
@@ -147,15 +148,31 @@ export default function Create() {
       }
       setSaving(false)
     } else {
-      // Apuntar al creador automáticamente como participante
-      if (evData?.id) {
+      // Recuperar el ID del evento recién creado con una query separada
+      // (el .select().single() puede fallar si RLS no permite leer de vuelta)
+      const { data: newEv } = await sb
+        .from('events')
+        .select('id')
+        .eq('creator_id', user.id)
+        .eq('title', form.title)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single()
+
+      const eventId = newEv?.id
+
+      // Apuntar al creador automáticamente
+      if (eventId) {
         await sb.from('event_participants').insert({
-          event_id: evData.id,
+          event_id: eventId,
           user_id:  user.id,
           status:   'joined',
         })
+        router.push(`/events/${eventId}`)
+      } else {
+        // Si no podemos leer el ID, ir al listado de eventos
+        router.push('/events')
       }
-      router.push(`/events/${evData?.id || ''}`)
     }
   }
 
