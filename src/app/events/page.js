@@ -163,10 +163,19 @@ function EventsContent() {
   useEffect(() => { load() }, [load])
 
   // Filtrado en cliente
+  const now = new Date()
   const filtered = events.filter(e => {
-    const c = SPORT_COLORS[e.sport] || '#5b6ef5'
+    const c = SPORT_COLORS[e.sport] || '#586875'
     e._color = e.color || c
     e._icon  = e.icon  || SPORT_ICONS[e.sport] || '🎯'
+    // Ocultar eventos que ya han terminado (fecha+hora < ahora)
+    if (e.date && e.time) {
+      const evEnd = new Date(`${e.date}T${e.time}`)
+      if (evEnd < now) return false
+    } else if (e.date) {
+      const evDay = new Date(e.date + 'T23:59:00')
+      if (evDay < now) return false
+    }
     return (
       (sport==='all' || e.sport===sport) &&
       (prov==='all'  || e.province===prov) &&

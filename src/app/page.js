@@ -1,16 +1,16 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import Navbar from '@/components/Navbar'
+import { getSupabase } from '@/lib/supabase'
 
-// Logo SVG inline — azul en claro (#586875), crema en oscuro (#f6eddc)
-// Se controla con currentColor sobre cada grupo
-function LogoTeamUp({ height = 32 }) {
-  const w = Math.round(height * (800/320))
+// Logo SVG inline — usa currentColor para cambiar con el tema
+function LogoTeamUp({ height = 36 }) {
+  const w = Math.round(height * (800 / 320))
   return (
-    <svg width={w} height={height} viewBox="0 0 800 320" xmlns="http://www.w3.org/2000/svg" aria-label="TeamUp">
-      {/* Letras principales */}
+    <svg width={w} height={height} viewBox="0 0 800 320" xmlns="http://www.w3.org/2000/svg" aria-label="TeamUp" style={{ display:'block' }}>
       <g fill="currentColor">
         <path d="M149.49,25.61v37.21c0,6.22-5.04,11.26-11.26,11.26h-29.11c-.78,0-1.41.63-1.41,1.41v170.35c0,6.22-5.04,11.26-11.26,11.26h-29.37c-6.22,0-11.26-5.04-11.26-11.26V75.49c0-.78-.63-1.41-1.41-1.41h-29.11c-6.22,0-11.26-5.04-11.26-11.26V25.61c0-6.22,5.04-11.26,11.26-11.26h112.92c6.22,0,11.26,5.04,11.26,11.26Z"/>
         <path d="M234.83,25.22v220.23c0,6.22,5.04,11.26,11.26,11.26h29.37c6.22,0,11.26-5.04,11.26-11.26v-79.73c0-1.79,1.45-3.24,3.24-3.24h0c1.79,0,3.24,1.45,3.24,3.24v79.73c0,6.22,5.04,11.26,11.26,11.26h29.37c6.22,0,11.26-5.04,11.26-11.26V25.22c0-6.22-5.04-11.26-11.26-11.26h-87.76c-6.22,0-11.26,5.04-11.26,11.26ZM286.72,107.34v-30.4c0-1.79,1.45-3.24,3.24-3.24h0c1.79,0,3.24,1.45,3.24,3.24v30.4c0,1.79-1.45,3.24-3.24,3.24h0c-1.79,0-3.24-1.45-3.24-3.24Z"/>
@@ -23,6 +23,8 @@ function LogoTeamUp({ height = 32 }) {
   )
 }
 
+const SPORT_ICONS  = { running:'🏃', padel:'🎾', senderismo:'🥾', futbol:'⚽', gimnasio:'💪', tenis:'🎾', natacion:'🏊', ciclismo:'🚴', yoga:'🧘', baloncesto:'🏀', voleibol:'🏐', badminton:'🏸' }
+
 const SPORTS = [
   { id:'running',    name:'Running',    icon:'🏃', from:'#586875', to:'#3f4f5a' },
   { id:'padel',      name:'Pádel',      icon:'🎾', from:'#7a9a8a', to:'#5a7a6a' },
@@ -32,39 +34,83 @@ const SPORTS = [
   { id:'tenis',      name:'Tenis',      icon:'🎾', from:'#8a9878', to:'#6a7858' },
 ]
 
-const NEARBY = [
+const DEMO_NEARBY = [
   { id:'demo-1', icon:'🏃', title:'Running Matutino',   loc:'Alameda de Córdoba',     time:'Hoy · 07:30',    p:7,  max:10, color:'#586875' },
   { id:'demo-2', icon:'🎾', title:'Torneo Pádel Medio', loc:'Club Pádel Centro',       time:'Mañana · 18:00', p:2,  max:4,  color:'#c8a96e' },
   { id:'demo-4', icon:'⚽', title:'Fútbol 7 tarde',     loc:'Polideportivo Municipal', time:'Vie · 20:00',    p:11, max:14, color:'#7a9a8a' },
 ]
+
+function fmtDate(dateStr, timeStr) {
+  if (!dateStr) return ''
+  const d = new Date(dateStr + 'T00:00:00')
+  const today = new Date(); today.setHours(0,0,0,0)
+  const tom = new Date(today); tom.setDate(tom.getDate() + 1)
+  let day = ''
+  if (d.getTime() === today.getTime())     day = 'Hoy'
+  else if (d.getTime() === tom.getTime())  day = 'Mañana'
+  else day = d.toLocaleDateString('es-ES', { weekday:'short', day:'numeric', month:'short' })
+  return timeStr ? `${day} · ${timeStr.slice(0,5)}` : day
+}
 
 export default function Home() {
   const { user, profile } = useAuth()
   const avatarUrl   = profile?.avatar_url || null
   const displayName = profile?.full_name || user?.user_metadata?.full_name || null
 
+  const [myEvents, setMyEvents] = useState([])
+
+  // Cargar eventos del usuario logueado
+  useEffect(() => {
+    if (!user) return
+    const load = async () => {
+      try {
+        const sb = getSupabase()
+        if (!sb) return
+        const now = new Date().toISOString().split('T')[0] // YYYY-MM-DD
+        // Eventos en los que participa y que aún no han pasado
+        const { data } = await sb
+          .from('event_participants')
+          .select('event_id, events_with_counts(id, title, sport, date, time, location, participant_count, max_players)')
+          .eq('user_id', user.id)
+          .limit(5)
+        if (data) {
+          const evs = data
+            .map(d => d.events_with_counts)
+            .filter(e => e && e.date >= now)
+            .sort((a, b) => a.date.localeCompare(b.date))
+          setMyEvents(evs.slice(0, 3))
+        }
+      } catch(_) {}
+    }
+    load()
+  }, [user])
+
   return (
     <>
       <div className="page-wrap">
 
-        {/* Header */}
-        <header style={{ paddingTop:58, paddingBottom:24, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-          {/* Logo real SVG — cambia de color con el tema */}
-          <Link href="/" style={{ color:'#586875' }} className="logo-link">
-            {/* En modo oscuro el logo es crema */}
-            <style>{`
-              [data-theme="dark"] .logo-link { color: #f6eddc !important; }
-            `}</style>
-            <LogoTeamUp height={28} />
+        {/* ── Header ── */}
+        <header style={{ paddingTop:60, paddingBottom:24, display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
+
+          {/* Logo — color azul en claro, crema en oscuro */}
+          <Link href="/" style={{
+            color:'#586875',
+            display:'flex', alignItems:'center',
+            flex:1, minWidth:0,
+          }}>
+            <style>{`[data-theme="dark"] .home-logo { color: #f6eddc !important; }`}</style>
+            <span className="home-logo" style={{ color:'inherit', display:'flex', alignItems:'center' }}>
+              <LogoTeamUp height={36} />
+            </span>
           </Link>
 
           {/* Avatar */}
           <Link href="/profile" style={{
-            width:40, height:40, borderRadius:'50%',
+            width:44, height:44, borderRadius:'50%',
             background: avatarUrl ? 'transparent' : 'var(--glass)',
             border:'2px solid var(--border)',
             display:'flex', alignItems:'center', justifyContent:'center',
-            fontSize:18, backdropFilter:'blur(14px)',
+            fontSize:20, backdropFilter:'blur(14px)',
             overflow:'hidden', flexShrink:0,
             boxShadow:'var(--shadow-sm)',
           }}>
@@ -75,7 +121,7 @@ export default function Home() {
           </Link>
         </header>
 
-        {/* Stats */}
+        {/* ── Stats ── */}
         <div className="card anim-1" style={{ display:'flex', justifyContent:'space-around', padding:'16px 12px', marginBottom:28 }}>
           {[['150+','Eventos activos'],['1.2k','Deportistas'],['47','Provincias']].map(([v,l])=>(
             <div key={l} style={{ textAlign:'center' }}>
@@ -85,7 +131,44 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Deportes */}
+        {/* ── Mis próximos eventos (solo logueado) ── */}
+        {user && myEvents.length > 0 && (
+          <>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}>
+              <h3 style={{ fontSize:17, fontWeight:700, margin:0, letterSpacing:'-0.02em' }}>Mis próximos eventos</h3>
+              <Link href="/profile" style={{ fontSize:13, fontWeight:600, color:'var(--primary)' }}>Ver todos →</Link>
+            </div>
+            <div style={{ display:'flex', flexDirection:'column', gap:10, marginBottom:28 }}>
+              {myEvents.map((ev, i) => {
+                const icon  = SPORT_ICONS[ev.sport] || '🎯'
+                const color = '#586875'
+                const pct   = ev.max_players > 0 ? Math.round(((ev.participant_count||0) / ev.max_players) * 100) : 0
+                return (
+                  <Link key={ev.id} href={`/events/${ev.id}`} className={`card anim-${i+1}`} style={{
+                    display:'flex', alignItems:'center', gap:14, padding:'14px 16px',
+                    borderLeft:'3px solid #586875',
+                  }}>
+                    <div style={{ width:44, height:44, borderRadius:14, background:'rgba(88,104,117,0.14)', border:'1.5px solid rgba(88,104,117,0.22)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:22, flexShrink:0 }}>
+                      {icon}
+                    </div>
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div style={{ fontSize:14, fontWeight:700, color:'var(--text)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:3 }}>{ev.title}</div>
+                      <div style={{ fontSize:12, color:'var(--muted)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:7 }}>{ev.location}</div>
+                      <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+                        <span style={{ fontSize:11, color:'var(--muted)', whiteSpace:'nowrap' }}>{fmtDate(ev.date, ev.time)}</span>
+                        <div style={{ flex:1 }}><div className="pbar"><div className="pbar-fill" style={{ width:`${pct}%`, background:color }}/></div></div>
+                        <span style={{ fontSize:11, fontWeight:700, color:color, whiteSpace:'nowrap' }}>{ev.participant_count||0}/{ev.max_players}</span>
+                      </div>
+                    </div>
+                    <div style={{ fontSize:18, color:'var(--muted)', flexShrink:0 }}>›</div>
+                  </Link>
+                )
+              })}
+            </div>
+          </>
+        )}
+
+        {/* ── Deportes ── */}
         <h2 style={{ fontSize:19, fontWeight:800, margin:'0 0 4px', letterSpacing:'-0.03em' }}>¿Qué hacemos hoy?</h2>
         <p style={{ fontSize:13, color:'var(--muted)', marginBottom:16 }}>Elige un deporte y únete a un evento</p>
 
@@ -111,14 +194,14 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Eventos cercanos */}
+        {/* ── Eventos cercanos ── */}
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:14 }}>
           <h3 style={{ fontSize:17, fontWeight:700, margin:0, letterSpacing:'-0.02em' }}>Eventos cerca de ti</h3>
           <Link href="/events" style={{ fontSize:13, fontWeight:600, color:'var(--primary)' }}>Ver todos →</Link>
         </div>
 
         <div style={{ display:'flex', flexDirection:'column', gap:10, marginBottom:24 }}>
-          {NEARBY.map((ev,i)=>(
+          {DEMO_NEARBY.map((ev,i)=>(
             <Link key={ev.id} href={`/events/${ev.id}`} className={`card anim-${i+4}`} style={{
               display:'flex', alignItems:'center', gap:14, padding:'14px 16px',
               borderLeft:`3px solid ${ev.color}`,
@@ -127,7 +210,7 @@ export default function Home() {
                 {ev.icon}
               </div>
               <div style={{ flex:1, minWidth:0 }}>
-                <div style={{ fontSize:14, fontWeight:700, letterSpacing:'-0.02em', marginBottom:3, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', color:'var(--text)' }}>{ev.title}</div>
+                <div style={{ fontSize:14, fontWeight:700, color:'var(--text)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:3 }}>{ev.title}</div>
                 <div style={{ fontSize:12, color:'var(--muted)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:8 }}>{ev.loc}</div>
                 <div style={{ display:'flex', alignItems:'center', gap:10 }}>
                   <span style={{ fontSize:11, color:'var(--muted)', whiteSpace:'nowrap' }}>{ev.time}</span>

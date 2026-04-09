@@ -407,6 +407,15 @@ export default function EventDetail() {
         <div style={{ background:`linear-gradient(160deg,${c}ee,${c}88)`, padding:'58px 22px 28px', position:'relative', overflow:'hidden' }}>
           <div style={{ position:'absolute', top:-40, right:-40, width:180, height:180, borderRadius:'50%', background:'rgba(255,255,255,0.10)', pointerEvents:'none' }}/>
           <button onClick={()=>router.back()} style={{ position:'absolute', top:16, left:16, background:'rgba(255,255,255,0.22)', border:'1px solid rgba(255,255,255,0.32)', borderRadius:12, color:'white', width:38, height:38, display:'flex', alignItems:'center', justifyContent:'center', fontSize:18, cursor:'pointer' }}>←</button>
+          {/* Botón compartir */}
+          <button onClick={()=>{
+            const url  = window.location.href
+            const text = `¡Úntete a "${ev.title}" en TeamUp! ${ev.date ? new Date(ev.date+'T00:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}) : ''} · ${ev.location}`
+            if (navigator.share) { navigator.share({ title:'TeamUp', text, url }) }
+            else { navigator.clipboard?.writeText(url); alert('Enlace copiado') }
+          }} style={{ position:'absolute', top:16, right:16, background:'rgba(255,255,255,0.22)', border:'1px solid rgba(255,255,255,0.32)', borderRadius:12, color:'white', width:38, height:38, display:'flex', alignItems:'center', justifyContent:'center', fontSize:16, cursor:'pointer' }}>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+          </button>
           <div style={{ position:'relative' }}>
             <div style={{ fontSize:52, marginBottom:12, filter:'drop-shadow(0 4px 14px rgba(0,0,0,0.22))' }}>{icon}</div>
             <div style={{ display:'inline-flex', gap:8, background:'rgba(255,255,255,0.20)', borderRadius:10, padding:'4px 12px', marginBottom:8 }}>

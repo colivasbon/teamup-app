@@ -398,7 +398,7 @@ export default function Profile() {
         )}
 
         {/* Cerrar sesión */}
-        <div style={{ padding:'24px 18px 8px' }}>
+        <div style={{ padding:'32px 18px 40px' }}>
           <button onClick={handleSignOut} className="btn btn-ghost" style={{ width:'100%', color:'#ef4444', borderColor:'rgba(239,68,68,0.25)' }}>
             Cerrar sesión
           </button>
