@@ -97,13 +97,26 @@ export default function EventDetail() {
             }
             setLoad(false)
             // Geocodificar la dirección para el mapa
+            // Si Nominatim no encuentra nada, se deja mapCoords como null
+            // y se muestra solo el boton de Google Maps
             if (data?.location) {
-              const q = encodeURIComponent([data.location, data.province].filter(Boolean).join(', '))
-              fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`, {
-                headers: { 'Accept-Language': 'es', 'User-Agent': 'TeamUpApp/1.0' }
-              }).then(r => r.json()).then(results => {
-                if (results?.[0]) setMapCoords({ lat: parseFloat(results[0].lat), lon: parseFloat(results[0].lon) })
-              }).catch(() => {})
+              const tryGeocode = async (query) => {
+                try {
+                  const r = await fetch(
+                    `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=es`,
+                    { headers: { 'Accept-Language': 'es', 'User-Agent': 'TeamUpApp/1.0' } }
+                  )
+                  const results = await r.json()
+                  return results?.[0] ? { lat: parseFloat(results[0].lat), lon: parseFloat(results[0].lon) } : null
+                } catch { return null }
+              }
+              // Intento 1: dirección completa
+              const full = [data.location, data.province].filter(Boolean).join(', ')
+              let coords = await tryGeocode(full)
+              // Intento 2: solo el nombre del lugar sin dirección adicional
+              if (!coords && data.location) coords = await tryGeocode(data.location)
+              // Si encontró algo, usar—si no, mapCoords queda null y no se muestra el mapa
+              if (coords) setMapCoords(coords)
             }
             return
           }
@@ -560,24 +573,17 @@ export default function EventDetail() {
               <p style={{ fontSize:14, color:'var(--text)', lineHeight:1.65, margin:0 }}>{ev.description || 'Sin descripción.'}</p>
             </div>
             <div className="card" style={{ overflow:'hidden' }}>
-              {/* Mapa embebido OpenStreetMap — gratuito, sin API key */}
-              {mapCoords ? (
+              {/* Mapa OSM si Nominatim encontró coordenadas, nada si no */}
+              {mapCoords && (
                 <iframe
                   key={`${mapCoords.lat},${mapCoords.lon}`}
                   title="Ubicación del evento"
-                  src={`https://www.openstreetmap.org/export/embed.html?bbox=${mapCoords.lon-0.01},${mapCoords.lat-0.008},${mapCoords.lon+0.01},${mapCoords.lat+0.008}&layer=mapnik&marker=${mapCoords.lat},${mapCoords.lon}`}
+                  src={`https://www.openstreetmap.org/export/embed.html?bbox=${mapCoords.lon-0.008},${mapCoords.lat-0.006},${mapCoords.lon+0.008},${mapCoords.lat+0.006}&layer=mapnik&marker=${mapCoords.lat},${mapCoords.lon}`}
                   style={{ width:'100%', height:190, border:'none', display:'block' }}
                   loading="lazy"
                   allowFullScreen
                   sandbox="allow-scripts allow-same-origin"
                 />
-              ) : (
-                <div style={{ width:'100%', height:190, background:'var(--surface2)', display:'flex', alignItems:'center', justifyContent:'center' }}>
-                  <div style={{ textAlign:'center', color:'var(--muted)' }}>
-                    <div style={{ fontSize:28, marginBottom:6 }}>🗺</div>
-                    <div style={{ fontSize:12 }}>Cargando ubicación...</div>
-                  </div>
-                </div>
               )}
               <div style={{ padding:'14px 16px', display:'flex', alignItems:'flex-start', gap:12 }}>
                 <div style={{ width:36, height:36, borderRadius:10, background:`${c}18`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
@@ -590,15 +596,24 @@ export default function EventDetail() {
                   <div style={{ fontWeight:700, fontSize:14, color:'var(--text)', marginBottom:2 }}>{ev.location}</div>
                   {ev.province && <div style={{ fontSize:12, color:'var(--muted)' }}>{ev.province}</div>}
                 </div>
+                {/* Botón Google Maps — siempre visible, más grande si no hay mapa */}
                 <a
                   href={`https://maps.google.com/?q=${encodeURIComponent([ev.location, ev.province].filter(Boolean).join(', '))}`}
                   target="_blank" rel="noreferrer"
-                  style={{ display:'inline-flex', alignItems:'center', gap:4, color:c, fontSize:12, fontWeight:700, whiteSpace:'nowrap', flexShrink:0 }}>
-                  Maps
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  style={{
+                    display:'inline-flex', alignItems:'center', gap:6,
+                    background: mapCoords ? 'transparent' : `${c}18`,
+                    border: mapCoords ? 'none' : `1.5px solid ${c}40`,
+                    borderRadius: mapCoords ? 0 : 10,
+                    padding: mapCoords ? 0 : '7px 12px',
+                    color:c, fontSize: mapCoords ? 12 : 13,
+                    fontWeight:700, whiteSpace:'nowrap', flexShrink:0,
+                  }}>
+                  {!mapCoords && <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>}
+                  {mapCoords ? 'Maps' : 'Ver en Google Maps'}
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                    <polyline points="15 3 21 3 21 9"/>
-                    <line x1="10" y1="14" x2="21" y2="3"/>
+                    <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
                   </svg>
                 </a>
               </div>
