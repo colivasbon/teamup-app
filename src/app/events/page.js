@@ -35,13 +35,52 @@ const PROVINCES = [
 ]
 
 const PROV_COORDS = {
-  madrid:{lat:40.4168,lon:-3.7038},barcelona:{lat:41.3851,lon:2.1734},
-  valencia:{lat:39.4699,lon:-0.3763},sevilla:{lat:37.3891,lon:-5.9845},
-  cordoba:{lat:37.8882,lon:-4.7794},granada:{lat:37.1773,lon:-3.5986},
-  malaga:{lat:36.7213,lon:-4.4213},alicante:{lat:38.346,lon:-0.4907},
-  murcia:{lat:37.9923,lon:-1.1304},zaragoza:{lat:41.6488,lon:-0.8891},
-  bilbao:{lat:43.263,lon:-2.935},cadiz:{lat:36.5267,lon:-6.2896},
-  huelva:{lat:37.2614,lon:-6.9447},jaen:{lat:37.7798,lon:-3.7876},almeria:{lat:36.834,lon:-2.4637},
+  // Andalucía
+  almeria:{lat:36.834,lon:-2.4637}, cadiz:{lat:36.5267,lon:-6.2896}, cordoba:{lat:37.8882,lon:-4.7794},
+  granada:{lat:37.1773,lon:-3.5986}, huelva:{lat:37.2614,lon:-6.9447}, jaen:{lat:37.7798,lon:-3.7876},
+  malaga:{lat:36.7213,lon:-4.4213}, sevilla:{lat:37.3891,lon:-5.9845},
+  // Aragón
+  huesca:{lat:42.1401,lon:-0.4089}, teruel:{lat:40.3456,lon:-1.1065}, zaragoza:{lat:41.6488,lon:-0.8891},
+  // Asturias
+  asturias:{lat:43.3614,lon:-5.8593}, oviedo:{lat:43.3614,lon:-5.8593},
+  // Baleares
+  'illes-balears':{lat:39.5696,lon:2.6502}, baleares:{lat:39.5696,lon:2.6502}, palma:{lat:39.5696,lon:2.6502},
+  // Canarias
+  'las-palmas':{lat:28.1235,lon:-15.4363}, 'santa-cruz-de-tenerife':{lat:28.4636,lon:-16.2518},
+  // Cantabria
+  cantabria:{lat:43.1828,lon:-3.9878}, santander:{lat:43.4623,lon:-3.8099},
+  // Castilla-La Mancha
+  albacete:{lat:38.9942,lon:-1.8585}, 'ciudad-real':{lat:38.9848,lon:-3.9274},
+  cuenca:{lat:40.0704,lon:-2.1374}, guadalajara:{lat:40.6321,lon:-3.1661}, toledo:{lat:39.8628,lon:-4.0273},
+  // Castilla y León
+  avila:{lat:40.6567,lon:-4.6814}, burgos:{lat:42.3439,lon:-3.6969}, leon:{lat:42.5987,lon:-5.5671},
+  palencia:{lat:42.0095,lon:-4.5244}, salamanca:{lat:40.9701,lon:-5.6635}, segovia:{lat:40.9429,lon:-4.1088},
+  soria:{lat:41.7638,lon:-2.4643}, valladolid:{lat:41.6523,lon:-4.7245}, zamora:{lat:41.5034,lon:-5.7460},
+  // Cataluña
+  barcelona:{lat:41.3851,lon:2.1734}, girona:{lat:41.9794,lon:2.8214},
+  lleida:{lat:41.6148,lon:0.6277}, tarragona:{lat:41.1189,lon:1.2445},
+  // Extremadura
+  badajoz:{lat:38.8794,lon:-6.9706}, caceres:{lat:39.4752,lon:-6.3724},
+  // Galicia
+  'a-coruna':{lat:43.3623,lon:-8.4115}, lugo:{lat:43.0097,lon:-7.5568},
+  ourense:{lat:42.3354,lon:-7.8639}, pontevedra:{lat:42.4333,lon:-8.6481}, vigo:{lat:42.2328,lon:-8.7226},
+  // La Rioja
+  'la-rioja':{lat:42.4650,lon:-2.4489}, logrono:{lat:42.4650,lon:-2.4489},
+  // Madrid
+  madrid:{lat:40.4168,lon:-3.7038},
+  // Murcia
+  murcia:{lat:37.9923,lon:-1.1304},
+  // Navarra
+  navarra:{lat:42.6954,lon:-1.6761}, pamplona:{lat:42.8169,lon:-1.6432},
+  // País Vasco
+  araba:{lat:42.8467,lon:-2.6716}, bilbao:{lat:43.263,lon:-2.935},
+  gipuzkoa:{lat:43.3128,lon:-1.9758}, 'san-sebastian':{lat:43.3183,lon:-1.9812},
+  vizcaya:{lat:43.263,lon:-2.935},
+  // Valencia
+  alicante:{lat:38.346,lon:-0.4907}, castellon:{lat:39.9864,lon:-0.0513},
+  valencia:{lat:39.4699,lon:-0.3763},
+  // Ciudades autónomas
+  ceuta:{lat:35.8894,lon:-5.3198}, melilla:{lat:35.2923,lon:-2.9381},
 }
 
 // Pequeño offset pseudo-aleatorio basado en el id del evento para evitar superposición
