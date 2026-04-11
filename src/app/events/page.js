@@ -6,6 +6,7 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import { getSupabase } from '@/lib/supabase'
 import { SportIcon, sportIconSVGString, SPORT_COLORS } from '@/components/SportIcon'
+import { SportImg } from '@/components/SportImg'
 import ThemeButton from '@/components/ThemeButton'
 
 const DEMO_EVENTS = [
@@ -248,7 +249,7 @@ function EventsContent() {
                         justifyContent: 'center',
                         flexShrink: 0,
                       }}>
-                        <SportIcon sport={ev.sport} size={28} color={color} />
+                        <SportImg sport={ev.sport} size={34} />
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>

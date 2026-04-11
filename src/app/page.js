@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import Navbar from '@/components/Navbar'
 import { getSupabase } from '@/lib/supabase'
+import { SportImg } from '@/components/SportImg'
 import ThemeButton from '@/components/ThemeButton'
 
 // Logo SVG inline — usa currentColor para cambiar con el tema
@@ -42,9 +43,9 @@ const SPORTS = [
 ]
 
 const DEMO_NEARBY = [
-  { id:'demo-1', icon:'🏃', title:'Running Matutino',   loc:'Alameda de Córdoba',     time:'Hoy · 07:30',    p:7,  max:10, color:'#586875' },
-  { id:'demo-2', icon:'🎾', title:'Torneo Pádel Medio', loc:'Club Pádel Centro',       time:'Mañana · 18:00', p:2,  max:4,  color:'#c8a96e' },
-  { id:'demo-4', icon:'⚽', title:'Fútbol 7 tarde',     loc:'Polideportivo Municipal', time:'Vie · 20:00',    p:11, max:14, color:'#7a9a8a' },
+  { id:'demo-1', sport:'running',    title:'Running Matutino',   loc:'Alameda de Córdoba',     time:'Hoy · 07:30',    p:7,  max:10, color:'#586875' },
+  { id:'demo-2', sport:'padel',      title:'Torneo Pádel Medio', loc:'Club Pádel Centro',       time:'Mañana · 18:00', p:2,  max:4,  color:'#c8a96e' },
+  { id:'demo-4', sport:'futbol',     title:'Fútbol 7 tarde',     loc:'Polideportivo Municipal', time:'Vie · 20:00',    p:11, max:14, color:'#7a9a8a' },
 ]
 
 function fmtDate(dateStr, timeStr) {
@@ -242,10 +243,14 @@ export default function Home() {
             onMouseEnter={e=>{ e.currentTarget.style.transform='translateY(-4px) scale(1.02)'; e.currentTarget.style.boxShadow=`0 12px 36px ${s.from}77` }}
             onMouseLeave={e=>{ e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=`0 6px 24px ${s.from}55` }}
             >
-              <div style={{ position:'absolute', right:-16, bottom:-16, width:80, height:80, borderRadius:'50%', background:'rgba(246,237,220,0.12)', filter:'blur(18px)', pointerEvents:'none' }}/>
-              <div style={{ position:'absolute', right:8, bottom:2, fontSize:52, opacity:0.14, lineHeight:1, pointerEvents:'none', userSelect:'none' }}>{s.icon}</div>
+              {/* Icono grande de fondo, semitransparente */}
+              <div style={{ position:'absolute', right:-8, bottom:-8, width:72, height:72, opacity:0.18, pointerEvents:'none' }}>
+                <SportImg sport={s.id} size={72} />
+              </div>
               <div style={{ position:'relative', zIndex:1 }}>
-                <div style={{ fontSize:30, marginBottom:8, lineHeight:1 }}>{s.icon}</div>
+                <div style={{ marginBottom:8 }}>
+                  <SportImg sport={s.id} size={40} />
+                </div>
                 <div style={{ fontSize:15, fontWeight:700, color:'#f6eddc', letterSpacing:'-0.02em' }}>{s.name}</div>
               </div>
             </Link>
@@ -264,8 +269,8 @@ export default function Home() {
               display:'flex', alignItems:'center', gap:14, padding:'14px 16px',
               borderLeft:`3px solid ${ev.color}`,
             }}>
-              <div className="sport-icon" style={{ background:`${ev.color}18`, border:`1.5px solid ${ev.color}30`, borderRadius:16, fontSize:22 }}>
-                {ev.icon}
+              <div style={{ width:52, height:52, background:`${ev.color}18`, border:`1.5px solid ${ev.color}30`, borderRadius:16, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, overflow:'hidden' }}>
+                <SportImg sport={ev.sport} size={34} />
               </div>
               <div style={{ flex:1, minWidth:0 }}>
                 <div style={{ fontSize:14, fontWeight:700, color:'var(--text)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:3 }}>{ev.title}</div>
