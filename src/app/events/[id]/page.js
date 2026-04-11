@@ -46,6 +46,7 @@ export default function EventDetail() {
   const fileRef      = useRef(null)
 
   const [ev,           setEv]          = useState(null)
+  const [mapCoords,    setMapCoords]    = useState(null) // { lat, lon }
   const [pCount,       setPCount]      = useState(0)
   const [participants, setParticipants]= useState([])
   const [loading,      setLoad]        = useState(true)
@@ -94,7 +95,17 @@ export default function EventDetail() {
                 if (fresh) setPCount(fresh.participant_count || 0)
               }, 1500)
             }
-            setLoad(false); return
+            setLoad(false)
+            // Geocodificar la dirección para el mapa
+            if (data?.location) {
+              const q = encodeURIComponent([data.location, data.province].filter(Boolean).join(', '))
+              fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`, {
+                headers: { 'Accept-Language': 'es', 'User-Agent': 'TeamUpApp/1.0' }
+              }).then(r => r.json()).then(results => {
+                if (results?.[0]) setMapCoords({ lat: parseFloat(results[0].lat), lon: parseFloat(results[0].lon) })
+              }).catch(() => {})
+            }
+            return
           }
         }
       } catch(_) {}
@@ -548,14 +559,47 @@ export default function EventDetail() {
               <div className="label" style={{ marginBottom:10 }}>Descripción</div>
               <p style={{ fontSize:14, color:'var(--text)', lineHeight:1.65, margin:0 }}>{ev.description || 'Sin descripción.'}</p>
             </div>
-            <div className="card" style={{ padding:'16px 18px', display:'flex', gap:12, alignItems:'flex-start' }}>
-              <div style={{ width:42, height:42, borderRadius:12, background:`${c}18`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:22, flexShrink:0 }}>📍</div>
-              <div>
-                <div style={{ fontWeight:700, fontSize:14, color:'var(--text)' }}>{ev.location}</div>
-                {ev.province && <div style={{ fontSize:12, color:'var(--muted)', marginTop:3 }}>{ev.province}</div>}
-                <a href={`https://maps.google.com/?q=${encodeURIComponent(ev.location)}`} target="_blank" rel="noreferrer"
-                  style={{ display:'inline-block', marginTop:10, color:c, fontSize:12, fontWeight:700 }}>
-                  Ver en Google Maps →
+            <div className="card" style={{ overflow:'hidden' }}>
+              {/* Mapa embebido OpenStreetMap — gratuito, sin API key */}
+              {mapCoords ? (
+                <iframe
+                  key={`${mapCoords.lat},${mapCoords.lon}`}
+                  title="Ubicación del evento"
+                  src={`https://www.openstreetmap.org/export/embed.html?bbox=${mapCoords.lon-0.01},${mapCoords.lat-0.008},${mapCoords.lon+0.01},${mapCoords.lat+0.008}&layer=mapnik&marker=${mapCoords.lat},${mapCoords.lon}`}
+                  style={{ width:'100%', height:190, border:'none', display:'block' }}
+                  loading="lazy"
+                  allowFullScreen
+                  sandbox="allow-scripts allow-same-origin"
+                />
+              ) : (
+                <div style={{ width:'100%', height:190, background:'var(--surface2)', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                  <div style={{ textAlign:'center', color:'var(--muted)' }}>
+                    <div style={{ fontSize:28, marginBottom:6 }}>🗺</div>
+                    <div style={{ fontSize:12 }}>Cargando ubicación...</div>
+                  </div>
+                </div>
+              )}
+              <div style={{ padding:'14px 16px', display:'flex', alignItems:'flex-start', gap:12 }}>
+                <div style={{ width:36, height:36, borderRadius:10, background:`${c}18`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                    <circle cx="12" cy="10" r="3" fill={c} fillOpacity="0.25"/>
+                  </svg>
+                </div>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div style={{ fontWeight:700, fontSize:14, color:'var(--text)', marginBottom:2 }}>{ev.location}</div>
+                  {ev.province && <div style={{ fontSize:12, color:'var(--muted)' }}>{ev.province}</div>}
+                </div>
+                <a
+                  href={`https://maps.google.com/?q=${encodeURIComponent([ev.location, ev.province].filter(Boolean).join(', '))}`}
+                  target="_blank" rel="noreferrer"
+                  style={{ display:'inline-flex', alignItems:'center', gap:4, color:c, fontSize:12, fontWeight:700, whiteSpace:'nowrap', flexShrink:0 }}>
+                  Maps
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                    <polyline points="15 3 21 3 21 9"/>
+                    <line x1="10" y1="14" x2="21" y2="3"/>
+                  </svg>
                 </a>
               </div>
             </div>
