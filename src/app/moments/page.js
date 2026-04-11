@@ -79,7 +79,14 @@ export default function Moments() {
         .order('created_at', { ascending: false })
         .limit(50)
 
-      if (error || !mData || mData.length === 0) throw new Error('no data')
+      // Error real de BD → caer al demo
+      if (error) throw new Error('db error')
+      // Tabla válida pero sin momentos aún → mostrar estado vacío real, no demo
+      if (!mData || mData.length === 0) {
+        setMoments([]); setFromDB(true)
+        if (showSpinner) setLoading(false)
+        return
+      }
 
       // Perfiles aparte
       const uids = [...new Set(mData.map(m => m.user_id))]
