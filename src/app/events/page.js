@@ -116,160 +116,11 @@ function fmtDuration(min) {
 }
 
 // ── Mapa con Leaflet cargado dinámicamente ────────────────────────────────────
-function EventMap({ events }) {
-  const mapRef         = useRef(null)
-  const mapInstanceRef = useRef(null)
-  const markersRef     = useRef([])
-  const userMarkerRef  = useRef(null)
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    if (mapInstanceRef.current) return // ya inicializado
-
-    // Leaflet CSS
-    if (!document.getElementById('leaflet-css')) {
-      const link = document.createElement('link')
-      link.id   = 'leaflet-css'
-      link.rel  = 'stylesheet'
-      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
-      document.head.appendChild(link)
-    }
-
-    const initMap = () => {
-      const L = window.L
-      if (!mapRef.current || mapInstanceRef.current) return
-
-      const map = L.map(mapRef.current, { zoomControl: true, attributionControl: false })
-        .setView([40.4168, -3.7038], 6)
-
-      // Tiles CartoDB Positron — claros, legibles en modo claro y oscuro
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        maxZoom: 19,
-        subdomains: 'abcd',
-      }).addTo(map)
-
-      mapInstanceRef.current = map
-
-      // Marcadores individuales por evento
-      addMarkers(L, map, events)
-
-      // Geolocalización: centrar el mapa en el usuario
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          pos => {
-            const { latitude: lat, longitude: lon } = pos.coords
-
-            // Marcador de posición del usuario (círculo azul)
-            if (userMarkerRef.current) userMarkerRef.current.remove()
-            const userIcon = L.divIcon({
-              html: `<div style="background:#2563eb;border:3px solid white;border-radius:50%;width:16px;height:16px;box-shadow:0 0 0 4px rgba(37,99,235,0.25)"></div>`,
-              className: '',
-              iconSize: [16, 16],
-              iconAnchor: [8, 8],
-            })
-            userMarkerRef.current = L.marker([lat, lon], { icon: userIcon })
-              .addTo(map)
-              .bindPopup('<div style="font-family:sans-serif;font-size:13px;font-weight:600">📍 Tu ubicación</div>')
-
-            map.setView([lat, lon], 11)
-          },
-          () => {},
-          { timeout: 6000 }
-        )
-      }
-    }
-
-    // Cargar Leaflet JS si no está ya
-    if (window.L) {
-      initMap()
-    } else {
-      const existing = document.getElementById('leaflet-js')
-      if (existing) {
-        existing.addEventListener('load', initMap)
-      } else {
-        const script = document.createElement('script')
-        script.id  = 'leaflet-js'
-        script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
-        script.onload = initMap
-        document.head.appendChild(script)
-      }
-    }
-
-    return () => { /* no destruir el mapa para que persista */ }
-  }, []) // solo al montar
-
-  // Actualizar marcadores cuando cambian los eventos
-  useEffect(() => {
-    if (!mapInstanceRef.current || !window.L) return
-    const L = window.L
-    const map = mapInstanceRef.current
-
-    // Limpiar marcadores anteriores
-    markersRef.current.forEach(m => m.remove())
-    markersRef.current = []
-
-    addMarkers(L, map, events)
-  }, [events])
-
-  function addMarkers(L, map, evs) {
-    evs.forEach(ev => {
-      let lat, lon
-      if (ev.lat && ev.lon) {
-        lat = ev.lat
-        lon = ev.lon
-      } else {
-        const coords = PROV_COORDS[ev.province]
-        if (!coords) return
-        const offset = getOffset(ev.id)
-        lat = coords.lat + offset.lat
-        lon = coords.lon + offset.lon
-      }
-
-      const color = SPORT_COLORS[ev.sport] || '#586875'
-      const iconSVG = sportIconSVGString(ev.sport, color)
-
-      const icon = L.divIcon({
-        html: `<div style="background:white;border:2.5px solid ${color};border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,0.25);cursor:pointer"><svg width="20" height="20" viewBox="0 0 24 24">${iconSVG}</svg></div>`,
-        className: '',
-        iconSize: [36, 36],
-        iconAnchor: [18, 18],
-      })
-
-      const timeStr = (ev.time || '').slice(0, 5)
-      const popup = `
-        <div style="min-width:190px;font-family:sans-serif;padding:2px">
-          <div style="font-weight:700;font-size:14px;margin-bottom:6px;color:#111">${ev.title}</div>
-          <div style="font-size:12px;color:#666;margin-bottom:3px">📅 ${formatDate(ev.date)}${timeStr ? ' · ' + timeStr : ''}</div>
-          <div style="font-size:12px;color:#666;margin-bottom:10px">📍 ${ev.location || ''}</div>
-          <a href="/events/${ev.id}" style="display:inline-block;background:${color};color:white;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;text-decoration:none">Ver evento →</a>
-        </div>
-      `
-
-      const marker = L.marker([lat, lon], { icon })
-        .addTo(map)
-        .bindPopup(popup)
-
-      markersRef.current.push(marker)
-    })
-  }
-
-  return (
-    <div ref={mapRef} style={{
-      height: 380,
-      borderRadius: 20,
-      overflow: 'hidden',
-      border: '1px solid var(--border)',
-      marginBottom: 16,
-    }}/>
-  )
-}
-
 // ── Contenido principal ───────────────────────────────────────────────────────
 function EventsContent() {
   const searchParams = useSearchParams()
   const initSport    = searchParams.get('sport') || 'all'
 
-  const [view,     setView]    = useState('list') // 'list' | 'map'
   const [sport,    setSport]   = useState(initSport)
   const [level,    setLevel]   = useState('all')
   const [prov,     setProv]    = useState('all')
@@ -354,97 +205,11 @@ function EventsContent() {
               {loading ? 'Cargando...' : `${filtered.length} evento${filtered.length !== 1 ? 's' : ''} ${geoLabel && prov !== 'all' ? `· ${geoLabel}` : ''}`}
             </p>
           </div>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            {/* Toggle lista/mapa */}
-            <div style={{ display: 'flex', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
-              {[['list', '☰'], ['map', '🗺']].map(([v, icon]) => (
-                <button key={v} onClick={() => setView(v)} style={{
-                  padding: '8px 12px', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 15,
-                  background: view === v ? '#586875' : 'transparent',
-                  color: view === v ? '#f6eddc' : 'var(--muted)',
-                  transition: 'all 0.15s ease',
-                }}>{icon}</button>
-              ))}
-            </div>
-            <Link href="/create" className="btn btn-primary" style={{ padding: '10px 16px', fontSize: 13 }}>+ Crear</Link>
-          </div>
+          <Link href="/create" className="btn btn-primary" style={{ padding: '10px 16px', fontSize: 13 }}>+ Crear</Link>
         </header>
 
-        {/* Búsqueda */}
-        <div style={{ position: 'relative', marginBottom: 12 }}>
-          <input
-            className="input"
-            placeholder="🔍  Buscar eventos, lugares..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            style={{ paddingLeft: 16, fontSize: 14 }}
-          />
-          {search && (
-            <button onClick={() => setSearch('')} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)', fontSize: 16 }}>✕</button>
-          )}
-        </div>
-
-        {/* Banner geo */}
-        {geoLabel && prov !== 'all' && (
-          <div className="anim-1" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(88,104,117,0.10)', border: '1px solid rgba(88,104,117,0.22)', borderRadius: 12, padding: '10px 14px', marginBottom: 12 }}>
-            <span style={{ fontSize: 13, color: 'var(--primary)', fontWeight: 600 }}>📍 {geoLabel}</span>
-            <button onClick={() => { setProv('all'); setGeoLabel('') }}
-              style={{ background: 'none', border: 'none', fontSize: 12, color: 'var(--muted)', cursor: 'pointer', fontFamily: 'inherit' }}>
-              Ver todos ✕
-            </button>
-          </div>
-        )}
-
-        {/* Filtro provincias */}
-        <div className="scroll-x" style={{ display: 'flex', gap: 8, paddingBottom: 10 }}>
-          {PROVINCES.map(p => (
-            <button key={p.id} onClick={() => { setProv(p.id); if (p.id !== prov) setGeoLabel('') }}
-              className={`pill ${prov === p.id ? 'pill-active' : 'pill-inactive'}`}>
-              {p.name}
-            </button>
-          ))}
-        </div>
-
-        {/* Filtro deporte */}
-        <div className="scroll-x" style={{ display: 'flex', gap: 8, paddingBottom: 10 }}>
-          {SPORT_FILTERS.map(f => (
-            <button key={f.id} onClick={() => setSport(f.id)}
-              className={`pill ${sport === f.id ? 'pill-active' : 'pill-inactive'}`}>
-              <span>{f.icon}</span><span>{f.label}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Filtro nivel */}
-        <div className="scroll-x" style={{ display: 'flex', gap: 8, paddingBottom: 20 }}>
-          {LEVEL_FILTERS.map(l => (
-            <button key={l.id} onClick={() => setLevel(l.id)}
-              className={`pill ${level === l.id ? 'pill-active' : 'pill-inactive'}`}>
-              <span>{l.icon}</span><span>{l.label}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Cargando */}
-        {loading && (
-          <div style={{ padding: '40px 0', textAlign: 'center' }}>
-            <div className="spinner"/>
-            <p style={{ fontSize: 13, color: 'var(--muted)', marginTop: 12 }}>Cargando eventos...</p>
-          </div>
-        )}
-
-        {/* Vista mapa */}
-        {!loading && view === 'map' && (
-          <>
-            <EventMap events={filtered} />
-            <p style={{ fontSize: 12, color: 'var(--muted)', textAlign: 'center', marginBottom: 16 }}>
-              Toca una chincheta para ver los detalles del evento
-            </p>
-          </>
-        )}
-
-        {/* Vista lista — sin resultados */}
-        {!loading && view === 'list' && filtered.length === 0 && (
+        {/* Sin resultados */}
+        {!loading && filtered.length === 0 && (
           <div className="card" style={{ padding: '40px 24px', textAlign: 'center' }}>
             <div style={{ fontSize: 44, marginBottom: 12 }}>🔍</div>
             <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>Sin resultados</div>
@@ -454,7 +219,7 @@ function EventsContent() {
         )}
 
         {/* Vista lista — cards */}
-        {!loading && view === 'list' && (
+        {!loading && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {filtered.map((ev, i) => {
               const pCnt  = typeof ev.participant_count === 'number' ? ev.participant_count : 0

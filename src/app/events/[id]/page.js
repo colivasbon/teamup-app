@@ -453,13 +453,13 @@ export default function EventDetail() {
               Editar evento
             </button>
           )}
-          {/* Botón compartir */}
+          {/* Botón compartir — al lado derecho del botón volver, no interfiere con el tema (fixed top-right) */}
           <button onClick={()=>{
             const url  = window.location.href
             const text = `¡Úntete a "${ev.title}" en TeamUp! ${ev.date ? new Date(ev.date+'T00:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}) : ''} · ${ev.location}`
             if (navigator.share) { navigator.share({ title:'TeamUp', text, url }) }
             else { navigator.clipboard?.writeText(url); alert('Enlace copiado') }
-          }} style={{ position:'absolute', top:16, right:16, background:'rgba(255,255,255,0.22)', border:'1px solid rgba(255,255,255,0.32)', borderRadius:12, color:'white', width:38, height:38, display:'flex', alignItems:'center', justifyContent:'center', fontSize:16, cursor:'pointer' }}>
+          }} style={{ position:'absolute', top:16, left:64, background:'rgba(255,255,255,0.22)', border:'1px solid rgba(255,255,255,0.32)', borderRadius:12, color:'white', width:38, height:38, display:'flex', alignItems:'center', justifyContent:'center', fontSize:16, cursor:'pointer' }}>
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
           </button>
           <div style={{ position:'relative' }}>
