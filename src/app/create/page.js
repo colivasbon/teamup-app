@@ -6,6 +6,7 @@ import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import { getSupabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
+import { SportIcon } from '@/components/SportIcon'
 
 const SPORTS = [
   {id:'running',    label:'Running',    icon:'🏃', color:'#5b6ef5'},
@@ -164,7 +165,7 @@ export default function Create() {
                   transform: form.sport===s.id?'scale(1.03)':'',
                   fontFamily:'inherit',
                 }}>
-                  <div style={{ fontSize:30, marginBottom:8 }}>{s.icon}</div>
+                  <SportIcon sport={s.id} size={42} />
                   <div style={{ fontSize:14, fontWeight:700, color:form.sport===s.id?'white':'var(--text)' }}>{s.label}</div>
                 </button>
               ))}
@@ -326,8 +327,8 @@ export default function Create() {
               <div style={{ height:4, background:selectedSport?`linear-gradient(90deg,${selectedSport.color},${selectedSport.color}55)`:'var(--grad)' }}/>
               <div style={{ padding:'18px 20px' }}>
                 <div style={{ display:'flex', gap:12, alignItems:'flex-start', marginBottom:12 }}>
-                  <div className="sport-icon" style={{ background:`${selectedSport?.color||'var(--primary)'}20`, border:`1.5px solid ${selectedSport?.color||'var(--primary)'}30`, borderRadius:16, fontSize:22 }}>
-                    {selectedSport?.icon||'🎯'}
+                  <div style={{ width:52, height:52, background:`${selectedSport?.color||'var(--primary)'}20`, border:`1.5px solid ${selectedSport?.color||'var(--primary)'}30`, borderRadius:16, display:'flex', alignItems:'center', justifyContent:'center' }}>
+                    <SportIcon sport={form.sport} size={36} />
                   </div>
                   <div>
                     <div style={{ fontSize:16, fontWeight:700, color:'var(--text)', marginBottom:2 }}>{form.title}</div>

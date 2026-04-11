@@ -243,12 +243,12 @@ export default function Home() {
             onMouseLeave={e=>{ e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=`0 6px 24px ${s.from}55` }}
             >
               {/* Icono de fondo semitransparente — esquina inferior derecha */}
-              <span style={{ position:'absolute', right:6, bottom:4, fontSize:52, opacity:0.18, pointerEvents:'none', lineHeight:1, userSelect:'none' }}>
-                {s.icon}
-              </span>
+              <div style={{ position:'absolute', right:6, bottom:4, opacity:0.18, pointerEvents:'none' }}>
+                <SportIcon sport={s.id} size={72} />
+              </div>
               {/* Contenido: icono + nombre abajo a la izquierda */}
               <div style={{ position:'absolute', bottom:16, left:18, zIndex:1 }}>
-                <div style={{ fontSize:34, lineHeight:1, marginBottom:6 }}>{s.icon}</div>
+                <SportIcon sport={s.id} size={48} />
                 <div style={{ fontSize:15, fontWeight:700, color:'#f6eddc', letterSpacing:'-0.02em' }}>{s.name}</div>
               </div>
             </Link>
