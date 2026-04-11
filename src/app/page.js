@@ -235,21 +235,20 @@ export default function Home() {
             <Link key={s.id} href={`/events?sport=${s.id}`} className={`anim-${Math.min(i+1,6)}`} style={{
               display:'block',
               background:`linear-gradient(140deg,${s.from},${s.to})`,
-              borderRadius:20, padding:'20px 18px', position:'relative', overflow:'hidden',
+              borderRadius:20, padding:'0', paddingTop:'90px', position:'relative', overflow:'hidden',
               boxShadow:`0 6px 24px ${s.from}55`,
               transition:'transform 0.22s cubic-bezier(.34,1.56,.64,1), box-shadow 0.22s ease',
             }}
             onMouseEnter={e=>{ e.currentTarget.style.transform='translateY(-4px) scale(1.02)'; e.currentTarget.style.boxShadow=`0 12px 36px ${s.from}77` }}
             onMouseLeave={e=>{ e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=`0 6px 24px ${s.from}55` }}
             >
-              {/* Icono de fondo semitransparente */}
-              <div style={{ position:'absolute', right:-6, bottom:-6, width:64, height:64, opacity:0.22, pointerEvents:'none' }}>
-                <SportIcon sport={s.id} size={64} />
-              </div>
-              <div style={{ position:'relative', zIndex:1 }}>
-                <div style={{ marginBottom:8 }}>
-                  <SportIcon sport={s.id} size={44} />
-                </div>
+              {/* Icono de fondo semitransparente — esquina inferior derecha */}
+              <span style={{ position:'absolute', right:6, bottom:4, fontSize:52, opacity:0.18, pointerEvents:'none', lineHeight:1, userSelect:'none' }}>
+                {s.icon}
+              </span>
+              {/* Contenido: icono + nombre abajo a la izquierda */}
+              <div style={{ position:'absolute', bottom:16, left:18, zIndex:1 }}>
+                <div style={{ fontSize:34, lineHeight:1, marginBottom:6 }}>{s.icon}</div>
                 <div style={{ fontSize:15, fontWeight:700, color:'#f6eddc', letterSpacing:'-0.02em' }}>{s.name}</div>
               </div>
             </Link>

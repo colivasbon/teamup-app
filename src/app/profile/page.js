@@ -29,14 +29,26 @@ const SPORT_COLORS = {
 }
 
 const BANNERS = [
-  { id:'grad-1', style:'linear-gradient(135deg, #586875, #3f4f5a)' },
-  { id:'grad-2', style:'linear-gradient(135deg, #f59e0b, #ef4444)' },
-  { id:'grad-3', style:'linear-gradient(135deg, #06d6a0, #0ea5e9)' },
-  { id:'grad-4', style:'linear-gradient(135deg, #8b5cf6, #ec4899)' },
-  { id:'grad-5', style:'linear-gradient(135deg, #1a2028, #586875)' },
-  { id:'grad-6', style:'linear-gradient(135deg, #c8a96e, #a07840)' },
-  { id:'grad-7', style:'linear-gradient(135deg, #ef4444, #f59e0b)' },
-  { id:'grad-8', style:'linear-gradient(135deg, #0ea5e9, #06d6a0)' },
+  { id:'grad-1',  style:'linear-gradient(135deg, #586875 0%, #3f4f5a 100%)' },
+  { id:'grad-2',  style:'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' },
+  { id:'grad-3',  style:'linear-gradient(135deg, #e96c1a 0%, #f5a623 100%)' },
+  { id:'grad-4',  style:'linear-gradient(135deg, #00b09b 0%, #96c93d 100%)' },
+  { id:'grad-5',  style:'linear-gradient(135deg, #8e44ad 0%, #3498db 100%)' },
+  { id:'grad-6',  style:'linear-gradient(135deg, #c0392b 0%, #8e44ad 100%)' },
+  { id:'grad-7',  style:'linear-gradient(135deg, #c8a96e 0%, #7a5230 100%)' },
+  { id:'grad-8',  style:'linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%)' },
+  { id:'grad-9',  style:'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)' },
+  { id:'grad-10', style:'linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%)' },
+  { id:'grad-11', style:'linear-gradient(135deg, #373b44 0%, #4286f4 100%)' },
+  { id:'grad-12', style:'linear-gradient(135deg, #ff6b6b 0%, #feca57 100%)' },
+  { id:'grad-13', style:'linear-gradient(135deg, #2d3436 0%, #636e72 100%)' },
+  { id:'grad-14', style:'linear-gradient(160deg, #0093E9 0%, #80D0C7 100%)' },
+  { id:'grad-15', style:'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
+  { id:'grad-16', style:'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' },
+  { id:'grad-17', style:'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' },
+  { id:'grad-18', style:'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)' },
+  { id:'grad-19', style:'linear-gradient(135deg, #fa709a 0%, #fee140 100%)' },
+  { id:'grad-20', style:'linear-gradient(135deg, #30cfd0 0%, #330867 100%)' },
 ]
 
 const NOTIF_ICONS = {
@@ -307,43 +319,7 @@ export default function Profile() {
               }}>✕ Cancelar</button>
             )}
 
-            {/* Selector de banner (solo en modo edición) */}
-            {editing && (
-              <div style={{
-                position:'absolute', bottom:12, left:'50%', transform:'translateX(-50%)',
-                display:'flex', gap:8, alignItems:'center', zIndex:2,
-              }}>
-                {BANNERS.map(b => (
-                  <button key={b.id} onClick={() => { setBanner(b.id); setBannerUrl(null) }} style={{
-                    width: banner === b.id && !bannerUrl ? 28 : 22,
-                    height: banner === b.id && !bannerUrl ? 28 : 22,
-                    borderRadius:'50%',
-                    background: b.style,
-                    border: banner === b.id && !bannerUrl ? '2.5px solid white' : '2px solid rgba(255,255,255,0.45)',
-                    cursor:'pointer',
-                    transition:'all 0.15s ease',
-                    boxShadow: banner === b.id && !bannerUrl ? '0 0 0 2px rgba(0,0,0,0.3)' : 'none',
-                    flexShrink:0,
-                  }}/>
-                ))}
-                {/* Botón subir foto de portada */}
-                <button
-                  onClick={() => bannerRef.current?.click()}
-                  style={{
-                    width:22, height:22, borderRadius:'50%',
-                    background:'rgba(255,255,255,0.25)',
-                    border: bannerUrl ? '2.5px solid white' : '2px solid rgba(255,255,255,0.45)',
-                    cursor:'pointer', fontSize:11, display:'flex', alignItems:'center', justifyContent:'center',
-                    color:'white', flexShrink:0,
-                    boxShadow: bannerUrl ? '0 0 0 2px rgba(0,0,0,0.3)' : 'none',
-                  }}
-                  title="Subir foto de portada"
-                >
-                  {uploadingBanner ? '⏳' : '🖼'}
-                </button>
-                <input ref={bannerRef} type="file" accept="image/*" style={{ display:'none' }} onChange={handleBannerChange}/>
-              </div>
-            )}
+            {/* Sin selector aquí — va debajo del avatar */}
           </div>
 
           {/* Avatar flotante */}
@@ -367,6 +343,37 @@ export default function Profile() {
             </div>
           </div>
         </div>
+
+        {/* Selector de banner — debajo del banner, en scroll horizontal, no solapa avatar */}
+        {editing && (
+          <div style={{ marginTop:52, padding:'0 18px 4px' }}>
+            <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.06em', color:'var(--muted)', textTransform:'uppercase', marginBottom:10 }}>Color de portada</div>
+            <div className="scroll-x" style={{ display:'flex', gap:8, paddingBottom:4 }}>
+              {BANNERS.map(b => (
+                <button key={b.id} onClick={() => { setBanner(b.id); setBannerUrl(null) }} style={{
+                  width:36, height:36, borderRadius:10, flexShrink:0,
+                  background: b.style,
+                  border: banner === b.id && !bannerUrl ? '3px solid var(--primary)' : '2px solid var(--border)',
+                  cursor:'pointer',
+                  boxShadow: banner === b.id && !bannerUrl ? '0 0 0 2px rgba(88,104,117,0.35)' : 'none',
+                  transition:'all 0.15s ease',
+                  outline:'none',
+                }}/>
+              ))}
+              {/* Subir foto propia */}
+              <button onClick={() => bannerRef.current?.click()} style={{
+                width:36, height:36, borderRadius:10, flexShrink:0,
+                background: bannerUrl ? 'var(--primary)' : 'var(--surface)',
+                border: bannerUrl ? '3px solid var(--primary)' : '2px solid var(--border)',
+                cursor:'pointer', fontSize:16, display:'flex', alignItems:'center', justifyContent:'center',
+                color: bannerUrl ? 'white' : 'var(--muted)',
+              }}>
+                {uploadingBanner ? '⏳' : '🖼️'}
+              </button>
+              <input ref={bannerRef} type="file" accept="image/*" style={{ display:'none' }} onChange={handleBannerChange}/>
+            </div>
+          </div>
+        )}
 
         {/* Nombre, username, bio */}
         <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:10, padding:'0 22px 4px' }}>
