@@ -29,61 +29,24 @@ const LEVELS = [
   {id:'advanced',     label:'Avanzado',     icon:'🔥', desc:'Nivel alto requerido'},
 ]
 
-// Provincias y sus municipios principales
+const DURATIONS = [
+  {value:30,  label:'30 min'},
+  {value:45,  label:'45 min'},
+  {value:60,  label:'1 h'},
+  {value:90,  label:'1 h 30'},
+  {value:120, label:'2 h'},
+  {value:150, label:'2 h 30'},
+  {value:180, label:'3 h'},
+  {value:240, label:'4 h'},
+  {value:300, label:'5 h'},
+  {value:480, label:'Todo el día'},
+]
+
 const PROVINCIA_MUNICIPIOS = {
-  'Álava':            ['Vitoria-Gasteiz','Llodio','Amurrio','Salvatierra','Laudio'],
-  'Albacete':         ['Albacete','Hellín','Almansa','Villarrobledo','La Roda'],
-  'Alicante':         ['Alicante','Elche','Torrevieja','Benidorm','Orihuela','Elda','Alcoy','Villajoyosa','Denia','Petrer'],
-  'Almería':          ['Almería','El Ejido','Roquetas de Mar','Adra','Vícar','Níjar'],
-  'Asturias':         ['Oviedo','Gijón','Avilés','Siero','Langreo','Mieres','Castrillón','Corvera'],
-  'Ávila':            ['Ávila','Arenas de San Pedro','Sotillo de la Adrada','Candeleda'],
-  'Badajoz':          ['Badajoz','Mérida','Don Benito','Almendralejo','Villanueva de la Serena'],
-  'Barcelona':        ['Barcelona','Badalona','Terrassa','Sabadell','Hospitalet de Llobregat','Mataró','Santa Coloma de Gramenet','Cornellà','Sant Boi','Rubí','Manresa','Vilanova'],
-  'Burgos':           ['Burgos','Miranda de Ebro','Aranda de Duero','Briviesca'],
-  'Cáceres':          ['Cáceres','Plasencia','Coria','Moraleja','Navalmoral'],
-  'Cádiz':            ['Cádiz','Jerez de la Frontera','Algeciras','San Fernando','El Puerto de Santa María','Chiclana','La Línea','Sanlúcar','Rota'],
-  'Cantabria':        ['Santander','Torrelavega','Castro-Urdiales','Piélagos','Camargo'],
-  'Castellón':        ['Castellón de la Plana','Vila-real','Burriana','Vinaròs','Benicàssim','Oropesa'],
-  'Ciudad Real':      ['Ciudad Real','Puertollano','Tomelloso','Alcázar de San Juan','Valdepeñas','Manzanares'],
-  'Córdoba':          ['Córdoba','Lucena','Montilla','Priego de Córdoba','Cabra','Palma del Río','Peñarroya','Pozoblanco','Rute'],
-  'Cuenca':           ['Cuenca','Tarancón','Motilla del Palancar','San Clemente'],
-  'Girona':           ['Girona','Blanes','Lloret de Mar','Figueres','Roses','Platja d\'Aro','Olot','Salt'],
-  'Granada':          ['Granada','Motril','Almuñécar','Maracena','Armilla','Loja','Guadix','Baza','Salobreña'],
-  'Guadalajara':      ['Guadalajara','Azuqueca de Henares','Alovera','Cabanillas del Campo'],
-  'Guipúzcoa':        ['San Sebastián','Irun','Errenteria','Zarautz','Eibar','Mondragón','Tolosa'],
-  'Huelva':           ['Huelva','Almonte','Lepe','Moguer','Isla Cristina','Ayamonte','Nerva'],
-  'Huesca':           ['Huesca','Barbastro','Monzón','Fraga','Sabiñánigo','Jaca'],
-  'Illes Balears':    ['Palma','Calvià','Manacor','Llucmajor','Ibiza','Maó','Ciutadella'],
-  'Jaén':             ['Jaén','Linares','Andújar','Úbeda','Baeza','Martos','Alcalá la Real'],
-  'La Rioja':         ['Logroño','Calahorra','Arnedo','Haro','Nájera','Alfaro'],
-  'Las Palmas':       ['Las Palmas de Gran Canaria','Telde','Arucas','Arrecife','Santa Lucía','Puerto del Rosario'],
-  'León':             ['León','Ponferrada','San Andrés del Rabanedo','Astorga'],
-  'Lleida':           ['Lleida','Balaguer','Mollerussa','Tàrrega','Igualada'],
-  'Lugo':             ['Lugo','Monforte de Lemos','Sarria','Viveiro','Vilalba'],
-  'Madrid':           ['Madrid','Móstoles','Alcalá de Henares','Fuenlabrada','Leganés','Getafe','Alcorcón','Torrejón de Ardoz','Parla','Alcobendas','Rivas-Vaciamadrid','Las Rozas','Majadahonda','Pozuelo','Tres Cantos'],
-  'Málaga':           ['Málaga','Marbella','Fuengirola','Vélez-Málaga','Torremolinos','Benalmádena','Mijas','Estepona','Ronda','Antequera','Nerja'],
-  'Murcia':           ['Murcia','Cartagena','Lorca','Molina de Segura','Alcantarilla','Totana','Yecla','Mazarrón','San Javier','Torre-Pacheco'],
-  'Navarra':          ['Pamplona','Tudela','Barañáin','Burlada','Estella','Sarriguren'],
-  'Ourense':          ['Ourense','Verín','O Barco de Valdeorras','Xinzo de Limia'],
-  'Palencia':         ['Palencia','Aguilar de Campoo','Guardo','Venta de Baños'],
-  'Pontevedra':       ['Vigo','Pontevedra','Vilagarcía de Arousa','Redondela','Marín','Moaña','Cangas'],
-  'Salamanca':        ['Salamanca','Béjar','Ciudad Rodrigo','Santa Marta de Tormes'],
-  'Santa Cruz de Tenerife': ['Santa Cruz de Tenerife','La Laguna','Arona','Adeje','Granadilla','Los Realejos','Puerto de la Cruz','La Orotava'],
-  'Segovia':          ['Segovia','Cuéllar','El Espinar','Las Navas de la Asunción'],
-  'Sevilla':          ['Sevilla','Dos Hermanas','Alcalá de Guadaíra','Mairena del Aljarafe','Utrera','Camas','San Juan de Aznalfarache','La Rinconada','Écija','Carmona'],
-  'Soria':            ['Soria','Ágreda','El Burgo de Osma','Almazán'],
-  'Tarragona':        ['Tarragona','Reus','Cambrils','Salou','Tortosa','Valls','El Vendrell'],
-  'Teruel':           ['Teruel','Alcañiz','Andorra','Utrillas','Calamocha'],
-  'Toledo':           ['Toledo','Talavera de la Reina','Illescas','Seseña','Torrijos','Madridejos'],
-  'Valencia':         ['Valencia','Torrent','Gandía','Paterna','Sagunto','Mislata','Burjassot','Alzira','Cullera','Sueca','Manises','Xirivella'],
-  'Valladolid':       ['Valladolid','Medina del Campo','Arroyo de la Encomienda','Laguna de Duero','Peñafiel'],
-  'Vizcaya':          ['Bilbao','Barakaldo','Getxo','Basauri','Leioa','Sestao','Santurtzi','Portugalete','Amorebieta'],
-  'Zamora':           ['Zamora','Benavente','Toro','Puebla de Sanabria'],
-  'Zaragoza':         ['Zaragoza','Calatayud','Ejea de los Caballeros','Utebo','Cuarte de Huerva','Tarazona'],
+  'Álava':['Vitoria-Gasteiz','Llodio','Amurrio'],'Albacete':['Albacete','Hellín','Almansa','Villarrobledo','La Roda'],'Alicante':['Alicante','Elche','Torrevieja','Benidorm','Orihuela','Elda','Alcoy','Villajoyosa','Denia','Petrer'],'Almería':['Almería','El Ejido','Roquetas de Mar','Adra'],'Asturias':['Oviedo','Gijón','Avilés','Siero','Langreo','Mieres'],'Ávila':['Ávila','Arenas de San Pedro'],'Badajoz':['Badajoz','Mérida','Don Benito','Almendralejo'],'Barcelona':['Barcelona','Badalona','Terrassa','Sabadell','Hospitalet de Llobregat','Mataró','Cornellà','Manresa'],'Burgos':['Burgos','Miranda de Ebro','Aranda de Duero'],'Cáceres':['Cáceres','Plasencia'],'Cádiz':['Cádiz','Jerez de la Frontera','Algeciras','San Fernando','El Puerto de Santa María','Chiclana','La Línea'],'Cantabria':['Santander','Torrelavega','Castro-Urdiales'],'Castellón':['Castellón de la Plana','Vila-real','Burriana','Vinaròs'],'Ciudad Real':['Ciudad Real','Puertollano','Tomelloso','Alcázar de San Juan'],'Córdoba':['Córdoba','Lucena','Montilla','Priego de Córdoba','Cabra','Palma del Río','Pozoblanco'],'Cuenca':['Cuenca','Tarancón'],'Girona':['Girona','Blanes','Lloret de Mar','Figueres','Roses','Olot'],'Granada':['Granada','Motril','Almuñécar','Loja','Guadix','Baza'],'Guadalajara':['Guadalajara','Azuqueca de Henares'],'Guipúzcoa':['San Sebastián','Irun','Errenteria','Zarautz','Eibar'],'Huelva':['Huelva','Almonte','Lepe','Moguer','Isla Cristina'],'Huesca':['Huesca','Barbastro','Monzón','Jaca'],'Illes Balears':['Palma','Calvià','Manacor','Ibiza','Maó'],'Jaén':['Jaén','Linares','Andújar','Úbeda','Baeza'],'La Rioja':['Logroño','Calahorra','Haro'],'Las Palmas':['Las Palmas de Gran Canaria','Telde','Arrecife'],'León':['León','Ponferrada'],'Lleida':['Lleida','Balaguer'],'Lugo':['Lugo','Monforte de Lemos'],'Madrid':['Madrid','Móstoles','Alcalá de Henares','Fuenlabrada','Leganés','Getafe','Alcorcón','Torrejón de Ardoz','Parla','Alcobendas','Las Rozas','Majadahonda','Pozuelo'],'Málaga':['Málaga','Marbella','Fuengirola','Vélez-Málaga','Torremolinos','Benalmádena','Mijas','Estepona','Ronda','Nerja'],'Murcia':['Murcia','Cartagena','Lorca','Molina de Segura','Alcantarilla'],'Navarra':['Pamplona','Tudela','Barañáin','Estella'],'Ourense':['Ourense','Verín'],'Palencia':['Palencia','Aguilar de Campoo'],'Pontevedra':['Vigo','Pontevedra','Vilagarcía de Arousa','Redondela'],'Salamanca':['Salamanca','Béjar','Ciudad Rodrigo'],'Santa Cruz de Tenerife':['Santa Cruz de Tenerife','La Laguna','Arona','Adeje','Puerto de la Cruz'],'Segovia':['Segovia','Cuéllar'],'Sevilla':['Sevilla','Dos Hermanas','Alcalá de Guadaíra','Mairena del Aljarafe','Utrera','Écija','Carmona'],'Soria':['Soria','Almazán'],'Tarragona':['Tarragona','Reus','Cambrils','Salou','Tortosa'],'Teruel':['Teruel','Alcañiz'],'Toledo':['Toledo','Talavera de la Reina','Illescas'],'Valencia':['Valencia','Torrent','Gandía','Paterna','Sagunto','Alzira','Manises'],'Valladolid':['Valladolid','Medina del Campo','Arroyo de la Encomienda'],'Vizcaya':['Bilbao','Barakaldo','Getxo','Basauri','Leioa','Sestao','Santurtzi','Portugalete'],'Zamora':['Zamora','Benavente'],'Zaragoza':['Zaragoza','Calatayud','Ejea de los Caballeros','Utebo'],
 }
 
 const PROVINCES_LIST = Object.keys(PROVINCIA_MUNICIPIOS).sort()
-
 const STEPS = ['Deporte','Detalles','Confirmar']
 
 export default function Create() {
@@ -96,7 +59,8 @@ export default function Create() {
   const [form,   setForm]   = useState({
     sport:'', level:'any',
     title:'', description:'',
-    date:'', time:'', location:'', province:'', municipio:'',
+    date:'', time:'', duration_minutes: 60,
+    location:'', province:'', municipio:'',
     maxPlayers:10, price:'Gratis',
     thirdPlace: false,
   })
@@ -114,8 +78,7 @@ export default function Create() {
 
   const submit = async () => {
     if (!user) { router.push('/auth'); return }
-    setSaving(true)
-    setError('')
+    setSaving(true); setError('')
 
     const sb = getSupabase()
     if (!sb) { setError('Error de conexión.'); setSaving(false); return }
@@ -124,32 +87,26 @@ export default function Create() {
       ? `${form.location ? form.location + ', ' : ''}${form.municipio}`
       : form.location
 
-    // INSERT del evento
     const { error: err } = await sb.from('events').insert({
-      creator_id:  user.id,
-      title:       form.title,
-      description: form.description,
-      sport:       form.sport,
-      level:       form.level,
-      date:        form.date,
-      time:        form.time,
-      location:    fullLocation,
-      province:    toSlug(form.province),
-      max_players: parseInt(form.maxPlayers),
-      price:       form.price || 'Gratis',
-      third_place: form.thirdPlace,
+      creator_id:       user.id,
+      title:            form.title,
+      description:      form.description,
+      sport:            form.sport,
+      level:            form.level,
+      date:             form.date,
+      time:             form.time,
+      duration_minutes: form.duration_minutes,
+      location:         fullLocation,
+      province:         toSlug(form.province),
+      max_players:      parseInt(form.maxPlayers),
+      price:            form.price || 'Gratis',
+      third_place:      form.thirdPlace,
     })
 
     if (err) {
-      if (err.code === 'PGRST205' || err.message?.includes('schema cache') || err.message?.includes('relation')) {
-        setError('La base de datos aún no está configurada. Ejecuta el SQL del archivo teamup-supabase-setup.sql en tu panel de Supabase.')
-      } else {
-        setError(err.message)
-      }
+      setError(err.message)
       setSaving(false)
     } else {
-      // Recuperar el ID del evento recién creado con una query separada
-      // (el .select().single() puede fallar si RLS no permite leer de vuelta)
       const { data: newEv } = await sb
         .from('events')
         .select('id')
@@ -161,16 +118,12 @@ export default function Create() {
 
       const eventId = newEv?.id
 
-      // Apuntar al creador automáticamente
       if (eventId) {
         await sb.from('event_participants').insert({
-          event_id: eventId,
-          user_id:  user.id,
-          status:   'joined',
+          event_id: eventId, user_id: user.id, status: 'joined',
         })
         router.push(`/events/${eventId}`)
       } else {
-        // Si no podemos leer el ID, ir al listado de eventos
         router.push('/events')
       }
     }
@@ -190,7 +143,7 @@ export default function Create() {
         <div style={{ display:'flex', gap:6, marginBottom:28 }}>
           {STEPS.map((s,i)=>(
             <div key={s} style={{ flex:1 }}>
-              <div style={{ height:4, borderRadius:100, marginBottom:6, background:i<=step?'var(--grad)':'var(--border)', transition:'background 0.3s' }}/>
+              <div style={{ height:4, borderRadius:100, marginBottom:6, background:i<=step?'#586875':'var(--border)', transition:'background 0.3s' }}/>
               <span style={{ fontSize:11, fontWeight:600, color:i<=step?'var(--primary)':'var(--muted)' }}>{s}</span>
             </div>
           ))}
@@ -198,7 +151,7 @@ export default function Create() {
 
         {/* ── PASO 0: Deporte ── */}
         {step===0 && (
-          <div className="anim-1" style={{ paddingBottom:32 }}>
+          <div className="anim-1" style={{ paddingBottom:40 }}>
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginBottom:24 }}>
               {SPORTS.map(s=>(
                 <button key={s.id} onClick={()=>set('sport',s.id)} style={{
@@ -218,7 +171,7 @@ export default function Create() {
             </div>
 
             <span className="label" style={{ marginBottom:14, display:'block' }}>Nivel de los participantes</span>
-            <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
+            <div style={{ display:'flex', flexDirection:'column', gap:8, marginBottom:28 }}>
               {LEVELS.map(lv=>(
                 <button key={lv.id} onClick={()=>set('level',lv.id)} style={{
                   display:'flex', alignItems:'center', gap:14,
@@ -238,7 +191,7 @@ export default function Create() {
               ))}
             </div>
 
-            <button className="btn btn-primary" style={{ width:'100%', marginTop:28, fontSize:16 }}
+            <button className="btn btn-primary" style={{ width:'100%', fontSize:16 }}
               onClick={()=>setStep(1)} disabled={!form.sport}>
               Siguiente →
             </button>
@@ -247,7 +200,7 @@ export default function Create() {
 
         {/* ── PASO 1: Detalles ── */}
         {step===1 && (
-          <div className="anim-1" style={{ display:'flex', flexDirection:'column', gap:16, paddingBottom:32 }}>
+          <div className="anim-1" style={{ display:'flex', flexDirection:'column', gap:16, paddingBottom:40 }}>
             <div>
               <label className="label" style={{ marginBottom:8 }}>Título del evento</label>
               <input className="input" type="text"
@@ -260,14 +213,36 @@ export default function Create() {
                 placeholder="Cuéntales a los participantes qué pueden esperar..."
                 value={form.description} onChange={e=>set('description',e.target.value)}/>
             </div>
+
+            {/* Fecha, hora y duración */}
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
               <div>
                 <label className="label" style={{ marginBottom:8 }}>Fecha</label>
                 <input className="input" type="date" value={form.date} onChange={e=>set('date',e.target.value)}/>
               </div>
               <div>
-                <label className="label" style={{ marginBottom:8 }}>Hora</label>
+                <label className="label" style={{ marginBottom:8 }}>Hora inicio</label>
                 <input className="input" type="time" value={form.time} onChange={e=>set('time',e.target.value)}/>
+              </div>
+            </div>
+
+            {/* Duración */}
+            <div>
+              <label className="label" style={{ marginBottom:10 }}>Duración estimada</label>
+              <div style={{ display:'flex', flexWrap:'wrap', gap:8 }}>
+                {DURATIONS.map(d=>(
+                  <button key={d.value} onClick={()=>set('duration_minutes',d.value)} style={{
+                    padding:'8px 14px', borderRadius:100,
+                    border: form.duration_minutes===d.value ? 'none' : '1.5px solid var(--border)',
+                    background: form.duration_minutes===d.value ? '#586875' : 'var(--glass)',
+                    color: form.duration_minutes===d.value ? '#f6eddc' : 'var(--text)',
+                    fontSize:13, fontWeight:600, cursor:'pointer', fontFamily:'inherit',
+                    transition:'all 0.15s ease',
+                    boxShadow: form.duration_minutes===d.value ? '0 3px 12px rgba(88,104,117,0.30)' : 'none',
+                  }}>
+                    {d.label}
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -320,8 +295,7 @@ export default function Create() {
               <button onClick={()=>set('thirdPlace',!form.thirdPlace)} style={{
                 width:48, height:28, borderRadius:100, border:'none',
                 background: form.thirdPlace?'var(--primary)':'var(--border)',
-                cursor:'pointer', position:'relative', transition:'background 0.22s',
-                flexShrink:0,
+                cursor:'pointer', position:'relative', transition:'background 0.22s', flexShrink:0,
               }}>
                 <div style={{ width:22, height:22, background:'white', borderRadius:'50%', position:'absolute', top:3, left: form.thirdPlace?'23px':'3px', transition:'left 0.22s cubic-bezier(.34,1.56,.64,1)', boxShadow:'0 1px 6px rgba(0,0,0,0.22)' }}/>
               </button>
@@ -340,9 +314,9 @@ export default function Create() {
 
         {/* ── PASO 2: Confirmar ── */}
         {step===2 && (
-          <div className="anim-1" style={{ paddingBottom:32 }}>
+          <div className="anim-1" style={{ paddingBottom:40 }}>
             {!user && (
-              <div style={{ background:'rgba(91,110,245,0.10)', border:'1px solid rgba(91,110,245,0.25)', borderRadius:14, padding:'16px 18px', marginBottom:16, textAlign:'center' }}>
+              <div style={{ background:'rgba(88,104,117,0.10)', border:'1px solid rgba(88,104,117,0.25)', borderRadius:14, padding:'16px 18px', marginBottom:16, textAlign:'center' }}>
                 <div style={{ fontSize:14, fontWeight:600, color:'var(--text)', marginBottom:8 }}>Necesitas iniciar sesión para publicar</div>
                 <Link href="/auth" className="btn btn-primary" style={{ fontSize:13, padding:'10px 20px' }}>Entrar / Registrarse</Link>
               </div>
@@ -363,6 +337,7 @@ export default function Create() {
                 {form.description && <p style={{ fontSize:13, color:'var(--text2)', lineHeight:1.6, marginBottom:14 }}>{form.description}</p>}
                 <div style={{ display:'flex', flexWrap:'wrap', gap:'6px 16px', fontSize:12, color:'var(--muted)' }}>
                   {form.date && <span>📅 {form.date}{form.time?` · ${form.time}`:''}</span>}
+                  {form.duration_minutes && <span>⏱ {DURATIONS.find(d=>d.value===form.duration_minutes)?.label||`${form.duration_minutes} min`}</span>}
                   {(form.location || form.municipio) && (
                     <span>📍 {[form.location, form.municipio, form.province].filter(Boolean).join(', ')}</span>
                   )}

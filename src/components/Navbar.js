@@ -2,8 +2,9 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useAuth } from '@/contexts/AuthContext'
+import { NotifBadge } from '@/components/NotifBadge'
 
-// SVG icons inline — no dependen de ningún icon set externo
 const icons = {
   home: (active) => (
     <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2.4 : 1.8} strokeLinecap="round" strokeLinejoin="round">
@@ -19,16 +20,15 @@ const icons = {
   ),
   create: (active) => (
     <div style={{
-      width: 44, height: 44,
-      borderRadius: 15,
-      background: active ? 'var(--grad)' : 'var(--glass)',
+      width: 44, height: 44, borderRadius: 15,
+      background: active ? '#586875' : 'var(--glass)',
       border: active ? 'none' : '1.5px solid var(--border)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      boxShadow: active ? '0 4px 18px rgba(var(--primary-rgb),0.42)' : 'none',
+      boxShadow: active ? '0 4px 18px rgba(88,104,117,0.42)' : 'none',
       transition: 'all 0.18s cubic-bezier(.34,1.56,.64,1)',
       backdropFilter: 'blur(14px)',
     }}>
-      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke={active ? 'white' : 'currentColor'} strokeWidth="2.4" strokeLinecap="round">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke={active ? '#f6eddc' : 'currentColor'} strokeWidth="2.4" strokeLinecap="round">
         <line x1="12" y1="5" x2="12" y2="19"/>
         <line x1="5" y1="12" x2="19" y2="12"/>
       </svg>
@@ -41,6 +41,13 @@ const icons = {
       <path d="M21 15 L16 10 L5 21" stroke={active ? 'white' : 'currentColor'} strokeWidth={active ? 2.2 : 1.8} fill="none"/>
     </svg>
   ),
+  // Campana para notificaciones
+  notifications: (active) => (
+    <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2.3 : 1.8} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" fill={active ? 'currentColor' : 'none'}/>
+      <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke={active ? 'white' : 'currentColor'}/>
+    </svg>
+  ),
   profile: (active) => (
     <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2.3 : 1.8} strokeLinecap="round" strokeLinejoin="round">
       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" fill={active ? 'currentColor' : 'none'}/>
@@ -50,15 +57,16 @@ const icons = {
 }
 
 const NAV_ITEMS = [
-  { href: '/',        label: 'Inicio',   key: 'home' },
-  { href: '/events',  label: 'Explorar', key: 'events' },
-  { href: '/create',  label: 'Crear',    key: 'create' },
-  { href: '/moments', label: 'Momentos', key: 'moments' },
-  { href: '/profile', label: 'Perfil',   key: 'profile' },
+  { href: '/',               label: 'Inicio',  key: 'home' },
+  { href: '/events',         label: 'Explorar',key: 'events' },
+  { href: '/create',         label: 'Crear',   key: 'create' },
+  { href: '/notifications',  label: 'Avisos',  key: 'notifications' },
+  { href: '/profile',        label: 'Perfil',  key: 'profile' },
 ]
 
 export default function Navbar() {
-  const path = usePathname()
+  const path      = usePathname()
+  const { user }  = useAuth()
 
   return (
     <nav className="navbar">
@@ -67,7 +75,12 @@ export default function Navbar() {
           const active = path === href || (href !== '/' && path?.startsWith(href))
           return (
             <Link key={href} href={href} className={`nav-item${active ? ' active' : ''}`}>
-              {icons[key](active)}
+              <div style={{ position:'relative', display:'inline-flex' }}>
+                {icons[key](active)}
+                {key === 'notifications' && user && (
+                  <NotifBadge userId={user.id} />
+                )}
+              </div>
               <span className="nav-label">{label}</span>
             </Link>
           )

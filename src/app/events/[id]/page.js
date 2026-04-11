@@ -420,6 +420,12 @@ export default function EventDetail() {
         <div style={{ background:`linear-gradient(160deg,${c}ee,${c}88)`, padding:'58px 22px 28px', position:'relative', overflow:'hidden' }}>
           <div style={{ position:'absolute', top:-40, right:-40, width:180, height:180, borderRadius:'50%', background:'rgba(255,255,255,0.10)', pointerEvents:'none' }}/>
           <button onClick={()=>router.back()} style={{ position:'absolute', top:16, left:16, background:'rgba(255,255,255,0.22)', border:'1px solid rgba(255,255,255,0.32)', borderRadius:12, color:'white', width:38, height:38, display:'flex', alignItems:'center', justifyContent:'center', fontSize:18, cursor:'pointer' }}>←</button>
+          {/* Botón editar (solo creador) */}
+          {user && ev.creator_id === user.id && (
+            <button onClick={()=>router.push(`/events/${id}/edit`)} style={{ position:'absolute', top:60, right:16, background:'rgba(255,255,255,0.22)', border:'1px solid rgba(255,255,255,0.32)', borderRadius:12, color:'white', padding:'6px 12px', fontSize:12, fontWeight:700, cursor:'pointer', display:'flex', alignItems:'center', gap:5 }}>
+              ✏️ Editar
+            </button>
+          )}
           {/* Botón compartir */}
           <button onClick={()=>{
             const url  = window.location.href
@@ -451,7 +457,21 @@ export default function EventDetail() {
           <div style={{ display:'flex', gap:10, minWidth:'max-content' }}>
             {[
               { icon:'📅', label:'Fecha',  value: fmt(ev.date) },
-              { icon:'⏱️', label:'Hora',   value: ev.time?.slice(0,5)||'' },
+              { icon:'⏱️', label:'Hora',   value: (() => {
+                if (!ev.time) return ''
+                const base = ev.time.slice(0,5)
+                if (!ev.duration_minutes) return base
+                const [h,m] = ev.time.split(':').map(Number)
+                const endMin = h*60+m+ev.duration_minutes
+                return `${base} – ${String(Math.floor(endMin/60)%24).padStart(2,'0')}:${String(endMin%60).padStart(2,'0')}`
+              })() },
+              { icon:'⏳', label:'Duración', value: (() => {
+                const min = ev.duration_minutes
+                if (!min) return '—'
+                if (min < 60) return `${min} min`
+                const h = Math.floor(min/60), rest = min%60
+                return rest ? `${h}h ${rest}min` : `${h}h`
+              })() },
               { icon:'📍', label:'Lugar',  value: ev.location },
               { icon:'💶', label:'Precio', value: ev.price||'Gratis' },
             ].map(item=>(
