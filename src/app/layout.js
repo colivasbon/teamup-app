@@ -2,7 +2,8 @@
 
 import './globals.css'
 import { useState, useEffect } from 'react'
-import { AuthProvider } from '@/contexts/AuthContext'
+import { AuthProvider, useAuth } from '@/contexts/AuthContext'
+import OnboardingModal from '@/components/OnboardingModal'
 
 function IconSun() {
   return (
@@ -49,6 +50,28 @@ function ThemeButton() {
   )
 }
 
+function AppShell({ children }) {
+  const { user, profile } = useAuth()
+  const [showOnboarding, setShowOnboarding] = useState(false)
+
+  useEffect(() => {
+    // Mostrar onboarding si el usuario está logueado y no tiene ciudad o deportes
+    if (user && profile !== undefined) {
+      const needsOnboarding = !profile?.location || !profile?.sports?.length
+      setShowOnboarding(needsOnboarding)
+    }
+  }, [user, profile])
+
+  return (
+    <div className="app-shell">
+      {children}
+      {showOnboarding && user && (
+        <OnboardingModal onComplete={() => setShowOnboarding(false)} />
+      )}
+    </div>
+  )
+}
+
 export default function RootLayout({ children }) {
   return (
     <html lang="es" data-theme="dark">
@@ -59,9 +82,7 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <AuthProvider>
-          <div className="app-shell">
-            {children}
-          </div>
+          <AppShell>{children}</AppShell>
         </AuthProvider>
       </body>
     </html>

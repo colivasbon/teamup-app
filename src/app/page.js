@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import Navbar from '@/components/Navbar'
 import { getSupabase } from '@/lib/supabase'
-import { SportImg } from '@/components/SportImg'
+import { SportIcon } from '@/components/SportIcon'
 import ThemeButton from '@/components/ThemeButton'
 
 // Logo SVG inline — usa currentColor para cambiar con el tema
@@ -168,7 +168,6 @@ export default function Home() {
             </div>
             <div style={{ display:'flex', flexDirection:'column', gap:10, marginBottom:28 }}>
               {myEvents.map((ev, i) => {
-                const icon  = SPORT_ICONS[ev.sport] || '🎯'
                 const color = '#586875'
                 const pct   = ev.max_players > 0 ? Math.round(((ev.participant_count||0) / ev.max_players) * 100) : 0
                 return (
@@ -176,8 +175,8 @@ export default function Home() {
                     display:'flex', alignItems:'center', gap:14, padding:'14px 16px',
                     borderLeft:'3px solid #586875',
                   }}>
-                    <div style={{ width:44, height:44, borderRadius:14, background:'rgba(88,104,117,0.14)', border:'1.5px solid rgba(88,104,117,0.22)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:22, flexShrink:0 }}>
-                      {icon}
+                    <div style={{ width:48, height:48, borderRadius:14, background:'rgba(88,104,117,0.10)', border:'1.5px solid rgba(88,104,117,0.20)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, overflow:'hidden' }}>
+                      <SportIcon sport={ev.sport} size={36} />
                     </div>
                     <div style={{ flex:1, minWidth:0 }}>
                       <div style={{ fontSize:14, fontWeight:700, color:'var(--text)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:3 }}>{ev.title}</div>
@@ -243,13 +242,13 @@ export default function Home() {
             onMouseEnter={e=>{ e.currentTarget.style.transform='translateY(-4px) scale(1.02)'; e.currentTarget.style.boxShadow=`0 12px 36px ${s.from}77` }}
             onMouseLeave={e=>{ e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=`0 6px 24px ${s.from}55` }}
             >
-              {/* Icono grande de fondo, semitransparente */}
-              <div style={{ position:'absolute', right:-8, bottom:-8, width:72, height:72, opacity:0.18, pointerEvents:'none' }}>
-                <SportImg sport={s.id} size={72} />
+              {/* Icono de fondo semitransparente */}
+              <div style={{ position:'absolute', right:-6, bottom:-6, width:64, height:64, opacity:0.22, pointerEvents:'none' }}>
+                <SportIcon sport={s.id} size={64} />
               </div>
               <div style={{ position:'relative', zIndex:1 }}>
                 <div style={{ marginBottom:8 }}>
-                  <SportImg sport={s.id} size={40} />
+                  <SportIcon sport={s.id} size={44} />
                 </div>
                 <div style={{ fontSize:15, fontWeight:700, color:'#f6eddc', letterSpacing:'-0.02em' }}>{s.name}</div>
               </div>
@@ -270,7 +269,7 @@ export default function Home() {
               borderLeft:`3px solid ${ev.color}`,
             }}>
               <div style={{ width:52, height:52, background:`${ev.color}18`, border:`1.5px solid ${ev.color}30`, borderRadius:16, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, overflow:'hidden' }}>
-                <SportImg sport={ev.sport} size={34} />
+                <SportIcon sport={ev.sport} size={36} />
               </div>
               <div style={{ flex:1, minWidth:0 }}>
                 <div style={{ fontSize:14, fontWeight:700, color:'var(--text)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:3 }}>{ev.title}</div>
