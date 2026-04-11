@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import { getSupabase } from '@/lib/supabase'
+import { useAuth } from '@/contexts/AuthContext'
 import { SportIcon, SPORT_COLORS } from '@/components/SportIcon'
 import ThemeButton from '@/components/ThemeButton'
 
@@ -120,6 +121,8 @@ function fmtDuration(min) {
 // ── Contenido principal ───────────────────────────────────────────────────────
 function EventsContent() {
   const searchParams = useSearchParams()
+  const router       = useRouter()
+  const { user }     = useAuth()
   const initSport    = searchParams.get('sport') || 'all'
 
   const [sport,    setSport]   = useState(initSport)
@@ -129,6 +132,8 @@ function EventsContent() {
   const [events,   setEvents]  = useState([])
   const [loading,  setLoading] = useState(true)
   const [geoLabel, setGeoLabel] = useState('')
+  const [joining,  setJoining] = useState({})   // { [eventId]: bool }
+  const [joined,   setJoined]  = useState({})   // { [eventId]: bool }
 
   // Geolocalización: detectar provincia al cargar
   useEffect(() => {
@@ -159,12 +164,23 @@ function EventsContent() {
       if (sb) {
         const { data, error } = await sb.from('events_with_counts').select('*').order('date', { ascending: true })
         if (!error && data && data.length > 0) {
-          setEvents(data); setLoading(false); return
+          setEvents(data)
+          // Cargar eventos en los que ya participa el usuario
+          if (user) {
+            const { data: ep } = await sb.from('event_participants')
+              .select('event_id').eq('user_id', user.id)
+            if (ep) {
+              const map = {}
+              ep.forEach(e => { map[e.event_id] = true })
+              setJoined(map)
+            }
+          }
+          setLoading(false); return
         }
       }
     } catch (_) {}
     setEvents(DEMO_EVENTS); setLoading(false)
-  }, [])
+  }, [user])
 
   useEffect(() => { load() }, [load])
 
@@ -212,13 +228,51 @@ function EventsContent() {
           </div>
         </header>
 
-        {/* Sin resultados */}
+        {/* Sin resultados — estado vacío enriquecido */}
         {!loading && filtered.length === 0 && (
-          <div className="card" style={{ padding: '40px 24px', textAlign: 'center' }}>
-            <div style={{ fontSize: 44, marginBottom: 12 }}>🔍</div>
-            <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>Sin resultados</div>
-            <div style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 20 }}>Prueba con otros filtros o crea un evento nuevo</div>
-            <Link href="/create" className="btn btn-primary" style={{ fontSize: 14 }}>+ Crear evento</Link>
+          <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
+            <div className="card" style={{ padding:'36px 24px', textAlign:'center' }}>
+              <div style={{ fontSize:52, marginBottom:16 }}>🔍</div>
+              <div style={{ fontWeight:800, fontSize:18, marginBottom:6, letterSpacing:'-0.03em' }}>
+                {search ? `Sin resultados para "${search}"` : 'No hay eventos aquí aún'}
+              </div>
+              <div style={{ fontSize:13, color:'var(--muted)', marginBottom:20, lineHeight:1.6 }}>
+                {search
+                  ? 'Prueba con otro término o elimina los filtros'
+                  : prov !== 'all'
+                  ? `Todavía no hay eventos en esta zona. Sé el primero en crear uno.`
+                  : 'Prueba con otros filtros o crea el primer evento'}
+              </div>
+              <div style={{ display:'flex', gap:10, justifyContent:'center', flexWrap:'wrap' }}>
+                {(sport !== 'all' || prov !== 'all' || level !== 'all' || search) && (
+                  <button onClick={() => { setSport('all'); setProv('all'); setLevel('all'); setSearch('') }}
+                    className="btn btn-ghost" style={{ fontSize:13 }}>
+                    Quitar filtros
+                  </button>
+                )}
+                <Link href="/create" className="btn btn-primary" style={{ fontSize:13 }}>+ Crear evento</Link>
+              </div>
+            </div>
+            {/* Sugerencias de deportes populares */}
+            <div>
+              <div style={{ fontSize:12, color:'var(--muted)', fontWeight:600, marginBottom:10, letterSpacing:'0.05em', textTransform:'uppercase' }}>
+                Deportes populares
+              </div>
+              <div className="scroll-x" style={{ display:'flex', gap:10 }}>
+                {SPORT_FILTERS.filter(f => f.id !== 'all').slice(0,6).map(f => (
+                  <button key={f.id} onClick={() => setSport(f.id)}
+                    className="card" style={{
+                      padding:'14px 16px', display:'flex', flexDirection:'column',
+                      alignItems:'center', gap:8, minWidth:80, cursor:'pointer',
+                      border:'none', fontFamily:'inherit', background:'var(--glass)',
+                      color:'var(--text)',
+                    }}>
+                    <span style={{ fontSize:28 }}>{f.icon}</span>
+                    <span style={{ fontSize:12, fontWeight:600 }}>{f.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
@@ -274,18 +328,45 @@ function EventsContent() {
                       <span style={{ fontSize: 12, color: barC, fontWeight: 700, whiteSpace: 'nowrap' }}>
                         {pCnt}/{ev.max_players}
                       </span>
-                      <button onClick={e => e.preventDefault()} style={{
-                        background: `linear-gradient(135deg,${color},${color}bb)`,
-                        color: 'white', border: 'none', borderRadius: 10,
-                        padding: '9px 18px', fontWeight: 700, fontSize: 13,
-                        cursor: 'pointer', letterSpacing: '-0.01em',
-                        boxShadow: `0 3px 14px ${color}44`,
-                        transition: 'all 0.16s ease', fontFamily: 'inherit',
-                      }}
-                      onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
-                      onMouseLeave={e => e.currentTarget.style.transform = ''}>
-                        Unirse
-                      </button>
+                      {joined[ev.id] ? (
+                        <span style={{
+                          background: `${color}20`, color, border: `1.5px solid ${color}50`,
+                          borderRadius: 10, padding: '8px 14px', fontWeight: 700, fontSize: 12,
+                          whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: 4,
+                        }}>✓ Apuntado</span>
+                      ) : (
+                        <button onClick={async (e) => {
+                          e.preventDefault(); e.stopPropagation()
+                          if (!user) { router.push('/auth'); return }
+                          if (joining[ev.id]) return
+                          setJoining(p => ({ ...p, [ev.id]: true }))
+                          try {
+                            const sb = getSupabase()
+                            if (sb) {
+                              const { error } = await sb.from('event_participants')
+                                .insert({ event_id: ev.id, user_id: user.id, status: 'joined' })
+                              if (!error) {
+                                setJoined(p => ({ ...p, [ev.id]: true }))
+                                setEvents(prev => prev.map(e2 => e2.id === ev.id
+                                  ? { ...e2, participant_count: (e2.participant_count || 0) + 1 }
+                                  : e2
+                                ))
+                              }
+                            }
+                          } catch(_) {}
+                          setJoining(p => ({ ...p, [ev.id]: false }))
+                        }} style={{
+                          background: `linear-gradient(135deg,${color},${color}bb)`,
+                          color: 'white', border: 'none', borderRadius: 10,
+                          padding: '9px 18px', fontWeight: 700, fontSize: 13,
+                          cursor: 'pointer', letterSpacing: '-0.01em',
+                          boxShadow: `0 3px 14px ${color}44`,
+                          transition: 'all 0.16s ease', fontFamily: 'inherit',
+                          opacity: joining[ev.id] ? 0.6 : 1,
+                        }}>
+                          {joining[ev.id] ? '...' : 'Unirse'}
+                        </button>
+                      )}
                     </div>
                   </div>
                 </Link>

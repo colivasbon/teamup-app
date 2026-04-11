@@ -28,28 +28,69 @@ const SPORT_COLORS = {
   yoga:'#ec4899', baloncesto:'#f59e0b', voleibol:'#06d6a0', badminton:'#8b5cf6',
 }
 
+// Formas SVG orgánicas — blobs y círculos que se superponen
+const BLOB_SHAPES = {
+  // Ola en la esquina inferior
+  wave: `<path d="M0 100 Q150 60 300 100 Q450 140 600 100 L600 160 L0 160Z" fill="rgba(255,255,255,0.12)"/>`,
+  // Círculo grande descentrado
+  circle: `<circle cx="480" cy="-20" r="140" fill="rgba(255,255,255,0.10)"/><circle cx="-40" cy="120" r="90" fill="rgba(255,255,255,0.07)"/>`,
+  // Blob orgánico
+  blob: `<path d="M520 20 Q580 80 540 140 Q500 200 420 160 Q340 120 380 60 Q420 0 520 20Z" fill="rgba(255,255,255,0.12)"/>`,
+  // Ondas horizontales
+  waves: `<path d="M0 80 Q100 50 200 80 Q300 110 400 80 Q500 50 600 80 L600 160 L0 160Z" fill="rgba(255,255,255,0.08)"/><path d="M0 100 Q100 70 200 100 Q300 130 400 100 Q500 70 600 100 L600 160 L0 160Z" fill="rgba(255,255,255,0.06)"/>`,
+  // Diágonales
+  diagonal: `<rect x="-20" y="-20" width="220" height="220" rx="40" transform="rotate(20 0 0) translate(300 -80)" fill="rgba(255,255,255,0.10)"/>`,
+  // Puntos
+  dots: `<circle cx="80" cy="30" r="40" fill="rgba(255,255,255,0.10)"/><circle cx="520" cy="130" r="60" fill="rgba(255,255,255,0.08)"/><circle cx="300" cy="80" r="25" fill="rgba(255,255,255,0.06)"/>`,
+  // Arcos
+  arcs: `<path d="M-40 120 A160 160 0 0 1 200 -40" stroke="rgba(255,255,255,0.18)" stroke-width="40" fill="none"/><path d="M400 200 A160 160 0 0 1 640 40" stroke="rgba(255,255,255,0.12)" stroke-width="30" fill="none"/>`,
+}
+
 const BANNERS = [
-  { id:'grad-1',  style:'linear-gradient(135deg, #586875 0%, #3f4f5a 100%)' },
-  { id:'grad-2',  style:'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' },
-  { id:'grad-3',  style:'linear-gradient(135deg, #e96c1a 0%, #f5a623 100%)' },
-  { id:'grad-4',  style:'linear-gradient(135deg, #00b09b 0%, #96c93d 100%)' },
-  { id:'grad-5',  style:'linear-gradient(135deg, #8e44ad 0%, #3498db 100%)' },
-  { id:'grad-6',  style:'linear-gradient(135deg, #c0392b 0%, #8e44ad 100%)' },
-  { id:'grad-7',  style:'linear-gradient(135deg, #c8a96e 0%, #7a5230 100%)' },
-  { id:'grad-8',  style:'linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%)' },
-  { id:'grad-9',  style:'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)' },
-  { id:'grad-10', style:'linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%)' },
-  { id:'grad-11', style:'linear-gradient(135deg, #373b44 0%, #4286f4 100%)' },
-  { id:'grad-12', style:'linear-gradient(135deg, #ff6b6b 0%, #feca57 100%)' },
-  { id:'grad-13', style:'linear-gradient(135deg, #2d3436 0%, #636e72 100%)' },
-  { id:'grad-14', style:'linear-gradient(160deg, #0093E9 0%, #80D0C7 100%)' },
-  { id:'grad-15', style:'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
-  { id:'grad-16', style:'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' },
-  { id:'grad-17', style:'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' },
-  { id:'grad-18', style:'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)' },
-  { id:'grad-19', style:'linear-gradient(135deg, #fa709a 0%, #fee140 100%)' },
-  { id:'grad-20', style:'linear-gradient(135deg, #30cfd0 0%, #330867 100%)' },
+  { id:'grad-1',  bg:'#586875,#3f4f5a',    shape:'wave'     },
+  { id:'grad-2',  bg:'#1a1a2e,#0f3460',    shape:'circle'   },
+  { id:'grad-3',  bg:'#e96c1a,#f5a623',    shape:'blob'     },
+  { id:'grad-4',  bg:'#00b09b,#96c93d',    shape:'waves'    },
+  { id:'grad-5',  bg:'#8e44ad,#3498db',    shape:'diagonal' },
+  { id:'grad-6',  bg:'#c0392b,#8e44ad',    shape:'dots'     },
+  { id:'grad-7',  bg:'#c8a96e,#7a5230',    shape:'arcs'     },
+  { id:'grad-8',  bg:'#2c3e50,#4ca1af',    shape:'wave'     },
+  { id:'grad-9',  bg:'#11998e,#38ef7d',    shape:'circle'   },
+  { id:'grad-10', bg:'#fc4a1a,#f7b733',    shape:'blob'     },
+  { id:'grad-11', bg:'#373b44,#4286f4',    shape:'waves'    },
+  { id:'grad-12', bg:'#ff6b6b,#feca57',    shape:'diagonal' },
+  { id:'grad-13', bg:'#2d3436,#636e72',    shape:'dots'     },
+  { id:'grad-14', bg:'#0093E9,#80D0C7',    shape:'arcs'     },
+  { id:'grad-15', bg:'#667eea,#764ba2',    shape:'wave'     },
+  { id:'grad-16', bg:'#f093fb,#f5576c',    shape:'circle'   },
+  { id:'grad-17', bg:'#4facfe,#00f2fe',    shape:'blob'     },
+  { id:'grad-18', bg:'#43e97b,#38f9d7',    shape:'waves'    },
+  { id:'grad-19', bg:'#fa709a,#fee140',    shape:'diagonal' },
+  { id:'grad-20', bg:'#30cfd0,#330867',    shape:'dots'     },
 ]
+
+// Renderizar banner con gradiente + forma SVG orgánica
+function BannerBg({ bannerId, bannerUrl, height = 160, children }) {
+  const b = BANNERS.find(x => x.id === bannerId) || BANNERS[0]
+  const [c1, c2] = b.bg.split(',')
+  const svgContent = BLOB_SHAPES[b.shape] || ''
+  const svgBg = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 160'%3E${encodeURIComponent(svgContent)}%3C/svg%3E")`
+  return (
+    <div style={{
+      height, width:'100%', position:'relative', overflow:'hidden',
+      background: bannerUrl ? `url(${bannerUrl}) center/cover` : `linear-gradient(135deg, ${c1}, ${c2})`,
+    }}>
+      {!bannerUrl && (
+        <div style={{
+          position:'absolute', inset:0,
+          backgroundImage: svgBg,
+          backgroundSize:'cover', backgroundPosition:'center',
+        }}/>
+      )}
+      {children}
+    </div>
+  )
+}
 
 const NOTIF_ICONS = {
   joined:    '👥',
@@ -279,10 +320,8 @@ export default function Profile() {
   const allEvents   = actTab === 'creados' ? myCreated : myJoined
   const unreadCount = notifs.filter(n => !n.read).length
 
-  // Calcular el gradiente activo del banner
-  const activeBannerStyle = bannerUrl
-    ? { backgroundImage:`url(${bannerUrl})`, backgroundSize:'cover', backgroundPosition:'center' }
-    : { background: BANNERS.find(b => b.id === banner)?.style || BANNERS[0].style }
+  // bannerId actual
+  const activeBannerId = banner || 'grad-1'
 
   return (
     <>
@@ -291,14 +330,9 @@ export default function Profile() {
         {/* Banner + Avatar hero */}
         <div style={{ position:'relative', marginBottom:52 }}>
 
-          {/* Banner */}
-          <div style={{
-            height: 160,
-            borderRadius: '0 0 24px 24px',
-            overflow: 'hidden',
-            position: 'relative',
-            ...activeBannerStyle,
-          }}>
+          {/* Banner con forma orgánica */}
+          <BannerBg bannerId={activeBannerId} bannerUrl={bannerUrl} height={160}>
+          <div style={{ borderRadius:'0 0 24px 24px', overflow:'hidden', position:'relative', height:'100%' }}>
             {/* Botón editar / guardar */}
             <button onClick={() => editing ? saveProfile() : setEditing(true)} style={{
               position:'absolute', top:14, right:14,
@@ -321,6 +355,7 @@ export default function Profile() {
 
             {/* Sin selector aquí — va debajo del avatar */}
           </div>
+          </BannerBg>
 
           {/* Avatar flotante */}
           <div style={{
@@ -349,17 +384,21 @@ export default function Profile() {
           <div style={{ marginTop:52, padding:'0 18px 4px' }}>
             <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.06em', color:'var(--muted)', textTransform:'uppercase', marginBottom:10 }}>Color de portada</div>
             <div className="scroll-x" style={{ display:'flex', gap:8, paddingBottom:4 }}>
-              {BANNERS.map(b => (
+              {BANNERS.map(b => {
+                const [c1,c2] = b.bg.split(',')
+                return (
                 <button key={b.id} onClick={() => { setBanner(b.id); setBannerUrl(null) }} style={{
                   width:36, height:36, borderRadius:10, flexShrink:0,
-                  background: b.style,
+                  background: `linear-gradient(135deg,${c1},${c2})`,
                   border: banner === b.id && !bannerUrl ? '3px solid var(--primary)' : '2px solid var(--border)',
                   cursor:'pointer',
                   boxShadow: banner === b.id && !bannerUrl ? '0 0 0 2px rgba(88,104,117,0.35)' : 'none',
                   transition:'all 0.15s ease',
                   outline:'none',
                 }}/>
-              ))}
+                )
+              })}
+              {/* cierre del map */}
               {/* Subir foto propia */}
               <button onClick={() => bannerRef.current?.click()} style={{
                 width:36, height:36, borderRadius:10, flexShrink:0,

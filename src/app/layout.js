@@ -53,13 +53,17 @@ function ThemeButton() {
 function AppShell({ children }) {
   const { user, profile } = useAuth()
   const [showOnboarding, setShowOnboarding] = useState(false)
+  const [profileLoaded,  setProfileLoaded]  = useState(false)
 
   useEffect(() => {
-    // Mostrar onboarding si el usuario está logueado y no tiene ciudad o deportes
-    if (user && profile !== undefined) {
-      const needsOnboarding = !profile?.location || !profile?.sports?.length
-      setShowOnboarding(needsOnboarding)
-    }
+    // profile empieza undefined (cargando), luego es null (sin perfil) o un objeto
+    // Solo actuar cuando profile ya tiene un valor definido
+    if (!user) { setShowOnboarding(false); setProfileLoaded(false); return }
+    if (profile === undefined) return // todavía cargando
+    setProfileLoaded(true)
+    // Solo mostrar si el perfil existe pero le faltan datos
+    const needsOnboarding = profile !== null && (!profile?.location || !profile?.sports?.length)
+    setShowOnboarding(needsOnboarding)
   }, [user, profile])
 
   return (
