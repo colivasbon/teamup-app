@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import Navbar from '@/components/Navbar'
@@ -57,7 +57,24 @@ export default function Home() {
   const avatarUrl   = profile?.avatar_url || null
   const displayName = profile?.full_name || user?.user_metadata?.full_name || null
 
-  const [myEvents, setMyEvents] = useState([])
+  const [myEvents,    setMyEvents]    = useState([])
+  const [unreadCount, setUnreadCount] = useState(0)
+
+  // Cargar notificaciones sin leer
+  useEffect(() => {
+    if (!user) return
+    const fetchUnread = async () => {
+      try {
+        const sb = getSupabase(); if (!sb) return
+        const { data } = await sb.from('notifications')
+          .select('id').eq('user_id', user.id).eq('read', false)
+        setUnreadCount(data?.length || 0)
+      } catch(_) {}
+    }
+    fetchUnread()
+    const iv = setInterval(fetchUnread, 30000)
+    return () => clearInterval(iv)
+  }, [user])
 
   // Cargar eventos del usuario logueado
   useEffect(() => {
@@ -166,6 +183,37 @@ export default function Home() {
               })}
             </div>
           </>
+        )}
+
+        {/* ── Banner notificaciones (solo si hay sin leer) ── */}
+        {user && unreadCount > 0 && (
+          <Link href="/profile" className="card anim-1" style={{
+            display:'flex', alignItems:'center', gap:14, padding:'14px 16px',
+            marginBottom:20, textDecoration:'none',
+            background:'linear-gradient(135deg, rgba(88,104,117,0.18), rgba(88,104,117,0.08))',
+            border:'1.5px solid rgba(88,104,117,0.30)',
+          }}>
+            <div style={{
+              width:42, height:42, borderRadius:'50%', flexShrink:0,
+              background:'#586875', display:'flex', alignItems:'center', justifyContent:'center',
+              fontSize:20, position:'relative',
+            }}>
+              🔔
+              <span style={{
+                position:'absolute', top:-3, right:-3, width:16, height:16,
+                background:'#ef4444', borderRadius:'50%', border:'2px solid var(--bg)',
+                display:'flex', alignItems:'center', justifyContent:'center',
+                fontSize:9, fontWeight:800, color:'white', lineHeight:1,
+              }}>{unreadCount > 9 ? '9+' : unreadCount}</span>
+            </div>
+            <div style={{ flex:1, minWidth:0 }}>
+              <div style={{ fontWeight:700, fontSize:14, color:'var(--text)', marginBottom:2 }}>
+                {unreadCount === 1 ? '1 notificación nueva' : `${unreadCount} notificaciones nuevas`}
+              </div>
+              <div style={{ fontSize:12, color:'var(--muted)' }}>Ver en tu perfil</div>
+            </div>
+            <span style={{ fontSize:18, color:'var(--muted)' }}>›</span>
+          </Link>
         )}
 
         {/* ── Deportes ── */}

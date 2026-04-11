@@ -444,10 +444,13 @@ export default function EventDetail() {
         <div style={{ background:`linear-gradient(160deg,${c}ee,${c}88)`, padding:'58px 22px 28px', position:'relative', overflow:'hidden' }}>
           <div style={{ position:'absolute', top:-40, right:-40, width:180, height:180, borderRadius:'50%', background:'rgba(255,255,255,0.10)', pointerEvents:'none' }}/>
           <button onClick={()=>router.back()} style={{ position:'absolute', top:16, left:16, background:'rgba(255,255,255,0.22)', border:'1px solid rgba(255,255,255,0.32)', borderRadius:12, color:'white', width:38, height:38, display:'flex', alignItems:'center', justifyContent:'center', fontSize:18, cursor:'pointer' }}>←</button>
-          {/* Botón editar (solo creador) */}
-          {user && ev.creator_id === user.id && (
-            <button onClick={()=>router.push(`/events/${id}/edit`)} style={{ position:'absolute', top:60, right:16, background:'rgba(255,255,255,0.22)', border:'1px solid rgba(255,255,255,0.32)', borderRadius:12, color:'white', padding:'6px 12px', fontSize:12, fontWeight:700, cursor:'pointer', display:'flex', alignItems:'center', gap:5 }}>
-              ✏️ Editar
+          {/* Botón editar (solo creador) — abajo a la izquierda del hero */}
+          {user && (ev.creator_id === user.id || ev.creator_id === undefined) && !isDemo(id) && ev.creator_id && (
+            <button
+              onClick={(e) => { e.stopPropagation(); router.push(`/events/${id}/edit`) }}
+              style={{ position:'absolute', bottom:16, right:16, background:'rgba(255,255,255,0.22)', border:'1px solid rgba(255,255,255,0.32)', borderRadius:12, color:'white', padding:'7px 14px', fontSize:12, fontWeight:700, cursor:'pointer', display:'flex', alignItems:'center', gap:5, zIndex:10 }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              Editar evento
             </button>
           )}
           {/* Botón compartir */}
