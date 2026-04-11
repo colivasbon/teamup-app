@@ -87,6 +87,12 @@ export default function EventDetail() {
               const { data: ep } = await sb.from('event_participants')
                 .select('id').eq('event_id', id).eq('user_id', user.id).maybeSingle()
               setJoined(!!ep)
+              // Recargar el contador tras 1.5s para capturar el insert del creador
+              setTimeout(async () => {
+                const { data: fresh } = await sb.from('events_with_counts')
+                  .select('participant_count').eq('id', id).single()
+                if (fresh) setPCount(fresh.participant_count || 0)
+              }, 1500)
             }
             setLoad(false); return
           }
