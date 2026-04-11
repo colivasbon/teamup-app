@@ -1,176 +1,236 @@
 'use client'
 
-// ─────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 // TeamUp — Iconos SVG propios para cada deporte
-// Uso: <SportIcon sport="running" size={24} color="#586875" />
-// ─────────────────────────────────────────────────────────
+// Diseñados a partir de referencias visuales de alta calidad
+// Uso: <SportIcon sport="running" size={28} color="#586875" />
+// ─────────────────────────────────────────────────────────────────────────────
 
-const PATHS = {
-  running: ({ c }) => (
-    // Figura corriendo — cuerpo inclinado hacia adelante
-    <g fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="15" cy="4.5" r="2" fill={c} stroke="none"/>
-      <path d="M12 7.5 L9.5 12 L6 13.5" />
-      <path d="M12 7.5 L14 12 L17.5 10.5" />
-      <path d="M9.5 12 L7.5 17.5 L10.5 20" />
-      <path d="M14 12 L15.5 17.5 L13 20.5" />
-    </g>
+const ICONS = {
+
+  // Corredor en zancada — figura sólida con movimiento
+  running: ({ c, s }) => (
+    <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+      {/* Cabeza */}
+      <circle cx="21" cy="5" r="3" fill={c}/>
+      {/* Cuerpo inclinado hacia adelante */}
+      <path d="M19 8 L14 15 L9 18" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+      {/* Brazo adelante */}
+      <path d="M17 10 L23 8" stroke={c} strokeWidth="2.5" strokeLinecap="round"/>
+      {/* Pierna delantera */}
+      <path d="M14 15 L11 22 L15 27" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+      {/* Pierna trasera */}
+      <path d="M14 15 L18 20 L14 25" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+      {/* Brazo atrás */}
+      <path d="M14 12 L10 15" stroke={c} strokeWidth="2.5" strokeLinecap="round"/>
+    </svg>
   ),
 
-  padel: ({ c }) => (
-    // Pala de pádel con pelota
-    <g fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="6" y="3" width="9" height="12" rx="4.5" fill={c} fillOpacity="0.15"/>
-      <rect x="6" y="3" width="9" height="12" rx="4.5"/>
-      <line x1="10.5" y1="15" x2="8" y2="21"/>
-      <circle cx="17" cy="19" r="2.2" fill={c} fillOpacity="0.3"/>
-      <circle cx="17" cy="19" r="2.2"/>
-    </g>
+  // Pala de pádel con bola — vista frontal con agujeros
+  padel: ({ c, s }) => (
+    <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+      {/* Cabeza de la pala — forma ovalada */}
+      <ellipse cx="16" cy="12" rx="8" ry="9.5" fill={c} fillOpacity="0.15" stroke={c} strokeWidth="2"/>
+      {/* Agujeros de la pala */}
+      <circle cx="13" cy="9" r="1.2" fill={c} opacity="0.5"/>
+      <circle cx="19" cy="9" r="1.2" fill={c} opacity="0.5"/>
+      <circle cx="13" cy="13" r="1.2" fill={c} opacity="0.5"/>
+      <circle cx="19" cy="13" r="1.2" fill={c} opacity="0.5"/>
+      <circle cx="16" cy="11" r="1.2" fill={c} opacity="0.5"/>
+      {/* Mango */}
+      <rect x="14" y="21" width="4" height="8" rx="2" fill={c}/>
+      {/* Bola */}
+      <circle cx="25" cy="8" r="3" fill={c} fillOpacity="0.25" stroke={c} strokeWidth="1.8"/>
+      <path d="M23 7 Q25 6 27 8" stroke={c} strokeWidth="1.2" strokeLinecap="round" fill="none"/>
+    </svg>
   ),
 
-  senderismo: ({ c }) => (
-    // Bota de montaña con perfil de montaña
-    <g fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="3,18 8,8 12,13 16,5 21,18"/>
-      <line x1="3" y1="18" x2="21" y2="18"/>
-    </g>
+  // Senderismo — montaña con bota
+  senderismo: ({ c, s }) => (
+    <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+      {/* Montaña izquierda */}
+      <path d="M2 26 L10 10 L15 18 L20 8 L30 26 Z" fill={c} fillOpacity="0.12" stroke={c} strokeWidth="2" strokeLinejoin="round"/>
+      {/* Nieve en la cima */}
+      <path d="M17.5 11 L20 8 L22.5 11 Z" fill={c} fillOpacity="0.5"/>
+      {/* Línea del suelo */}
+      <line x1="2" y1="26" x2="30" y2="26" stroke={c} strokeWidth="2" strokeLinecap="round"/>
+    </svg>
   ),
 
-  futbol: ({ c }) => (
-    // Balón de fútbol geométrico
-    <g fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="9"/>
-      <polygon points="12,5 14.5,8.5 12,12 9.5,8.5" fill={c} fillOpacity="0.25"/>
-      <line x1="12" y1="5" x2="12" y2="3"/>
-      <line x1="14.5" y1="8.5" x2="18" y2="7"/>
-      <line x1="14.5" y1="8.5" x2="16.5" y2="12"/>
-      <line x1="9.5" y1="8.5" x2="6" y2="7"/>
-      <line x1="9.5" y1="8.5" x2="7.5" y2="12"/>
-      <line x1="12" y1="12" x2="12" y2="15.5"/>
-    </g>
+  // Balón de fútbol — hexágonos
+  futbol: ({ c, s }) => (
+    <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+      <circle cx="16" cy="16" r="13" stroke={c} strokeWidth="2" fill="none"/>
+      {/* Pentágono central */}
+      <polygon points="16,8 20.5,12 19,17.5 13,17.5 11.5,12" fill={c} fillOpacity="0.3" stroke={c} strokeWidth="1.5"/>
+      {/* Líneas desde el pentágono hacia el borde */}
+      <line x1="16" y1="8" x2="16" y2="3" stroke={c} strokeWidth="1.5"/>
+      <line x1="20.5" y1="12" x2="27" y2="9" stroke={c} strokeWidth="1.5"/>
+      <line x1="19" y1="17.5" x2="25" y2="22" stroke={c} strokeWidth="1.5"/>
+      <line x1="13" y1="17.5" x2="7" y2="22" stroke={c} strokeWidth="1.5"/>
+      <line x1="11.5" y1="12" x2="5" y2="9" stroke={c} strokeWidth="1.5"/>
+    </svg>
   ),
 
-  gimnasio: ({ c }) => (
-    // Mancuerna / dumbbell
-    <g fill="none" stroke={c} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="10" width="3" height="4" rx="1" fill={c} fillOpacity="0.3"/>
-      <rect x="2" y="8.5" width="3" height="7" rx="1"/>
-      <rect x="19" y="10" width="3" height="4" rx="1" fill={c} fillOpacity="0.3"/>
-      <rect x="19" y="8.5" width="3" height="7" rx="1"/>
-      <line x1="5" y1="12" x2="19" y2="12" strokeWidth="2.5"/>
-      <rect x="7" y="9" width="3" height="6" rx="1" fill={c} fillOpacity="0.2"/>
-      <rect x="7" y="9" width="3" height="6" rx="1"/>
-      <rect x="14" y="9" width="3" height="6" rx="1" fill={c} fillOpacity="0.2"/>
-      <rect x="14" y="9" width="3" height="6" rx="1"/>
-    </g>
+  // Mancuerna — pesos con barra
+  gimnasio: ({ c, s }) => (
+    <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+      {/* Barra central */}
+      <rect x="10" y="14.5" width="12" height="3" rx="1.5" fill={c}/>
+      {/* Peso izquierdo exterior */}
+      <rect x="2" y="11" width="5" height="10" rx="2.5" fill={c}/>
+      {/* Peso izquierdo interior */}
+      <rect x="7" y="12.5" width="3" height="7" rx="1.5" fill={c} fillOpacity="0.7"/>
+      {/* Peso derecho interior */}
+      <rect x="22" y="12.5" width="3" height="7" rx="1.5" fill={c} fillOpacity="0.7"/>
+      {/* Peso derecho exterior */}
+      <rect x="25" y="11" width="5" height="10" rx="2.5" fill={c}/>
+    </svg>
   ),
 
-  tenis: ({ c }) => (
-    // Raqueta de tenis con pelota
-    <g fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <ellipse cx="11" cy="9" rx="6.5" ry="7.5" fill={c} fillOpacity="0.12"/>
-      <ellipse cx="11" cy="9" rx="6.5" ry="7.5"/>
-      <line x1="11" y1="2" x2="11" y2="16.5"/>
-      <line x1="4.5" y1="9" x2="17.5" y2="9"/>
-      <line x1="6" y1="4.5" x2="16" y2="13.5"/>
-      <line x1="16" y1="4.5" x2="6" y2="13.5"/>
-      <line x1="11" y1="16.5" x2="9.5" y2="22"/>
-      <circle cx="20" cy="20" r="2" fill={c} fillOpacity="0.3"/>
-      <circle cx="20" cy="20" r="2"/>
-    </g>
+  // Raqueta de tenis con cuerdas
+  tenis: ({ c, s }) => (
+    <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+      {/* Cabeza de la raqueta */}
+      <ellipse cx="17" cy="12" rx="9" ry="10" fill={c} fillOpacity="0.1" stroke={c} strokeWidth="2"/>
+      {/* Cuerdas verticales */}
+      <line x1="14" y1="3" x2="14" y2="21" stroke={c} strokeWidth="1" opacity="0.6"/>
+      <line x1="17" y1="2.5" x2="17" y2="21.5" stroke={c} strokeWidth="1" opacity="0.6"/>
+      <line x1="20" y1="3" x2="20" y2="21" stroke={c} strokeWidth="1" opacity="0.6"/>
+      {/* Cuerdas horizontales */}
+      <line x1="9" y1="9" x2="25" y2="9" stroke={c} strokeWidth="1" opacity="0.6"/>
+      <line x1="8" y1="13" x2="26" y2="13" stroke={c} strokeWidth="1" opacity="0.6"/>
+      <line x1="9" y1="17" x2="25" y2="17" stroke={c} strokeWidth="1" opacity="0.6"/>
+      {/* Mango */}
+      <path d="M14 22 L10 30" stroke={c} strokeWidth="2.5" strokeLinecap="round"/>
+      <path d="M9.5 29 L12 31" stroke={c} strokeWidth="2" strokeLinecap="round"/>
+    </svg>
   ),
 
-  natacion: ({ c }) => (
-    // Olas + figura nadando
-    <g fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="17" cy="5" r="2" fill={c} stroke="none"/>
-      <path d="M2 11 Q5 9 8 11 Q11 13 14 11 Q17 9 20 11 Q22 12 22 12"/>
-      <path d="M2 15 Q5 13 8 15 Q11 17 14 15 Q17 13 20 15 Q22 16 22 16"/>
-      <path d="M8 11 L12 7 L17 7"/>
-    </g>
+  // Nadador con olas
+  natacion: ({ c, s }) => (
+    <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+      {/* Cabeza */}
+      <circle cx="26" cy="8" r="3" fill={c}/>
+      {/* Cuerpo nadando */}
+      <path d="M24 11 L14 13 L6 11" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+      {/* Brazo adelante */}
+      <path d="M20 12 L28 15" stroke={c} strokeWidth="2.5" strokeLinecap="round"/>
+      {/* Piernas */}
+      <path d="M6 11 L3 14 M6 11 L4 16" stroke={c} strokeWidth="2.5" strokeLinecap="round"/>
+      {/* Olas */}
+      <path d="M2 21 Q6 18 10 21 Q14 24 18 21 Q22 18 26 21 Q28 22.5 30 21" stroke={c} strokeWidth="2" strokeLinecap="round" fill="none"/>
+      <path d="M2 26 Q6 23 10 26 Q14 29 18 26 Q22 23 26 26 Q28 27.5 30 26" stroke={c} strokeWidth="2" strokeLinecap="round" fill="none"/>
+    </svg>
   ),
 
-  ciclismo: ({ c }) => (
-    // Bicicleta minimalista
-    <g fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="6" cy="16" r="4.5"/>
-      <circle cx="18" cy="16" r="4.5"/>
-      <polyline points="6,16 9,9 13,9 18,16"/>
-      <line x1="13" y1="9" x2="12" y2="16"/>
-      <circle cx="13" cy="9" r="1.5" fill={c} stroke="none"/>
-      <polyline points="9,9 11,5 14,5"/>
-    </g>
+  // Bicicleta — vista lateral limpia
+  ciclismo: ({ c, s }) => (
+    <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+      {/* Rueda trasera */}
+      <circle cx="8" cy="22" r="7" stroke={c} strokeWidth="2" fill="none"/>
+      <circle cx="8" cy="22" r="2" fill={c}/>
+      {/* Rueda delantera */}
+      <circle cx="24" cy="22" r="7" stroke={c} strokeWidth="2" fill="none"/>
+      <circle cx="24" cy="22" r="2" fill={c}/>
+      {/* Cuadro */}
+      <path d="M8 22 L16 10 L24 22" stroke={c} strokeWidth="2.2" strokeLinejoin="round" fill="none"/>
+      <path d="M16 10 L16 22" stroke={c} strokeWidth="2" strokeLinecap="round"/>
+      {/* Manillar */}
+      <path d="M19 10 L24 10 M22 8 L24 10 L22 12" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+      {/* Sillín */}
+      <path d="M13 10 L19 10" stroke={c} strokeWidth="2" strokeLinecap="round"/>
+      {/* Pedal */}
+      <circle cx="16" cy="18" r="2.5" stroke={c} strokeWidth="1.8" fill="none"/>
+    </svg>
   ),
 
-  yoga: ({ c }) => (
-    // Figura en postura de loto / meditación
-    <g fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="4.5" r="2" fill={c} fillOpacity="0.3"/>
-      <circle cx="12" cy="4.5" r="2"/>
-      <path d="M12 7 L12 13"/>
-      <path d="M4 11 Q8 9 12 13 Q16 9 20 11"/>
-      <path d="M7 18 Q9.5 14 12 13 Q14.5 14 17 18"/>
-      <line x1="7" y1="18" x2="4" y2="20"/>
-      <line x1="17" y1="18" x2="20" y2="20"/>
-    </g>
+  // Yoga — postura loto, figura serena
+  yoga: ({ c, s }) => (
+    <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+      {/* Cabeza */}
+      <circle cx="16" cy="5" r="3.5" fill={c}/>
+      {/* Torso */}
+      <path d="M16 9 L16 18" stroke={c} strokeWidth="2.5" strokeLinecap="round"/>
+      {/* Brazos abiertos horizontal */}
+      <path d="M6 14 L16 16 L26 14" stroke={c} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+      {/* Manos en mudra */}
+      <circle cx="6" cy="14" r="1.5" fill={c}/>
+      <circle cx="26" cy="14" r="1.5" fill={c}/>
+      {/* Piernas cruzadas */}
+      <path d="M16 18 Q10 20 8 26" stroke={c} strokeWidth="2.2" strokeLinecap="round" fill="none"/>
+      <path d="M16 18 Q22 20 24 26" stroke={c} strokeWidth="2.2" strokeLinecap="round" fill="none"/>
+      {/* Pies */}
+      <ellipse cx="8" cy="27" rx="3" ry="2" fill={c} fillOpacity="0.4"/>
+      <ellipse cx="24" cy="27" rx="3" ry="2" fill={c} fillOpacity="0.4"/>
+    </svg>
   ),
 
-  baloncesto: ({ c }) => (
-    // Balón de baloncesto
-    <g fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="9"/>
-      <path d="M3 12 Q8 8 12 12 Q16 16 21 12"/>
-      <path d="M12 3 Q8 8 12 12 Q16 16 12 21"/>
-    </g>
+  // Baloncesto — balón con líneas características
+  baloncesto: ({ c, s }) => (
+    <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+      <circle cx="16" cy="16" r="13" fill={c} fillOpacity="0.12" stroke={c} strokeWidth="2"/>
+      {/* Línea vertical central */}
+      <line x1="16" y1="3" x2="16" y2="29" stroke={c} strokeWidth="2"/>
+      {/* Línea horizontal */}
+      <line x1="3" y1="16" x2="29" y2="16" stroke={c} strokeWidth="2"/>
+      {/* Curva superior izquierda */}
+      <path d="M5 8 Q11 12 11 16" stroke={c} strokeWidth="2" fill="none"/>
+      {/* Curva inferior izquierda */}
+      <path d="M5 24 Q11 20 11 16" stroke={c} strokeWidth="2" fill="none"/>
+      {/* Curva superior derecha */}
+      <path d="M27 8 Q21 12 21 16" stroke={c} strokeWidth="2" fill="none"/>
+      {/* Curva inferior derecha */}
+      <path d="M27 24 Q21 20 21 16" stroke={c} strokeWidth="2" fill="none"/>
+    </svg>
   ),
 
-  voleibol: ({ c }) => (
-    // Balón de voleibol con líneas curvas
-    <g fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="9"/>
-      <path d="M5 7 Q12 12 19 7"/>
-      <path d="M3 14 Q9 10 12 21"/>
-      <path d="M21 14 Q15 10 12 21"/>
-    </g>
+  // Voleibol — balón con costuras
+  voleibol: ({ c, s }) => (
+    <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+      <circle cx="16" cy="16" r="13" fill={c} fillOpacity="0.12" stroke={c} strokeWidth="2"/>
+      {/* Costura superior */}
+      <path d="M4 10 Q10 14 16 10 Q22 6 28 10" stroke={c} strokeWidth="2" fill="none"/>
+      {/* Costura izquierda */}
+      <path d="M4 10 Q6 18 4 26" stroke={c} strokeWidth="2" fill="none"/>
+      {/* Costura derecha */}
+      <path d="M28 10 Q30 18 28 26" stroke={c} strokeWidth="2" fill="none"/>
+      {/* Costura inferior */}
+      <path d="M4 26 Q10 22 16 26 Q22 30 28 26" stroke={c} strokeWidth="2" fill="none"/>
+    </svg>
   ),
 
-  badminton: ({ c }) => (
-    // Raqueta de bádminton con volante
-    <g fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <ellipse cx="10" cy="8.5" rx="5.5" ry="6.5" fill={c} fillOpacity="0.12"/>
-      <ellipse cx="10" cy="8.5" rx="5.5" ry="6.5"/>
-      <line x1="10" y1="2.5" x2="10" y2="15"/>
-      <line x1="4.5" y1="8.5" x2="15.5" y2="8.5"/>
-      <line x1="10" y1="15" x2="14" y2="22"/>
-      {/* Volante */}
-      <circle cx="19" cy="18" r="1.5" fill={c} stroke="none"/>
-      <path d="M17 15 L19 16.5"/>
-      <path d="M19 15 L19 16.5"/>
-      <path d="M21 15 L19 16.5"/>
-    </g>
+  // Bádminton — volante icónico
+  badminton: ({ c, s }) => (
+    <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+      {/* Base del volante */}
+      <circle cx="16" cy="24" r="4.5" fill={c} fillOpacity="0.25" stroke={c} strokeWidth="2"/>
+      {/* Plumas — 6 líneas que forman el cono */}
+      <path d="M16 20 L10 5" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M16 20 L13 4" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M16 20 L16 3.5" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M16 20 L19 4" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M16 20 L22 5" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M16 20 L25 7" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
+      {/* Aro de las plumas */}
+      <ellipse cx="16" cy="7" rx="7" ry="3" fill="none" stroke={c} strokeWidth="1.8"/>
+    </svg>
   ),
 }
 
-export function SportIcon({ sport, size = 24, color, className = '', style = {} }) {
+export function SportIcon({ sport, size = 28, color }) {
   const c = color || 'currentColor'
-  const S = PATHS[sport]
-  if (!S) {
-    // Fallback genérico: estrella / destello
-    return (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} style={style}>
-        <circle cx="12" cy="12" r="9" stroke={c} strokeWidth="1.8" fill={c} fillOpacity="0.12"/>
-        <path d="M12 7l1.5 3.5 3.5 0.5-2.5 2.5 0.5 3.5L12 15.5l-3 1.5 0.5-3.5L7 11l3.5-0.5z" fill={c} stroke="none"/>
-      </svg>
-    )
-  }
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" className={className} style={style}>
-      <S c={c} />
+  const Icon = ICONS[sport]
+  if (!Icon) return (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+      <circle cx="16" cy="16" r="12" stroke={c} strokeWidth="2" fill={c} fillOpacity="0.12"/>
+      <path d="M16 10 L18.5 14.5 L23.5 15.5 L20 19 L20.5 24 L16 21.5 L11.5 24 L12 19 L8.5 15.5 L13.5 14.5 Z" fill={c} stroke="none"/>
     </svg>
   )
+  return <Icon c={c} s={size} />
 }
 
-// Mapa de colores por deporte (exportado para usar en toda la app)
+// Colores oficiales por deporte
 export const SPORT_COLORS = {
   running:    '#5b6ef5',
   padel:      '#06d6a0',
@@ -201,21 +261,21 @@ export const SPORT_LABELS = {
   badminton:  'Bádminton',
 }
 
-// Para usar en marcadores del mapa (SVG como string, sin JSX)
+// SVG como string para marcadores de Leaflet (si se usan en el futuro)
 export function sportIconSVGString(sport, color = '#586875') {
-  const svgs = {
-    running:    `<g fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="15" cy="4.5" r="2" fill="${color}" stroke="none"/><path d="M12 7.5 L9.5 12 L6 13.5"/><path d="M12 7.5 L14 12 L17.5 10.5"/><path d="M9.5 12 L7.5 17.5 L10.5 20"/><path d="M14 12 L15.5 17.5 L13 20.5"/></g>`,
-    padel:      `<g fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="9" height="12" rx="4.5" fill="${color}" fill-opacity="0.25"/><rect x="6" y="3" width="9" height="12" rx="4.5"/><line x1="10.5" y1="15" x2="8" y2="21"/></g>`,
-    senderismo: `<g fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3,18 8,8 12,13 16,5 21,18"/><line x1="3" y1="18" x2="21" y2="18"/></g>`,
-    futbol:     `<g fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polygon points="12,5 14.5,8.5 12,12 9.5,8.5" fill="${color}" fill-opacity="0.3"/></g>`,
-    gimnasio:   `<g fill="none" stroke="${color}" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8.5" width="3" height="7" rx="1"/><rect x="19" y="8.5" width="3" height="7" rx="1"/><line x1="5" y1="12" x2="19" y2="12" stroke-width="2.5"/><rect x="7" y="9" width="3" height="6" rx="1"/><rect x="14" y="9" width="3" height="6" rx="1"/></g>`,
-    tenis:      `<g fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="11" cy="9" rx="6.5" ry="7.5" fill="${color}" fill-opacity="0.15"/><ellipse cx="11" cy="9" rx="6.5" ry="7.5"/><line x1="11" y1="2" x2="11" y2="16.5"/><line x1="4.5" y1="9" x2="17.5" y2="9"/><line x1="11" y1="16.5" x2="9.5" y2="22"/></g>`,
-    natacion:   `<g fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 11 Q5 9 8 11 Q11 13 14 11 Q17 9 20 11 Q22 12 22 12"/><path d="M2 15 Q5 13 8 15 Q11 17 14 15 Q17 13 20 15 Q22 16 22 16"/><path d="M8 11 L12 7 L17 7"/><circle cx="17" cy="5" r="2" fill="${color}" stroke="none"/></g>`,
-    ciclismo:   `<g fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="16" r="4.5"/><circle cx="18" cy="16" r="4.5"/><polyline points="6,16 9,9 13,9 18,16"/><line x1="13" y1="9" x2="12" y2="16"/></g>`,
-    yoga:       `<g fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.5" r="2" fill="${color}" fill-opacity="0.3"/><circle cx="12" cy="4.5" r="2"/><path d="M12 7 L12 13"/><path d="M4 11 Q8 9 12 13 Q16 9 20 11"/><path d="M7 18 Q9.5 14 12 13 Q14.5 14 17 18"/></g>`,
-    baloncesto: `<g fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12 Q8 8 12 12 Q16 16 21 12"/><path d="M12 3 Q8 8 12 12 Q16 16 12 21"/></g>`,
-    voleibol:   `<g fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M5 7 Q12 12 19 7"/><path d="M3 14 Q9 10 12 21"/><path d="M21 14 Q15 10 12 21"/></g>`,
-    badminton:  `<g fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="10" cy="8.5" rx="5.5" ry="6.5" fill="${color}" fill-opacity="0.15"/><ellipse cx="10" cy="8.5" rx="5.5" ry="6.5"/><line x1="10" y1="2.5" x2="10" y2="15"/><line x1="4.5" y1="8.5" x2="15.5" y2="8.5"/><line x1="10" y1="15" x2="14" y2="22"/></g>`,
+  const map = {
+    running:    `<circle cx="21" cy="5" r="3" fill="${color}"/><path d="M19 8 L14 15 L9 18" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M17 10 L23 8" stroke="${color}" stroke-width="2.5" stroke-linecap="round"/><path d="M14 15 L11 22 L15 27" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M14 15 L18 20 L14 25" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`,
+    padel:      `<ellipse cx="16" cy="12" rx="8" ry="9.5" fill="${color}" fill-opacity="0.2" stroke="${color}" stroke-width="2"/><rect x="14" y="21" width="4" height="8" rx="2" fill="${color}"/><circle cx="25" cy="8" r="3" fill="${color}" fill-opacity="0.3" stroke="${color}" stroke-width="1.8"/>`,
+    senderismo: `<path d="M2 26 L10 10 L15 18 L20 8 L30 26 Z" fill="${color}" fill-opacity="0.15" stroke="${color}" stroke-width="2" stroke-linejoin="round"/>`,
+    futbol:     `<circle cx="16" cy="16" r="13" stroke="${color}" stroke-width="2" fill="none"/><polygon points="16,8 20.5,12 19,17.5 13,17.5 11.5,12" fill="${color}" fill-opacity="0.3" stroke="${color}" stroke-width="1.5"/>`,
+    gimnasio:   `<rect x="2" y="11" width="5" height="10" rx="2.5" fill="${color}"/><rect x="25" y="11" width="5" height="10" rx="2.5" fill="${color}"/><rect x="10" y="14.5" width="12" height="3" rx="1.5" fill="${color}"/>`,
+    tenis:      `<ellipse cx="17" cy="12" rx="9" ry="10" fill="${color}" fill-opacity="0.1" stroke="${color}" stroke-width="2"/><line x1="17" y1="2.5" x2="17" y2="21.5" stroke="${color}" stroke-width="1"/><line x1="8" y1="13" x2="26" y2="13" stroke="${color}" stroke-width="1"/><path d="M14 22 L10 30" stroke="${color}" stroke-width="2.5" stroke-linecap="round"/>`,
+    natacion:   `<circle cx="26" cy="8" r="3" fill="${color}"/><path d="M24 11 L14 13 L6 11" stroke="${color}" stroke-width="2.5" stroke-linecap="round" fill="none"/><path d="M2 21 Q6 18 10 21 Q14 24 18 21 Q22 18 26 21" stroke="${color}" stroke-width="2" stroke-linecap="round" fill="none"/>`,
+    ciclismo:   `<circle cx="8" cy="22" r="7" stroke="${color}" stroke-width="2" fill="none"/><circle cx="24" cy="22" r="7" stroke="${color}" stroke-width="2" fill="none"/><path d="M8 22 L16 10 L24 22" stroke="${color}" stroke-width="2.2" fill="none"/><path d="M16 10 L16 22" stroke="${color}" stroke-width="2" stroke-linecap="round"/>`,
+    yoga:       `<circle cx="16" cy="5" r="3.5" fill="${color}"/><path d="M16 9 L16 18" stroke="${color}" stroke-width="2.5" stroke-linecap="round"/><path d="M6 14 L16 16 L26 14" stroke="${color}" stroke-width="2.2" stroke-linecap="round" fill="none"/><path d="M16 18 Q10 20 8 26" stroke="${color}" stroke-width="2.2" stroke-linecap="round" fill="none"/><path d="M16 18 Q22 20 24 26" stroke="${color}" stroke-width="2.2" stroke-linecap="round" fill="none"/>`,
+    baloncesto: `<circle cx="16" cy="16" r="13" fill="${color}" fill-opacity="0.12" stroke="${color}" stroke-width="2"/><line x1="16" y1="3" x2="16" y2="29" stroke="${color}" stroke-width="2"/><line x1="3" y1="16" x2="29" y2="16" stroke="${color}" stroke-width="2"/><path d="M5 8 Q11 12 11 16" stroke="${color}" stroke-width="2" fill="none"/><path d="M27 8 Q21 12 21 16" stroke="${color}" stroke-width="2" fill="none"/>`,
+    voleibol:   `<circle cx="16" cy="16" r="13" fill="${color}" fill-opacity="0.12" stroke="${color}" stroke-width="2"/><path d="M4 10 Q10 14 16 10 Q22 6 28 10" stroke="${color}" stroke-width="2" fill="none"/><path d="M4 26 Q10 22 16 26 Q22 30 28 26" stroke="${color}" stroke-width="2" fill="none"/>`,
+    badminton:  `<circle cx="16" cy="24" r="4.5" fill="${color}" fill-opacity="0.25" stroke="${color}" stroke-width="2"/><path d="M16 20 L10 5" stroke="${color}" stroke-width="1.8" stroke-linecap="round"/><path d="M16 20 L16 3.5" stroke="${color}" stroke-width="1.8" stroke-linecap="round"/><path d="M16 20 L22 5" stroke="${color}" stroke-width="1.8" stroke-linecap="round"/><ellipse cx="16" cy="7" rx="7" ry="3" fill="none" stroke="${color}" stroke-width="1.8"/>`,
   }
-  return svgs[sport] || `<circle cx="12" cy="12" r="8" fill="${color}" fill-opacity="0.3"/><circle cx="12" cy="12" r="8" stroke="${color}" stroke-width="1.8" fill="none"/>`
+  return map[sport] || `<circle cx="16" cy="16" r="12" stroke="${color}" stroke-width="2" fill="${color}" fill-opacity="0.12"/>`
 }

@@ -61,7 +61,6 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           <div className="app-shell">
             {children}
-            <ThemeButton />
           </div>
         </AuthProvider>
       </body>

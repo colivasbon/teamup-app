@@ -6,6 +6,7 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import { getSupabase } from '@/lib/supabase'
 import { SportIcon, sportIconSVGString, SPORT_COLORS } from '@/components/SportIcon'
+import ThemeButton from '@/components/ThemeButton'
 
 const DEMO_EVENTS = [
   { id:'demo-1', sport:'running',    title:'Running Matutino',         description:'Ruta suave por la Alameda.', date:'2026-06-30', time:'07:30:00', location:'Alameda de Córdoba',      province:'cordoba',  level:'any',          max_players:10, price:'Gratis',     third_place:false, creator_name:'Carlos O.', participant_count:7  },
@@ -205,7 +206,10 @@ function EventsContent() {
               {loading ? 'Cargando...' : `${filtered.length} evento${filtered.length !== 1 ? 's' : ''} ${geoLabel && prov !== 'all' ? `· ${geoLabel}` : ''}`}
             </p>
           </div>
-          <Link href="/create" className="btn btn-primary" style={{ padding: '10px 16px', fontSize: 13 }}>+ Crear</Link>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <ThemeButton />
+            <Link href="/create" className="btn btn-primary" style={{ padding: '10px 16px', fontSize: 13 }}>+ Crear</Link>
+          </div>
         </header>
 
         {/* Sin resultados */}

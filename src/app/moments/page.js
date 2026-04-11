@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import { getSupabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
+import ThemeButton from '@/components/ThemeButton'
 
 const S_COLORS = {
   running:'#5b6ef5', padel:'#06d6a0', senderismo:'#f59e0b', futbol:'#ef4444',
@@ -169,13 +170,23 @@ export default function Moments() {
     <>
       <div className="page-wrap" style={{ paddingTop:0 }}>
 
-        <header style={{ paddingTop:60, paddingBottom:16 }}>
-          <h1 style={{ fontSize:24, fontWeight:800, margin:'0 0 3px', letterSpacing:'-0.04em' }}>Momentos</h1>
-          <p style={{ fontSize:13, color:'var(--muted)', margin:0 }}>
-            {localFilter !== 'all'
-              ? `${PROVINCE_LABELS[localFilter] || localFilter} · comunidad local`
-              : 'Lo que ha pasado hoy en la comunidad'}
-          </p>
+        <header style={{ paddingTop:60, paddingBottom:16, display:'flex', alignItems:'flex-start', justifyContent:'space-between' }}>
+          <div>
+            <h1 style={{ fontSize:24, fontWeight:800, margin:'0 0 3px', letterSpacing:'-0.04em' }}>Momentos</h1>
+            <p style={{ fontSize:13, color:'var(--muted)', margin:0 }}>
+              {localFilter !== 'all'
+                ? `${PROVINCE_LABELS[localFilter] || localFilter} · comunidad local`
+                : 'Lo que ha pasado hoy en la comunidad'}
+            </p>
+          </div>
+          <div style={{ display:'flex', gap:8, alignItems:'center' }}>
+            <ThemeButton />
+            {user && (
+              <Link href="/events" className="btn btn-primary" style={{ fontSize:12, padding:'8px 14px', whiteSpace:'nowrap' }}>
+                + Publicar
+              </Link>
+            )}
+          </div>
         </header>
 
         {/* CTA para publicar — redirige a eventos */}
