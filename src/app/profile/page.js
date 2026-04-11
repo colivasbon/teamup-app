@@ -130,6 +130,7 @@ export default function Profile() {
   const [avatarUrl,    setAvatarUrl]  = useState(null)
   const [banner,       setBanner]     = useState('grad-1')
   const [bannerUrl,    setBannerUrl]  = useState(null)
+  const [skinTone,     setSkinTone]   = useState('default')
 
   // Notificaciones
   const [notifs,       setNotifs]     = useState([])
@@ -158,6 +159,7 @@ export default function Profile() {
       setAvatarUrl(profile.avatar_url || null)
       setBanner(profile.banner_color || 'grad-1')
       setBannerUrl(profile.banner_url || null)
+      setSkinTone(profile.skin_tone || 'default')
     }
   }, [profile])
 
@@ -243,6 +245,7 @@ export default function Profile() {
         sports:       form.sports,
         banner_color: banner,
         banner_url:   bannerUrl,
+        skin_tone:    skinTone,
       })
       .eq('id', user.id)
       .select().single()
@@ -411,8 +414,48 @@ export default function Profile() {
               </button>
               <input ref={bannerRef} type="file" accept="image/*" style={{ display:'none' }} onChange={handleBannerChange}/>
             </div>
+
+            {/* Selector tono de piel */}
+            <div style={{ marginTop:16 }}>
+              <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.06em', color:'var(--muted)', textTransform:'uppercase', marginBottom:10 }}>Tono de piel</div>
+              <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+                {[
+                  { id:'default',     color:'#FFCC22', label:'Amarillo'     },
+                  { id:'light',       color:'#FDDBB4', label:'Muy claro'    },
+                  { id:'medium-light',color:'#E8B88A', label:'Claro'        },
+                  { id:'medium',      color:'#C68642', label:'Medio'        },
+                  { id:'medium-dark', color:'#8D5524', label:'Oscuro medio' },
+                  { id:'dark',        color:'#4A2912', label:'Oscuro'       },
+                ].map(t => (
+                  <button key={t.id} onClick={() => setSkinTone(t.id)}
+                    title={t.label}
+                    style={{
+                      width:36, height:36, borderRadius:'50%', flexShrink:0,
+                      background: t.color,
+                      border: skinTone === t.id ? '3px solid var(--primary)' : '2px solid var(--border)',
+                      cursor:'pointer',
+                      boxShadow: skinTone === t.id ? '0 0 0 2px rgba(88,104,117,0.35)' : 'none',
+                      transition:'all 0.15s ease',
+                      position:'relative', overflow:'hidden',
+                    }}>
+                    {skinTone === t.id && (
+                      <span style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:16 }}>✓</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+              <div style={{ fontSize:12, color:'var(--muted)', marginTop:8 }}>
+                Vista previa: <span style={{ fontSize:20 }}>{['running','natacion','ciclismo','yoga','gimnasio'].map(s => {
+                  const PERSON = { running:'🏃', gimnasio:'💪', natacion:'🏊', ciclismo:'🚴', yoga:'🧘' }
+                  const mods = { default:'', light:'\u{1F3FB}', 'medium-light':'\u{1F3FC}', medium:'\u{1F3FD}', 'medium-dark':'\u{1F3FE}', dark:'\u{1F3FF}' }
+                  return PERSON[s] + (mods[skinTone] || '')
+                }).join(' ')}</span>
+              </div>
+            </div>
           </div>
         )}
+
+        {/* SQL: la columna skin_tone se añade con el SQL de v10.5 */}
 
         {/* Nombre, username, bio */}
         <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:10, padding:'0 22px 4px' }}>
