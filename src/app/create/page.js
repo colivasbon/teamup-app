@@ -215,7 +215,7 @@ export default function Create() {
                       width:'100%', background:'none', border:'none', cursor:'pointer',
                       fontFamily:'inherit', padding:'8px 0', color:'var(--text)',
                     }}>
-                      <span style={{fontSize:14}}>¿Tienes raqueta de repuesto para prestar?</span>
+                      <span style={{fontSize:14}}>¿Tienes pala de repuesto para prestar?</span>
                       <div style={{
                         width:44, height:26, borderRadius:100, position:'relative',
                         background: sportDetails.has_spare_racket ? '#586875' : 'var(--border)',
@@ -360,15 +360,7 @@ export default function Create() {
                         <option value="open_water">Aguas abiertas</option>
                       </select>
                     </div>
-                    <div>
-                      <label className="label" style={{ marginBottom:6, fontSize:12 }}>Nivel técnico</label>
-                      <select className="input" value={sportDetails.tech_level||''} onChange={e=>setSD('tech_level',e.target.value)}>
-                        <option value="">Selecciona nivel</option>
-                        <option value="beginner">Principiante</option>
-                        <option value="intermediate">Intermedio</option>
-                        <option value="advanced">Avanzado</option>
-                      </select>
-                    </div>
+
                   </>
                 )}
 
