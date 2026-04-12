@@ -440,11 +440,12 @@ select.input   { appearance: none; cursor: pointer; }
 }
 .nav-item.active {
   color: #586875;
-  background: rgba(88,104,117,0.10);
+  background: rgba(88,104,117,0.14);
 }
 [data-theme="dark"] .nav-item.active {
   color: #f6eddc;
-  background: rgba(246,237,220,0.08);
+  background: rgba(246,237,220,0.14);
+  border: 1px solid rgba(246,237,220,0.12);
 }
 .nav-item:not(.active):hover { color: var(--text2); }
 .nav-item .nav-label {
