@@ -468,7 +468,7 @@ export default function Create() {
             <div>
               <label className="label" style={{ marginBottom:8 }}>Título del evento</label>
               <input className="input" type="text"
-                placeholder={`${selectedSport?.icon||''} Ej: Partido de ${selectedSport?.label||'deporte'} en el parque`}
+                placeholder={`${selectedSport?.icon||''} ${{ running:'Ej: Ruta matutina por el río', padel:'Ej: Partido de pádel nivel medio', senderismo:'Ej: Ruta por la sierra', futbol:'Ej: Partido de fútbol 7', gimnasio:'Ej: Entreno funcional en grupo', tenis:'Ej: Dobles tenis nivel bajo', natacion:'Ej: Sesión de natación en piscina', ciclismo:'Ej: Salida en bici por la vía verde', yoga:'Ej: Sesión de yoga al aire libre', baloncesto:'Ej: 3x3 en la pista del parque', voleibol:'Ej: Partido de voley playa', badminton:'Ej: Partido de bádminton casual' }[selectedSport?.id] || 'Ej: Nombre del evento'}`}
                 value={form.title} onChange={e=>set('title',e.target.value)}/>
             </div>
             <div>

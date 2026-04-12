@@ -53,6 +53,7 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
 
 export default function PosterModal({ event, onClose }) {
   const canvasRef  = useRef(null)
+  const [mode, setMode]         = useState('poster') // 'poster' | 'qr'
   const [style, setStyle]       = useState('dark') // 'dark' | 'light' | 'sport'
   const [rendered, setRendered] = useState(false)
   const [downloading, setDown]  = useState(false)
@@ -63,8 +64,9 @@ export default function PosterModal({ event, onClose }) {
 
   useEffect(() => {
     if (!event) return
-    drawPoster()
-  }, [event, style])
+    if (mode === 'qr') drawQROnly()
+    else drawPoster()
+  }, [event, style, mode])
 
   async function drawPoster() {
     const canvas = canvasRef.current
@@ -232,6 +234,50 @@ export default function PosterModal({ event, onClose }) {
     ctx.closePath()
   }
 
+  async function drawQROnly() {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const W = 800, H = 800
+    canvas.width = W
+    canvas.height = H
+    setRendered(false)
+
+    const isDark = style === 'dark' || style === 'sport'
+    const accent = SPORT_COLORS[event.sport] || '#586875'
+    const bg     = isDark ? '#0f1318' : '#f6eddc'
+    const fg     = isDark ? '#f6eddc' : '#1a2028'
+
+    const ctx = canvas.getContext('2d')
+    ctx.fillStyle = bg
+    ctx.fillRect(0, 0, W, H)
+
+    // Borde accent
+    ctx.strokeStyle = accent
+    ctx.lineWidth   = 16
+    ctx.strokeRect(8, 8, W - 16, H - 16)
+
+    try {
+      const qrDataUrl = await QRCode.toDataURL(eventUrl, {
+        width: 560, margin: 2,
+        color: { dark: fg, light: bg },
+      })
+      const qrImg = new Image()
+      await new Promise((res, rej) => { qrImg.onload = res; qrImg.onerror = rej; qrImg.src = qrDataUrl })
+      ctx.drawImage(qrImg, 120, 80, 560, 560)
+    } catch(e) {}
+
+    ctx.font = 'bold 28px system-ui, sans-serif'
+    ctx.fillStyle = fg
+    ctx.textAlign = 'center'
+    ctx.fillText(event.title || 'Evento', W/2, 690)
+    ctx.font = '22px system-ui, sans-serif'
+    ctx.fillStyle = accent
+    ctx.fillText('teamup-app-alpha.vercel.app', W/2, 740)
+    ctx.textAlign = 'left'
+
+    setRendered(true)
+  }
+
   function download() {
     setDown(true)
     const canvas = canvasRef.current
@@ -264,6 +310,26 @@ export default function PosterModal({ event, onClose }) {
           width:36, height:36, cursor:'pointer', color:'#f6eddc', fontSize:18,
           display:'flex', alignItems:'center', justifyContent:'center',
         }}>✕</button>
+      </div>
+
+      {/* Toggle: Póster completo / Solo QR */}
+      <div style={{
+        display:'flex', gap:0, background:'rgba(255,255,255,0.08)',
+        border:'1px solid rgba(255,255,255,0.15)', borderRadius:14,
+        overflow:'hidden', marginBottom:14, width:'100%', maxWidth:480,
+      }}>
+        {[
+          { id:'poster', label:'🖼 Póster completo' },
+          { id:'qr',     label:'◻ Solo QR' },
+        ].map(m => (
+          <button key={m.id} onClick={() => setMode(m.id)} style={{
+            flex:1, padding:'12px 0', border:'none', cursor:'pointer',
+            fontFamily:'inherit', fontSize:13, fontWeight:700,
+            background: mode===m.id ? 'rgba(255,255,255,0.18)' : 'transparent',
+            color: mode===m.id ? '#f6eddc' : 'rgba(246,237,220,0.45)',
+            transition:'all 0.15s ease',
+          }}>{m.label}</button>
+        ))}
       </div>
 
       {/* Selector de estilo */}

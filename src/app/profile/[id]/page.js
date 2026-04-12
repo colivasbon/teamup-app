@@ -25,6 +25,12 @@ export default function PublicProfile() {
   const router     = useRouter()
   const { user }   = useAuth()
 
+  // Aplicar el tema guardado (igual que ThemeButton)
+  useEffect(() => {
+    const saved = localStorage.getItem('tu-theme') || 'dark'
+    document.documentElement.setAttribute('data-theme', saved)
+  }, [])
+
   const [profile,  setProfile]  = useState(null)
   const [events,   setEvents]   = useState([])
   const [moments,  setMoments]  = useState([])
