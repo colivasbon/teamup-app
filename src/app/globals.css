@@ -149,15 +149,15 @@ input, textarea, select { font-family: inherit; }
   margin: 0 auto;
   width: 100%;
   padding: 0 18px;
-  /* navbar ~70px + margen 16px */
-  padding-bottom: 86px;
+  /* navbar ~70px + ticker 40px + margen 16px */
+  padding-bottom: 126px;
 }
 .page-wrap-full {
   max-width: 480px;
   margin: 0 auto;
   width: 100%;
   padding: 0;
-  padding-bottom: 86px;
+  padding-bottom: 126px;
 }
 
 /* ─── SPINNER ───────────────────────────────────────── */

@@ -293,15 +293,6 @@ export default function Home() {
 
       </div>
 
-      {/* ── Franja patrocinadores — fuera del page-wrap para ocupar 100% de pantalla ── */}
-      <div className="sponsors-ticker" style={{ marginBottom:32 }}>
-        <div className="sponsors-ticker__inner">
-          {Array.from({length: 30}).map((_, i) => (
-            <span key={i} className="sponsors-ticker__item">PATROCINADOR</span>
-          ))}
-        </div>
-      </div>
-
       <Navbar />
     </>
   )
