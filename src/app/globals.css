@@ -476,12 +476,10 @@ body.hide-slogan .slogan-bar {
 /* Franja de patrocinadores: elemento normal en el flujo de la página,
    no fixed. Aparece donde se coloca en el JSX, no flota ni tapa nada. */
 .sponsors-ticker {
-  /* Elemento de página normal — se ve solo cuando llegas con scroll.
-     Márgenes negativos para romper el padding del page-wrap y ocupar 100% de pantalla. */
   margin-left: -18px;
   margin-right: -18px;
   margin-bottom: 48px;
-  height: 44px;
+  height: 56px;
   overflow: hidden;
   background: transparent;
   display: flex;

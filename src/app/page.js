@@ -317,13 +317,13 @@ export default function Home() {
                   s.website_url
                     ? <a key={i} href={s.website_url} target="_blank" rel="noopener noreferrer" className="sponsors-ticker__item" style={{ textDecoration:'none', cursor:'pointer' }}>
                         {s.logo_url
-                          ? <img src={s.logo_url} alt={s.name} style={{ height:22, maxWidth:110, objectFit:'contain', verticalAlign:'middle', filter:'var(--sponsor-filter)' }} />
+                          ? <img src={s.logo_url} alt={s.name} style={{ height:36, maxWidth:140, objectFit:'contain', verticalAlign:'middle', filter:'var(--sponsor-filter)' }} />
                           : s.name
                         }
                       </a>
                     : <span key={i} className="sponsors-ticker__item">
                         {s.logo_url
-                          ? <img src={s.logo_url} alt={s.name} style={{ height:22, maxWidth:110, objectFit:'contain', verticalAlign:'middle', filter:'var(--sponsor-filter)' }} />
+                          ? <img src={s.logo_url} alt={s.name} style={{ height:36, maxWidth:140, objectFit:'contain', verticalAlign:'middle', filter:'var(--sponsor-filter)' }} />
                           : s.name
                         }
                       </span>
