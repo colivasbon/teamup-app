@@ -19,9 +19,11 @@ function AppShell({ children }) {
   return (
     <div className="app-shell">
 
-      {/* Cinta del eslogan — fixed top, TODAS las páginas */}
+      {/* Cinta del eslogan — elemento normal en el flujo, no fixed.
+          Aparece arriba al entrar en la app y desaparece al hacer scroll.
+          No tapa nada, no sigue al usuario. */}
       <div className="slogan-bar" style={{
-        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200,
+        width: '100%',
         height: 26, overflow: 'hidden',
         background: '#586875',
       }}>

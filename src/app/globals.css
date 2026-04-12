@@ -149,15 +149,15 @@ input, textarea, select { font-family: inherit; }
   margin: 0 auto;
   width: 100%;
   padding: 0 18px;
-  /* 28px ticker + 62px nav-inner + 16px margen = 106px */
-  padding-bottom: 106px;
+  /* navbar ~70px + margen 16px */
+  padding-bottom: 86px;
 }
 .page-wrap-full {
   max-width: 480px;
   margin: 0 auto;
   width: 100%;
   padding: 0;
-  padding-bottom: 106px;
+  padding-bottom: 86px;
 }
 
 /* ─── SPINNER ───────────────────────────────────────── */
@@ -473,14 +473,14 @@ body.hide-slogan .slogan-bar {
 }
 
 /* ─── CARRUSEL PATROCINADORES ─────────────────────────────── */
-/* El ticker vive DENTRO del <nav>, como primera fila.
-   No es position:fixed independiente — es parte del navbar.
-   Así nunca puede solaparse: siempre queda encima de los iconos. */
+/* Franja de patrocinadores: elemento normal en el flujo de la página,
+   no fixed. Aparece donde se coloca en el JSX, no flota ni tapa nada. */
 .sponsors-ticker {
   width: 100%;
-  height: 28px;
+  height: 32px;
   overflow: hidden;
   background: var(--bg);
+  border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;

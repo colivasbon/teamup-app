@@ -215,7 +215,7 @@ function EventsContent() {
       <div className="page-wrap" style={{ paddingTop: 0 }}>
 
         {/* Cabecera */}
-        <header style={{ paddingTop: 60, paddingBottom: 14, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <header style={{ paddingTop: 16, paddingBottom: 14, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 800, margin: '0 0 3px', letterSpacing: '-0.04em' }}>Eventos</h1>
             <p style={{ fontSize: 13, color: 'var(--muted)', margin: 0 }}>

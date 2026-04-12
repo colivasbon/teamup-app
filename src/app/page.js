@@ -115,7 +115,7 @@ export default function Home() {
       <div className="page-wrap">
 
         {/* ── Header ── */}
-        <header style={{ paddingTop:36, paddingBottom:20, display:'flex', alignItems:'center', justifyContent:'space-between', gap:8 }}>
+        <header style={{ paddingTop:16, paddingBottom:20, display:'flex', alignItems:'center', justifyContent:'space-between', gap:8 }}>
 
           {/* Logo — color azul en claro, crema en oscuro */}
           <Link href="/" style={{
@@ -284,12 +284,21 @@ export default function Home() {
           ))}
         </div>
 
-        <Link href="/create" className="btn btn-primary" style={{ display:'flex', width:'100%', fontSize:16, padding:'15px 24px', borderRadius:16, marginBottom:32, justifyContent:'center', gap:8 }}>
+        <Link href="/create" className="btn btn-primary" style={{ display:'flex', width:'100%', fontSize:16, padding:'15px 24px', borderRadius:16, marginBottom:24, justifyContent:'center', gap:8 }}>
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
           </svg>
           Crear evento
         </Link>
+
+        {/* ── Franja patrocinadores — elemento normal en el flujo de la página ── */}
+        <div className="sponsors-ticker" style={{ margin:'0 -18px', marginBottom:8 }}>
+          <div className="sponsors-ticker__inner">
+            {Array.from({length: 30}).map((_, i) => (
+              <span key={i} className="sponsors-ticker__item">PATROCINADOR</span>
+            ))}
+          </div>
+        </div>
 
       </div>
 
