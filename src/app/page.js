@@ -291,15 +291,15 @@ export default function Home() {
           Crear evento
         </Link>
 
-        {/* ── Franja patrocinadores — elemento normal en el flujo de la página ── */}
-        <div className="sponsors-ticker" style={{ margin:'0 -18px', marginBottom:32 }}>
-          <div className="sponsors-ticker__inner">
-            {Array.from({length: 30}).map((_, i) => (
-              <span key={i} className="sponsors-ticker__item">PATROCINADOR</span>
-            ))}
-          </div>
-        </div>
+      </div>
 
+      {/* ── Franja patrocinadores — fuera del page-wrap para ocupar 100% de pantalla ── */}
+      <div className="sponsors-ticker" style={{ marginBottom:32 }}>
+        <div className="sponsors-ticker__inner">
+          {Array.from({length: 30}).map((_, i) => (
+            <span key={i} className="sponsors-ticker__item">PATROCINADOR</span>
+          ))}
+        </div>
       </div>
 
       <Navbar />
