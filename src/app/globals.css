@@ -146,14 +146,14 @@ input, textarea, select { font-family: inherit; }
   margin: 0 auto;
   width: 100%;
   padding: 0 18px;
-  padding-bottom: 120px;
+  padding-bottom: 152px; /* nav-h ~68 + carrusel 32 + margen 52 */
 }
 .page-wrap-full {
   max-width: 480px;
   margin: 0 auto;
   width: 100%;
   padding: 0;
-  padding-bottom: 120px;
+  padding-bottom: 152px;
 }
 
 /* ─── SPINNER ───────────────────────────────────────── */

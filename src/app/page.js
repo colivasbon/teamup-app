@@ -307,34 +307,6 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Carrusel patrocinadores — dentro del page-wrap para respetar el padding del navbar */}
-        <div style={{ marginBottom:20, marginTop:8, overflow:'hidden', borderRadius:16, border:'1px solid var(--border)', background:'var(--surface)' }}>
-          <div style={{ padding:'8px 0 6px', display:'flex', alignItems:'center', gap:8, paddingLeft:16, paddingRight:16 }}>
-            <div style={{ height:1, flex:1, background:'var(--border)' }}/>
-            <span style={{ fontSize:9, fontWeight:800, letterSpacing:'0.15em', color:'var(--muted)', textTransform:'uppercase' }}>Patrocinadores</span>
-            <div style={{ height:1, flex:1, background:'var(--border)' }}/>
-          </div>
-          <div style={{ overflow:'hidden', paddingBottom:10 }}>
-            <div style={{
-              display:'flex', gap:56, alignItems:'center',
-              animation:'marquee 22s linear infinite',
-              width:'max-content',
-            }}>
-              {[...Array(2)].map((_,set) => (
-                <div key={set} style={{ display:'flex', gap:56, alignItems:'center' }}>
-                  {['PATROCINADOR','PATROCINADOR','PATROCINADOR','PATROCINADOR'].map((txt,i) => (
-                    <span key={i} style={{
-                      fontSize:15, fontWeight:900, letterSpacing:'0.15em',
-                      color:'var(--text)', textTransform:'uppercase',
-                      opacity:0.25, whiteSpace:'nowrap',
-                    }}>{txt}</span>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
         <Link href="/create" className="btn btn-primary" style={{ display:'flex', width:'100%', fontSize:16, padding:'15px 24px', borderRadius:16, marginBottom:32, justifyContent:'center', gap:8 }}>
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>

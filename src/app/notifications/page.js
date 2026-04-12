@@ -65,7 +65,10 @@ export default function NotificationsPage() {
       await sb.from('notifications').update({ read: true }).eq('id', notif.id)
       setNotifs(p => p.map(n => n.id === notif.id ? { ...n, read: true } : n))
     }
-    if (notif.event_id) {
+    if (notif.type === 'like' || notif.type === 'comment') {
+      // Las notificaciones sociales guardan el moment_id en event_id
+      router.push(`/moments`)
+    } else if (notif.event_id) {
       if (notif.type === 'message') {
         router.push(`/events/${notif.event_id}?tab=Chat`)
       } else {
@@ -171,7 +174,7 @@ export default function NotificationsPage() {
                     background: notif.read ? 'var(--glass)' : `rgba(${isEvent?'88,104,117':'239,68,68'},0.07)`,
                     border: notif.read ? '1px solid var(--border)' : `1px solid rgba(${isEvent?'88,104,117':'239,68,68'},0.20)`,
                     borderRadius:16, padding:'14px 16px',
-                    cursor: notif.event_id ? 'pointer' : 'default',
+                    cursor: (notif.event_id || notif.type === 'like' || notif.type === 'comment') ? 'pointer' : 'default',
                     textAlign:'left', fontFamily:'inherit',
                     transition:'all 0.15s ease',
                     backdropFilter:'blur(14px)',
@@ -198,7 +201,7 @@ export default function NotificationsPage() {
                     </p>
                     <span style={{ fontSize:11, color:'var(--muted)' }}>{timeAgo(notif.created_at)}</span>
                   </div>
-                  {notif.event_id && (
+                  {(notif.event_id || notif.type === 'like' || notif.type === 'comment') && (
                     <span style={{ fontSize:18, color:'var(--muted)', flexShrink:0, alignSelf:'center' }}>›</span>
                   )}
                 </button>
