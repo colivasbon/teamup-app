@@ -82,6 +82,15 @@ export default function Navbar() {
   return (
     <nav className="navbar">
 
+      {/* ── Carrusel patrocinadores — parte del navbar, siempre encima de los iconos ── */}
+      <div className="sponsors-ticker">
+        <div className="sponsors-ticker__inner">
+          {Array.from({length: 30}).map((_, i) => (
+            <span key={i} className="sponsors-ticker__item">PATROCINADOR</span>
+          ))}
+        </div>
+      </div>
+
       {/* ── Iconos de navegación ── */}
       <div className="nav-inner">
         {NAV_ITEMS.map(({ href, label, icon }) => {

@@ -46,17 +46,6 @@ function AppShell({ children }) {
         <OnboardingModal onComplete={() => setShowOnboarding(false)} />
       )}
 
-      {/* Carrusel patrocinadores:
-          position fixed, bottom 68px = justo encima del navbar (que mide 68px).
-          z-index 99 (navbar es 100). Sin cálculos, sin safe-area, simple. */}
-      <div className="sponsors-ticker">
-        <div className="sponsors-ticker__inner">
-          {Array.from({length: 30}).map((_, i) => (
-            <span key={i} className="sponsors-ticker__item">PATROCINADOR</span>
-          ))}
-        </div>
-      </div>
-
     </div>
   )
 }
