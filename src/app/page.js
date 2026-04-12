@@ -304,22 +304,34 @@ export default function Home() {
         </Link>
 
         {/* Ticker patrocinadores: elemento de página, se ve al llegar con scroll */}
-        <div className="sponsors-ticker">
-          <div className="sponsors-ticker__inner">
-            {(sponsors.length > 0
-              ? sponsors
-              : Array.from({length:4}).map((_,i) => ({ id:i, name:'PATROCINADOR', logo_url:null }))
-            ).flatMap((s,_,arr) => Array.from({length: Math.ceil(30/arr.length)}).map((__,r) => ({...s, _key:`${s.id}-${r}`})))
-             .map(s => (
-              <span key={s._key} className="sponsors-ticker__item">
-                {s.logo_url
-                  ? <img src={s.logo_url} alt={s.name} style={{ height:22, maxWidth:110, objectFit:'contain', verticalAlign:'middle', filter:'var(--sponsor-filter)' }} />
-                  : s.name
-                }
-              </span>
-            ))}
-          </div>
-        </div>
+        {(() => {
+          const list = sponsors.length > 0
+            ? sponsors
+            : Array.from({length:4}).map((_,i) => ({ id:i, name:'PATROCINADOR', logo_url:null, website_url:null }))
+          // Repetir la secuencia completa para que el loop sea fluido
+          const repeated = Array.from({length: 10}).flatMap(() => list)
+          return (
+            <div className="sponsors-ticker">
+              <div className="sponsors-ticker__inner">
+                {repeated.map((s, i) => (
+                  s.website_url
+                    ? <a key={i} href={s.website_url} target="_blank" rel="noopener noreferrer" className="sponsors-ticker__item" style={{ textDecoration:'none', cursor:'pointer' }}>
+                        {s.logo_url
+                          ? <img src={s.logo_url} alt={s.name} style={{ height:22, maxWidth:110, objectFit:'contain', verticalAlign:'middle', filter:'var(--sponsor-filter)' }} />
+                          : s.name
+                        }
+                      </a>
+                    : <span key={i} className="sponsors-ticker__item">
+                        {s.logo_url
+                          ? <img src={s.logo_url} alt={s.name} style={{ height:22, maxWidth:110, objectFit:'contain', verticalAlign:'middle', filter:'var(--sponsor-filter)' }} />
+                          : s.name
+                        }
+                      </span>
+                ))}
+              </div>
+            </div>
+          )
+        })()}
 
       </div>
 
