@@ -112,29 +112,6 @@ export default function Home() {
 
   return (
     <>
-      {/* ── Cinta del eslogán — carrusel automático lento ── */}
-      <div style={{
-        position:'fixed', top:0, left:0, right:0, zIndex:50,
-        background:'#586875', height:26,
-        overflow:'hidden',
-      }}>
-        <div style={{
-          display:'flex', alignItems:'center', gap:0,
-          animation:'marquee 40s linear infinite',
-          width:'max-content', height:'100%',
-        }}>
-          {[...Array(8)].map((_,i) => (
-            <span key={i} style={{
-              fontSize:10, fontWeight:800, letterSpacing:'0.2em',
-              color:'#f6eddc', textTransform:'uppercase', whiteSpace:'nowrap',
-              padding:'0 28px',
-            }}>
-              HAZ DEPORTE · CONOCE GENTE
-            </span>
-          ))}
-        </div>
-      </div>
-
       <div className="page-wrap">
 
         {/* ── Header ── */}

@@ -68,39 +68,58 @@ function AppShell({ children }) {
 
   return (
     <div className="app-shell">
-      {children}
-      {showOnboarding && user && (
-        <OnboardingModal onComplete={() => setShowOnboarding(false)} />
-      )}
-      {/* Carrusel patrocinadores — pegado encima del navbar, fuera del scroll */}
+
+      {/* ── Cinta del eslogán — fixed top, todas las páginas ── */}
       <div style={{
-        position:'fixed', bottom:'var(--nav-h)', left:0, right:0, zIndex:98,
-        height:32, overflow:'hidden',
-        background:'var(--bg)',
-        borderTop:'1px solid var(--border)',
-        display:'flex', alignItems:'center',
-        maxWidth:480, margin:'0 auto',
+        position:'fixed', top:0, left:0, right:0, zIndex:200,
+        height:26, overflow:'hidden',
+        background:'#586875',
       }}>
         <div style={{
-          display:'flex', alignItems:'center',
-          animation:'marquee 25s linear infinite',
+          display:'flex', alignItems:'center', height:'100%',
+          animation:'marquee 40s linear infinite',
           width:'max-content',
-          gap:0,
         }}>
-          {[...Array(2)].map((_,set) => (
-            <div key={set} style={{ display:'flex', alignItems:'center', gap:0 }}>
-              {['PATROCINADOR','PATROCINADOR','PATROCINADOR','PATROCINADOR','PATROCINADOR','PATROCINADOR'].map((txt,i) => (
-                <span key={i} style={{
-                  fontSize:13, fontWeight:900, letterSpacing:'0.14em',
-                  color:'var(--text)', textTransform:'uppercase',
-                  opacity:0.22, whiteSpace:'nowrap',
-                  padding:'0 24px',
-                }}>{txt}</span>
-              ))}
-            </div>
+          {[...Array(10)].map((_,i) => (
+            <span key={i} style={{
+              fontSize:10, fontWeight:800, letterSpacing:'0.2em',
+              color:'#f6eddc', textTransform:'uppercase', whiteSpace:'nowrap',
+              padding:'0 28px',
+            }}>HAZ DEPORTE · CONOCE GENTE</span>
           ))}
         </div>
       </div>
+
+      {children}
+
+      {showOnboarding && user && (
+        <OnboardingModal onComplete={() => setShowOnboarding(false)} />
+      )}
+
+      {/* ── Carrusel patrocinadores — fixed, entre el contenido y el navbar ── */}
+      <div style={{
+        position:'fixed', bottom:68, left:0, right:0, zIndex:99,
+        height:30, overflow:'hidden',
+        background:'var(--bg)',
+        borderTop:'1px solid var(--border)',
+        borderBottom:'1px solid var(--border)',
+      }}>
+        <div style={{
+          display:'flex', alignItems:'center', height:'100%',
+          animation:'marquee 25s linear infinite',
+          width:'max-content',
+        }}>
+          {[...Array(10)].map((_,i) => (
+            <span key={i} style={{
+              fontSize:12, fontWeight:900, letterSpacing:'0.16em',
+              color:'var(--text)', textTransform:'uppercase',
+              opacity:0.28, whiteSpace:'nowrap',
+              padding:'0 28px',
+            }}>PATROCINADOR</span>
+          ))}
+        </div>
+      </div>
+
     </div>
   )
 }
