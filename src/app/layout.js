@@ -44,15 +44,6 @@ function AppShell({ children }) {
 
       {children}
 
-      {/* Franja patrocinadores — fixed, justo encima del navbar, ocupa 100% pantalla */}
-      <div className="sponsors-ticker">
-        <div className="sponsors-ticker__inner">
-          {Array.from({length: 30}).map((_, i) => (
-            <span key={i} className="sponsors-ticker__item">PATROCINADOR</span>
-          ))}
-        </div>
-      </div>
-
       {showOnboarding && user && (
         <OnboardingModal onComplete={() => setShowOnboarding(false)} />
       )}
