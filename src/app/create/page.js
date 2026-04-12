@@ -57,6 +57,8 @@ export default function Create() {
   const [step,   setStep]   = useState(0)
   const [saving, setSaving] = useState(false)
   const [error,  setError]  = useState('')
+  const [sportDetails, setSportDetails] = useState({})
+  const setSD = (k, v) => setSportDetails(p => ({...p, [k]: v}))
   const [form,   setForm]   = useState({
     sport:'', level:'any',
     title:'', description:'',
@@ -102,6 +104,7 @@ export default function Create() {
       max_players:      parseInt(form.maxPlayers),
       price:            form.price || 'Gratis',
       third_place:      form.thirdPlace,
+      sport_details:    JSON.stringify(sportDetails),
     })
 
     if (err) {
@@ -191,6 +194,274 @@ export default function Create() {
                 </button>
               ))}
             </div>
+
+            {form.sport && (
+              <div className="card anim-1" style={{ padding:'16px 18px', marginBottom:16 }}>
+                <div className="label" style={{ marginBottom:12 }}>
+                  Detalles de {SPORTS.find(s=>s.id===form.sport)?.label}
+                </div>
+
+                {/* PADEL */}
+                {form.sport === 'padel' && (
+                  <>
+                    <div style={{ marginBottom:12 }}>
+                      <label className="label" style={{ marginBottom:6, fontSize:12 }}>Puntuación Playtomic</label>
+                      <input className="input" type="text" placeholder="Ej: 4.5 (opcional)"
+                        value={sportDetails.playtomic_score||''}
+                        onChange={e=>setSD('playtomic_score',e.target.value)}/>
+                    </div>
+                    <button onClick={()=>setSD('has_spare_racket',!sportDetails.has_spare_racket)} style={{
+                      display:'flex', alignItems:'center', justifyContent:'space-between',
+                      width:'100%', background:'none', border:'none', cursor:'pointer',
+                      fontFamily:'inherit', padding:'8px 0', color:'var(--text)',
+                    }}>
+                      <span style={{fontSize:14}}>¿Tienes raqueta de repuesto para prestar?</span>
+                      <div style={{
+                        width:44, height:26, borderRadius:100, position:'relative',
+                        background: sportDetails.has_spare_racket ? '#586875' : 'var(--border)',
+                        transition:'background 0.2s',
+                      }}>
+                        <div style={{
+                          width:20, height:20, background:'white', borderRadius:'50%',
+                          position:'absolute', top:3,
+                          left: sportDetails.has_spare_racket ? 21 : 3,
+                          transition:'left 0.2s cubic-bezier(.34,1.56,.64,1)',
+                          boxShadow:'0 1px 4px rgba(0,0,0,0.2)',
+                        }}/>
+                      </div>
+                    </button>
+                  </>
+                )}
+
+                {/* TENIS */}
+                {form.sport === 'tenis' && (
+                  <>
+                    <div style={{ marginBottom:12 }}>
+                      <label className="label" style={{ marginBottom:6, fontSize:12 }}>Nivel RFET/RPT</label>
+                      <input className="input" type="text" placeholder="Ej: 2.1 (opcional)"
+                        value={sportDetails.rfet_level||''}
+                        onChange={e=>setSD('rfet_level',e.target.value)}/>
+                    </div>
+                    <button onClick={()=>setSD('has_spare_racket',!sportDetails.has_spare_racket)} style={{
+                      display:'flex', alignItems:'center', justifyContent:'space-between',
+                      width:'100%', background:'none', border:'none', cursor:'pointer',
+                      fontFamily:'inherit', padding:'8px 0', color:'var(--text)',
+                    }}>
+                      <span style={{fontSize:14}}>¿Tienes raqueta de repuesto?</span>
+                      <div style={{
+                        width:44, height:26, borderRadius:100, position:'relative',
+                        background: sportDetails.has_spare_racket ? '#586875' : 'var(--border)',
+                        transition:'background 0.2s',
+                      }}>
+                        <div style={{
+                          width:20, height:20, background:'white', borderRadius:'50%',
+                          position:'absolute', top:3,
+                          left: sportDetails.has_spare_racket ? 21 : 3,
+                          transition:'left 0.2s cubic-bezier(.34,1.56,.64,1)',
+                          boxShadow:'0 1px 4px rgba(0,0,0,0.2)',
+                        }}/>
+                      </div>
+                    </button>
+                  </>
+                )}
+
+                {/* RUNNING */}
+                {form.sport === 'running' && (
+                  <>
+                    <div style={{ marginBottom:12 }}>
+                      <label className="label" style={{ marginBottom:6, fontSize:12 }}>Ritmo medio</label>
+                      <select className="input" value={sportDetails.pace||''} onChange={e=>setSD('pace',e.target.value)}>
+                        <option value="">Selecciona un ritmo</option>
+                        <option value="lt430">&lt; 4:30 min/km</option>
+                        <option value="430_530">4:30 – 5:30 min/km</option>
+                        <option value="530_700">5:30 – 7:00 min/km</option>
+                        <option value="gt700">&gt; 7:00 min/km</option>
+                        <option value="none">Sin preferencia</option>
+                      </select>
+                    </div>
+                    <button onClick={()=>setSD('adapt_pace',!sportDetails.adapt_pace)} style={{
+                      display:'flex', alignItems:'center', justifyContent:'space-between',
+                      width:'100%', background:'none', border:'none', cursor:'pointer',
+                      fontFamily:'inherit', padding:'8px 0', color:'var(--text)',
+                    }}>
+                      <span style={{fontSize:14}}>Me adapto al ritmo del grupo 🤝</span>
+                      <div style={{
+                        width:44, height:26, borderRadius:100, position:'relative',
+                        background: sportDetails.adapt_pace ? '#586875' : 'var(--border)',
+                        transition:'background 0.2s',
+                      }}>
+                        <div style={{
+                          width:20, height:20, background:'white', borderRadius:'50%',
+                          position:'absolute', top:3,
+                          left: sportDetails.adapt_pace ? 21 : 3,
+                          transition:'left 0.2s cubic-bezier(.34,1.56,.64,1)',
+                          boxShadow:'0 1px 4px rgba(0,0,0,0.2)',
+                        }}/>
+                      </div>
+                    </button>
+                  </>
+                )}
+
+                {/* SENDERISMO */}
+                {form.sport === 'senderismo' && (
+                  <>
+                    <div style={{ marginBottom:12 }}>
+                      <label className="label" style={{ marginBottom:6, fontSize:12 }}>Duración</label>
+                      <select className="input" value={sportDetails.duration||''} onChange={e=>setSD('duration',e.target.value)}>
+                        <option value="">Selecciona duración</option>
+                        <option value="1d">1 día</option>
+                        <option value="2d">2 días</option>
+                        <option value="3d">3 días</option>
+                        <option value="3d_plus">Más de 3 días</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="label" style={{ marginBottom:6, fontSize:12 }}>Terreno</label>
+                      <select className="input" value={sportDetails.terrain||''} onChange={e=>setSD('terrain',e.target.value)}>
+                        <option value="">Selecciona terreno</option>
+                        <option value="marked">Sendero marcado</option>
+                        <option value="mid_mountain">Montaña media</option>
+                        <option value="high_mountain">Alta montaña</option>
+                      </select>
+                    </div>
+                  </>
+                )}
+
+                {/* CICLISMO */}
+                {form.sport === 'ciclismo' && (
+                  <>
+                    <div style={{ marginBottom:12 }}>
+                      <label className="label" style={{ marginBottom:6, fontSize:12 }}>Tipo de bici</label>
+                      <select className="input" value={sportDetails.bike_type||''} onChange={e=>setSD('bike_type',e.target.value)}>
+                        <option value="">Selecciona tipo</option>
+                        <option value="road">Carretera</option>
+                        <option value="mtb">Montaña (MTB)</option>
+                        <option value="gravel">Mixta/Gravel</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="label" style={{ marginBottom:6, fontSize:12 }}>Distancia estimada (km)</label>
+                      <input className="input" type="number" min={1} max={500}
+                        placeholder="Ej: 60"
+                        value={sportDetails.distance_km||''}
+                        onChange={e=>setSD('distance_km',e.target.value)}/>
+                    </div>
+                  </>
+                )}
+
+                {/* NATACION */}
+                {form.sport === 'natacion' && (
+                  <>
+                    <div style={{ marginBottom:12 }}>
+                      <label className="label" style={{ marginBottom:6, fontSize:12 }}>Modalidad</label>
+                      <select className="input" value={sportDetails.modality||''} onChange={e=>setSD('modality',e.target.value)}>
+                        <option value="">Selecciona modalidad</option>
+                        <option value="pool">Piscina</option>
+                        <option value="open_water">Aguas abiertas</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="label" style={{ marginBottom:6, fontSize:12 }}>Nivel técnico</label>
+                      <select className="input" value={sportDetails.tech_level||''} onChange={e=>setSD('tech_level',e.target.value)}>
+                        <option value="">Selecciona nivel</option>
+                        <option value="beginner">Principiante</option>
+                        <option value="intermediate">Intermedio</option>
+                        <option value="advanced">Avanzado</option>
+                      </select>
+                    </div>
+                  </>
+                )}
+
+                {/* GIMNASIO */}
+                {form.sport === 'gimnasio' && (
+                  <div>
+                    <label className="label" style={{ marginBottom:6, fontSize:12 }}>Tipo de entreno</label>
+                    <select className="input" value={sportDetails.workout_type||''} onChange={e=>setSD('workout_type',e.target.value)}>
+                      <option value="">Selecciona tipo</option>
+                      <option value="crossfit">Funcional/CrossFit</option>
+                      <option value="strength">Fuerza</option>
+                      <option value="cardio">Cardio</option>
+                      <option value="mixed">Mixto</option>
+                    </select>
+                  </div>
+                )}
+
+                {/* YOGA */}
+                {form.sport === 'yoga' && (
+                  <div>
+                    <label className="label" style={{ marginBottom:6, fontSize:12 }}>Estilo</label>
+                    <select className="input" value={sportDetails.yoga_style||''} onChange={e=>setSD('yoga_style',e.target.value)}>
+                      <option value="">Selecciona estilo</option>
+                      <option value="hatha">Hatha</option>
+                      <option value="vinyasa">Vinyasa</option>
+                      <option value="yin">Yin Yoga</option>
+                      <option value="beginners">Para principiantes</option>
+                      <option value="meditation">Meditación</option>
+                    </select>
+                  </div>
+                )}
+
+                {/* FUTBOL / BALONCESTO / VOLEIBOL */}
+                {(form.sport === 'futbol' || form.sport === 'baloncesto' || form.sport === 'voleibol') && (
+                  <>
+                    <button onClick={()=>setSD('has_locker_rooms',!sportDetails.has_locker_rooms)} style={{
+                      display:'flex', alignItems:'center', justifyContent:'space-between',
+                      width:'100%', background:'none', border:'none', cursor:'pointer',
+                      fontFamily:'inherit', padding:'8px 0', color:'var(--text)',
+                    }}>
+                      <span style={{fontSize:14}}>¿Hay vestuarios disponibles?</span>
+                      <div style={{
+                        width:44, height:26, borderRadius:100, position:'relative',
+                        background: sportDetails.has_locker_rooms ? '#586875' : 'var(--border)',
+                        transition:'background 0.2s',
+                      }}>
+                        <div style={{
+                          width:20, height:20, background:'white', borderRadius:'50%',
+                          position:'absolute', top:3,
+                          left: sportDetails.has_locker_rooms ? 21 : 3,
+                          transition:'left 0.2s cubic-bezier(.34,1.56,.64,1)',
+                          boxShadow:'0 1px 4px rgba(0,0,0,0.2)',
+                        }}/>
+                      </div>
+                    </button>
+                    <button onClick={()=>setSD('has_referee',!sportDetails.has_referee)} style={{
+                      display:'flex', alignItems:'center', justifyContent:'space-between',
+                      width:'100%', background:'none', border:'none', cursor:'pointer',
+                      fontFamily:'inherit', padding:'8px 0', color:'var(--text)',
+                    }}>
+                      <span style={{fontSize:14}}>¿Hay árbitro?</span>
+                      <div style={{
+                        width:44, height:26, borderRadius:100, position:'relative',
+                        background: sportDetails.has_referee ? '#586875' : 'var(--border)',
+                        transition:'background 0.2s',
+                      }}>
+                        <div style={{
+                          width:20, height:20, background:'white', borderRadius:'50%',
+                          position:'absolute', top:3,
+                          left: sportDetails.has_referee ? 21 : 3,
+                          transition:'left 0.2s cubic-bezier(.34,1.56,.64,1)',
+                          boxShadow:'0 1px 4px rgba(0,0,0,0.2)',
+                        }}/>
+                      </div>
+                    </button>
+                  </>
+                )}
+
+                {/* BADMINTON */}
+                {form.sport === 'badminton' && (
+                  <div>
+                    <label className="label" style={{ marginBottom:6, fontSize:12 }}>Modalidad</label>
+                    <select className="input" value={sportDetails.badminton_modality||''} onChange={e=>setSD('badminton_modality',e.target.value)}>
+                      <option value="">Selecciona modalidad</option>
+                      <option value="singles">Individual</option>
+                      <option value="doubles">Dobles</option>
+                      <option value="mixed">Mixto</option>
+                    </select>
+                  </div>
+                )}
+
+              </div>
+            )}
 
             <button className="btn btn-primary" style={{ width:'100%', fontSize:16 }}
               onClick={()=>setStep(1)} disabled={!form.sport}>

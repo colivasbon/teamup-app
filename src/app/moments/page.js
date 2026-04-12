@@ -58,6 +58,15 @@ export default function Moments() {
   const [loading,     setLoading]     = useState(true)
   const [myProvince,  setMyProvince]  = useState(null)
 
+  // Likers modal
+  const [likersModal, setLikersModal] = useState(null)
+  const [likers,      setLikers]      = useState([])
+
+  // Comments
+  const [openComments, setOpenComments] = useState({})
+  const [comments,     setComments]     = useState({})
+  const [commentText,  setCommentText]  = useState({})
+
   // Detectar provincia del perfil
   useEffect(() => {
     if (profile?.location) {
@@ -144,6 +153,58 @@ export default function Moments() {
     pollRef.current = setInterval(() => fetchMoments(false), 15000)
     return () => { if (pollRef.current) clearInterval(pollRef.current) }
   }, [fetchMoments])
+
+  // ── Likers ───────────────────────────────────────────────
+  const loadLikers = async (momentId) => {
+    const sb = getSupabase(); if (!sb) return
+    const { data } = await sb.from('moment_likes')
+      .select('user_id, profiles(full_name, username, avatar_url)')
+      .eq('moment_id', momentId)
+      .limit(50)
+    setLikers(data?.map(d => d.profiles).filter(Boolean) || [])
+    setLikersModal(momentId)
+  }
+
+  // ── Comments ─────────────────────────────────────────────
+  const loadComments = async (momentId) => {
+    const sb = getSupabase(); if (!sb) return
+    const { data } = await sb.from('moment_comments')
+      .select('id, text, created_at, user_id, profiles(full_name, username, avatar_url)')
+      .eq('moment_id', momentId)
+      .order('created_at', {ascending:true})
+      .limit(20)
+    if (data) setComments(p => ({...p, [momentId]: data.map(c => ({
+      id: c.id,
+      text: c.text,
+      created_at: c.created_at,
+      author: c.profiles?.full_name || 'Usuario',
+      username: c.profiles?.username,
+      avatar: c.profiles?.avatar_url,
+      me: c.user_id === user?.id,
+    }))}))
+  }
+
+  const sendComment = async (momentId) => {
+    const text = (commentText[momentId]||'').trim()
+    if (!text || !user) return
+    setCommentText(p => ({...p, [momentId]: ''}))
+    const sb = getSupabase(); if (!sb) return
+    const { data, error } = await sb.from('moment_comments').insert({
+      moment_id: momentId,
+      user_id: user.id,
+      text,
+    }).select('id, text, created_at, user_id').single()
+    if (!error && data) {
+      const newComment = {
+        id: data.id, text: data.text, created_at: data.created_at,
+        author: profile?.full_name || 'Tú',
+        username: profile?.username,
+        avatar: profile?.avatar_url,
+        me: true,
+      }
+      setComments(p => ({...p, [momentId]: [...(p[momentId]||[]), newComment]}))
+    }
+  }
 
   // ── Like ─────────────────────────────────────────────────
   const toggleLike = async (mid) => {
@@ -314,6 +375,45 @@ export default function Moments() {
                       <img src={m.image_url} alt="" style={{ width:'100%', borderRadius:12, marginBottom:10, objectFit:'cover', maxHeight:280 }}/>
                     )}
                   </div>
+                  {openComments[m.id] && (
+                    <div style={{padding:'0 16px 12px', borderTop:'1px solid var(--border)'}}>
+                      <div style={{display:'flex', flexDirection:'column', gap:8, marginBottom:10, marginTop:12}}>
+                        {(comments[m.id]||[]).map(c => (
+                          <div key={c.id} style={{display:'flex', gap:8, alignItems:'flex-start'}}>
+                            <div style={{width:28,height:28,borderRadius:'50%',background:'var(--surface)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,overflow:'hidden',flexShrink:0}}>
+                              {c.avatar ? <img src={c.avatar} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/> : '👤'}
+                            </div>
+                            <div style={{flex:1, background:'var(--surface2)', borderRadius:'4px 12px 12px 12px', padding:'8px 12px'}}>
+                              <span style={{fontWeight:700,fontSize:12,color:'var(--primary)'}}>{c.author} </span>
+                              <span style={{fontSize:13,color:'var(--text)'}}>{c.text}</span>
+                            </div>
+                          </div>
+                        ))}
+                        {(comments[m.id]||[]).length === 0 && (
+                          <div style={{fontSize:13,color:'var(--muted)',textAlign:'center',padding:'8px 0'}}>
+                            Sé el primero en comentar
+                          </div>
+                        )}
+                      </div>
+                      {user && (
+                        <div style={{display:'flex', gap:8, alignItems:'center'}}>
+                          <input
+                            value={commentText[m.id]||''}
+                            onChange={e => setCommentText(p => ({...p, [m.id]: e.target.value}))}
+                            onKeyDown={e => { if(e.key==='Enter') sendComment(m.id) }}
+                            placeholder="Escribe un comentario..."
+                            maxLength={280}
+                            style={{flex:1, background:'var(--surface)', border:'1px solid var(--border)', borderRadius:20, padding:'8px 14px', fontSize:13, color:'var(--text)', outline:'none', fontFamily:'inherit'}}
+                          />
+                          <button onClick={() => sendComment(m.id)} disabled={!(commentText[m.id]||'').trim()} style={{
+                            background:'#586875', color:'#f6eddc', border:'none', borderRadius:'50%',
+                            width:32, height:32, display:'flex', alignItems:'center', justifyContent:'center',
+                            cursor:'pointer', fontSize:14, flexShrink:0,
+                          }}>➤</button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <div style={{ display:'flex', alignItems:'center', padding:'8px 14px 12px', borderTop:'1px solid var(--border)', gap:16 }}>
                     <button onClick={()=>toggleLike(m.id)} style={{
                       background:'none', border:'none', cursor:'pointer', padding:0, fontFamily:'inherit',
@@ -321,7 +421,26 @@ export default function Moments() {
                       color: isLiked ? '#ef4444' : 'var(--muted)',
                       transition:'all 0.15s ease', transform: isLiked ? 'scale(1.1)' : 'scale(1)',
                     }}>
-                      <span style={{ fontSize:16 }}>{isLiked?'❤️':'🤍'}</span> {likeCount}
+                      <span style={{ fontSize:16 }}>{isLiked?'❤️':'🤍'}</span>
+                    </button>
+                    <button onClick={() => loadLikers(m.id)} style={{
+                      background:'none', border:'none', cursor:'pointer', padding:0, fontFamily:'inherit',
+                      fontSize:13, fontWeight:600, color: isLiked ? '#ef4444' : 'var(--muted)',
+                    }}>
+                      {likeCount > 0 ? likeCount : ''}
+                    </button>
+                    <button onClick={() => {
+                      const isOpen = openComments[m.id]
+                      setOpenComments(p => ({...p, [m.id]: !isOpen}))
+                      if (!isOpen && !comments[m.id]) loadComments(m.id)
+                    }} style={{
+                      background:'none', border:'none', cursor:'pointer', padding:0,
+                      display:'flex', alignItems:'center', gap:5, fontSize:13, fontWeight:600,
+                      color: openComments[m.id] ? 'var(--primary)' : 'var(--muted)',
+                      fontFamily:'inherit',
+                    }}>
+                      <span style={{fontSize:16}}>💬</span>
+                      {comments[m.id]?.length > 0 ? comments[m.id].length : ''}
                     </button>
                     {m.event_id && (
                       <Link href={`/events/${m.event_id}`} style={{
@@ -343,6 +462,36 @@ export default function Moments() {
           </div>
         )}
       </div>
+      {/* Modal likers */}
+      {likersModal && (
+        <div onClick={() => setLikersModal(null)} style={{
+          position:'fixed', inset:0, background:'rgba(0,0,0,0.6)',
+          zIndex:1000, display:'flex', alignItems:'flex-end',
+        }}>
+          <div onClick={e=>e.stopPropagation()} style={{
+            background:'var(--solid)', borderRadius:'24px 24px 0 0',
+            padding:'20px 20px 40px', width:'100%', maxHeight:'60vh',
+            overflowY:'auto',
+          }}>
+            <div style={{fontWeight:700, fontSize:16, marginBottom:16}}>
+              ❤️ {likers.length} {likers.length===1?'persona':'personas'} dieron like
+            </div>
+            {likers.length === 0 ? (
+              <div style={{color:'var(--muted)', fontSize:14}}>Nadie aún</div>
+            ) : likers.map((p,i) => (
+              <div key={i} style={{display:'flex', alignItems:'center', gap:12, marginBottom:12}}>
+                <div style={{width:40,height:40,borderRadius:'50%',background:'var(--surface)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,overflow:'hidden',flexShrink:0}}>
+                  {p.avatar_url ? <img src={p.avatar_url} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/> : '👤'}
+                </div>
+                <div>
+                  <div style={{fontWeight:600,fontSize:14,color:'var(--text)'}}>{p.full_name||'Usuario'}</div>
+                  {p.username && <div style={{fontSize:12,color:'var(--muted)'}}>@{p.username}</div>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       <Navbar />
     </>
   )

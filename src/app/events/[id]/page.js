@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 import Navbar from '@/components/Navbar'
 import { getSupabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
@@ -36,10 +37,11 @@ function canPostMoment(ev) {
   return diffH >= 0 && diffH <= 48
 }
 
-export default function EventDetail() {
-  const { id }   = useParams()
-  const router   = useRouter()
-  const { user } = useAuth()
+function EventDetailInner() {
+  const { id }      = useParams()
+  const router       = useRouter()
+  const searchParams = useSearchParams()
+  const { user }     = useAuth()
   const chatRef      = useRef(null)
   const chatPollRef  = useRef(null)
   const prevMsgCount = useRef(0)
@@ -50,7 +52,8 @@ export default function EventDetail() {
   const [pCount,       setPCount]      = useState(0)
   const [participants, setParticipants]= useState([])
   const [loading,      setLoad]        = useState(true)
-  const [tab,          setTab]         = useState('Info')
+  const initTab = searchParams?.get('tab') || 'Info'
+  const [tab,          setTab]         = useState(initTab)
   const [joined,       setJoined]      = useState(false)
   const [joining,      setJoining]     = useState(false)
 
@@ -902,5 +905,17 @@ export default function EventDetail() {
       </div>
       <Navbar />
     </>
+  )
+}
+
+export default function EventDetail() {
+  return (
+    <Suspense fallback={
+      <div className="app-shell" style={{ display:'flex', alignItems:'center', justifyContent:'center', minHeight:'100dvh' }}>
+        <div className="spinner"/>
+      </div>
+    }>
+      <EventDetailInner />
+    </Suspense>
   )
 }

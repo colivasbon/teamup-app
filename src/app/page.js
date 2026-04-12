@@ -112,10 +112,25 @@ export default function Home() {
 
   return (
     <>
+      {/* ── Cinta del eslogán ── */}
+      <div style={{
+        position:'fixed', top:0, left:0, right:0, zIndex:50,
+        background:'#586875', height:28,
+        display:'flex', alignItems:'center', justifyContent:'center',
+        overflow:'hidden',
+      }}>
+        <p style={{
+          margin:0, fontSize:11, fontWeight:700, letterSpacing:'0.18em',
+          color:'#f6eddc', textTransform:'uppercase', whiteSpace:'nowrap',
+        }}>
+          Haz deporte · Conoce gente · Haz deporte · Conoce gente · Haz deporte · Conoce gente
+        </p>
+      </div>
+
       <div className="page-wrap">
 
         {/* ── Header ── */}
-        <header style={{ paddingTop:60, paddingBottom:24, display:'flex', alignItems:'center', justifyContent:'space-between', gap:8 }}>
+        <header style={{ paddingTop:96, paddingBottom:24, display:'flex', alignItems:'center', justifyContent:'space-between', gap:8 }}>
 
           {/* Logo — color azul en claro, crema en oscuro */}
           <Link href="/" style={{
@@ -293,6 +308,42 @@ export default function Home() {
         </Link>
 
       </div>
+
+      {/* ── Carrusel patrocinadores ── */}
+      <div style={{
+        maxWidth:480, margin:'0 auto',
+        padding:'0 0 8px',
+        overflow:'hidden',
+        borderTop:'1px solid var(--border)',
+        background:'var(--bg)',
+      }}>
+        <div style={{ padding:'10px 18px 6px', display:'flex', alignItems:'center', gap:8 }}>
+          <div style={{ height:1, flex:1, background:'var(--border)' }}/>
+          <span style={{ fontSize:10, fontWeight:700, letterSpacing:'0.12em', color:'var(--muted)', textTransform:'uppercase' }}>Patrocinadores</span>
+          <div style={{ height:1, flex:1, background:'var(--border)' }}/>
+        </div>
+        <div style={{ overflow:'hidden', position:'relative' }}>
+          <div style={{
+            display:'flex', gap:48, alignItems:'center',
+            animation:'marquee 18s linear infinite',
+            width:'max-content',
+          }}>
+            {/* Se duplica para loop sin salto */}
+            {[...Array(2)].map((_,set) => (
+              <div key={set} style={{ display:'flex', gap:48, alignItems:'center' }}>
+                {['PATROCINADOR','PATROCINADOR','PATROCINADOR','PATROCINADOR','PATROCINADOR'].map((txt,i) => (
+                  <span key={i} style={{
+                    fontSize:13, fontWeight:800, letterSpacing:'0.12em',
+                    color:'var(--muted)', textTransform:'uppercase',
+                    opacity:0.45, whiteSpace:'nowrap',
+                  }}>{txt}</span>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <Navbar />
     </>
   )
