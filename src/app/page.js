@@ -115,7 +115,7 @@ export default function Home() {
       <div className="page-wrap">
 
         {/* ── Header ── */}
-        <header style={{ paddingTop:56, paddingBottom:20, display:'flex', alignItems:'center', justifyContent:'space-between', gap:8 }}>
+        <header style={{ paddingTop:36, paddingBottom:20, display:'flex', alignItems:'center', justifyContent:'space-between', gap:8 }}>
 
           {/* Logo — color azul en claro, crema en oscuro */}
           <Link href="/" style={{

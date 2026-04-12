@@ -231,7 +231,7 @@ export default function Moments() {
     <>
       <div className="page-wrap" style={{ paddingTop:0 }}>
 
-        <header style={{ paddingTop:60, paddingBottom:16, display:'flex', alignItems:'flex-start', justifyContent:'space-between' }}>
+        <header style={{ paddingTop:36, paddingBottom:16, display:'flex', alignItems:'flex-start', justifyContent:'space-between' }}>
           <div>
             <h1 style={{ fontSize:24, fontWeight:800, margin:'0 0 3px', letterSpacing:'-0.04em' }}>Momentos</h1>
             <p style={{ fontSize:13, color:'var(--muted)', margin:0 }}>

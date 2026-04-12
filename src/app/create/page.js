@@ -136,7 +136,7 @@ export default function Create() {
   return (
     <>
       <div className="page-wrap" style={{ paddingTop:0 }}>
-        <header style={{ paddingTop:60, paddingBottom:24 }}>
+        <header style={{ paddingTop:36, paddingBottom:24 }}>
           <h1 style={{ fontSize:24, fontWeight:800, margin:'0 0 4px', letterSpacing:'-0.04em' }}>Crear evento</h1>
           <p style={{ fontSize:13, color:'var(--muted)' }}>
             {step===0?'Elige el deporte':step===1?'Rellena los detalles':'Revisa y publica'}

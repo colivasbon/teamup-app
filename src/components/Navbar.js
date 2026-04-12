@@ -74,8 +74,6 @@ const NAV_ITEMS = [
   { href: '/profile', label: 'Perfil',   icon: (a) => <IconProfile a={a}/> },
 ]
 
-// Texto del carrusel — suficientes repeticiones para que nunca se corte
-const SPONSOR_ITEMS = Array(24).fill('PATROCINADOR')
 
 export default function Navbar() {
   const path     = usePathname()
@@ -83,38 +81,6 @@ export default function Navbar() {
 
   return (
     <nav className="navbar">
-
-      {/* ── Carrusel patrocinadores — parte del navbar, siempre encima ── */}
-      <div style={{
-        overflow: 'hidden',
-        height: 26,
-        borderBottom: '1px solid var(--border)',
-        display: 'flex',
-        alignItems: 'center',
-        background: 'transparent',
-      }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          animation: 'marquee 60s linear infinite',   /* MUY LENTO */
-          width: 'max-content',
-          flexShrink: 0,
-        }}>
-          {SPONSOR_ITEMS.map((txt, i) => (
-            <span key={i} style={{
-              fontSize: 11,
-              fontWeight: 900,
-              letterSpacing: '0.18em',
-              color: 'var(--text)',
-              textTransform: 'uppercase',
-              opacity: 0.35,
-              whiteSpace: 'nowrap',
-              padding: '0 28px',
-              flexShrink: 0,
-            }}>{txt}</span>
-          ))}
-        </div>
-      </div>
 
       {/* ── Iconos de navegación ── */}
       <div className="nav-inner">

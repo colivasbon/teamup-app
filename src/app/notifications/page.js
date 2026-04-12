@@ -88,7 +88,7 @@ export default function NotificationsPage() {
     <>
       <div className="page-wrap" style={{ paddingTop:0 }}>
 
-        <header style={{ paddingTop:60, paddingBottom:16, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+        <header style={{ paddingTop:36, paddingBottom:16, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           <div>
             <h1 style={{ fontSize:24, fontWeight:800, margin:'0 0 2px', letterSpacing:'-0.04em' }}>Notificaciones</h1>
           </div>

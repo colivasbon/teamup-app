@@ -8,6 +8,9 @@
 
 /* ─── TOKENS MODO CLARO ─────────────────────────────── */
 :root {
+  /* Altura del navbar — usada por el carrusel de patrocinadores */
+  --navbar-height: 80px; /* aprox: 26px cinta + 10+12+labels+icon ~ 68px */
+
   /* Fondos */
   --bg:           #f6eddc;
   --bg2:          #ede3d0;
@@ -146,14 +149,15 @@ input, textarea, select { font-family: inherit; }
   margin: 0 auto;
   width: 100%;
   padding: 0 18px;
-  padding-bottom: 168px;
+  /* 68px navbar + 28px carrusel patrocinadores + 16px margen */
+  padding-bottom: 112px;
 }
 .page-wrap-full {
   max-width: 480px;
   margin: 0 auto;
   width: 100%;
   padding: 0;
-  padding-bottom: 168px;
+  padding-bottom: 112px;
 }
 
 /* ─── SPINNER ───────────────────────────────────────── */
@@ -466,6 +470,52 @@ select.input   { appearance: none; cursor: pointer; }
 /* Ocultar cinta del eslogán en la página de perfil */
 body.hide-slogan .slogan-bar {
   display: none !important;
+}
+
+/* ─── CARRUSEL PATROCINADORES ─────────────────────────────── */
+.sponsors-ticker {
+  position: fixed;
+  left: 0;
+  right: 0;
+  /* El navbar tiene z-index:100 y bottom:0.
+     Calculamos su altura real: icons+labels (~52px) + padding top/bottom (~22px)
+     + safe-area. Fijamos un valor que funciona en todos los dispositivos:
+     usamos bottom con la misma fórmula que el navbar usa para su padding. */
+  bottom: calc(52px + 22px + max(env(safe-area-inset-bottom, 0px), 8px));
+  z-index: 99;
+  height: 28px;
+  overflow: hidden;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+}
+
+.sponsors-ticker__inner {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  animation: marquee 55s linear infinite;
+  width: max-content;
+  flex-shrink: 0;
+}
+
+.sponsors-ticker__item {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  color: var(--text);
+  text-transform: uppercase;
+  opacity: 0.35;
+  white-space: nowrap;
+  padding: 0 28px;
+  flex-shrink: 0;
+}
+
+[data-theme="light"] .sponsors-ticker__item {
+  opacity: 0.55;
+  color: #1a2028;
 }
 
 @keyframes fadeUp {

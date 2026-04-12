@@ -51,6 +51,18 @@ function AppShell({ children }) {
         <OnboardingModal onComplete={() => setShowOnboarding(false)} />
       )}
 
+      {/* ── Carrusel patrocinadores ──
+          position:fixed, bottom igual a la altura del navbar.
+          El navbar mide ~68px de contenido nav + safe-area abajo.
+          Usamos una clase CSS para controlarlo fácilmente. ── */}
+      <div className="sponsors-ticker">
+        <div className="sponsors-ticker__inner">
+          {Array.from({length:30}).map((_,i) => (
+            <span key={i} className="sponsors-ticker__item">PATROCINADOR</span>
+          ))}
+        </div>
+      </div>
+
     </div>
   )
 }
