@@ -164,6 +164,9 @@ export default function Profile() {
   // Notificaciones
   const [notifs,       setNotifs]     = useState([])
   const [notifsLoading, setNotifsLoading] = useState(false)
+  const [notifTab,     setNotifTab]   = useState('eventos') // 'eventos' | 'social'
+  const EVENT_NOTIF_TYPES  = ['joined','left','message','event_new','event_full','karma']
+  const SOCIAL_NOTIF_TYPES = ['like','comment']
   const pollRef = useRef(null)
 
   const [form, setForm] = useState({ full_name:'', username:'', bio:'', sports:[] })
@@ -256,7 +259,11 @@ export default function Profile() {
         setNotifs(prev => prev.map(n => n.id === notif.id ? { ...n, read: true } : n))
       }
     }
-    if (notif.event_id) {
+    if (notif.type === 'like' || notif.type === 'comment') {
+      router.push('/moments')
+    } else if (notif.type === 'message' && notif.event_id) {
+      router.push(`/events/${notif.event_id}?tab=Chat`)
+    } else if (notif.event_id) {
       router.push(`/events/${notif.event_id}`)
     }
   }
@@ -702,108 +709,129 @@ export default function Profile() {
         )}
 
         {/* Tab: Notificaciones */}
-        {tab === 'Notificaciones' && (
-          <div style={{ padding:'16px 18px 0' }}>
+        {tab === 'Notificaciones' && (() => {
+          const eventNotifs  = notifs.filter(n => EVENT_NOTIF_TYPES.includes(n.type) || (!SOCIAL_NOTIF_TYPES.includes(n.type) && n.priority !== 'low'))
+          const socialNotifs = notifs.filter(n => SOCIAL_NOTIF_TYPES.includes(n.type) || n.priority === 'low')
+          const visibleNotifs = notifTab === 'eventos' ? eventNotifs : socialNotifs
+          const unreadEvents = eventNotifs.filter(n => !n.read).length
+          const unreadSocial = socialNotifs.filter(n => !n.read).length
+          const unreadVisible = visibleNotifs.filter(n => !n.read).length
+          return (
+            <div style={{ padding:'16px 18px 0' }}>
 
-            {/* Cabecera */}
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:14 }}>
-              <div style={{ fontWeight:700, fontSize:15, color:'var(--text)' }}>
-                Notificaciones
-                {unreadCount > 0 && (
-                  <span style={{ marginLeft:8, background:'#0ea5e9', color:'white', borderRadius:20, fontSize:11, fontWeight:700, padding:'2px 8px' }}>
-                    {unreadCount} nuevas
-                  </span>
+              {/* Cabecera */}
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:14 }}>
+                <div style={{ fontWeight:700, fontSize:15, color:'var(--text)' }}>Notificaciones</div>
+                {unreadVisible > 0 && (
+                  <button onClick={markAllRead} style={{
+                    background:'none', border:'1px solid var(--border)', borderRadius:10,
+                    color:'var(--muted)', fontSize:12, fontWeight:600, padding:'5px 12px',
+                    cursor:'pointer', fontFamily:'inherit',
+                  }}>Marcar leídas</button>
                 )}
               </div>
-              {unreadCount > 0 && (
-                <button onClick={markAllRead} style={{
-                  background:'none', border:'1px solid var(--border)', borderRadius:10,
-                  color:'var(--muted)', fontSize:12, fontWeight:600, padding:'5px 12px',
-                  cursor:'pointer', fontFamily:'inherit',
-                }}>
-                  Marcar todas leídas
-                </button>
+
+              {/* Toggle Eventos / Social */}
+              <div style={{
+                display:'flex', gap:0, background:'var(--surface)',
+                border:'1px solid var(--border)', borderRadius:14,
+                overflow:'hidden', marginBottom:16,
+              }}>
+                {[
+                  { id:'eventos', label:'Eventos', icon:'🎯', count: unreadEvents },
+                  { id:'social',  label:'Social',  icon:'❤️', count: unreadSocial },
+                ].map(t => (
+                  <button key={t.id} onClick={() => setNotifTab(t.id)} style={{
+                    flex:1, padding:'12px 0', border:'none', cursor:'pointer',
+                    fontFamily:'inherit', fontSize:13, fontWeight:700,
+                    background: notifTab===t.id ? '#586875' : 'transparent',
+                    color: notifTab===t.id ? '#f6eddc' : 'var(--muted)',
+                    transition:'all 0.18s ease',
+                    display:'flex', alignItems:'center', justifyContent:'center', gap:6,
+                  }}>
+                    <span style={{ fontSize:15 }}>{t.icon}</span>
+                    {t.label}
+                    {t.count > 0 && (
+                      <span style={{
+                        background: notifTab===t.id ? 'rgba(246,237,220,0.25)' : 'rgba(88,104,117,0.15)',
+                        color: notifTab===t.id ? '#f6eddc' : 'var(--primary)',
+                        borderRadius:100, fontSize:11, fontWeight:800,
+                        padding:'1px 7px', minWidth:18, textAlign:'center',
+                      }}>{t.count}</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              {/* Lista */}
+              {notifsLoading && notifs.length === 0 ? (
+                <div style={{ textAlign:'center', padding:'40px 0' }}><div className="spinner"/></div>
+              ) : visibleNotifs.length === 0 ? (
+                <div className="card" style={{ padding:'40px 24px', textAlign:'center' }}>
+                  <div style={{ fontSize:44, marginBottom:12 }}>{notifTab === 'eventos' ? '🎯' : '❤️'}</div>
+                  <div style={{ fontWeight:600, fontSize:15, marginBottom:6 }}>
+                    {notifTab === 'eventos' ? 'Sin novedades en tus eventos' : 'Sin actividad social aún'}
+                  </div>
+                  <div style={{ fontSize:13, color:'var(--muted)' }}>
+                    {notifTab === 'eventos'
+                      ? 'Cuando alguien se una o escriba en el chat, aparecerá aquí'
+                      : 'Cuando alguien dé like o comente tus momentos, aparecerá aquí'}
+                  </div>
+                </div>
+              ) : (
+                <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
+                  {visibleNotifs.map(notif => {
+                    const isSocial = SOCIAL_NOTIF_TYPES.includes(notif.type)
+                    const icon = NOTIF_ICONS[notif.type] || '🔔'
+                    const isClickable = notif.event_id || isSocial
+                    return (
+                      <button
+                        key={notif.id}
+                        onClick={() => handleNotifClick(notif)}
+                        style={{
+                          display:'flex', alignItems:'flex-start', gap:12,
+                          padding:'14px 14px',
+                          background: notif.read ? 'var(--surface)' : `rgba(${isSocial?'239,68,68':'88,104,117'},0.07)`,
+                          border: notif.read ? '1px solid var(--border)' : `1px solid rgba(${isSocial?'239,68,68':'88,104,117'},0.22)`,
+                          borderRadius:16,
+                          cursor: isClickable ? 'pointer' : 'default',
+                          fontFamily:'inherit', textAlign:'left', width:'100%',
+                          transition:'background 0.15s ease', position:'relative',
+                        }}
+                      >
+                        {!notif.read && (
+                          <span style={{
+                            position:'absolute', top:10, right:12,
+                            width:8, height:8, borderRadius:'50%',
+                            background: isSocial ? '#ef4444' : '#586875', flexShrink:0,
+                          }}/>
+                        )}
+                        <div style={{
+                          width:38, height:38, borderRadius:12, flexShrink:0,
+                          background: notif.read ? 'var(--glass)' : `rgba(${isSocial?'239,68,68':'88,104,117'},0.12)`,
+                          display:'flex', alignItems:'center', justifyContent:'center',
+                          fontSize:18, border:'1px solid var(--border)',
+                        }}>{icon}</div>
+                        <div style={{ flex:1, minWidth:0 }}>
+                          <div style={{
+                            fontSize:13, fontWeight: notif.read ? 500 : 700,
+                            color:'var(--text)', lineHeight:1.45,
+                            overflow:'hidden', textOverflow:'ellipsis',
+                            display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical',
+                          }}>{notif.message || notif.body || 'Nueva notificación'}</div>
+                          <div style={{ fontSize:11, color:'var(--muted)', marginTop:4 }}>{timeAgo(notif.created_at)}</div>
+                        </div>
+                        {isClickable && (
+                          <div style={{ color:'var(--muted)', fontSize:14, flexShrink:0, alignSelf:'center' }}>›</div>
+                        )}
+                      </button>
+                    )
+                  })}
+                </div>
               )}
             </div>
-
-            {/* Lista */}
-            {notifsLoading && notifs.length === 0 ? (
-              <div style={{ textAlign:'center', padding:'40px 0' }}>
-                <div className="spinner"/>
-              </div>
-            ) : notifs.length === 0 ? (
-              <div className="card" style={{ padding:'40px 24px', textAlign:'center' }}>
-                <div style={{ fontSize:44, marginBottom:12 }}>🔔</div>
-                <div style={{ fontWeight:600, fontSize:15, marginBottom:6 }}>No tienes notificaciones aún 🔔</div>
-                <div style={{ fontSize:13, color:'var(--muted)' }}>Te avisaremos cuando haya novedades en tus eventos</div>
-              </div>
-            ) : (
-              <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
-                {notifs.map((notif, i) => {
-                  const icon = NOTIF_ICONS[notif.type] || '🔔'
-                  return (
-                    <button
-                      key={notif.id}
-                      onClick={() => handleNotifClick(notif)}
-                      style={{
-                        display:'flex', alignItems:'flex-start', gap:12,
-                        padding:'14px 14px',
-                        background: notif.read ? 'var(--surface)' : 'rgba(14,165,233,0.07)',
-                        border: notif.read ? '1px solid var(--border)' : '1px solid rgba(14,165,233,0.22)',
-                        borderRadius:16,
-                        cursor: notif.event_id ? 'pointer' : 'default',
-                        fontFamily:'inherit',
-                        textAlign:'left',
-                        width:'100%',
-                        transition:'background 0.15s ease',
-                        position:'relative',
-                      }}
-                    >
-                      {/* Punto no leído */}
-                      {!notif.read && (
-                        <span style={{
-                          position:'absolute', top:10, right:12,
-                          width:8, height:8, borderRadius:'50%',
-                          background:'#0ea5e9', flexShrink:0,
-                        }}/>
-                      )}
-
-                      {/* Icono */}
-                      <div style={{
-                        width:38, height:38, borderRadius:12, flexShrink:0,
-                        background: notif.read ? 'var(--glass)' : 'rgba(14,165,233,0.12)',
-                        display:'flex', alignItems:'center', justifyContent:'center',
-                        fontSize:18, border:'1px solid var(--border)',
-                      }}>
-                        {icon}
-                      </div>
-
-                      {/* Contenido */}
-                      <div style={{ flex:1, minWidth:0 }}>
-                        <div style={{
-                          fontSize:13, fontWeight: notif.read ? 500 : 700,
-                          color:'var(--text)', lineHeight:1.45,
-                          overflow:'hidden', textOverflow:'ellipsis',
-                          display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical',
-                        }}>
-                          {notif.message || notif.body || 'Nueva notificación'}
-                        </div>
-                        <div style={{ fontSize:11, color:'var(--muted)', marginTop:4 }}>
-                          {timeAgo(notif.created_at)}
-                        </div>
-                      </div>
-
-                      {/* Flecha si tiene evento */}
-                      {notif.event_id && (
-                        <div style={{ color:'var(--muted)', fontSize:14, flexShrink:0, alignSelf:'center' }}>›</div>
-                      )}
-                    </button>
-                  )
-                })}
-              </div>
-            )}
-          </div>
-        )}
+          )
+        })()}
 
         {/* Cerrar sesión */}
         <div style={{ padding:'32px 18px 40px' }}>
