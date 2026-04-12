@@ -484,8 +484,13 @@ body.hide-slogan .slogan-bar {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 68px;
-  z-index: 99;
+  /* El navbar ocupa: 10px padding-top + ~50px icons+labels + 12px padding-bottom
+     = 72px SIN safe-area. MAS la safe-area (en iPhone ~34px) que el navbar
+     añade como padding-bottom extra.
+     El carrusel debe ir encima de todo eso:
+     bottom = 72px + max(safe-area, 8px) */
+  bottom: calc(72px + max(env(safe-area-inset-bottom, 0px), 8px));
+  z-index: 101;
   height: 28px;
   overflow: hidden;
   background: var(--bg);
