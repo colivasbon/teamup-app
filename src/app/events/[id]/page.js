@@ -6,6 +6,7 @@ import { Suspense } from 'react'
 import Navbar from '@/components/Navbar'
 import { getSupabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
+import PosterModal from '@/components/PosterModal'
 
 const S_COLORS = { running:'#5b6ef5', padel:'#06d6a0', senderismo:'#f59e0b', futbol:'#ef4444', gimnasio:'#8b5cf6', tenis:'#fbbf24', natacion:'#0ea5e9', ciclismo:'#f97316', yoga:'#ec4899', baloncesto:'#f59e0b', voleibol:'#06d6a0', badminton:'#8b5cf6' }
 const S_ICONS  = { running:'🏃', padel:'🎾', senderismo:'🥾', futbol:'⚽', gimnasio:'💪', tenis:'🎾', natacion:'🏊', ciclismo:'🚴', yoga:'🧘', baloncesto:'🏀', voleibol:'🏐', badminton:'🏸' }
@@ -63,6 +64,9 @@ function EventDetailInner() {
   const [sendingMsg,  setSending]   = useState(false)
   const [loadingChat, setLoadChat]  = useState(false)
   const [chatError,   setChatError] = useState('')
+
+  // Póster
+  const [showPoster, setShowPoster] = useState(false)
 
   // Momentos
   const [moments,       setMoments]      = useState([])
@@ -465,6 +469,10 @@ function EventDetailInner() {
           }} style={{ position:'absolute', top:16, left:64, background:'rgba(255,255,255,0.22)', border:'1px solid rgba(255,255,255,0.32)', borderRadius:12, color:'white', width:38, height:38, display:'flex', alignItems:'center', justifyContent:'center', fontSize:16, cursor:'pointer' }}>
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
           </button>
+          {/* Botón póster / QR */}
+          {!isDemo(id) && (
+            <button onClick={() => setShowPoster(true)} style={{ position:'absolute', top:16, left:110, background:'rgba(255,255,255,0.22)', border:'1px solid rgba(255,255,255,0.32)', borderRadius:12, color:'white', width:38, height:38, display:'flex', alignItems:'center', justifyContent:'center', fontSize:17, cursor:'pointer' }}>🪧</button>
+          )}
           <div style={{ position:'relative' }}>
             <div style={{ fontSize:52, marginBottom:12, filter:'drop-shadow(0 4px 14px rgba(0,0,0,0.22))' }}>{icon}</div>
             <div style={{ display:'inline-flex', gap:8, background:'rgba(255,255,255,0.20)', borderRadius:10, padding:'4px 12px', marginBottom:8 }}>
@@ -904,6 +912,11 @@ function EventDetailInner() {
         <div style={{ height:90 }}/>
       </div>
       <Navbar />
+
+      {/* Modal póster */}
+      {showPoster && ev && (
+        <PosterModal event={ev} onClose={() => setShowPoster(false)} />
+      )}
     </>
   )
 }

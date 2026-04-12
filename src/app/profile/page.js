@@ -356,7 +356,11 @@ export default function Profile() {
   const displayName = form.full_name || profile?.full_name || user.user_metadata?.full_name || user.email?.split('@')[0] || 'Usuario'
   const username    = form.username  || profile?.username  || user.email?.split('@')[0] || 'usuario'
   const karma       = profile?.karma || 5.0
-  const allEvents   = actTab === 'creados' ? myCreated : myJoined
+  const today = new Date().toISOString().split('T')[0]
+  const pastEvents  = [...myCreated, ...myJoined].filter(ev => ev?.date && ev.date < today)
+    .sort((a,b) => b.date.localeCompare(a.date))
+    .filter((ev,i,arr) => arr.findIndex(e=>e.id===ev.id)===i) // deduplicar
+  const allEvents   = actTab === 'creados' ? myCreated : actTab === 'historial' ? pastEvents : myJoined
   const unreadCount = notifs.filter(n => !n.read).length
 
   // bannerId actual
@@ -586,11 +590,15 @@ export default function Profile() {
         {/* Tab: Actividad */}
         {tab === 'Actividad' && (
           <div style={{ padding:'16px 18px 0' }}>
-            <div style={{ display:'flex', gap:8, marginBottom:14 }}>
-              {['creados','apuntado'].map(t=>(
-                <button key={t} onClick={() => setActTab(t)}
-                  className={`pill ${actTab===t?'pill-active':'pill-inactive'}`}>
-                  {t==='creados' ? `📅 Mis eventos (${myCreated.length})` : `✓ Apuntado (${myJoined.length})`}
+            <div style={{ display:'flex', gap:8, marginBottom:14, flexWrap:'wrap' }}>
+              {[
+                { id:'creados',   label:`📅 Creados (${myCreated.length})` },
+                { id:'apuntado',  label:`✓ Apuntado (${myJoined.length})` },
+                { id:'historial', label:`🕐 Historial (${pastEvents.length})` },
+              ].map(t=>(
+                <button key={t.id} onClick={() => setActTab(t.id)}
+                  className={`pill ${actTab===t.id?'pill-active':'pill-inactive'}`}>
+                  {t.label}
                 </button>
               ))}
             </div>
@@ -691,9 +699,21 @@ export default function Profile() {
         )}
 
         {/* Tab: Karma */}
-        {tab === 'Karma' && (
+        {tab === 'Karma' && (() => {
+          // Insignias calculadas con los datos disponibles
+          const totalEvents  = myCreated.length + myJoined.length
+          const sportsSet    = new Set([...myCreated.map(e=>e.sport), ...myJoined.map(e=>e.sport)].filter(Boolean))
+          const badges = [
+            { id:'first',    icon:'🌟', label:'Primera vez',      desc:'Participaste en tu primer evento',      unlocked: totalEvents >= 1 },
+            { id:'five',     icon:'🔥', label:'Deportista',        desc:'Has participado en 5 o más eventos',    unlocked: totalEvents >= 5 },
+            { id:'ten',      icon:'📈', label:'Habitual',          desc:'Has participado en 10 o más eventos',   unlocked: totalEvents >= 10 },
+            { id:'creator',  icon:'🏆', label:'Organizador',       desc:'Has creado tu primer evento',           unlocked: myCreated.length >= 1 },
+            { id:'multisport',icon:'🧘',label:'Polideportivo',     desc:'Practicas 3 o más deportes distintos',  unlocked: sportsSet.size >= 3 },
+            { id:'karma5',   icon:'⭐', label:'Buena reputación',  desc:'Karma igual o superior a 4.5',          unlocked: karma >= 4.5 },
+          ]
+          return (
           <div style={{ padding:'16px 18px 0' }}>
-            <div className="card anim-1" style={{ padding:'24px 20px', textAlign:'center' }}>
+            <div className="card anim-1" style={{ padding:'24px 20px', textAlign:'center', marginBottom:16 }}>
               <div style={{ fontSize:56, fontWeight:900, lineHeight:1, background:'var(--grad)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>
                 {karma.toFixed(1)}
               </div>
@@ -705,8 +725,35 @@ export default function Profile() {
                 El karma refleja tu reputación en la comunidad. Se calcula a partir de las valoraciones que recibes de otros participantes después de cada evento.
               </p>
             </div>
+
+            {/* Insignias */}
+            <div style={{ fontWeight:700, fontSize:15, marginBottom:12, color:'var(--text)' }}>
+              Insignias
+              <span style={{ marginLeft:8, fontSize:12, fontWeight:600, color:'var(--muted)' }}>
+                {badges.filter(b=>b.unlocked).length}/{badges.length} conseguidas
+              </span>
+            </div>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+              {badges.map(b => (
+                <div key={b.id} className="card" style={{
+                  padding:'16px 14px', display:'flex', flexDirection:'column', alignItems:'center',
+                  gap:8, textAlign:'center',
+                  opacity: b.unlocked ? 1 : 0.38,
+                  border: b.unlocked ? '1px solid var(--border)' : '1px dashed var(--border)',
+                  filter: b.unlocked ? 'none' : 'grayscale(1)',
+                }}>
+                  <span style={{ fontSize:34 }}>{b.icon}</span>
+                  <div style={{ fontWeight:700, fontSize:13, color:'var(--text)' }}>{b.label}</div>
+                  <div style={{ fontSize:11, color:'var(--muted)', lineHeight:1.4 }}>{b.desc}</div>
+                  {b.unlocked && (
+                    <span style={{ fontSize:10, fontWeight:800, color:'#06d6a0', background:'rgba(6,214,160,0.12)', borderRadius:20, padding:'2px 8px' }}>CONSEGUIDA</span>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
-        )}
+          )
+        })()}
 
         {/* Tab: Notificaciones */}
         {tab === 'Notificaciones' && (() => {
