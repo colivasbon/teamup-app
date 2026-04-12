@@ -16,30 +16,25 @@ function AppShell({ children }) {
     setShowOnboarding(needsOnboarding)
   }, [user, profile])
 
-  // Detectar si estamos en la página de perfil para ocultar la cinta
-  // (se hace via clase en body desde la propia página si fuera necesario,
-  //  pero aquí la dejamos siempre visible — solo quitamos en perfil via CSS)
-
   return (
     <div className="app-shell">
 
-      {/* ── Cinta del eslogan — fixed top, TODAS las páginas ── */}
+      {/* Cinta del eslogan — fixed top, TODAS las páginas */}
       <div className="slogan-bar" style={{
-        position:'fixed', top:0, left:0, right:0, zIndex:200,
-        height:26, overflow:'hidden',
-        background:'#586875',
+        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200,
+        height: 26, overflow: 'hidden',
+        background: '#586875',
       }}>
         <div style={{
-          display:'flex', alignItems:'center', height:'100%',
-          animation:'marquee 40s linear infinite',
-          width:'max-content',
-          whiteSpace:'nowrap',
+          display: 'flex', alignItems: 'center', height: '100%',
+          animation: 'marquee 40s linear infinite',
+          width: 'max-content',
         }}>
-          {[...Array(12)].map((_,i) => (
+          {Array.from({length: 12}).map((_, i) => (
             <span key={i} style={{
-              fontSize:10, fontWeight:800, letterSpacing:'0.2em',
-              color:'#f6eddc', textTransform:'uppercase',
-              padding:'0 28px', flexShrink:0,
+              fontSize: 10, fontWeight: 800, letterSpacing: '0.2em',
+              color: '#f6eddc', textTransform: 'uppercase',
+              padding: '0 28px', flexShrink: 0, whiteSpace: 'nowrap',
             }}>HAZ DEPORTE · CONOCE GENTE</span>
           ))}
         </div>
@@ -51,13 +46,12 @@ function AppShell({ children }) {
         <OnboardingModal onComplete={() => setShowOnboarding(false)} />
       )}
 
-      {/* ── Carrusel patrocinadores ──
-          position:fixed, bottom igual a la altura del navbar.
-          El navbar mide ~68px de contenido nav + safe-area abajo.
-          Usamos una clase CSS para controlarlo fácilmente. ── */}
+      {/* Carrusel patrocinadores:
+          position fixed, bottom 68px = justo encima del navbar (que mide 68px).
+          z-index 99 (navbar es 100). Sin cálculos, sin safe-area, simple. */}
       <div className="sponsors-ticker">
         <div className="sponsors-ticker__inner">
-          {Array.from({length:30}).map((_,i) => (
+          {Array.from({length: 30}).map((_, i) => (
             <span key={i} className="sponsors-ticker__item">PATROCINADOR</span>
           ))}
         </div>

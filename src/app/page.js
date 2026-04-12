@@ -293,8 +293,6 @@ export default function Home() {
 
       </div>
 
-      {/* ── Carrusel patrocinadores ── */}
-
       <Navbar />
     </>
   )

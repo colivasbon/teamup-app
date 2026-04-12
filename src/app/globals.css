@@ -473,21 +473,23 @@ body.hide-slogan .slogan-bar {
 }
 
 /* ─── CARRUSEL PATROCINADORES ─────────────────────────────── */
+/* El navbar está fixed bottom:0 y mide exactamente:
+   10px padding-top + ~46px icons+labels + 12px padding-bottom = 68px
+   Más el safe-area del iPhone que gestiona el propio navbar.
+   Ponemos el carrusel a bottom:68px que es justo encima del navbar
+   en todos los dispositivos sin safe-area. En iPhone con safe-area,
+   el navbar crece hacia abajo (no hacia arriba), así que 68px sigue
+   siendo correcto para la parte visible del navbar. */
 .sponsors-ticker {
   position: fixed;
   left: 0;
   right: 0;
-  /* El navbar tiene z-index:100 y bottom:0.
-     Calculamos su altura real: icons+labels (~52px) + padding top/bottom (~22px)
-     + safe-area. Fijamos un valor que funciona en todos los dispositivos:
-     usamos bottom con la misma fórmula que el navbar usa para su padding. */
-  bottom: calc(52px + 22px + max(env(safe-area-inset-bottom, 0px), 8px));
+  bottom: 68px;
   z-index: 99;
   height: 28px;
   overflow: hidden;
   background: var(--bg);
   border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
 }
@@ -502,19 +504,19 @@ body.hide-slogan .slogan-bar {
 }
 
 .sponsors-ticker__item {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 900;
   letter-spacing: 0.18em;
   color: var(--text);
   text-transform: uppercase;
   opacity: 0.35;
   white-space: nowrap;
-  padding: 0 28px;
+  padding: 0 36px;
   flex-shrink: 0;
 }
 
 [data-theme="light"] .sponsors-ticker__item {
-  opacity: 0.55;
+  opacity: 0.6;
   color: #1a2028;
 }
 
