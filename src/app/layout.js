@@ -44,8 +44,8 @@ function AppShell({ children }) {
 
       {children}
 
-      {/* Franja patrocinadores — en el layout para que ocupe 100% en todas las páginas */}
-      <div className="sponsors-ticker" style={{ width:'100%' }}>
+      {/* Franja patrocinadores — fixed, justo encima del navbar, ocupa 100% pantalla */}
+      <div className="sponsors-ticker">
         <div className="sponsors-ticker__inner">
           {Array.from({length: 30}).map((_, i) => (
             <span key={i} className="sponsors-ticker__item">PATROCINADOR</span>

@@ -149,15 +149,15 @@ input, textarea, select { font-family: inherit; }
   margin: 0 auto;
   width: 100%;
   padding: 0 18px;
-  /* navbar ~70px + ticker 40px + margen 16px */
-  padding-bottom: 126px;
+  /* navbar 72px + ticker 40px + margen 16px = 128px */
+  padding-bottom: 128px;
 }
 .page-wrap-full {
   max-width: 480px;
   margin: 0 auto;
   width: 100%;
   padding: 0;
-  padding-bottom: 126px;
+  padding-bottom: 128px;
 }
 
 /* ─── SPINNER ───────────────────────────────────────── */
@@ -476,7 +476,12 @@ body.hide-slogan .slogan-bar {
 /* Franja de patrocinadores: elemento normal en el flujo de la página,
    no fixed. Aparece donde se coloca en el JSX, no flota ni tapa nada. */
 .sponsors-ticker {
-  width: 100%;
+  position: fixed;
+  left: 0;
+  right: 0;
+  /* navbar: 10px padding-top + 26px icono + 4px gap + 12px label + 12px padding-bottom + 8px navbar padding-bottom = 72px */
+  bottom: 72px;
+  z-index: 101;
   height: 40px;
   overflow: hidden;
   background: var(--bg);
