@@ -292,7 +292,7 @@ export default function Home() {
         </Link>
 
         {/* ── Franja patrocinadores — elemento normal en el flujo de la página ── */}
-        <div className="sponsors-ticker" style={{ margin:'0 -18px', marginBottom:8 }}>
+        <div className="sponsors-ticker" style={{ margin:'0 -18px', marginBottom:32 }}>
           <div className="sponsors-ticker__inner">
             {Array.from({length: 30}).map((_, i) => (
               <span key={i} className="sponsors-ticker__item">PATROCINADOR</span>

@@ -29,7 +29,7 @@ function AppShell({ children }) {
       }}>
         <div style={{
           display: 'flex', alignItems: 'center', height: '100%',
-          animation: 'marquee 40s linear infinite',
+          animation: 'marquee 80s linear infinite',
           width: 'max-content',
         }}>
           {Array.from({length: 12}).map((_, i) => (

@@ -477,11 +477,9 @@ body.hide-slogan .slogan-bar {
    no fixed. Aparece donde se coloca en el JSX, no flota ni tapa nada. */
 .sponsors-ticker {
   width: 100%;
-  height: 32px;
+  height: 40px;
   overflow: hidden;
   background: var(--bg);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
 }
@@ -490,20 +488,20 @@ body.hide-slogan .slogan-bar {
   display: flex;
   align-items: center;
   height: 100%;
-  animation: marquee 55s linear infinite;
+  animation: marquee 90s linear infinite;
   width: max-content;
   flex-shrink: 0;
 }
 
 .sponsors-ticker__item {
-  font-size: 13px;
+  font-size: 17px;
   font-weight: 900;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.22em;
   color: var(--text);
   text-transform: uppercase;
   opacity: 0.35;
   white-space: nowrap;
-  padding: 0 36px;
+  padding: 0 40px;
   flex-shrink: 0;
 }
 
