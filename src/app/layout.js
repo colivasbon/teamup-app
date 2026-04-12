@@ -96,13 +96,16 @@ function AppShell({ children }) {
         <OnboardingModal onComplete={() => setShowOnboarding(false)} />
       )}
 
-      {/* ── Carrusel patrocinadores — fixed, entre el contenido y el navbar ── */}
+      {/* ── Carrusel patrocinadores — fixed, encima del navbar, semitransparente ── */}
       <div style={{
-        position:'fixed', bottom:68, left:0, right:0, zIndex:99,
-        height:30, overflow:'hidden',
-        background:'var(--bg)',
+        position:'fixed',
+        bottom:'calc(68px + env(safe-area-inset-bottom, 0px))',
+        left:0, right:0, zIndex:99,
+        height:28, overflow:'hidden',
+        background:'rgba(var(--bg-rgb, 26,32,40), 0.85)',
+        backdropFilter:'blur(12px)',
+        WebkitBackdropFilter:'blur(12px)',
         borderTop:'1px solid var(--border)',
-        borderBottom:'1px solid var(--border)',
       }}>
         <div style={{
           display:'flex', alignItems:'center', height:'100%',

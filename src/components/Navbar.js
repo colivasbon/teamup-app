@@ -5,38 +5,57 @@ import { usePathname } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { NotifBadge } from '@/components/NotifBadge'
 
-// Inicio — sin detalles interiores problemáticos
+// Casita con puerta — los detalles interiores usan var(--bg) para adaptarse al tema
 const IconHome = ({ a }) => (
-  <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-    strokeWidth={a ? 2.3 : 1.8} strokeLinecap="round" strokeLinejoin="round">
-    {/* Tejado y paredes */}
+  <svg width="23" height="23" viewBox="0 0 24 24" fill="none"
+    strokeLinecap="round" strokeLinejoin="round">
+    {/* Estructura */}
     <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"
-      fill={a ? 'currentColor' : 'none'}/>
-    {/* Sin puerta interior — icono minimalista */}
+      fill={a ? 'currentColor' : 'none'}
+      stroke="currentColor" strokeWidth={a ? 2.3 : 1.8}/>
+    {/* Puerta — usa var(--bg) como color para contrastar con el fill activo */}
+    {a && (
+      <rect x="9" y="13" width="6" height="8" rx="1"
+        fill="var(--bg)" stroke="none"/>
+    )}
+    {!a && (
+      <path d="M9 21V14a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v7"
+        stroke="currentColor" strokeWidth="1.8" fill="none"/>
+    )}
   </svg>
 )
 
-// Explorar
+// Explorar — lupa sin cambios
 const IconSearch = ({ a }) => (
-  <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-    strokeWidth={a ? 2.3 : 1.8} strokeLinecap="round" strokeLinejoin="round">
+  <svg width="23" height="23" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth={a ? 2.3 : 1.8}
+    strokeLinecap="round" strokeLinejoin="round">
     <circle cx="11" cy="11" r="7.5"/>
     <line x1="21" y1="21" x2="16.2" y2="16.2"/>
   </svg>
 )
 
-// Momentos — imagen sin detalles interiores
+// Momentos — foto con montaña y sol
 const IconMoments = ({ a }) => (
-  <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-    strokeWidth={a ? 2.3 : 1.8} strokeLinecap="round" strokeLinejoin="round">
+  <svg width="23" height="23" viewBox="0 0 24 24" fill="none"
+    strokeLinecap="round" strokeLinejoin="round">
     {/* Marco */}
     <rect x="3" y="3" width="18" height="18" rx="3"
-      fill={a ? 'currentColor' : 'none'}/>
-    {/* Sin detalles interiores blancos — icono limpio */}
+      fill={a ? 'currentColor' : 'none'}
+      stroke="currentColor" strokeWidth={a ? 2.3 : 1.8}/>
+    {/* Sol — usa var(--bg) cuando activo para contrastar */}
+    <circle cx="8.5" cy="8.5" r="1.5"
+      fill={a ? 'var(--bg)' : 'currentColor'}
+      stroke="none"/>
+    {/* Montaña */}
+    <path d="M21 15 L16 10 L5 21"
+      stroke={a ? 'var(--bg)' : 'currentColor'}
+      strokeWidth={a ? 2 : 1.8}
+      fill="none"/>
   </svg>
 )
 
-// Crear
+// Crear — botón circular
 const IconCreate = ({ a }) => (
   <div style={{
     width: 44, height: 44, borderRadius: 15,
@@ -56,8 +75,9 @@ const IconCreate = ({ a }) => (
 
 // Perfil
 const IconProfile = ({ a }) => (
-  <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-    strokeWidth={a ? 2.3 : 1.8} strokeLinecap="round" strokeLinejoin="round">
+  <svg width="23" height="23" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth={a ? 2.3 : 1.8}
+    strokeLinecap="round" strokeLinejoin="round">
     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
       fill={a ? 'currentColor' : 'none'}/>
     <circle cx="12" cy="7" r="4"

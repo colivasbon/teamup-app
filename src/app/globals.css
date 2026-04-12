@@ -146,15 +146,13 @@ input, textarea, select { font-family: inherit; }
   margin: 0 auto;
   width: 100%;
   padding: 0 18px;
-  padding-top: 26px;      /* altura cinta eslogán */
-  padding-bottom: 168px;  /* navbar 68 + carrusel 30 + margen 70 */
+  padding-bottom: 168px;
 }
 .page-wrap-full {
   max-width: 480px;
   margin: 0 auto;
   width: 100%;
   padding: 0;
-  padding-top: 26px;
   padding-bottom: 168px;
 }
 
