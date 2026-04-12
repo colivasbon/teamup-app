@@ -24,7 +24,7 @@ function AppShell({ children }) {
     <div className="app-shell">
 
       {/* ── Cinta del eslogan — fixed top, TODAS las páginas ── */}
-      <div style={{
+      <div className="slogan-bar" style={{
         position:'fixed', top:0, left:0, right:0, zIndex:200,
         height:26, overflow:'hidden',
         background:'#586875',
@@ -50,28 +50,6 @@ function AppShell({ children }) {
       {showOnboarding && user && (
         <OnboardingModal onComplete={() => setShowOnboarding(false)} />
       )}
-
-      {/* ── Carrusel patrocinadores ──
-          fixed, JUSTO encima del navbar.
-          El navbar tiene padding-bottom de safe-area, ~68px de contenido.
-          Usamos bottom: 68px fijo + safe-area por encima. ── */}
-      <div className="sponsors-bar">
-        <div style={{
-          display:'flex', alignItems:'center', height:'100%',
-          animation:'marquee 20s linear infinite',
-          width:'max-content',
-        }}>
-          {/* Repetimos muchas veces para que nunca se vea el final */}
-          {[...Array(20)].map((_,i) => (
-            <span key={i} style={{
-              fontSize:12, fontWeight:900, letterSpacing:'0.18em',
-              color:'var(--text)', textTransform:'uppercase',
-              opacity:0.35, whiteSpace:'nowrap',
-              padding:'0 32px', flexShrink:0,
-            }}>PATROCINADOR</span>
-          ))}
-        </div>
-      </div>
 
     </div>
   )

@@ -407,25 +407,6 @@ select.input   { appearance: none; cursor: pointer; }
 }
 
 /* ─── NAVBAR ────────────────────────────────────────── */
-/* ─── BARRA PATROCINADORES ──────────────────────────────── */
-.sponsors-bar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: calc(68px + max(env(safe-area-inset-bottom, 0px), 8px));
-  z-index: 98;
-  height: 28px;
-  overflow: hidden;
-  background: var(--bg);
-  border-top: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-}
-[data-theme="light"] .sponsors-bar span {
-  opacity: 0.65 !important;
-  color: #1a2028 !important;
-}
-
 .navbar {
   position: fixed;
   bottom: 0; left: 0; right: 0;
@@ -480,6 +461,11 @@ select.input   { appearance: none; cursor: pointer; }
 @keyframes marquee {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
+}
+
+/* Ocultar cinta del eslogán en la página de perfil */
+body.hide-slogan .slogan-bar {
+  display: none !important;
 }
 
 @keyframes fadeUp {

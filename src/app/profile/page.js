@@ -142,6 +142,12 @@ export default function Profile() {
   const fileRef   = useRef(null)
   const bannerRef = useRef(null)
 
+  // Ocultar la cinta del eslogán en esta página
+  useEffect(() => {
+    document.body.classList.add('hide-slogan')
+    return () => document.body.classList.remove('hide-slogan')
+  }, [])
+
   const [tab,          setTab]        = useState('Actividad')
   const [editing,      setEditing]    = useState(false)
   const [saving,       setSaving]     = useState(false)
