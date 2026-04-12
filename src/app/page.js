@@ -67,6 +67,18 @@ export default function Home() {
 
   const [myEvents,    setMyEvents]    = useState([])
   const [unreadCount, setUnreadCount] = useState(0)
+  const [sponsors,    setSponsors]    = useState([])
+
+  // Cargar patrocinadores
+  useEffect(() => {
+    const sb = getSupabase()
+    if (!sb) return
+    sb.from('sponsors')
+      .select('id, name, logo_url, website_url')
+      .eq('active', true)
+      .order('sort_order', { ascending: true })
+      .then(({ data }) => { if (data && data.length > 0) setSponsors(data) })
+  }, [])
 
   // Cargar notificaciones sin leer
   useEffect(() => {
@@ -291,11 +303,20 @@ export default function Home() {
           Crear evento
         </Link>
 
-        {/* Ticker patrocinadores: elemento normal de página, se ve al llegar con scroll */}
+        {/* Ticker patrocinadores: elemento de página, se ve al llegar con scroll */}
         <div className="sponsors-ticker">
           <div className="sponsors-ticker__inner">
-            {Array.from({length: 30}).map((_, i) => (
-              <span key={i} className="sponsors-ticker__item">PATROCINADOR</span>
+            {(sponsors.length > 0
+              ? sponsors
+              : Array.from({length:4}).map((_,i) => ({ id:i, name:'PATROCINADOR', logo_url:null }))
+            ).flatMap((s,_,arr) => Array.from({length: Math.ceil(30/arr.length)}).map((__,r) => ({...s, _key:`${s.id}-${r}`})))
+             .map(s => (
+              <span key={s._key} className="sponsors-ticker__item">
+                {s.logo_url
+                  ? <img src={s.logo_url} alt={s.name} style={{ height:22, maxWidth:110, objectFit:'contain', verticalAlign:'middle', filter:'var(--sponsor-filter)' }} />
+                  : s.name
+                }
+              </span>
             ))}
           </div>
         </div>

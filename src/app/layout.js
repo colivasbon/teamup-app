@@ -64,27 +64,6 @@ function AppShell({ children }) {
         <OnboardingModal onComplete={() => setShowOnboarding(false)} />
       )}
 
-      {/* Carrusel patrocinadores — en el layout, fuera del page-wrap, 100% ancho */}
-      {/* Se muestra siempre aunque no haya patrocinadores (usa texto por defecto) */}
-      <div className="sponsors-ticker">
-        <div className="sponsors-ticker__inner">
-          {(sponsors.length > 0 ? sponsors : Array.from({length:4}).map((_,i)=>({id:i, name:'PATROCINADOR', logo_url:null, website_url:null})))
-            .flatMap((s, _, arr) => Array.from({length: REPEAT}).map((__, r) => ({...s, _key: `${s.id}-${r}`})))
-            .map(s => (
-              <span key={s._key} className="sponsors-ticker__item">
-                {s.logo_url ? (
-                  <img
-                    src={s.logo_url}
-                    alt={s.name}
-                    style={{ height:22, maxWidth:100, objectFit:'contain', verticalAlign:'middle', filter:'var(--sponsor-filter)' }}
-                  />
-                ) : s.name}
-              </span>
-            ))
-          }
-        </div>
-      </div>
-
     </div>
   )
 }
