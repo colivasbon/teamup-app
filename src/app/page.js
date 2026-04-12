@@ -284,7 +284,7 @@ export default function Home() {
           ))}
         </div>
 
-        <Link href="/create" className="btn btn-primary" style={{ display:'flex', width:'100%', fontSize:16, padding:'15px 24px', borderRadius:16, marginBottom:32, justifyContent:'center', gap:8 }}>
+        <Link href="/create" className="btn btn-primary" style={{ display:'flex', width:'100%', fontSize:16, padding:'15px 24px', borderRadius:16, marginBottom:12, justifyContent:'center', gap:8 }}>
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
           </svg>
