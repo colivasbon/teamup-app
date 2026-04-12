@@ -4,10 +4,15 @@ import './globals.css'
 import { useState, useEffect } from 'react'
 import { AuthProvider, useAuth } from '@/contexts/AuthContext'
 import OnboardingModal from '@/components/OnboardingModal'
+import { getSupabase } from '@/lib/supabase'
+
+// Número de repeticiones del carrusel para que el loop sea fluido
+const REPEAT = 6
 
 function AppShell({ children }) {
   const { user, profile } = useAuth()
   const [showOnboarding, setShowOnboarding] = useState(false)
+  const [sponsors, setSponsors] = useState([])
 
   useEffect(() => {
     if (!user) { setShowOnboarding(false); return }
@@ -15,6 +20,17 @@ function AppShell({ children }) {
     const needsOnboarding = profile !== null && (!profile?.location || !profile?.sports?.length)
     setShowOnboarding(needsOnboarding)
   }, [user, profile])
+
+  // Cargar patrocinadores desde Supabase
+  useEffect(() => {
+    const sb = getSupabase()
+    if (!sb) return
+    sb.from('sponsors')
+      .select('id, name, logo_url, website_url')
+      .eq('active', true)
+      .order('sort_order', { ascending: true })
+      .then(({ data }) => { if (data && data.length > 0) setSponsors(data) })
+  }, [])
 
   return (
     <div className="app-shell">
@@ -47,6 +63,27 @@ function AppShell({ children }) {
       {showOnboarding && user && (
         <OnboardingModal onComplete={() => setShowOnboarding(false)} />
       )}
+
+      {/* Carrusel patrocinadores — en el layout, fuera del page-wrap, 100% ancho */}
+      {/* Se muestra siempre aunque no haya patrocinadores (usa texto por defecto) */}
+      <div className="sponsors-ticker">
+        <div className="sponsors-ticker__inner">
+          {(sponsors.length > 0 ? sponsors : Array.from({length:4}).map((_,i)=>({id:i, name:'PATROCINADOR', logo_url:null, website_url:null})))
+            .flatMap((s, _, arr) => Array.from({length: REPEAT}).map((__, r) => ({...s, _key: `${s.id}-${r}`})))
+            .map(s => (
+              <span key={s._key} className="sponsors-ticker__item">
+                {s.logo_url ? (
+                  <img
+                    src={s.logo_url}
+                    alt={s.name}
+                    style={{ height:22, maxWidth:100, objectFit:'contain', verticalAlign:'middle', filter:'var(--sponsor-filter)' }}
+                  />
+                ) : s.name}
+              </span>
+            ))
+          }
+        </div>
+      </div>
 
     </div>
   )

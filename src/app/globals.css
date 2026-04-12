@@ -514,6 +514,10 @@ body.hide-slogan .slogan-bar {
   color: #1a2028;
 }
 
+/* Logos monocromo PNG: en oscuro blanco semitransparente, en claro negro semitransparente */
+:root { --sponsor-filter: brightness(10) opacity(0.35); }
+[data-theme="light"] { --sponsor-filter: brightness(0) opacity(0.55); }
+
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
