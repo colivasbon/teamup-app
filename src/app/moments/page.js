@@ -186,18 +186,32 @@ export default function Moments() {
   // ── Comments ─────────────────────────────────────────────
   const loadComments = async (momentId) => {
     const sb = getSupabase(); if (!sb) return
-    const { data } = await sb.from('moment_comments')
-      .select('id, text, created_at, user_id, profiles(full_name, username, avatar_url)')
+    // Query sin join para evitar bloqueos RLS — igual que fetchMoments
+    const { data: cData } = await sb.from('moment_comments')
+      .select('id, text, created_at, user_id')
       .eq('moment_id', momentId)
-      .order('created_at', {ascending:true})
-      .limit(20)
-    if (data) setComments(p => ({...p, [momentId]: data.map(c => ({
+      .order('created_at', { ascending: true })
+      .limit(50)
+    if (!cData || cData.length === 0) {
+      setComments(p => ({...p, [momentId]: []}))
+      return
+    }
+    // Perfiles aparte
+    const uids = [...new Set(cData.map(c => c.user_id))]
+    let pMap = {}
+    if (uids.length > 0) {
+      const { data: pData } = await sb.from('profiles')
+        .select('id, full_name, username, avatar_url')
+        .in('id', uids)
+      if (pData) pData.forEach(p => { pMap[p.id] = p })
+    }
+    setComments(p => ({...p, [momentId]: cData.map(c => ({
       id: c.id,
       text: c.text,
       created_at: c.created_at,
-      author: c.profiles?.full_name || 'Usuario',
-      username: c.profiles?.username,
-      avatar: c.profiles?.avatar_url,
+      author: pMap[c.user_id]?.full_name || 'Usuario',
+      username: pMap[c.user_id]?.username,
+      avatar: pMap[c.user_id]?.avatar_url,
       me: c.user_id === user?.id,
     }))}))
   }
