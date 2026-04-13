@@ -53,7 +53,7 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
 
 export default function PosterModal({ event, onClose }) {
   const canvasRef  = useRef(null)
-  const [mode, setMode]         = useState('poster') // 'poster' | 'qr'
+  const [mode, setMode]         = useState('qr') // 'qr' | 'poster'
   const [style, setStyle]       = useState('dark') // 'dark' | 'light' | 'sport'
   const [rendered, setRendered] = useState(false)
   const [downloading, setDown]  = useState(false)
@@ -180,26 +180,21 @@ export default function PosterModal({ event, onClose }) {
 
     // ── QR ──────────────────────────────────────────────────
     try {
-      const qrDataUrl = await QRCode.toDataURL(eventUrl, {
-        width: 340, margin: 2,
+      // Renderizar QR en canvas temporal y copiarlo al canvas principal
+      const qrCanvas = document.createElement('canvas')
+      await QRCode.toCanvas(qrCanvas, eventUrl, {
+        width: 440, margin: 2,
         color: {
           dark:  isDark ? '#f6eddc' : '#1a2028',
           light: isDark ? '#1a2028' : '#f6eddc',
         },
       })
-      const qrImg = new Image()
-      await new Promise((res, rej) => {
-        qrImg.onload = res
-        qrImg.onerror = rej
-        qrImg.src = qrDataUrl
-      })
-      // Caja del QR
       const qrX = W/2 - 220, qrY = H - 620
       ctx.fillStyle = isDark ? '#1a2028' : '#f0e8d8'
       roundRect(ctx, qrX - 24, qrY - 24, 488, 488, 28)
       ctx.fill()
-      ctx.drawImage(qrImg, qrX, qrY, 440, 440)
-    } catch(e) { /* QR falla silenciosamente */ }
+      ctx.drawImage(qrCanvas, qrX, qrY, 440, 440)
+    } catch(e) { console.error('QR error:', e) }
 
     // ── Call to action ──────────────────────────────────────
     ctx.font = 'bold 32px system-ui, -apple-system, sans-serif'
@@ -312,18 +307,19 @@ export default function PosterModal({ event, onClose }) {
         }}>✕</button>
       </div>
 
-      {/* Toggle: Póster completo / Solo QR */}
+      {/* Toggle: Solo QR / Póster completo */}
       <div style={{
         display:'flex', gap:0, background:'rgba(255,255,255,0.08)',
         border:'1px solid rgba(255,255,255,0.15)', borderRadius:14,
         overflow:'hidden', marginBottom:14, width:'100%', maxWidth:480,
+        marginTop:4,
       }}>
         {[
+          { id:'qr',     label:'▢ Solo QR' },
           { id:'poster', label:'🖼 Póster completo' },
-          { id:'qr',     label:'◻ Solo QR' },
         ].map(m => (
           <button key={m.id} onClick={() => setMode(m.id)} style={{
-            flex:1, padding:'12px 0', border:'none', cursor:'pointer',
+            flex:1, padding:'13px 0', border:'none', cursor:'pointer',
             fontFamily:'inherit', fontSize:13, fontWeight:700,
             background: mode===m.id ? 'rgba(255,255,255,0.18)' : 'transparent',
             color: mode===m.id ? '#f6eddc' : 'rgba(246,237,220,0.45)',

@@ -150,7 +150,16 @@ export default function Moments() {
 
   useEffect(() => {
     fetchMoments(true)
-    pollRef.current = setInterval(() => fetchMoments(false), 15000)
+    pollRef.current = setInterval(async () => {
+      await fetchMoments(false)
+      // Recargar comentarios de los momentos que estén abiertos
+      setOpenComments(prev => {
+        Object.keys(prev).forEach(mid => {
+          if (prev[mid]) loadComments(mid)
+        })
+        return prev
+      })
+    }, 15000)
     return () => { if (pollRef.current) clearInterval(pollRef.current) }
   }, [fetchMoments])
 
