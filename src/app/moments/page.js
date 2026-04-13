@@ -64,8 +64,9 @@ export default function Moments() {
 
   // Comments
   const [openComments, setOpenComments] = useState({})
-  const [comments,     setComments]     = useState({})
-  const [commentText,  setCommentText]  = useState({})
+  const [comments,      setComments]      = useState({})
+  const [commentCounts, setCommentCounts] = useState({}) // conteo desde BD sin cargar el detalle
+  const [commentText,   setCommentText]   = useState({})
 
   // Detectar provincia del perfil
   useEffect(() => {
@@ -122,6 +123,14 @@ export default function Moments() {
         counts[l.moment_id] = (counts[l.moment_id] || 0) + 1
         if (l.user_id === user?.id) myL[l.moment_id] = true
       }
+
+      // Conteo de comentarios aparte — para mostrar el número aunque no se hayan cargado
+      const { data: cData } = await sb.from('moment_comments').select('moment_id').in('moment_id', mids)
+      const cCounts = {}
+      for (const c of (cData || [])) {
+        cCounts[c.moment_id] = (cCounts[c.moment_id] || 0) + 1
+      }
+      setCommentCounts(cCounts)
 
       setMoments(mData.map(m => ({
         id: m.id, user_id: m.user_id,
@@ -212,6 +221,7 @@ export default function Moments() {
         me: true,
       }
       setComments(p => ({...p, [momentId]: [...(p[momentId]||[]), newComment]}))
+      setCommentCounts(p => ({...p, [momentId]: (p[momentId]||0) + 1}))
     }
   }
 
@@ -449,7 +459,10 @@ export default function Moments() {
                       fontFamily:'inherit',
                     }}>
                       <span style={{fontSize:16}}>💬</span>
-                      {comments[m.id]?.length > 0 ? comments[m.id].length : ''}
+                      {/* Mostrar conteo real si hay comentarios cargados, si no el conteo de BD */}
+                      {comments[m.id]?.length > 0
+                        ? comments[m.id].length
+                        : (commentCounts[m.id] || '')}
                     </button>
                     {m.event_id && (
                       <Link href={`/events/${m.event_id}`} style={{
