@@ -451,7 +451,9 @@ export default function Moments() {
                     <button onClick={() => {
                       const isOpen = openComments[m.id]
                       setOpenComments(p => ({...p, [m.id]: !isOpen}))
-                      if (!isOpen && !comments[m.id]) loadComments(m.id)
+                      // Cargar si se abre y no hay comentarios reales ya cargados
+                      const hasRealComments = comments[m.id]?.some(c => c?.text)
+                      if (!isOpen && !hasRealComments) loadComments(m.id)
                     }} style={{
                       background:'none', border:'none', cursor:'pointer', padding:0,
                       display:'flex', alignItems:'center', gap:5, fontSize:13, fontWeight:600,
