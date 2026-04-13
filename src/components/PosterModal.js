@@ -119,7 +119,8 @@ export default function PosterModal({ event, onClose }) {
 
     // ── Logo texto ─────────────────────────────────────────
     ctx.font = 'bold 52px system-ui, -apple-system, sans-serif'
-    ctx.fillStyle = accent
+    // En modo color el fondo es el accent — el texto va siempre en blanco
+    ctx.fillStyle = style === 'sport' ? '#ffffff' : accent
     ctx.fillText('TEAM UP', 80, 110)
 
     ctx.font = '28px system-ui, -apple-system, sans-serif'
@@ -328,17 +329,17 @@ export default function PosterModal({ event, onClose }) {
         ))}
       </div>
 
-      {/* Selector de estilo */}
+      {/* Selector de estilo — en Solo QR solo Oscuro/Claro; en Póster también Color */}
       <div style={{
         display:'flex', gap:8, marginBottom:20, width:'100%', maxWidth:480,
       }}>
-        {[
-          { id:'dark',  label:'Oscuro' },
-          { id:'light', label:'Claro'  },
-          { id:'sport', label:'Color'  },
-        ].map(s => (
+        {(mode === 'qr'
+          ? [{ id:'dark', label:'Oscuro' }, { id:'light', label:'Claro' }]
+          : [{ id:'dark', label:'Oscuro' }, { id:'light', label:'Claro' }, { id:'sport', label:'Color' }]
+        ).map(s => (
           <button key={s.id} onClick={() => setStyle(s.id)} style={{
-            flex:1, padding:'10px 0', border: style===s.id ? `2px solid ${SPORT_COLORS[event?.sport]||'#586875'}` : '2px solid rgba(255,255,255,0.15)',
+            flex:1, padding:'10px 0',
+            border: style===s.id ? `2px solid ${SPORT_COLORS[event?.sport]||'#586875'}` : '2px solid rgba(255,255,255,0.15)',
             borderRadius:12, background: style===s.id ? 'rgba(255,255,255,0.12)' : 'transparent',
             color: style===s.id ? '#f6eddc' : 'rgba(246,237,220,0.5)',
             fontWeight:700, fontSize:13, cursor:'pointer', fontFamily:'inherit',
@@ -347,9 +348,11 @@ export default function PosterModal({ event, onClose }) {
         ))}
       </div>
 
-      {/* Preview del póster */}
+      {/* Preview del póster — scroll si es el póster completo (1080×1920) */}
       <div style={{
-        width:'100%', maxWidth:480, borderRadius:20, overflow:'hidden',
+        width:'100%', maxWidth:480, borderRadius:20,
+        overflow: mode === 'poster' ? 'auto' : 'hidden',
+        maxHeight: mode === 'poster' ? 520 : 'none',
         boxShadow:'0 24px 60px rgba(0,0,0,0.6)',
       }}>
         <canvas ref={canvasRef} style={{ width:'100%', display:'block' }} />
