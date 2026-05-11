@@ -155,7 +155,7 @@ export default function Create() {
 
         {/* ── PASO 0: Deporte ── */}
         {step===0 && (
-          <div className="anim-1" style={{ paddingBottom:40 }}>
+          <div className="anim-1" style={{ paddingBottom:110 }}>
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginBottom:24 }}>
               {SPORTS.map(s=>(
                 <button key={s.id} onClick={()=>set('sport',s.id)} style={{
@@ -464,7 +464,7 @@ export default function Create() {
 
         {/* ── PASO 1: Detalles ── */}
         {step===1 && (
-          <div className="anim-1" style={{ display:'flex', flexDirection:'column', gap:16, paddingBottom:40 }}>
+          <div className="anim-1" style={{ display:'flex', flexDirection:'column', gap:16, paddingBottom:110 }}>
             <div>
               <label className="label" style={{ marginBottom:8 }}>Título del evento</label>
               <input className="input" type="text"
@@ -578,7 +578,7 @@ export default function Create() {
 
         {/* ── PASO 2: Confirmar ── */}
         {step===2 && (
-          <div className="anim-1" style={{ paddingBottom:40 }}>
+          <div className="anim-1" style={{ paddingBottom:110 }}>
             {!user && (
               <div style={{ background:'rgba(88,104,117,0.10)', border:'1px solid rgba(88,104,117,0.25)', borderRadius:14, padding:'16px 18px', marginBottom:16, textAlign:'center' }}>
                 <div style={{ fontSize:14, fontWeight:600, color:'var(--text)', marginBottom:8 }}>Necesitas iniciar sesión para publicar</div>

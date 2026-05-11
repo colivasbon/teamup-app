@@ -366,7 +366,7 @@ export default function TournamentDetail() {
           ))}
         </div>
 
-        <div className="page-wrap" style={{ paddingTop:20 }}>
+        <div className="page-wrap" style={{ paddingTop:20, paddingBottom:110 }}>
 
           {/* ── TAB INFO ── */}
           {tab === 'Info' && (

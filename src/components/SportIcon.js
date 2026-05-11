@@ -68,9 +68,9 @@ export function getSportEmoji(sport, toneId = 'default') {
 }
 
 export const SPORT_COLORS = {
-  running:'#5b6ef5', padel:'#06d6a0', senderismo:'#f59e0b', futbol:'#ef4444',
+  running:'#5b6ef5', padel:'#2d9e7a', senderismo:'#f59e0b', futbol:'#ef4444',
   gimnasio:'#8b5cf6', tenis:'#fbbf24', natacion:'#0ea5e9', ciclismo:'#f97316',
-  yoga:'#ec4899', baloncesto:'#f59e0b', voleibol:'#06d6a0', badminton:'#8b5cf6',
+  yoga:'#ec4899', baloncesto:'#f59e0b', voleibol:'#1a8c6e', badminton:'#8b5cf6',
 }
 
 export const SPORT_LABELS = {
