@@ -30,7 +30,7 @@ export default function PrivacyPolicy() {
           },
           {
             title: '3. Finalidad del tratamiento',
-            content: `Los datos personales se tratan para las siguientes finalidades:\n\n— Gestión del registro y la autenticación de usuarios.\n— Prestación del servicio: permitir la creación y participación en eventos y torneos deportivos, la publicación de momentos y la comunicación entre usuarios.\n— Mejora del servicio y corrección de errores técnicos.\n— Envío de comunicaciones relacionadas con la actividad del usuario dentro de la plataforma (notificaciones de eventos, mensajes de chat, respuestas a comentarios), siempre que el usuario no haya revocado su consentimiento.\n— Envío de comunicaciones comerciales o promocionales, únicamente si el usuario ha otorgado su consentimiento expreso en el momento del registro.`,
+            content: `Los datos personales se tratan para las siguientes finalidades:\n\n— Gestión del registro y la autenticación de usuarios.\n— Prestación del servicio: permitir la creación y participación en eventos y torneos deportivos, la publicación de momentos y la comunicación entre usuarios.\n— Mejora del servicio y corrección de errores técnicos.\n— Envío de comunicaciones relacionadas con la actividad del usuario dentro de la plataforma (notificaciones de eventos, mensajes de chat, respuestas a comentarios), siempre que el usuario haya dado su consentimiento y mientras no lo revoque.\n— Envío de comunicaciones comerciales o promocionales, únicamente si el usuario ha otorgado su consentimiento expreso en el momento del registro.`,
           },
           {
             title: '4. Base jurídica del tratamiento',

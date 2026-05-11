@@ -213,6 +213,17 @@ export default function Auth() {
               {/* Casillas legales — solo en registro, nunca premarcadas */}
               {mode === 'register' && (
                 <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+
+                  {/* Resumen de política de privacidad */}
+                  <div style={{
+                    background:'var(--surface)', border:'1px solid var(--border)',
+                    borderRadius:12, padding:'12px 14px', fontSize:12,
+                    color:'var(--muted)', lineHeight:1.6,
+                  }}>
+                    <div style={{ fontWeight:700, color:'var(--text)', marginBottom:4, fontSize:12 }}>Información básica sobre protección de datos</div>
+                    <div><strong>Responsable:</strong> Carlos Olivas &middot; <strong>Finalidad:</strong> Gestión de tu cuenta y prestación del servicio TeamUp &middot; <strong>Legitimación:</strong> Ejecución de contrato y consentimiento &middot; <strong>Derechos:</strong> Acceso, rectificación, supresión y oposición dirigiéndote a <a href="mailto:colivasbon@gmail.com" style={{ color:'var(--primary)' }}>colivasbon@gmail.com</a> &middot; <strong>Información adicional:</strong>{' '}
+                    <a href="/privacy" target="_blank" rel="noopener noreferrer" style={{ color:'var(--primary)', fontWeight:600 }}>Política de Privacidad completa</a>.</div>
+                  </div>
                   {/* Obligatoria: política de privacidad */}
                   <label style={{ display:'flex', alignItems:'flex-start', gap:10, cursor:'pointer' }}>
                     <input

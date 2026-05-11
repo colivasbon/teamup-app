@@ -120,10 +120,20 @@ export default function TournamentDetail() {
   // Cuadro — categoría activa
   const [bracketCat,   setBracketCat]   = useState(null)
 
-  const isCreator = user && tournament?.creator_id === user.id
-  const isOpen    = tournament?.status === 'open'
-  const pairMode  = tournament?.pair_mode
-  const cats      = tournament?.categories || []
+  const isCreator    = user && tournament?.creator_id === user.id
+  const isOpen       = tournament?.status === 'open'
+  const pairMode     = tournament?.pair_mode
+  const cats         = tournament?.categories || []
+
+  // RGPD: cuadro visible 12h antes del inicio (creador lo ve siempre)
+  const bracketVisible = (() => {
+    if (!tournament) return false
+    if (isCreator) return true
+    if (!tournament.date || !tournament.time) return false
+    const start = new Date(`${tournament.date}T${tournament.time}`)
+    const hoursUntil = (start - new Date()) / (1000 * 60 * 60)
+    return hoursUntil <= 12
+  })()
   const hasCats   = cats.length > 0
 
   // Carga datos
@@ -545,6 +555,7 @@ export default function TournamentDetail() {
             // Cuadro provisional: si no hay bracket guardado pero hay inscritos,
             // el organizador ve cómo quedaría con los inscritos actuales
             const previewBracket = (() => {
+              if (!bracketVisible) return [] // RGPD: oculto hasta 12h antes
               if (activeBracket.length > 0) return activeBracket
               if (!isCreator) return []
               const key = bracketCat || '_all'
@@ -585,10 +596,12 @@ export default function TournamentDetail() {
                 <div className="card" style={{ padding:'40px 24px', textAlign:'center' }}>
                   <div style={{ fontSize:40, marginBottom:12 }}>🔒</div>
                   <div style={{ fontWeight:700, fontSize:15, marginBottom:8 }}>
-                    {isCreator ? 'Sin inscritos suficientes' : 'Cuadro no disponible aún'}
+                    {!bracketVisible ? 'Cuadro no disponible aún' : isCreator ? 'Sin inscritos suficientes' : 'Cuadro no disponible aún'}
                   </div>
                   <p style={{ fontSize:13, color:'var(--muted)', lineHeight:1.6 }}>
-                    {isCreator
+                    {!bracketVisible
+                      ? 'El cuadro de emparejamientos se publicará 12 horas antes del inicio del torneo.'
+                      : isCreator
                       ? 'Necesitas al menos 2 inscritos en esta categoría para ver el cuadro provisional.'
                       : 'El cuadro se genera cuando el organizador cierra las inscripciones.'}
                   </p>
@@ -650,7 +663,17 @@ export default function TournamentDetail() {
                 </div>
               )}
 
-              {(() => {
+              {/* RGPD: nombres solo visibles para el creador y los participantes inscritos */}
+              {!isCreator && !joined ? (
+                <div className="card" style={{ padding:'28px 20px', textAlign:'center' }}>
+                  <div style={{ fontSize:36, marginBottom:10 }}>🔒</div>
+                  <div style={{ fontWeight:700, fontSize:14, marginBottom:6 }}>Lista de participantes privada</div>
+                  <p style={{ fontSize:13, color:'var(--muted)', lineHeight:1.6, marginBottom:4 }}>
+                    {participants.length} {pairMode ? 'pareja' : 'participante'}{participants.length !== 1 ? 's' : ''} inscrito{participants.length !== 1 ? 's' : ''}.
+                    Los nombres son visibles solo para los participantes del torneo.
+                  </p>
+                </div>
+              ) : (() => {
                 const filtered = bracketCat && hasCats
                   ? participants.filter(p => p.category_id === bracketCat)
                   : participants

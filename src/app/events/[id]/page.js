@@ -661,15 +661,37 @@ function EventDetailInner() {
           <div style={{ padding:'16px 18px 0', display:'flex', flexDirection:'column', gap:10 }}>
             <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:4 }}>
               <span style={{ fontSize:13, color:'var(--muted)' }}>{pCount} persona{pCount!==1?'s':''} apuntada{pCount!==1?'s':''}</span>
-              {!joined && user && <span style={{ fontSize:12, color:c, fontWeight:600 }}>Únete para ver más</span>}
             </div>
-            {participants.length === 0 ? (
+
+            {/* Principio de minimización RGPD: nombres solo visibles para participantes del evento */}
+            {!joined ? (
+              <div className="card" style={{ padding:'28px 20px', textAlign:'center' }}>
+                <div style={{ fontSize:36, marginBottom:10 }}>🔒</div>
+                <div style={{ fontWeight:700, fontSize:14, marginBottom:6 }}>Lista de participantes privada</div>
+                <div style={{ fontSize:13, color:'var(--muted)', lineHeight:1.6, marginBottom:16 }}>
+                  Los nombres de los participantes solo son visibles para quienes se han unido al evento.
+                </div>
+                {user ? (
+                  <button className="btn btn-primary" style={{ fontSize:13, padding:'10px 20px' }} onClick={async () => {
+                    setJoining(true)
+                    const sb = getSupabase()
+                    if (sb) {
+                      const { error } = await sb.from('event_participants').insert({ event_id:id, user_id:user.id, status:'joined' })
+                      if (!error) { setJoined(true); setPCount(p => p+1) }
+                    }
+                    setJoining(false)
+                  }} disabled={joining}>✓ Unirme para ver la lista</button>
+                ) : (
+                  <a href="/auth" className="btn btn-primary" style={{ display:'block', textAlign:'center', textDecoration:'none' }}>Entra para ver la lista</a>
+                )}
+              </div>
+            ) : participants.length === 0 ? (
               <div className="card" style={{ padding:'28px 20px', textAlign:'center' }}>
                 <div style={{ fontSize:36, marginBottom:8 }}>👥</div>
                 <div style={{ fontSize:14, color:'var(--muted)' }}>Sé el primero en apuntarte</div>
               </div>
             ) : (
-              participants.slice(0, joined ? undefined : 3).map((p, i) => (
+              participants.map((p, i) => (
                 <a key={p.id} href={`/profile/${p.id}`} className={`card anim-${(i%6)+1}`}
                   style={{ padding:'12px 16px', display:'flex', alignItems:'center', gap:12, textDecoration:'none' }}>
                   <div style={{ width:42, height:42, borderRadius:'50%', overflow:'hidden', flexShrink:0, background:`${c}20`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:20 }}>
