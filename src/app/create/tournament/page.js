@@ -9,21 +9,21 @@ import { useAuth } from '@/contexts/AuthContext'
 import { SPORT_COLORS } from '@/components/SportIcon'
 
 const SPORTS = [
-  { id:'padel',      label:'Pádel',      icon:'🎾', pairs:true  },
-  { id:'tenis',      label:'Tenis',      icon:'🎾', pairs:true  },
-  { id:'badminton',  label:'Bádminton',  icon:'🏸', pairs:true  },
-  { id:'voleibol',   label:'Voleibol',   icon:'🏐', pairs:false },
-  { id:'futbol',     label:'Fútbol',     icon:'⚽', pairs:false },
-  { id:'baloncesto', label:'Baloncesto', icon:'🏀', pairs:false },
-  { id:'running',    label:'Running',    icon:'🏃', pairs:false },
-  { id:'natacion',   label:'Natación',   icon:'🏊', pairs:false },
-  { id:'ciclismo',   label:'Ciclismo',   icon:'🚴', pairs:false },
-  { id:'senderismo', label:'Senderismo', icon:'🥾', pairs:false },
-  { id:'yoga',       label:'Yoga',       icon:'🧘', pairs:false },
-  { id:'gimnasio',   label:'Gimnasio',   icon:'💪', pairs:false },
-  { id:'escalada',   label:'Escalada',   icon:'🧗', pairs:false },
-  { id:'surf',       label:'Surf',       icon:'🏄', pairs:false },
-  { id:'esgrima',    label:'Esgrima',    icon:'🤺', pairs:false },
+  { id:'padel',      label:'Pádel',      icon:'🎾' },
+  { id:'tenis',      label:'Tenis',      icon:'🎾' },
+  { id:'badminton',  label:'Bádminton',  icon:'🏸' },
+  { id:'voleibol',   label:'Voleibol',   icon:'🏐' },
+  { id:'futbol',     label:'Fútbol',     icon:'⚽' },
+  { id:'baloncesto', label:'Baloncesto', icon:'🏀' },
+  { id:'running',    label:'Running',    icon:'🏃' },
+  { id:'natacion',   label:'Natación',   icon:'🏊' },
+  { id:'ciclismo',   label:'Ciclismo',   icon:'🚴' },
+  { id:'senderismo', label:'Senderismo', icon:'🥾' },
+  { id:'yoga',       label:'Yoga',       icon:'🧘' },
+  { id:'gimnasio',   label:'Gimnasio',   icon:'💪' },
+  { id:'escalada',   label:'Escalada',   icon:'🧗' },
+  { id:'surf',       label:'Surf',       icon:'🏄' },
+  { id:'esgrima',    label:'Esgrima',    icon:'🤺' },
 ]
 
 const FORMATS = [
@@ -31,29 +31,54 @@ const FORMATS = [
   { id:'groups',             label:'Fase de grupos + eliminatoria', desc:'Primero grupos, luego los mejores pasan a llaves.' },
 ]
 
+const PROVINCES = [
+  'Álava','Albacete','Alicante','Almería','Asturias','Ávila','Badajoz','Barcelona',
+  'Burgos','Cáceres','Cádiz','Cantabria','Castellón','Ciudad Real','Córdoba',
+  'Cuenca','Girona','Granada','Guadalajara','Guipúzcoa','Huelva','Huesca',
+  'Islas Baleares','Jaén','La Coruña','La Rioja','Las Palmas','León','Lleida',
+  'Lugo','Madrid','Málaga','Murcia','Navarra','Ourense','Palencia','Pontevedra',
+  'Salamanca','Santa Cruz de Tenerife','Segovia','Sevilla','Soria','Tarragona',
+  'Teruel','Toledo','Valencia','Valladolid','Vizcaya','Zamora','Zaragoza',
+]
+
 export default function CreateTournament() {
   const router  = useRouter()
   const { user, profile } = useAuth()
 
-  const [step,    setStep]    = useState(1) // 1: deporte, 2: detalles, 3: confirmar
+  const [step,    setStep]    = useState(1) // 1: deporte, 2: detalles, 3: categorías, 4: confirmar
   const [loading, setLoading] = useState(false)
   const [error,   setError]   = useState('')
 
   const [form, setForm] = useState({
-    sport:      '',
-    title:      '',
-    description:'',
-    location:   '',
-    date:       '',
-    time:       '',
-    price:      'Gratis',
-    format:     'single_elimination',
-    pair_mode:  true,
-    max_pairs:  8,
+    sport:             '',
+    title:             '',
+    description:       '',
+    location:          '',
+    province:          '',
+    date:              '',
+    time:              '',
+    price:             'Gratis',
+    format:            'single_elimination',
+    pair_mode:         true,
+    max_pairs:         8,
+    prize_enabled:     false,
+    prize_description: '',
   })
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }))
 
-  // Solo cuentas business pueden crear torneos
+  // Categorías — array de {id, name}
+  const [categories, setCategories] = useState([])
+  const [catInput,   setCatInput]   = useState('')
+
+  const addCategory = () => {
+    const name = catInput.trim()
+    if (!name || categories.length >= 5) return
+    setCategories(prev => [...prev, { id: `cat${Date.now()}`, name }])
+    setCatInput('')
+  }
+  const removeCategory = (id) => setCategories(prev => prev.filter(c => c.id !== id))
+
+  // Solo cuentas business
   if (user && profile && profile.account_type !== 'business') {
     return (
       <>
@@ -62,7 +87,7 @@ export default function CreateTournament() {
             <div style={{ fontSize:48, marginBottom:16 }}>🏆</div>
             <h2 style={{ fontWeight:800, fontSize:18, marginBottom:10 }}>Solo para clubs y negocios</h2>
             <p style={{ fontSize:14, color:'var(--muted)', lineHeight:1.6, marginBottom:20 }}>
-              La creación de torneos está disponible para perfiles de empresa verificados. Si gestionas un club o negocio deportivo, contáctanos para activar tu cuenta.
+              La creación de torneos está disponible para perfiles de empresa verificados.
             </p>
             <a href="mailto:colivasbon@gmail.com?subject=TeamUp%20%E2%80%94%20Solicitud%20perfil%20empresa"
               className="btn btn-primary" style={{ display:'block', textAlign:'center' }}>
@@ -82,32 +107,34 @@ export default function CreateTournament() {
   const accent = SPORT_COLORS[form.sport] || '#586875'
 
   const handleSubmit = async () => {
-    if (!form.title.trim())    { setError('Añade un título al torneo'); return }
-    if (!form.location.trim()) { setError('Indica el lugar'); return }
-    if (!form.date)            { setError('Selecciona una fecha'); return }
-
     setLoading(true); setError('')
     const sb = getSupabase()
     if (!sb) { setError('Error de conexión'); setLoading(false); return }
 
     const { data, error: err } = await sb.from('tournaments').insert({
-      creator_id:  user.id,
-      title:       form.title.trim(),
-      description: form.description.trim() || null,
-      sport:       form.sport,
-      location:    form.location.trim(),
-      date:        form.date,
-      time:        form.time || null,
-      price:       form.price.trim() || 'Gratis',
-      format:      form.format,
-      pair_mode:   form.pair_mode,
-      max_pairs:   form.max_pairs,
-      status:      'open',
+      creator_id:        user.id,
+      title:             form.title.trim(),
+      description:       form.description.trim() || null,
+      sport:             form.sport,
+      location:          form.location.trim(),
+      province:          form.province || null,
+      date:              form.date,
+      time:              form.time || null,
+      price:             form.price.trim() || 'Gratis',
+      format:            form.format,
+      pair_mode:         form.pair_mode,
+      max_pairs:         form.max_pairs,
+      prize_enabled:     form.prize_enabled,
+      prize_description: form.prize_enabled ? form.prize_description.trim() : null,
+      categories:        categories.length > 0 ? categories : [],
+      status:            'open',
     }).select().single()
 
     if (err) { setError(err.message); setLoading(false); return }
     router.push(`/tournaments/${data.id}`)
   }
+
+  const STEPS = ['Deporte','Detalles','Categorías','Confirmar']
 
   return (
     <>
@@ -124,7 +151,7 @@ export default function CreateTournament() {
 
         {/* Pasos */}
         <div style={{ display:'flex', gap:0, marginBottom:28 }}>
-          {['Deporte','Detalles','Confirmar'].map((s,i) => (
+          {STEPS.map((s,i) => (
             <div key={s} style={{ flex:1, textAlign:'center' }}>
               <div style={{
                 height:3,
@@ -132,7 +159,7 @@ export default function CreateTournament() {
                 borderRadius:2, marginBottom:4,
                 opacity: step === i+1 ? 1 : step > i ? 0.6 : 0.3,
               }}/>
-              <span style={{ fontSize:11, color: step === i+1 ? 'var(--text)' : 'var(--muted)', fontWeight: step === i+1 ? 700 : 400 }}>{s}</span>
+              <span style={{ fontSize:10, color: step === i+1 ? 'var(--text)' : 'var(--muted)', fontWeight: step === i+1 ? 700 : 400 }}>{s}</span>
             </div>
           ))}
         </div>
@@ -143,34 +170,33 @@ export default function CreateTournament() {
           </div>
         )}
 
-        {/* Paso 1: Deporte */}
+        {/* ── PASO 1: Deporte ── */}
         {step === 1 && (
           <div className="anim-1">
             <p className="label" style={{ marginBottom:14 }}>¿Qué deporte?</p>
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:10, paddingBottom:8 }}>
               {SPORTS.map(s => (
-                <button key={s.id} onClick={() => { set('sport', s.id) }}
+                <button key={s.id} onClick={() => set('sport', s.id)}
                   style={{
-                    padding:'14px 8px', borderRadius:16, border: form.sport===s.id ? `2px solid ${SPORT_COLORS[s.id]||'#586875'}` : '1.5px solid var(--border)',
+                    padding:'14px 8px', borderRadius:16,
+                    border: form.sport===s.id ? `2px solid ${SPORT_COLORS[s.id]||'#586875'}` : '1.5px solid var(--border)',
                     background: form.sport===s.id ? `${SPORT_COLORS[s.id]||'#586875'}15` : 'var(--surface)',
                     cursor:'pointer', fontFamily:'inherit', textAlign:'center',
                     display:'flex', flexDirection:'column', alignItems:'center', gap:6,
                   }}>
                   <span style={{ fontSize:26 }}>{s.icon}</span>
                   <span style={{ fontSize:12, fontWeight:700, color:'var(--text)' }}>{s.label}</span>
-                  {s.pairs && <span style={{ fontSize:10, color:'var(--muted)' }}>por parejas</span>}
                 </button>
               ))}
             </div>
-            <button
-              onClick={() => { if (!form.sport) { setError('Selecciona un deporte'); return } setError(''); setStep(2) }}
+            <button onClick={() => { if (!form.sport) { setError('Selecciona un deporte'); return } setError(''); setStep(2) }}
               className="btn btn-primary" style={{ width:'100%', marginTop:24 }}>
               Siguiente →
             </button>
           </div>
         )}
 
-        {/* Paso 2: Detalles */}
+        {/* ── PASO 2: Detalles ── */}
         {step === 2 && (
           <div className="anim-1" style={{ display:'flex', flexDirection:'column', gap:16 }}>
 
@@ -184,7 +210,7 @@ export default function CreateTournament() {
             <div>
               <label className="label" style={{ marginBottom:8 }}>Descripción (opcional)</label>
               <textarea className="input" rows={3}
-                placeholder="Información adicional, premios, patrocinadores..."
+                placeholder="Información adicional, patrocinadores, reglas especiales..."
                 value={form.description} onChange={e => set('description', e.target.value)}
                 style={{ resize:'none', lineHeight:1.5 }} />
             </div>
@@ -207,12 +233,50 @@ export default function CreateTournament() {
             </div>
 
             <div>
+              <label className="label" style={{ marginBottom:8 }}>Provincia</label>
+              <select className="input" value={form.province} onChange={e => set('province', e.target.value)}>
+                <option value="">Selecciona provincia</option>
+                {PROVINCES.map(p => <option key={p} value={p.toLowerCase()}>{p}</option>)}
+              </select>
+            </div>
+
+            <div>
               <label className="label" style={{ marginBottom:8 }}>Precio de inscripción</label>
               <input className="input" type="text" placeholder="Gratis / 10€ por pareja / ..."
                 value={form.price} onChange={e => set('price', e.target.value)} />
             </div>
 
-            {/* Modalidad de inscripción */}
+            {/* Premio */}
+            <div className="card" style={{ padding:'16px' }}>
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom: form.prize_enabled ? 12 : 0 }}>
+                <div>
+                  <div style={{ fontWeight:700, fontSize:14 }}>🏅 ¿Hay premio?</div>
+                  <div style={{ fontSize:12, color:'var(--muted)' }}>Trofeo, dinero, productos...</div>
+                </div>
+                <button onClick={() => set('prize_enabled', !form.prize_enabled)}
+                  style={{
+                    width:44, height:24, borderRadius:12, border:'none', cursor:'pointer',
+                    background: form.prize_enabled ? accent : 'var(--border)',
+                    position:'relative', transition:'background 0.2s ease',
+                  }}>
+                  <div style={{
+                    width:18, height:18, borderRadius:'50%', background:'white',
+                    position:'absolute', top:3,
+                    left: form.prize_enabled ? 23 : 3,
+                    transition:'left 0.2s ease',
+                    boxShadow:'0 1px 3px rgba(0,0,0,0.2)',
+                  }}/>
+                </button>
+              </div>
+              {form.prize_enabled && (
+                <input className="input" type="text"
+                  placeholder="Ej: Trofeo + 200€ al ganador, jamón ibérico..."
+                  value={form.prize_description}
+                  onChange={e => set('prize_description', e.target.value)} />
+              )}
+            </div>
+
+            {/* Modalidad */}
             <div>
               <label className="label" style={{ marginBottom:10 }}>Modalidad de inscripción</label>
               <div style={{ display:'flex', gap:0, background:'var(--surface)', border:'1px solid var(--border)', borderRadius:14, overflow:'hidden' }}>
@@ -233,6 +297,7 @@ export default function CreateTournament() {
               </div>
             </div>
 
+            {/* Formato */}
             <div>
               <label className="label" style={{ marginBottom:10 }}>Formato</label>
               <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
@@ -250,9 +315,10 @@ export default function CreateTournament() {
               </div>
             </div>
 
+            {/* Máximo */}
             <div>
               <label className="label" style={{ marginBottom:10 }}>
-                {selectedSport?.pairs ? 'Máximo de parejas' : 'Máximo de participantes'}
+                {form.pair_mode ? 'Máximo de parejas por categoría' : 'Máximo de participantes por categoría'}
               </label>
               <div style={{ display:'flex', gap:8 }}>
                 {[4,8,16,32].map(n => (
@@ -274,13 +340,78 @@ export default function CreateTournament() {
                 if (!form.location.trim()) { setError('Indica el lugar'); return }
                 if (!form.date)            { setError('Selecciona una fecha'); return }
                 setError(''); setStep(3)
-              }} className="btn btn-primary" style={{ flex:2 }}>Ver resumen →</button>
+              }} className="btn btn-primary" style={{ flex:2 }}>Categorías →</button>
             </div>
           </div>
         )}
 
-        {/* Paso 3: Confirmar */}
+        {/* ── PASO 3: Categorías ── */}
         {step === 3 && (
+          <div className="anim-1" style={{ display:'flex', flexDirection:'column', gap:16 }}>
+
+            <div className="card" style={{ padding:'16px 18px', background:`${accent}08`, border:`1px solid ${accent}30` }}>
+              <div style={{ fontWeight:700, fontSize:14, marginBottom:4 }}>¿Cómo funcionan las categorías?</div>
+              <p style={{ fontSize:13, color:'var(--muted)', lineHeight:1.55, margin:0 }}>
+                Cada categoría es un grupo independiente con su propio cuadro de llaves. Los participantes eligen su categoría al inscribirse. Puedes crear hasta 5 categorías con el nombre que quieras: "Nivel 1", "Amateur", "Sub-18", "Senior"...
+              </p>
+            </div>
+
+            {/* Añadir categoría */}
+            <div>
+              <label className="label" style={{ marginBottom:8 }}>
+                Categorías del torneo {categories.length > 0 ? `(${categories.length}/5)` : '(opcional — sin categorías = tablón único)'}
+              </label>
+              <div style={{ display:'flex', gap:8 }}>
+                <input className="input" style={{ flex:1 }}
+                  placeholder='Ej: "Nivel 1", "Amateur", "Sub-18"...'
+                  value={catInput}
+                  onChange={e => setCatInput(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && addCategory()}
+                  maxLength={30} />
+                <button onClick={addCategory} disabled={!catInput.trim() || categories.length >= 5}
+                  className="btn btn-primary" style={{ padding:'0 16px', flexShrink:0, background: accent }}>
+                  + Añadir
+                </button>
+              </div>
+            </div>
+
+            {/* Lista de categorías */}
+            {categories.length > 0 && (
+              <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
+                {categories.map((cat, i) => (
+                  <div key={cat.id} className="card" style={{ padding:'12px 16px', display:'flex', alignItems:'center', gap:12 }}>
+                    <div style={{ width:26, height:26, borderRadius:'50%', background:`${accent}20`,
+                      display:'flex', alignItems:'center', justifyContent:'center',
+                      fontSize:12, fontWeight:800, color: accent, flexShrink:0 }}>
+                      {i+1}
+                    </div>
+                    <span style={{ flex:1, fontWeight:700, fontSize:14 }}>{cat.name}</span>
+                    <button onClick={() => removeCategory(cat.id)}
+                      style={{ background:'none', border:'none', color:'var(--muted)', cursor:'pointer',
+                        fontSize:18, padding:'0 4px' }}>✕</button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {categories.length === 0 && (
+              <div style={{ textAlign:'center', padding:'20px', color:'var(--muted)', fontSize:13 }}>
+                Sin categorías — todos los inscritos van al mismo cuadro
+              </div>
+            )}
+
+            <div style={{ display:'flex', gap:10, marginTop:8 }}>
+              <button onClick={() => setStep(2)} className="btn btn-ghost" style={{ flex:1 }}>← Atrás</button>
+              <button onClick={() => { setError(''); setStep(4) }}
+                className="btn btn-primary" style={{ flex:2, background: accent }}>
+                Ver resumen →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── PASO 4: Confirmar ── */}
+        {step === 4 && (
           <div className="anim-1">
             <div className="card" style={{ padding:'20px', marginBottom:16, borderTop:`3px solid ${accent}` }}>
               <div style={{ display:'flex', gap:10, alignItems:'center', marginBottom:14 }}>
@@ -292,18 +423,30 @@ export default function CreateTournament() {
               </div>
               {[
                 { label:'Fecha', val: form.date ? new Date(form.date+'T00:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}) + (form.time ? ` · ${form.time.slice(0,5)}h` : '') : '—' },
+                { label:'Provincia', val: form.province || '—' },
+                { label:'Modalidad', val: form.pair_mode ? 'Por parejas' : 'Individual' },
                 { label:'Formato', val: FORMATS.find(f=>f.id===form.format)?.label },
-                { label: selectedSport?.pairs ? 'Máx. parejas' : 'Máx. participantes', val: form.max_pairs },
+                { label: form.pair_mode ? 'Máx. parejas/cat.' : 'Máx. part./cat.', val: form.max_pairs },
                 { label:'Inscripción', val: form.price || 'Gratis' },
+                ...(form.prize_enabled ? [{ label:'Premio', val: form.prize_description || 'Sí (sin especificar)' }] : []),
               ].map(r => (
                 <div key={r.label} style={{ display:'flex', justifyContent:'space-between', padding:'8px 0', borderBottom:'1px solid var(--border)', fontSize:13 }}>
                   <span style={{ color:'var(--muted)' }}>{r.label}</span>
-                  <span style={{ fontWeight:600, color:'var(--text)' }}>{r.val}</span>
+                  <span style={{ fontWeight:600, color:'var(--text)', textAlign:'right', maxWidth:'60%' }}>{r.val}</span>
                 </div>
               ))}
-              {selectedSport?.pairs && (
-                <div style={{ marginTop:12, padding:'10px 14px', background:`${accent}10`, borderRadius:10, fontSize:12, color:'var(--muted)' }}>
-                  🎾 Los usuarios pueden inscribirse solos (buscando pareja) o con su pareja confirmada.
+
+              {categories.length > 0 && (
+                <div style={{ marginTop:12 }}>
+                  <div style={{ fontSize:12, color:'var(--muted)', marginBottom:6 }}>Categorías:</div>
+                  <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
+                    {categories.map((c,i) => (
+                      <span key={c.id} style={{ fontSize:12, fontWeight:700, background:`${accent}15`,
+                        color: accent, borderRadius:20, padding:'3px 10px', border:`1px solid ${accent}30` }}>
+                        {i+1}. {c.name}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
@@ -315,7 +458,7 @@ export default function CreateTournament() {
             )}
 
             <div style={{ display:'flex', gap:10 }}>
-              <button onClick={() => setStep(2)} className="btn btn-ghost" style={{ flex:1 }}>← Atrás</button>
+              <button onClick={() => setStep(3)} className="btn btn-ghost" style={{ flex:1 }}>← Atrás</button>
               <button onClick={handleSubmit} disabled={loading} className="btn btn-primary" style={{ flex:2, background: accent }}>
                 {loading ? 'Creando...' : '🏆 Crear torneo'}
               </button>
