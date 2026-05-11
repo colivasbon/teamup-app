@@ -510,25 +510,23 @@ export default function Create() {
               </div>
             </div>
 
-            {/* Provincia → Municipio */}
-            <div>
-              <label className="label" style={{ marginBottom:8 }}>Provincia</label>
-              <select className="input" value={form.province}
-                onChange={e=>{ set('province',e.target.value); set('municipio','') }}>
-                <option value="">Selecciona tu provincia</option>
-                {PROVINCES_LIST.map(p=><option key={p} value={p}>{p}</option>)}
-              </select>
-            </div>
-
-            {form.province && (
-              <div className="anim-1">
-                <label className="label" style={{ marginBottom:8 }}>Municipio</label>
-                <select className="input" value={form.municipio} onChange={e=>set('municipio',e.target.value)}>
-                  <option value="">Selecciona el municipio</option>
-                  {municipios.map(m=><option key={m} value={m}>{m}</option>)}
-                </select>
+            {/* Provincia y municipio — texto libre */}
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+              <div>
+                <label className="label" style={{ marginBottom:8 }}>Provincia</label>
+                <input className="input" type="text"
+                  placeholder="Ej: Córdoba"
+                  value={form.province}
+                  onChange={e => set('province', e.target.value)} />
               </div>
-            )}
+              <div>
+                <label className="label" style={{ marginBottom:8 }}>Municipio</label>
+                <input className="input" type="text"
+                  placeholder="Ej: Priego de Córdoba"
+                  value={form.municipio}
+                  onChange={e => set('municipio', e.target.value)} />
+              </div>
+            </div>
 
             <div>
               <label className="label" style={{ marginBottom:8 }}>Lugar / Dirección exacta</label>

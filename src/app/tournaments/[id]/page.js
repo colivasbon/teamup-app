@@ -85,22 +85,6 @@ function pairName(p) {
   return p.player1_name || 'Participante'
 }
 
-// ── Mapa simple via iframe OSM ────────────────────────────────────────────────
-function SimpleMap({ location }) {
-  const q = encodeURIComponent(location + ', España')
-  return (
-    <div style={{ borderRadius:16, overflow:'hidden', height:160, marginBottom:16 }}>
-      <iframe
-        title="Ubicación"
-        width="100%" height="160"
-        style={{ border:'none', display:'block' }}
-        src={`https://www.openstreetmap.org/export/embed.html?bbox=-9,35,5,44&layer=mapnik&marker=${q}`}
-        loading="lazy"
-      />
-    </div>
-  )
-}
-
 export default function TournamentDetail() {
   const { id }             = useParams()
   const router             = useRouter()
@@ -111,6 +95,7 @@ export default function TournamentDetail() {
   const [loading,      setLoading]      = useState(true)
   const [tab,          setTab]          = useState('Info')
   const [bracket,      setBracket]      = useState({}) // { catId: rounds[] } o { _all: rounds[] }
+  const [mapCoords,    setMapCoords]    = useState(null)
 
   // Seeding
   const [showSeeding,  setShowSeeding]  = useState(false)
@@ -151,6 +136,24 @@ export default function TournamentDetail() {
     if (!t) { router.push('/tournaments'); return }
     setTournament(t)
     if (t.bracket) setBracket(t.bracket)
+
+    // Geocodificar ubicación igual que en eventos
+    if (t.location) {
+      const tryGeocode = async (query) => {
+        try {
+          const r = await fetch(
+            `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=es`,
+            { headers:{ 'Accept-Language':'es', 'User-Agent':'TeamUpApp/1.0' } }
+          )
+          const res = await r.json()
+          return res?.[0] ? { lat: parseFloat(res[0].lat), lon: parseFloat(res[0].lon) } : null
+        } catch { return null }
+      }
+      const full = [t.location, t.province].filter(Boolean).join(', ')
+      let coords = await tryGeocode(full)
+      if (!coords && t.location) coords = await tryGeocode(t.location)
+      if (coords) setMapCoords(coords)
+    }
 
     const cats = t.categories || []
     if (cats.length > 0 && !bracketCat) setBracketCat(cats[0].id)
@@ -428,16 +431,36 @@ export default function TournamentDetail() {
                 </div>
               )}
 
-              {/* Mapa */}
-              {tournament.location && (
+              {/* Mapa — mismo sistema que eventos: Nominatim + bbox real */}
+              {(mapCoords || tournament.location) && (
                 <div style={{ marginBottom:16 }}>
                   <div style={{ fontWeight:700, fontSize:14, marginBottom:10 }}>Ubicación</div>
-                  <SimpleMap location={tournament.location} />
-                  <a href={`https://www.google.com/maps/search/${encodeURIComponent(tournament.location)}`}
-                    target="_blank" rel="noopener noreferrer"
-                    style={{ display:'block', textAlign:'center', fontSize:13, color:color, fontWeight:600, marginTop:4 }}>
-                    Ver en Google Maps →
-                  </a>
+                  {mapCoords ? (
+                    <div style={{ borderRadius:16, overflow:'hidden', marginBottom:8 }}>
+                      <iframe
+                        key={`${mapCoords.lat},${mapCoords.lon}`}
+                        title="Ubicación del torneo"
+                        src={`https://www.openstreetmap.org/export/embed.html?bbox=${mapCoords.lon-0.008},${mapCoords.lat-0.006},${mapCoords.lon+0.008},${mapCoords.lat+0.006}&layer=mapnik&marker=${mapCoords.lat},${mapCoords.lon}`}
+                        style={{ width:'100%', height:190, border:'none', display:'block' }}
+                        loading="lazy"
+                        allowFullScreen
+                        sandbox="allow-scripts allow-same-origin"
+                      />
+                    </div>
+                  ) : null}
+                  <div style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 14px',
+                    background:'var(--surface)', borderRadius:12, border:'1px solid var(--border)' }}>
+                    <span style={{ fontSize:18 }}>📍</span>
+                    <div style={{ flex:1 }}>
+                      <div style={{ fontWeight:700, fontSize:14 }}>{tournament.location}</div>
+                      {tournament.province && <div style={{ fontSize:12, color:'var(--muted)' }}>{tournament.province}</div>}
+                    </div>
+                    <a href={`https://maps.google.com/?q=${encodeURIComponent([tournament.location, tournament.province].filter(Boolean).join(', '))}`}
+                      target="_blank" rel="noreferrer"
+                      style={{ fontSize:12, color:color, fontWeight:700, textDecoration:'none', whiteSpace:'nowrap' }}>
+                      Google Maps →
+                    </a>
+                  </div>
                 </div>
               )}
 
