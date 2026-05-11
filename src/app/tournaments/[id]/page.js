@@ -1,16 +1,69 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import { getSupabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { SPORT_COLORS } from '@/components/SportIcon'
+import {
+  DndContext, closestCenter, PointerSensor, TouchSensor,
+  useSensor, useSensors, DragOverlay
+} from '@dnd-kit/core'
+import {
+  SortableContext, verticalListSortingStrategy,
+  useSortable, arrayMove
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
 const SPORT_ICONS = { padel:'🎾', tenis:'🎾', badminton:'🏸', voleibol:'🏐', futbol:'⚽', baloncesto:'🏀', running:'🏃', natacion:'🏊', ciclismo:'🚴' }
 const FORMAT_LABELS = { single_elimination:'Eliminación directa', groups:'Grupos + eliminatoria' }
 const STATUS_LABELS = { open:'Inscripciones abiertas', in_progress:'En curso', finished:'Finalizado', cancelled:'Cancelado' }
+
+// ── Componente arrastrable para cada pareja ───────────────────────────────
+function SortablePair({ pair, index, color }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: pair.id })
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.4 : 1,
+    zIndex: isDragging ? 999 : 'auto',
+  }
+  return (
+    <div ref={setNodeRef} style={style}
+      {...attributes}
+      {...listeners}
+      className="card"
+      style={{
+        ...style,
+        padding:'13px 16px',
+        display:'flex', alignItems:'center', gap:12,
+        cursor:'grab', touchAction:'none',
+        border: isDragging ? `2px solid ${color}` : '1px solid var(--border)',
+        background: isDragging ? `${color}10` : 'var(--surface)',
+        userSelect:'none',
+      }}>
+      {/* Número de posición */}
+      <div style={{ width:28, height:28, borderRadius:'50%', background:`${color}20`,
+        display:'flex', alignItems:'center', justifyContent:'center',
+        fontSize:12, fontWeight:800, color, flexShrink:0 }}>
+        {index + 1}
+      </div>
+      {/* Nombre de la pareja */}
+      <div style={{ flex:1, minWidth:0 }}>
+        <div style={{ fontWeight:700, fontSize:13, color:'var(--text)',
+          overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
+          {pair.player2_name && pair.pair_confirmed
+            ? `${pair.player1_name} / ${pair.player2_name}`
+            : pair.player1_name + (pair.seeking_partner ? ' (busca pareja)' : '')}
+        </div>
+      </div>
+      {/* Icono drag */}
+      <div style={{ color:'var(--muted)', fontSize:18, flexShrink:0 }}>⋮⋮</div>
+    </div>
+  )
+}
 const STATUS_COLORS = { open:'#06d6a0', in_progress:'#f59e0b', finished:'var(--muted)', cancelled:'#ef4444' }
 
 // Generar cuadro de llaves para eliminación directa
@@ -54,6 +107,15 @@ export default function TournamentDetail() {
   const [bracket,       setBracket]      = useState([])
 
   // Inscripción
+  const [showSeeding,   setShowSeeding]  = useState(false)
+  const [seedOrder,     setSeedOrder]    = useState([])
+  const [activeId,      setActiveId]     = useState(null)
+
+  // Sensores drag & drop (hooks, deben estar en el cuerpo del componente)
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint:{ distance:5 } }),
+    useSensor(TouchSensor,   { activationConstraint:{ delay:100, tolerance:5 } })
+  )
   const [showJoin,      setShowJoin]     = useState(false)
   const [partnerSearch, setPartnerSearch]= useState('')
   const [partnerResult, setPartnerResult]= useState(null)
@@ -373,17 +435,14 @@ export default function TournamentDetail() {
                 </div>
               )}
 
-              {/* Organizer: generar cuadro */}
+              {/* Organizer: abrir pantalla de seeding */}
               {isCreator && tournament.status === 'open' && participants.length >= 2 && (
-                <button onClick={async () => {
-                  const confirmed = participants.filter(p => !pairMode || p.pair_confirmed || p.seeking_partner)
-                  const br = generateBracket(confirmed)
-                  const sb = getSupabase()
-                  await sb.from('tournaments').update({ bracket: br, status:'in_progress' }).eq('id', id)
-                  setBracket(br)
-                  setTournament(prev => ({...prev, status:'in_progress', bracket: br}))
+                <button onClick={() => {
+                  const confirmed = participants.filter(p => !pairMode || p.pair_confirmed || !p.player2_id)
+                  setSeedOrder(confirmed)
+                  setShowSeeding(true)
                 }} className="btn btn-primary" style={{ width:'100%', marginTop:16, background:color }}>
-                  🏆 Cerrar inscripciones y generar cuadro ({participants.length} inscritos)
+                  🏆 Cerrar inscripciones y ordenar cuadro ({participants.length} inscritos)
                 </button>
               )}
             </div>
@@ -425,6 +484,100 @@ export default function TournamentDetail() {
 
         </div>
       </div>
+
+      {/* ── Modal seeding: ordenar parejas antes de generar el cuadro ── */}
+      {showSeeding && (
+        <div style={{ position:'fixed', inset:0, zIndex:600,
+          background:'rgba(0,0,0,0.75)', backdropFilter:'blur(8px)',
+          display:'flex', flexDirection:'column', overflowY:'auto' }}>
+          <div style={{ background:'var(--bg)', flex:1, maxWidth:480, width:'100%', margin:'0 auto',
+            borderRadius:'0 0 0 0', padding:'24px 18px 120px' }}>
+
+            {/* Cabecera */}
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8 }}>
+              <h2 style={{ fontWeight:900, fontSize:20, margin:0 }}>Ordenar el cuadro</h2>
+              <button onClick={() => setShowSeeding(false)}
+                style={{ background:'var(--surface)', border:'1px solid var(--border)', borderRadius:50,
+                  width:36, height:36, cursor:'pointer', color:'var(--text)', fontSize:18,
+                  display:'flex', alignItems:'center', justifyContent:'center' }}>✕</button>
+            </div>
+            <p style={{ fontSize:13, color:'var(--muted)', lineHeight:1.55, marginBottom:20 }}>
+              Arrastra las parejas para decidir su posición en el cuadro. La pareja en posición 1 jugará contra la 2, la 3 contra la 4, y así sucesivamente en la primera ronda.
+            </p>
+
+            {/* Lista sortable */}
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragStart={({ active }) => setActiveId(active.id)}
+              onDragEnd={({ active, over }) => {
+                setActiveId(null)
+                if (!over || active.id === over.id) return
+                setSeedOrder(prev => {
+                  const oldIdx = prev.findIndex(p => p.id === active.id)
+                  const newIdx = prev.findIndex(p => p.id === over.id)
+                  return arrayMove(prev, oldIdx, newIdx)
+                })
+              }}
+            >
+              <SortableContext items={seedOrder.map(p => p.id)} strategy={verticalListSortingStrategy}>
+                <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
+                  {seedOrder.map((pair, i) => (
+                    <SortablePair key={pair.id} pair={pair} index={i} color={color} />
+                  ))}
+                </div>
+              </SortableContext>
+              <DragOverlay>
+                {activeId ? (() => {
+                  const pair = seedOrder.find(p => p.id === activeId)
+                  if (!pair) return null
+                  return (
+                    <div className="card" style={{
+                      padding:'13px 16px', display:'flex', alignItems:'center', gap:12,
+                      border:`2px solid ${color}`, background:'var(--bg)',
+                      boxShadow:'0 8px 32px rgba(0,0,0,0.25)', opacity:0.96,
+                    }}>
+                      <div style={{ width:28, height:28, borderRadius:'50%', background:`${color}20`,
+                        display:'flex', alignItems:'center', justifyContent:'center',
+                        fontSize:12, fontWeight:800, color }}>
+                        {seedOrder.findIndex(p => p.id === activeId) + 1}
+                      </div>
+                      <div style={{ fontWeight:700, fontSize:13, color:'var(--text)' }}>
+                        {pair.player2_name && pair.pair_confirmed
+                          ? `${pair.player1_name} / ${pair.player2_name}`
+                          : pair.player1_name}
+                      </div>
+                    </div>
+                  )
+                })() : null}
+              </DragOverlay>
+            </DndContext>
+
+            {/* Botones */}
+            <div style={{ position:'fixed', bottom:0, left:'50%', transform:'translateX(-50%)',
+              width:'100%', maxWidth:480, padding:'16px 18px 32px', background:'var(--bg)',
+              borderTop:'1px solid var(--border)', display:'flex', gap:10 }}>
+              <button onClick={() => setShowSeeding(false)} className="btn btn-ghost" style={{ flex:1 }}>
+                Cancelar
+              </button>
+              <button onClick={async () => {
+                const br = generateBracket(seedOrder)
+                const sb = getSupabase()
+                await sb.from('tournaments')
+                  .update({ bracket: br, status:'in_progress' })
+                  .eq('id', id)
+                setBracket(br)
+                setTournament(prev => ({...prev, status:'in_progress', bracket: br}))
+                setShowSeeding(false)
+                setTab('Cuadro')
+              }} className="btn btn-primary" style={{ flex:2, background:color }}>
+                🏆 Confirmar y generar cuadro
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
 
       {/* Modal inscripción por parejas */}
       {showJoin && (

@@ -1,7 +1,8 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { NotifBadge } from '@/components/NotifBadge'
 
@@ -77,27 +78,74 @@ const NAV_ITEMS = [
 
 export default function Navbar() {
   const path     = usePathname()
-  const { user } = useAuth()
+  const router   = useRouter()
+  const { user, profile } = useAuth()
+  const [showCreateMenu, setShowCreateMenu] = useState(false)
+  const isBusiness = profile?.account_type === 'business'
 
   return (
-    <nav className="navbar">
+    <>
+      {/* Mini menú Evento / Torneo para cuentas business */}
+      {showCreateMenu && (
+        <>
+          <div onClick={() => setShowCreateMenu(false)}
+            style={{ position:'fixed', inset:0, zIndex:199, background:'rgba(0,0,0,0.45)', backdropFilter:'blur(4px)' }}/>
+          <div style={{
+            position:'fixed', bottom:82, left:'50%', transform:'translateX(-50%)',
+            zIndex:200, background:'var(--bg)', borderRadius:20,
+            border:'1px solid var(--border)', padding:'8px',
+            width:220, boxShadow:'0 8px 32px rgba(0,0,0,0.22)',
+          }}>
+            <button onClick={() => { setShowCreateMenu(false); router.push('/create') }}
+              style={{ display:'flex', alignItems:'center', gap:12, width:'100%', padding:'13px 16px',
+                background:'none', border:'none', cursor:'pointer', fontFamily:'inherit',
+                borderRadius:14, fontSize:14, fontWeight:700, color:'var(--text)' }}>
+              <span style={{ fontSize:24 }}>🗓</span> Crear evento
+            </button>
+            <button onClick={() => { setShowCreateMenu(false); router.push('/create/tournament') }}
+              style={{ display:'flex', alignItems:'center', gap:12, width:'100%', padding:'13px 16px',
+                background:'none', border:'none', cursor:'pointer', fontFamily:'inherit',
+                borderRadius:14, fontSize:14, fontWeight:700, color:'var(--text)' }}>
+              <span style={{ fontSize:24 }}>🏆</span> Crear torneo
+            </button>
+          </div>
+        </>
+      )}
 
-      {/* ── Iconos de navegación ── */}
-      <div className="nav-inner">
-        {NAV_ITEMS.map(({ href, label, icon }) => {
-          const active = path === href || (href !== '/' && path?.startsWith(href))
-          return (
-            <Link key={href} href={href} className={`nav-item${active ? ' active' : ''}`}>
-              <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-                {icon(active)}
-                {label === 'Perfil' && user && <NotifBadge userId={user.id} />}
-              </div>
-              <span className="nav-label">{label}</span>
-            </Link>
-          )
-        })}
-      </div>
+      <nav className="navbar">
 
-    </nav>
+        {/* ── Iconos de navegación ── */}
+        <div className="nav-inner">
+          {NAV_ITEMS.map(({ href, label, icon }) => {
+            const active = path === href || (href !== '/' && path?.startsWith(href))
+
+            // Botón Crear: si es business abre el menú, si no va directo
+            if (label === 'Crear' && isBusiness) {
+              return (
+                <button key={href} onClick={() => setShowCreateMenu(p => !p)}
+                  className={`nav-item${active || showCreateMenu ? ' active' : ''}`}
+                  style={{ background:'none', border:'none', cursor:'pointer', fontFamily:'inherit' }}>
+                  <div style={{ position:'relative', display:'inline-flex', alignItems:'center', justifyContent:'center' }}>
+                    {icon(active || showCreateMenu)}
+                  </div>
+                  <span className="nav-label">Crear</span>
+                </button>
+              )
+            }
+
+            return (
+              <Link key={href} href={href} className={`nav-item${active ? ' active' : ''}`}>
+                <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {icon(active)}
+                  {label === 'Perfil' && user && <NotifBadge userId={user.id} />}
+                </div>
+                <span className="nav-label">{label}</span>
+              </Link>
+            )
+          })}
+        </div>
+
+      </nav>
+    </>
   )
 }

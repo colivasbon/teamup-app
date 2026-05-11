@@ -18,6 +18,12 @@ const SPORTS = [
   { id:'running',    label:'Running',    icon:'🏃', pairs:false },
   { id:'natacion',   label:'Natación',   icon:'🏊', pairs:false },
   { id:'ciclismo',   label:'Ciclismo',   icon:'🚴', pairs:false },
+  { id:'senderismo', label:'Senderismo', icon:'🥾', pairs:false },
+  { id:'yoga',       label:'Yoga',       icon:'🧘', pairs:false },
+  { id:'gimnasio',   label:'Gimnasio',   icon:'💪', pairs:false },
+  { id:'escalada',   label:'Escalada',   icon:'🧗', pairs:false },
+  { id:'surf',       label:'Surf',       icon:'🏄', pairs:false },
+  { id:'esgrima',    label:'Esgrima',    icon:'🤺', pairs:false },
 ]
 
 const FORMATS = [
@@ -94,7 +100,7 @@ export default function CreateTournament() {
       time:        form.time || null,
       price:       form.price.trim() || 'Gratis',
       format:      form.format,
-      pair_mode:   selectedSport?.pairs ?? form.pair_mode,
+      pair_mode:   form.pair_mode,
       max_pairs:   form.max_pairs,
       status:      'open',
     }).select().single()
@@ -105,7 +111,7 @@ export default function CreateTournament() {
 
   return (
     <>
-      <div className="page-wrap" style={{ paddingTop:16 }}>
+      <div className="page-wrap" style={{ paddingTop:16, paddingBottom:100 }}>
 
         {/* Header */}
         <header style={{ display:'flex', alignItems:'center', gap:12, marginBottom:24, paddingBottom:16, borderBottom:'1px solid var(--border)' }}>
@@ -141,9 +147,9 @@ export default function CreateTournament() {
         {step === 1 && (
           <div className="anim-1">
             <p className="label" style={{ marginBottom:14 }}>¿Qué deporte?</p>
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:10 }}>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:10, paddingBottom:8 }}>
               {SPORTS.map(s => (
-                <button key={s.id} onClick={() => { set('sport', s.id); set('pair_mode', s.pairs) }}
+                <button key={s.id} onClick={() => { set('sport', s.id) }}
                   style={{
                     padding:'14px 8px', borderRadius:16, border: form.sport===s.id ? `2px solid ${SPORT_COLORS[s.id]||'#586875'}` : '1.5px solid var(--border)',
                     background: form.sport===s.id ? `${SPORT_COLORS[s.id]||'#586875'}15` : 'var(--surface)',
@@ -204,6 +210,27 @@ export default function CreateTournament() {
               <label className="label" style={{ marginBottom:8 }}>Precio de inscripción</label>
               <input className="input" type="text" placeholder="Gratis / 10€ por pareja / ..."
                 value={form.price} onChange={e => set('price', e.target.value)} />
+            </div>
+
+            {/* Modalidad de inscripción */}
+            <div>
+              <label className="label" style={{ marginBottom:10 }}>Modalidad de inscripción</label>
+              <div style={{ display:'flex', gap:0, background:'var(--surface)', border:'1px solid var(--border)', borderRadius:14, overflow:'hidden' }}>
+                <button onClick={() => set('pair_mode', true)}
+                  style={{ flex:1, padding:'13px 0', border:'none', cursor:'pointer', fontFamily:'inherit',
+                    fontSize:13, fontWeight:700, transition:'all 0.15s ease',
+                    background: form.pair_mode ? accent : 'transparent',
+                    color: form.pair_mode ? '#f6eddc' : 'var(--muted)' }}>
+                  👥 Por parejas
+                </button>
+                <button onClick={() => set('pair_mode', false)}
+                  style={{ flex:1, padding:'13px 0', border:'none', cursor:'pointer', fontFamily:'inherit',
+                    fontSize:13, fontWeight:700, transition:'all 0.15s ease',
+                    background: !form.pair_mode ? accent : 'transparent',
+                    color: !form.pair_mode ? '#f6eddc' : 'var(--muted)' }}>
+                  👤 Individual
+                </button>
+              </div>
             </div>
 
             <div>
