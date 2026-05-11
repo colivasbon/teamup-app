@@ -155,6 +155,7 @@ export default function Profile() {
   const [uploadingBanner, setUploadBanner] = useState(false)
   const [myCreated,    setCreated]    = useState([])
   const [myJoined,     setJoined]     = useState([])
+  const [myTournaments,setMyTournaments]=useState([])
   const [actTab,       setActTab]     = useState('creados')
   const [avatarUrl,    setAvatarUrl]  = useState(null)
   const [banner,       setBanner]     = useState('grad-1')
@@ -360,7 +361,7 @@ export default function Profile() {
   const pastEvents  = [...myCreated, ...myJoined].filter(ev => ev?.date && ev.date < today)
     .sort((a,b) => b.date.localeCompare(a.date))
     .filter((ev,i,arr) => arr.findIndex(e=>e.id===ev.id)===i) // deduplicar
-  const allEvents   = actTab === 'creados' ? myCreated : actTab === 'historial' ? pastEvents : myJoined
+  const allEvents   = actTab === 'creados' ? myCreated : actTab === 'historial' ? pastEvents : actTab === 'torneos' ? myTournaments : myJoined
   const unreadCount = notifs.filter(n => !n.read).length
 
   // bannerId actual
@@ -595,6 +596,7 @@ export default function Profile() {
                 { id:'creados',   label:`📅 Creados (${myCreated.length})` },
                 { id:'apuntado',  label:`✓ Apuntado (${myJoined.length})` },
                 { id:'historial', label:`🕐 Historial (${pastEvents.length})` },
+                ...(profile?.account_type === 'business' ? [{ id:'torneos', label:`🏆 Torneos (${myTournaments.length})` }] : []),
               ].map(t=>(
                 <button key={t.id} onClick={() => setActTab(t.id)}
                   className={`pill ${actTab===t.id?'pill-active':'pill-inactive'}`}>

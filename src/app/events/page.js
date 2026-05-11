@@ -162,6 +162,7 @@ function EventsContent() {
     try {
       const sb = getSupabase()
       if (sb) {
+        const now = new Date().toISOString()
         const { data, error } = await sb.from('events_with_counts').select('*').order('date', { ascending: true })
         if (!error && data && data.length > 0) {
           setEvents(data)
@@ -217,7 +218,7 @@ function EventsContent() {
         {/* Cabecera */}
         <header style={{ paddingTop: 16, paddingBottom: 14, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <h1 style={{ fontSize: 24, fontWeight: 800, margin: '0 0 3px', letterSpacing: '-0.04em' }}>Eventos</h1>
+            <h1 style={{ fontSize: 24, fontWeight: 800, margin: '0 0 3px', letterSpacing: '-0.04em' }}>Explorar</h1>
             <p style={{ fontSize: 13, color: 'var(--muted)', margin: 0 }}>
               {loading ? 'Cargando...' : `${filtered.length} evento${filtered.length !== 1 ? 's' : ''} ${geoLabel && prov !== 'all' ? `· ${geoLabel}` : ''}`}
             </p>
@@ -227,6 +228,19 @@ function EventsContent() {
             <Link href="/create" className="btn btn-primary" style={{ padding: '10px 16px', fontSize: 13 }}>+ Crear</Link>
           </div>
         </header>
+
+        {/* Toggle Eventos / Torneos */}
+        <div style={{ display:'flex', gap:0, background:'var(--surface)', border:'1px solid var(--border)',
+          borderRadius:14, overflow:'hidden', marginBottom:16 }}>
+          <Link href="/events" style={{ flex:1, padding:'11px 0', textAlign:'center', textDecoration:'none',
+            fontWeight:700, fontSize:13, background:'#586875', color:'#f6eddc' }}>
+            🗓 Eventos
+          </Link>
+          <Link href="/tournaments" style={{ flex:1, padding:'11px 0', textAlign:'center', textDecoration:'none',
+            fontWeight:600, fontSize:13, color:'var(--muted)' }}>
+            🏆 Torneos
+          </Link>
+        </div>
 
         {/* Sin resultados — estado vacío enriquecido */}
         {!loading && filtered.length === 0 && (
@@ -287,9 +301,9 @@ function EventsContent() {
               return (
                 <Link key={ev.id} href={`/events/${ev.id}`} className={`card anim-${Math.min(i + 1, 6)}`}
                   style={{ display: 'block', overflow: 'hidden', position: 'relative',
-                    ...(ev.featured ? { boxShadow:`0 0 0 2px ${color}55, 0 4px 18px ${color}22` } : {}) }}>
-                  <div style={{ height: ev.featured ? 4 : 3, background: `linear-gradient(90deg,${color},${color}55)`, position:'relative' }}>
-                    {ev.featured && (
+                    ...((ev.featured_until && ev.featured_until > now) ? { boxShadow:`0 0 0 2px ${color}55, 0 4px 18px ${color}22` } : {}) }}>
+                  <div style={{ height: (ev.featured_until && ev.featured_until > now) ? 4 : 3, background: `linear-gradient(90deg,${color},${color}55)`, position:'relative' }}>
+                    {(ev.featured_until && ev.featured_until > now) && (
                       <span style={{
                         position:'absolute', right:12, top:'50%', transform:'translateY(-50%) translateY(4px)',
                         fontSize:10, fontWeight:800, letterSpacing:'0.05em',
