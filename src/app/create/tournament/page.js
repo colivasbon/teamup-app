@@ -8,22 +8,23 @@ import { getSupabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { SPORT_COLORS } from '@/components/SportIcon'
 
+// mode: 'pair' = puede ser parejas o individual | 'team' = por equipos | 'individual' = solo individual
 const SPORTS = [
-  { id:'padel',      label:'Pádel',      icon:'🎾' },
-  { id:'tenis',      label:'Tenis',      icon:'🎾' },
-  { id:'badminton',  label:'Bádminton',  icon:'🏸' },
-  { id:'voleibol',   label:'Voleibol',   icon:'🏐' },
-  { id:'futbol',     label:'Fútbol',     icon:'⚽' },
-  { id:'baloncesto', label:'Baloncesto', icon:'🏀' },
-  { id:'running',    label:'Running',    icon:'🏃' },
-  { id:'natacion',   label:'Natación',   icon:'🏊' },
-  { id:'ciclismo',   label:'Ciclismo',   icon:'🚴' },
-  { id:'senderismo', label:'Senderismo', icon:'🥾' },
-  { id:'yoga',       label:'Yoga',       icon:'🧘' },
-  { id:'gimnasio',   label:'Gimnasio',   icon:'💪' },
-  { id:'escalada',   label:'Escalada',   icon:'🧗' },
-  { id:'surf',       label:'Surf',       icon:'🏄' },
-  { id:'esgrima',    label:'Esgrima',    icon:'🤺' },
+  { id:'padel',      label:'Pádel',      icon:'🎾', mode:'pair'       },
+  { id:'tenis',      label:'Tenis',      icon:'🎾', mode:'pair'       },
+  { id:'badminton',  label:'Bádminton',  icon:'🏸', mode:'pair'       },
+  { id:'voleibol',   label:'Voleibol',   icon:'🏐', mode:'team'       },
+  { id:'futbol',     label:'Fútbol',     icon:'⚽',     mode:'team'       },
+  { id:'baloncesto', label:'Baloncesto', icon:'🏀', mode:'team'       },
+  { id:'running',    label:'Running',    icon:'🏃', mode:'individual' },
+  { id:'natacion',   label:'Natación',   icon:'🏊', mode:'individual' },
+  { id:'ciclismo',   label:'Ciclismo',   icon:'🚴', mode:'individual' },
+  { id:'senderismo', label:'Senderismo', icon:'🥾', mode:'individual' },
+  { id:'yoga',       label:'Yoga',       icon:'🧘', mode:'individual' },
+  { id:'gimnasio',   label:'Gimnasio',   icon:'💪', mode:'individual' },
+  { id:'escalada',   label:'Escalada',   icon:'🧗', mode:'individual' },
+  { id:'surf',       label:'Surf',       icon:'🏄', mode:'individual' },
+  { id:'esgrima',    label:'Esgrima',    icon:'🤺', mode:'pair'       },
 ]
 
 const FORMATS = [
@@ -122,7 +123,8 @@ export default function CreateTournament() {
       time:              form.time || null,
       price:             form.price.trim() || 'Gratis',
       format:            form.format,
-      pair_mode:         form.pair_mode,
+      pair_mode:         selectedSport?.mode === 'pair' ? form.pair_mode : false,
+      // sport_mode se deduce del deporte al mostrar la ficha
       max_pairs:         form.max_pairs,
       prize_enabled:     form.prize_enabled,
       prize_description: form.prize_enabled ? form.prize_description.trim() : null,
@@ -276,26 +278,62 @@ export default function CreateTournament() {
               )}
             </div>
 
-            {/* Modalidad */}
-            <div>
-              <label className="label" style={{ marginBottom:10 }}>Modalidad de inscripción</label>
-              <div style={{ display:'flex', gap:0, background:'var(--surface)', border:'1px solid var(--border)', borderRadius:14, overflow:'hidden' }}>
-                <button onClick={() => set('pair_mode', true)}
-                  style={{ flex:1, padding:'13px 0', border:'none', cursor:'pointer', fontFamily:'inherit',
-                    fontSize:13, fontWeight:700, transition:'all 0.15s ease',
-                    background: form.pair_mode ? accent : 'transparent',
-                    color: form.pair_mode ? '#f6eddc' : 'var(--muted)' }}>
-                  👥 Por parejas
-                </button>
-                <button onClick={() => set('pair_mode', false)}
-                  style={{ flex:1, padding:'13px 0', border:'none', cursor:'pointer', fontFamily:'inherit',
-                    fontSize:13, fontWeight:700, transition:'all 0.15s ease',
-                    background: !form.pair_mode ? accent : 'transparent',
-                    color: !form.pair_mode ? '#f6eddc' : 'var(--muted)' }}>
-                  👤 Individual
-                </button>
-              </div>
-            </div>
+            {/* Modalidad — según el tipo de deporte */}
+            {(() => {
+              const sportMode = selectedSport?.mode || 'pair'
+              if (sportMode === 'team') {
+                // Fútbol, baloncesto, voleibol: siempre por equipos
+                if (form.pair_mode !== false) set('pair_mode', false) // asegurar que no es pair
+                return (
+                  <div className="card" style={{ padding:'14px 16px', background:`${accent}08`, border:`1px solid ${accent}30` }}>
+                    <div style={{ display:'flex', gap:10, alignItems:'center' }}>
+                      <span style={{ fontSize:22 }}>👟</span>
+                      <div>
+                        <div style={{ fontWeight:700, fontSize:14 }}>Inscripción por equipos</div>
+                        <div style={{ fontSize:12, color:'var(--muted)' }}>Cada equipo se inscribe como una unidad. El máximo indica el número de equipos por categoría.</div>
+                      </div>
+                    </div>
+                  </div>
+                )
+              }
+              if (sportMode === 'individual') {
+                // Running, ciclismo, etc: siempre individual
+                if (form.pair_mode !== false) set('pair_mode', false)
+                return (
+                  <div className="card" style={{ padding:'14px 16px', background:`${accent}08`, border:`1px solid ${accent}30` }}>
+                    <div style={{ display:'flex', gap:10, alignItems:'center' }}>
+                      <span style={{ fontSize:22 }}>👤</span>
+                      <div>
+                        <div style={{ fontWeight:700, fontSize:14 }}>Inscripción individual</div>
+                        <div style={{ fontSize:12, color:'var(--muted)' }}>Cada participante se inscribe por su cuenta.</div>
+                      </div>
+                    </div>
+                  </div>
+                )
+              }
+              // Deportes de pareja: mostrar toggle
+              return (
+                <div>
+                  <label className="label" style={{ marginBottom:10 }}>Modalidad de inscripción</label>
+                  <div style={{ display:'flex', gap:0, background:'var(--surface)', border:'1px solid var(--border)', borderRadius:14, overflow:'hidden' }}>
+                    <button onClick={() => set('pair_mode', true)}
+                      style={{ flex:1, padding:'13px 0', border:'none', cursor:'pointer', fontFamily:'inherit',
+                        fontSize:13, fontWeight:700, transition:'all 0.15s ease',
+                        background: form.pair_mode ? accent : 'transparent',
+                        color: form.pair_mode ? '#f6eddc' : 'var(--muted)' }}>
+                      👥 Por parejas
+                    </button>
+                    <button onClick={() => set('pair_mode', false)}
+                      style={{ flex:1, padding:'13px 0', border:'none', cursor:'pointer', fontFamily:'inherit',
+                        fontSize:13, fontWeight:700, transition:'all 0.15s ease',
+                        background: !form.pair_mode ? accent : 'transparent',
+                        color: !form.pair_mode ? '#f6eddc' : 'var(--muted)' }}>
+                      👤 Individual
+                    </button>
+                  </div>
+                </div>
+              )
+            })()}
 
             {/* Formato */}
             <div>
@@ -318,7 +356,9 @@ export default function CreateTournament() {
             {/* Máximo */}
             <div>
               <label className="label" style={{ marginBottom:10 }}>
-                {form.pair_mode ? 'Máximo de parejas por categoría' : 'Máximo de participantes por categoría'}
+                {selectedSport?.mode === 'team' ? 'Máximo de equipos por categoría'
+                  : form.pair_mode ? 'Máximo de parejas por categoría'
+                  : 'Máximo de participantes por categoría'}
               </label>
               <div style={{ display:'flex', gap:8 }}>
                 {[4,8,16,32].map(n => (
