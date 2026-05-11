@@ -518,7 +518,22 @@ export default function TournamentDetail() {
           )}
 
           {/* ── TAB CUADRO ── */}
-          {tab === 'Cuadro' && (
+          {tab === 'Cuadro' && (() => {
+            // Cuadro provisional: si no hay bracket guardado pero hay inscritos,
+            // el organizador ve cómo quedaría con los inscritos actuales
+            const previewBracket = (() => {
+              if (activeBracket.length > 0) return activeBracket
+              if (!isCreator) return []
+              const key = bracketCat || '_all'
+              const catParts = bracketCat
+                ? participants.filter(p => p.category_id === bracketCat)
+                : participants
+              if (catParts.length < 2) return []
+              return generateBracket(catParts)
+            })()
+            const isPreview = activeBracket.length === 0 && previewBracket.length > 0
+
+            return (
             <div className="anim-1">
               {/* Selector de categoría */}
               {hasCats && (
@@ -533,24 +548,38 @@ export default function TournamentDetail() {
                 </div>
               )}
 
-              {activeBracket.length === 0 ? (
+              {/* Banner preview */}
+              {isPreview && (
+                <div style={{ background:'rgba(251,191,36,0.1)', border:'1px solid rgba(251,191,36,0.3)',
+                  borderRadius:12, padding:'10px 14px', marginBottom:14, fontSize:12,
+                  color:'var(--text)', display:'flex', alignItems:'center', gap:8 }}>
+                  <span style={{ fontSize:16 }}>👁</span>
+                  <span>Vista previa para el organizador — cuadro provisional con los inscritos actuales. Aún no es definitivo.</span>
+                </div>
+              )}
+
+              {previewBracket.length === 0 ? (
                 <div className="card" style={{ padding:'40px 24px', textAlign:'center' }}>
                   <div style={{ fontSize:40, marginBottom:12 }}>🔒</div>
-                  <div style={{ fontWeight:700, fontSize:15, marginBottom:8 }}>Cuadro no disponible aún</div>
+                  <div style={{ fontWeight:700, fontSize:15, marginBottom:8 }}>
+                    {isCreator ? 'Sin inscritos suficientes' : 'Cuadro no disponible aún'}
+                  </div>
                   <p style={{ fontSize:13, color:'var(--muted)', lineHeight:1.6 }}>
-                    El cuadro se genera cuando el organizador cierra las inscripciones.
+                    {isCreator
+                      ? 'Necesitas al menos 2 inscritos en esta categoría para ver el cuadro provisional.'
+                      : 'El cuadro se genera cuando el organizador cierra las inscripciones.'}
                   </p>
                 </div>
               ) : (
                 <div style={{ overflowX:'auto', paddingBottom:16 }}>
-                  <div style={{ display:'flex', gap:0, minWidth: activeBracket.length * 180 }}>
-                    {activeBracket.map((round, ri) => (
+                  <div style={{ display:'flex', gap:0, minWidth: previewBracket.length * 180 }}>
+                    {previewBracket.map((round, ri) => (
                       <div key={ri} style={{ flex:1, display:'flex', flexDirection:'column',
                         justifyContent:'space-around', minWidth:160 }}>
                         <div style={{ fontSize:11, fontWeight:800, color:'var(--muted)', textAlign:'center',
                           padding:'8px 0', letterSpacing:'0.05em', textTransform:'uppercase',
                           borderBottom:'1px solid var(--border)', marginBottom:8 }}>
-                          {ri===activeBracket.length-1 ? 'Final' : ri===activeBracket.length-2 ? 'Semifinal' : `Ronda ${ri+1}`}
+                          {ri===previewBracket.length-1 ? 'Final' : ri===previewBracket.length-2 ? 'Semifinal' : `Ronda ${ri+1}`}
                         </div>
                         {round.map((match, mi) => (
                           <div key={mi} style={{ margin:'8px 6px' }}>
@@ -576,7 +605,8 @@ export default function TournamentDetail() {
                 </div>
               )}
             </div>
-          )}
+            )
+          })()}
 
           {/* ── TAB PARTICIPANTES ── */}
           {tab === 'Participantes' && (
