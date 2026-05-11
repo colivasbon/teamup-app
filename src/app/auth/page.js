@@ -18,6 +18,10 @@ export default function Auth() {
   const [form,    setForm]    = useState({ email:'', password:'', name:'' })
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }))
 
+  // Casillas legales del registro
+  const [acceptPrivacy,   setAcceptPrivacy]   = useState(false)
+  const [acceptMarketing, setAcceptMarketing] = useState(false)
+
   useEffect(() => { if (user) router.replace('/') }, [user])
 
   const reset = () => { setError(''); setSuccess('') }
@@ -44,6 +48,7 @@ export default function Auth() {
     } else {
       if (!form.name.trim())       { setError('Escribe tu nombre');                               setLoading(false); return }
       if (form.password.length < 6) { setError('La contraseña debe tener al menos 6 caracteres'); setLoading(false); return }
+      if (!acceptPrivacy)            { setError('Debes aceptar la política de privacidad para registrarte'); setLoading(false); return }
 
       const { data, error: err } = await sb.auth.signUp({
         email:    form.email,
@@ -204,6 +209,42 @@ export default function Auth() {
                   </button>
                 )}
               </div>
+
+              {/* Casillas legales — solo en registro, nunca premarcadas */}
+              {mode === 'register' && (
+                <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+                  {/* Obligatoria: política de privacidad */}
+                  <label style={{ display:'flex', alignItems:'flex-start', gap:10, cursor:'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={acceptPrivacy}
+                      onChange={e => setAcceptPrivacy(e.target.checked)}
+                      style={{ marginTop:2, width:16, height:16, flexShrink:0, accentColor:'#586875' }}
+                    />
+                    <span style={{ fontSize:12, color:'var(--text)', lineHeight:1.55 }}>
+                      He leído y acepto la{' '}
+                      <a href="/privacy" target="_blank" rel="noopener noreferrer"
+                        style={{ color:'var(--primary)', fontWeight:700, textDecoration:'underline' }}>
+                        Política de Privacidad
+                      </a>
+                      {' '}de TeamUp. <span style={{ color:'#ef4444' }}>*</span>
+                    </span>
+                  </label>
+
+                  {/* Opcional: comunicaciones comerciales */}
+                  <label style={{ display:'flex', alignItems:'flex-start', gap:10, cursor:'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={acceptMarketing}
+                      onChange={e => setAcceptMarketing(e.target.checked)}
+                      style={{ marginTop:2, width:16, height:16, flexShrink:0, accentColor:'#586875' }}
+                    />
+                    <span style={{ fontSize:12, color:'var(--muted)', lineHeight:1.55 }}>
+                      Acepto recibir comunicaciones comerciales y promociones de TeamUp. (Opcional)
+                    </span>
+                  </label>
+                </div>
+              )}
 
               {error   && <div className="error-msg">{error}</div>}
               {success && <div className="success-msg">{success}</div>}

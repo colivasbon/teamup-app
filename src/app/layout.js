@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import { AuthProvider, useAuth } from '@/contexts/AuthContext'
 import OnboardingModal from '@/components/OnboardingModal'
 import { getSupabase } from '@/lib/supabase'
+import CookieBanner from '@/components/CookieBanner'
 
 // Número de repeticiones del carrusel para que el loop sea fluido
 const REPEAT = 6
@@ -63,6 +64,9 @@ function AppShell({ children }) {
       {showOnboarding && user && (
         <OnboardingModal onComplete={() => setShowOnboarding(false)} />
       )}
+
+      {/* Banner de cookies — solo aparece si no hay decisión guardada */}
+      <CookieBanner />
 
     </div>
   )
