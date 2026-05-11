@@ -134,6 +134,15 @@ export default function PublicProfile() {
           <h1 style={{ fontSize:22, fontWeight:800, margin:'0 0 4px', letterSpacing:'-0.03em' }}>
             {profile.full_name || 'Usuario'}
           </h1>
+          {profile.account_type === 'business' && (
+            <div style={{ marginBottom:6 }}>
+              <span style={{
+                fontSize:11, fontWeight:800, letterSpacing:'0.05em',
+                background:'#586875', color:'#f6eddc',
+                borderRadius:20, padding:'3px 11px',
+              }}>CLUB VERIFICADO ✓</span>
+            </div>
+          )}
           {profile.username && (
             <div style={{ fontSize:14, color:'var(--muted)', marginBottom:10 }}>@{profile.username}</div>
           )}

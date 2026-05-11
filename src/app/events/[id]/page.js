@@ -91,6 +91,14 @@ function EventDetailInner() {
           const { data, error } = await sb.from('events_with_counts').select('*').eq('id', id).single()
           if (!error && data) {
             setEv(data); setPCount(data.participant_count || 0)
+            // Cargar account_type del creador para badge empresa
+            if (data.creator_id) {
+              const { data: cp } = await sb.from('profiles')
+                .select('account_type').eq('id', data.creator_id).maybeSingle()
+              if (cp?.account_type === 'business') {
+                setEv(prev => ({...prev, creator_account_type: 'business'}))
+              }
+            }
             if (user) {
               const { data: ep } = await sb.from('event_participants')
                 .select('id').eq('event_id', id).eq('user_id', user.id).maybeSingle()
@@ -480,12 +488,18 @@ function EventDetailInner() {
               {ev.level && ev.level!=='any' && <><span style={{ color:'rgba(255,255,255,0.6)' }}>·</span><span style={{ color:'rgba(255,255,255,0.88)', fontSize:12, textTransform:'capitalize' }}>{ev.level}</span></>}
             </div>
             <h1 style={{ color:'white', fontWeight:900, fontSize:26, margin:'0 0 6px', letterSpacing:'-0.05em', lineHeight:1.2 }}>{ev.title}</h1>
-            <div style={{ color:'rgba(255,255,255,0.80)', fontSize:13 }}>
+            <div style={{ color:'rgba(255,255,255,0.80)', fontSize:13, display:'flex', alignItems:'center', gap:7, flexWrap:'wrap' }}>
               por{' '}
               {ev.creator_id
                 ? <a href={`/profile/${ev.creator_id}`} style={{ color:'white', fontWeight:700, textDecoration:'underline', textDecorationColor:'rgba(255,255,255,0.4)' }}>{ev.creator_name || 'Organizador'}</a>
-                : <span>{ev.creator_name || 'Organizador'}</span>
-              }
+                : <span>{ev.creator_name || 'Organizador'}</span>}
+              {ev.creator_account_type === 'business' && (
+                <span style={{
+                  fontSize:10, fontWeight:800, letterSpacing:'0.05em',
+                  background:'rgba(255,255,255,0.22)', color:'white',
+                  borderRadius:20, padding:'2px 9px', border:'1px solid rgba(255,255,255,0.35)',
+                }}>CLUB VERIFICADO ✓</span>
+              )}
             </div>
           </div>
         </div>

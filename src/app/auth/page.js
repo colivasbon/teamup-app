@@ -259,6 +259,38 @@ export default function Auth() {
       <div style={{ marginTop:24 }}>
         <Link href="/" style={{ fontSize:12, color:'var(--muted)' }}>← Volver al inicio</Link>
       </div>
+
+      {/* Bloque captación empresas */}
+      <div style={{
+        marginTop:32,
+        background:'var(--surface)',
+        border:'1px solid var(--border)',
+        borderRadius:18,
+        padding:'20px 22px',
+        maxWidth:360,
+        width:'100%',
+      }}>
+        <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10 }}>
+          <span style={{ fontSize:26 }}>🏢</span>
+          <span style={{ fontWeight:800, fontSize:15, color:'var(--text)' }}>¿Eres un club o negocio deportivo?</span>
+        </div>
+        <p style={{ fontSize:13, color:'var(--muted)', lineHeight:1.55, margin:'0 0 14px 0' }}>
+          Si gestionas un club, gimnasio, escuela deportiva o marca, podemos darte un perfil verificado para publicar y destacar tus eventos ante toda la comunidad de TeamUp.
+        </p>
+        <a
+          href="mailto:colivasbon@gmail.com?subject=TeamUp%20%E2%80%94%20Solicitud%20perfil%20empresa&body=Hola%2C%20me%20gustar%C3%ADa%20obtener%20un%20perfil%20de%20empresa%20en%20TeamUp.%0A%0ANombre%20del%20negocio%3A%20%0ATipo%20de%20negocio%3A%20%0AWeb%2FRRSS%3A%20%0AContacto%3A%20"
+          style={{
+            display:'block', textAlign:'center',
+            background:'#586875', color:'#f6eddc',
+            borderRadius:12, padding:'11px 0',
+            fontWeight:700, fontSize:13,
+            textDecoration:'none',
+          }}
+        >
+          Contáctanos para saber más
+        </a>
+      </div>
+
     </div>
   )
 }

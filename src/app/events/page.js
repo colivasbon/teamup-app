@@ -286,8 +286,18 @@ function EventsContent() {
               const barC  = pct >= 90 ? '#ef4444' : pct >= 70 ? '#f59e0b' : color
               return (
                 <Link key={ev.id} href={`/events/${ev.id}`} className={`card anim-${Math.min(i + 1, 6)}`}
-                  style={{ display: 'block', overflow: 'hidden', position: 'relative' }}>
-                  <div style={{ height: 3, background: `linear-gradient(90deg,${color},${color}55)` }}/>
+                  style={{ display: 'block', overflow: 'hidden', position: 'relative',
+                    ...(ev.featured ? { boxShadow:`0 0 0 2px ${color}55, 0 4px 18px ${color}22` } : {}) }}>
+                  <div style={{ height: ev.featured ? 4 : 3, background: `linear-gradient(90deg,${color},${color}55)`, position:'relative' }}>
+                    {ev.featured && (
+                      <span style={{
+                        position:'absolute', right:12, top:'50%', transform:'translateY(-50%) translateY(4px)',
+                        fontSize:10, fontWeight:800, letterSpacing:'0.05em',
+                        background: color, color:'white',
+                        borderRadius:20, padding:'2px 9px',
+                      }}>DESTACADO</span>
+                    )}
+                  </div>
                   <div style={{ padding: '16px 18px' }}>
                     <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start', marginBottom: 12 }}>
                       {/* Icono SVG del deporte */}
