@@ -54,9 +54,9 @@ export default function CookieBanner() {
             </Link>
           </p>
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={rejectAll}   style={btnStyle}>Rechazar</button>
+            <button onClick={rejectAll}            style={btnStyle}>Rechazar</button>
             <button onClick={() => setShowConf(true)} style={btnStyle}>Configurar</button>
-            <button onClick={acceptAll}   style={{ ...btnStyle, background: '#586875', color: '#f6eddc', border: '1px solid #586875' }}>Aceptar</button>
+            <button onClick={acceptAll}             style={btnStyle}>Aceptar</button>
           </div>
         </>
       ) : (
@@ -101,7 +101,7 @@ export default function CookieBanner() {
 
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={() => setShowConf(false)} style={btnStyle}>← Atrás</button>
-            <button onClick={saveConfig} style={{ ...btnStyle, background: '#586875', color: '#f6eddc', border: '1px solid #586875' }}>
+            <button onClick={saveConfig} style={btnStyle}>
               Guardar configuración
             </button>
           </div>
