@@ -512,7 +512,15 @@ export default function Profile() {
           ) : (
             <div style={{ textAlign:'center' }}>
               <div style={{ fontWeight:800, fontSize:22, letterSpacing:'-0.04em', color:'var(--text)' }}>{displayName}</div>
-              <div style={{ color:'var(--muted)', fontSize:14, marginTop:2 }}>@{username}</div>
+              {profile?.account_type === 'business' && (
+                <div style={{ marginTop:6 }}>
+                  <span style={{ fontSize:11, fontWeight:800, letterSpacing:'0.05em',
+                    background:'#586875', color:'#f6eddc', borderRadius:20, padding:'3px 11px' }}>
+                    CLUB VERIFICADO ✓
+                  </span>
+                </div>
+              )}
+              <div style={{ color:'var(--muted)', fontSize:14, marginTop:4 }}>@{username}</div>
             </div>
           )}
 
