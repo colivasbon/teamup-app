@@ -561,13 +561,15 @@ select.input   { appearance: none; cursor: pointer; }
   -webkit-backdrop-filter: blur(26px) saturate(200%) contrast(1.1);
   border-top: 1px solid var(--navbar-glass-edge);
   border-radius: 26px 26px 0 0;
-  border: none;
   z-index: 999;
   padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.12),
               0 10px 38px rgba(0,0,0,0.18);
   overflow: hidden;
   background-clip: padding-box;
+  isolation: isolate;
+  transform: translateZ(0);
+  will-change: backdrop-filter;
 }
 
 .nav-inner {
