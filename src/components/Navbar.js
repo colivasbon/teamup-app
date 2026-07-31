@@ -123,7 +123,7 @@ export default function Navbar() {
       <nav className="navbar" style={{
           backdropFilter: 'blur(26px) saturate(130%) contrast(0.95)',
           WebkitBackdropFilter: 'blur(26px) saturate(130%) contrast(0.95)',
-          backgroundColor: 'rgba(255,255,255,0.72)',
+          backgroundColor: 'var(--navbar-glass)',
           borderRadius: 0,
           isolation: 'isolate',
           transform: 'translateZ(0)',

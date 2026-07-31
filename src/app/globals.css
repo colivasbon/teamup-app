@@ -42,7 +42,7 @@
   --glass:        rgba(255,252,245,0.78);
   --glass-edge:   rgba(255,255,255,0.92);
   /* Navbar glass */
-  --navbar-glass: rgba(255,255,255,0.40);
+  --navbar-glass: rgba(255,255,255,0.55);
   --navbar-glass-edge: rgba(255,255,255,0.72);
   --navbar-blur:  blur(22px) saturate(180%) contrast(1.08);
 
@@ -243,7 +243,7 @@
   --accent-rgb:   15,118,110;
   --glass:        rgba(255,255,255,0.88);
   --glass-edge:   rgba(15,23,42,0.08);
-  --navbar-glass: rgba(255,255,255,0.70);
+  --navbar-glass: rgba(255,255,255,0.92);
   --navbar-glass-edge: rgba(15,23,42,0.12);
   --shadow-sm:    0 2px 10px rgba(15,23,42,0.08);
   --shadow:       0 4px 22px rgba(15,23,42,0.10);
