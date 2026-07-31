@@ -161,6 +161,23 @@ export default function Profile() {
   const [banner,       setBanner]     = useState('grad-1')
   const [bannerUrl,    setBannerUrl]  = useState(null)
   const [skinTone,     setSkinTone]   = useState('default')
+  const [appTheme,     setAppTheme]   = useState('dark')
+
+  const THEME_OPTIONS = [
+    { id:'dark',         label:'Oscuro',      icon:'🌙' },
+    { id:'dark-amoled',  label:'AMOLED',      icon:'⚫' },
+    { id:'dark-emerald', label:'Esmeralda',   icon:'💚' },
+    { id:'pure-white',   label:'Puro',        icon:'☀️' },
+    { id:'light',        label:'Claro',       icon:'🌤️' },
+  ]
+
+  const THEME_PREVIEWS = {
+    dark: 'linear-gradient(135deg,#1f2937,#111827)',
+    'dark-amoled': 'linear-gradient(135deg,#020617,#050a10)',
+    'dark-emerald': 'linear-gradient(135deg,#064e3b,#0f766e)',
+    'pure-white': 'linear-gradient(135deg,#f8fafc,#ffffff)',
+    light: 'linear-gradient(135deg,#e2e8f0,#f8fafc)',
+  }
 
   // Notificaciones
   const [notifs,       setNotifs]     = useState([])
@@ -180,7 +197,7 @@ export default function Profile() {
     )
   }
 
-  // Inicializar form cuando llega el perfil
+  // Inicializar form y tema cuando llega el perfil
   useEffect(() => {
     if (profile) {
       setForm({
@@ -194,6 +211,9 @@ export default function Profile() {
       setBannerUrl(profile.banner_url || null)
       setSkinTone(profile.skin_tone || 'default')
     }
+    const savedTheme = localStorage.getItem('tu-theme') || 'dark'
+    setAppTheme(savedTheme)
+    document.documentElement.setAttribute('data-theme', savedTheme)
   }, [profile])
 
   // Cargar eventos creados y apuntados
@@ -287,6 +307,8 @@ export default function Profile() {
       .eq('id', user.id)
       .select().single()
     if (data) setProfile(data)
+    localStorage.setItem('tu-theme', appTheme)
+    document.documentElement.setAttribute('data-theme', appTheme)
     setSaving(false)
     setEditing(false)
   }
@@ -456,7 +478,56 @@ export default function Profile() {
               <input ref={bannerRef} type="file" accept="image/*" style={{ display:'none' }} onChange={handleBannerChange}/>
             </div>
 
-            {/* Selector tono de piel */}
+            {/* Selector de tema */}
+            <div style={{ marginTop:16, padding:'18px', borderRadius:18, background:'rgba(255,255,255,0.04)', border:'1px solid var(--border)' }}>
+              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:12, marginBottom:14 }}>
+                <div>
+                  <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.06em', color:'var(--muted)', textTransform:'uppercase' }}>Tema de la app</div>
+                  <div style={{ fontSize:13, fontWeight:700, color:'var(--text)', marginTop:4 }}>Selecciona el estilo visual que prefieras</div>
+                </div>
+                <div style={{ fontSize:12, color:'var(--muted)' }}>{THEME_OPTIONS.find(t => t.id === appTheme)?.label || 'Oscuro'}</div>
+              </div>
+
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(5,minmax(0,1fr))', gap:8 }}>
+                {THEME_OPTIONS.map(theme => (
+                  <button key={theme.id} onClick={() => {
+                    setAppTheme(theme.id)
+                    localStorage.setItem('tu-theme', theme.id)
+                    document.documentElement.setAttribute('data-theme', theme.id)
+                  }}
+                    style={{
+                      display:'flex', flexDirection:'column', alignItems:'stretch', justifyContent:'space-between', gap:10,
+                      padding:'12px', borderRadius:18, border: appTheme === theme.id ? '2px solid var(--primary)' : '1px solid var(--border)',
+                      background: appTheme === theme.id ? 'rgba(255,255,255,0.08)' : 'var(--surface)',
+                      color: appTheme === theme.id ? 'var(--button-contrast)' : 'var(--text)',
+                      fontSize:12, fontWeight:700, cursor:'pointer', minHeight:108,
+                      transition:'all 0.18s ease',
+                      textAlign:'left',
+                    }}
+                  >
+                    <div style={{ position:'relative', borderRadius:16, overflow:'hidden', height:48, background: THEME_PREVIEWS[theme.id], border: '1px solid rgba(255,255,255,0.12)' }}>
+                      <span style={{ position:'absolute', top:8, right:8, width:24, height:24, borderRadius:16, background:'rgba(255,255,255,0.7)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12 }}>
+                        {theme.icon}
+                      </span>
+                    </div>
+                    <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:10 }}>
+                      <div>
+                        <div style={{ fontSize:14 }}>{theme.label}</div>
+                        <div style={{ fontSize:10, color:'var(--muted)', marginTop:4 }}>{theme.id === 'dark' ? 'Clásico' : theme.id === 'dark-amoled' ? 'Negro puro' : theme.id === 'dark-emerald' ? 'Verde' : theme.id === 'pure-white' ? 'Blanco puro' : 'Claro'}</div>
+                      </div>
+                      <div style={{ display:'grid', gridTemplateColumns:'repeat(3,10px)', gap:4, alignItems:'center' }}>
+                        <span style={{ width:10, height:10, borderRadius:999, background:'rgba(255,255,255,0.7)' }} />
+                        <span style={{ width:10, height:10, borderRadius:999, background:'rgba(255,255,255,0.4)' }} />
+                        <span style={{ width:10, height:10, borderRadius:999, background:'rgba(0,0,0,0.12)' }} />
+                      </div>
+                    </div>
+                    {appTheme === theme.id ? (
+                      <span style={{ fontSize:11, color:'var(--primary)', textAlign:'right' }}>Seleccionado</span>
+                    ) : null}
+                  </button>
+                ))}
+              </div>
+            </div>
             <div style={{ marginTop:16 }}>
               <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.06em', color:'var(--muted)', textTransform:'uppercase', marginBottom:10 }}>Tono de piel</div>
               <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
@@ -631,7 +702,7 @@ export default function Profile() {
                 const c = SPORT_COLORS[ev?.sport] || '#5b6ef5'
                 return ev ? (
                   <Link key={ev.id} href={`/events/${ev.id}`} className={`card anim-${(i%6)+1}`}
-                    style={{ display:'flex', alignItems:'center', gap:12, padding:'14px 16px', borderLeft:`3px solid ${c}` }}>
+                    style={{ display:'flex', alignItems:'center', gap:12, padding:'14px 16px', background:'var(--glass)', border:'1px solid transparent', boxShadow:`0 0 0 1px rgba(255,255,255,0.08), 0 18px 32px ${c}15` }}>
                     <div style={{ flex:1, minWidth:0 }}>
                       <div style={{ fontWeight:700, fontSize:14, color:'var(--text)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{ev.title}</div>
                       <div style={{ fontSize:12, color:'var(--muted)', marginTop:2, textTransform:'capitalize' }}>

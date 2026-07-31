@@ -185,7 +185,9 @@ export default function Home() {
                 return (
                   <Link key={ev.id} href={`/events/${ev.id}`} className={`card anim-${i+1}`} style={{
                     display:'flex', alignItems:'center', gap:14, padding:'14px 16px',
-                    borderLeft:'3px solid #586875',
+                    background:'var(--glass)',
+                    border:'1px solid transparent',
+                    boxShadow:'0 0 0 1px rgba(255,255,255,0.09), 0 20px 36px rgba(88,104,117,0.10)',
                   }}>
                     <div style={{ width:48, height:48, borderRadius:14, background:'rgba(88,104,117,0.10)', border:'1.5px solid rgba(88,104,117,0.20)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, overflow:'hidden' }}>
                       <SportIcon sport={ev.sport} size={36} />
@@ -277,7 +279,9 @@ export default function Home() {
           {DEMO_NEARBY.map((ev,i)=>(
             <Link key={ev.id} href={`/events/${ev.id}`} className={`card anim-${i+4}`} style={{
               display:'flex', alignItems:'center', gap:14, padding:'14px 16px',
-              borderLeft:`3px solid ${ev.color}`,
+              background:'var(--glass)',
+              border:'1px solid transparent',
+              boxShadow:`0 0 0 1px rgba(255,255,255,0.08), 0 16px 40px ${ev.color}15`,
             }}>
               <div style={{ width:52, height:52, background:`${ev.color}18`, border:`1.5px solid ${ev.color}30`, borderRadius:16, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, overflow:'hidden' }}>
                 <SportIcon sport={ev.sport} size={36} />

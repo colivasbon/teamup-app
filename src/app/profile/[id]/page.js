@@ -219,7 +219,7 @@ export default function PublicProfile() {
               const pct = ev.max_players > 0 ? Math.round(((ev.participant_count||0)/ev.max_players)*100) : 0
               return (
                 <a key={ev.id} href={`/events/${ev.id}`} className={`card anim-${(i%6)+1}`}
-                  style={{ display:'flex', gap:12, padding:'14px 16px', alignItems:'center', textDecoration:'none', borderLeft:`3px solid ${c}` }}>
+                  style={{ display:'flex', gap:12, padding:'14px 16px', alignItems:'center', textDecoration:'none', border:'1px solid transparent', background:'var(--glass)', boxShadow:`0 0 0 1px rgba(255,255,255,0.08), 0 16px 40px ${c}15` }}>
                   <div style={{ width:40, height:40, borderRadius:12, background:`${c}18`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:22, flexShrink:0 }}>
                     {S_ICONS[ev.sport] || '🎯'}
                   </div>

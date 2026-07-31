@@ -51,6 +51,13 @@
   --grad:         linear-gradient(135deg, #586875 0%, #3f4f5a 100%);
   --grad-warm:    linear-gradient(135deg, #c8a96e 0%, #a07840 100%);
 
+  /* UI helpers */
+  --button-contrast: #f6eddc;
+  --bg-image: radial-gradient(ellipse 60% 40% at 10% 15%, rgba(88,104,117,0.10) 0%, transparent 55%),
+               radial-gradient(ellipse 48% 52% at 90% 85%, rgba(200,169,110,0.08) 0%, transparent 55%),
+               radial-gradient(ellipse 34% 42% at 70% 2%, rgba(88,104,117,0.06) 0%, transparent 55%),
+               radial-gradient(ellipse 28% 28% at 20% 90%, rgba(200,169,110,0.05) 0%, transparent 55%);
+
   /* Radios */
   --radius:       20px;
   --radius-sm:    14px;
@@ -65,14 +72,14 @@
   --bg2:          #212a33;
 
   /* Superficies */
-  --surface:      rgba(255,255,255,0.05);
+  --surface:      rgba(255,255,255,0.06);
   --surface2:     rgba(255,255,255,0.03);
   --solid:        #252f38;
 
   /* Texto */
   --text:         #f6eddc;
   --text2:        #c8bfaf;
-  --muted:        #6a7a86;
+  --muted:        #8a98a4;
 
   /* Bordes */
   --border:       rgba(246,237,220,0.12);
@@ -99,6 +106,95 @@
   /* Gradiente principal */
   --grad:         linear-gradient(135deg, #586875 0%, #3f4f5a 100%);
   --grad-warm:    linear-gradient(135deg, #c8a96e 0%, #a07840 100%);
+
+  /* Background extras */
+  --bg-image: radial-gradient(ellipse 55% 45% at 12% 12%, rgba(246,237,220,0.08) 0%, transparent 58%),
+               radial-gradient(ellipse 42% 38% at 84% 84%, rgba(200,169,110,0.07) 0%, transparent 56%);
+  --button-contrast: #1a2028;
+}
+
+[data-theme="dark-amoled"] {
+  --bg:           #000000;
+  --bg2:          #0a0a0a;
+  --surface:      rgba(255,255,255,0.06);
+  --surface2:     rgba(255,255,255,0.04);
+  --solid:        #090909;
+  --text:         #f8fafc;
+  --text2:        #cbd5e1;
+  --muted:        #94a3b8;
+  --border:       rgba(248,250,252,0.10);
+  --border2:      rgba(248,250,252,0.05);
+  --primary:      #22d3ee;
+  --primary-h:    #7dd3fc;
+  --primary-rgb:  34,211,238;
+  --accent:       #0ea5e9;
+  --accent-rgb:   14,165,233;
+  --glass:        rgba(255,255,255,0.08);
+  --glass-edge:   rgba(255,255,255,0.12);
+  --shadow-sm:    0 2px 14px rgba(0,0,0,0.35);
+  --shadow:       0 4px 30px rgba(0,0,0,0.50);
+  --shadow-lg:    0 12px 54px rgba(0,0,0,0.65);
+  --grad:         linear-gradient(135deg, #0f172a 0%, #07101a 100%);
+  --grad-warm:    linear-gradient(135deg, #0d3b5d 0%, #072032 100%);
+  --bg-image: radial-gradient(ellipse 55% 40% at 12% 12%, rgba(34,211,238,0.09) 0%, transparent 52%),
+               radial-gradient(ellipse 40% 40% at 88% 88%, rgba(14,165,233,0.06) 0%, transparent 55%);
+  --button-contrast: #020617;
+}
+
+[data-theme="dark-emerald"] {
+  --bg:           #041b13;
+  --bg2:          #0b2f20;
+  --surface:      rgba(236,253,245,0.09);
+  --surface2:     rgba(236,253,245,0.05);
+  --solid:        #08261d;
+  --text:         #e9faf3;
+  --text2:        #a7f3d0;
+  --muted:        #8ed7b9;
+  --border:       rgba(236,253,245,0.12);
+  --border2:      rgba(236,253,245,0.06);
+  --primary:      #2dd4bf;
+  --primary-h:    #6ee7b7;
+  --primary-rgb:  45,212,191;
+  --accent:       #34d399;
+  --accent-rgb:   52,211,153;
+  --glass:        rgba(12,32,24,0.80);
+  --glass-edge:   rgba(236,253,245,0.10);
+  --shadow-sm:    0 2px 12px rgba(0,0,0,0.32);
+  --shadow:       0 4px 28px rgba(0,0,0,0.45);
+  --shadow-lg:    0 12px 48px rgba(0,0,0,0.60);
+  --grad:         linear-gradient(135deg, #10b981 0%, #047857 100%);
+  --grad-warm:    linear-gradient(135deg, #22c55e 0%, #14532d 100%);
+  --bg-image: radial-gradient(ellipse 48% 40% at 12% 14%, rgba(45,212,191,0.10) 0%, transparent 52%),
+               radial-gradient(ellipse 35% 34% at 86% 84%, rgba(52,211,153,0.06) 0%, transparent 60%);
+  --button-contrast: #0a1910;
+}
+
+[data-theme="pure-white"] {
+  --bg:           #ffffff;
+  --bg2:          #f8fafc;
+  --surface:      rgba(255,255,255,0.94);
+  --surface2:     rgba(248,250,252,0.78);
+  --solid:        #f1f5f9;
+  --text:         #0f172a;
+  --text2:        #475569;
+  --muted:        #64748b;
+  --border:       rgba(15,23,42,0.08);
+  --border2:      rgba(15,23,42,0.04);
+  --primary:      #0f172a;
+  --primary-h:    #334155;
+  --primary-rgb:  15,23,42;
+  --accent:       #0f766e;
+  --accent-rgb:   15,118,110;
+  --glass:        rgba(255,255,255,0.88);
+  --glass-edge:   rgba(15,23,42,0.08);
+  --shadow-sm:    0 2px 10px rgba(15,23,42,0.08);
+  --shadow:       0 4px 22px rgba(15,23,42,0.10);
+  --shadow-lg:    0 12px 40px rgba(15,23,42,0.12);
+  --grad:         linear-gradient(135deg, #334155 0%, #1e293b 100%);
+  --grad-warm:    linear-gradient(135deg, #0f766e 0%, #064e3b 100%);
+  --bg-image: radial-gradient(ellipse 55% 50% at 12% 14%, rgba(15,23,42,0.05) 0%, transparent 52%),
+               radial-gradient(ellipse 35% 30% at 86% 84%, rgba(15,23,42,0.02) 0%, transparent 60%);
+  --button-contrast: #ffffff;
 }
 
 /* ─── RESET ─────────────────────────────────────────── */
@@ -135,11 +231,9 @@ input, textarea, select { font-family: inherit; }
 .app-shell {
   min-height: 100dvh;
   background-color: var(--bg);
-  background-image:
-    radial-gradient(ellipse 60% 50% at 5%  15%, rgba(88,104,117,0.10)  0%, transparent 65%),
-    radial-gradient(ellipse 50% 60% at 95% 85%, rgba(200,169,110,0.08) 0%, transparent 65%),
-    radial-gradient(ellipse 40% 35% at 70%  2%, rgba(88,104,117,0.06)  0%, transparent 55%),
-    radial-gradient(ellipse 30% 30% at 20% 90%, rgba(200,169,110,0.05) 0%, transparent 55%);
+  background-image: var(--bg-image);
+  background-size: cover;
+  background-position: center;
   position: relative;
 }
 
@@ -150,7 +244,7 @@ input, textarea, select { font-family: inherit; }
   width: 100%;
   padding: 0 18px;
   /* navbar ~72px + safe area + margen generoso para que nunca tape */
-  padding-bottom: 110px;
+  padding-bottom: 96px;
 }
 .page-wrap-full {
   max-width: 480px;
@@ -234,15 +328,9 @@ input, textarea, select { font-family: inherit; }
 
 /* Modo claro: fondo azul, texto crema */
 .btn-primary {
-  background: #586875;
-  color: #f6eddc;
-  box-shadow: 0 4px 20px rgba(88,104,117,0.35);
-}
-/* Modo oscuro: fondo crema, texto azul */
-[data-theme="dark"] .btn-primary {
-  background: #f6eddc;
-  color: #1a2028;
-  box-shadow: 0 4px 20px rgba(246,237,220,0.18);
+  background: var(--primary);
+  color: var(--button-contrast);
+  box-shadow: 0 4px 20px rgba(var(--primary-rgb),0.28);
 }
 .btn-primary:hover  { filter: brightness(1.08); transform: translateY(-2px); }
 .btn-primary:active { transform: scale(0.97); }
@@ -314,14 +402,9 @@ select.input   { appearance: none; cursor: pointer; }
   font-family: inherit;
 }
 .pill-active {
-  background: #586875;
-  color: #f6eddc;
-  box-shadow: 0 3px 14px rgba(88,104,117,0.28);
-}
-[data-theme="dark"] .pill-active {
-  background: #f6eddc;
-  color: #1a2028;
-  box-shadow: 0 3px 14px rgba(246,237,220,0.15);
+  background: var(--primary);
+  color: var(--button-contrast);
+  box-shadow: 0 3px 14px rgba(var(--primary-rgb),0.22);
 }
 .pill-inactive {
   background: var(--glass);
@@ -335,14 +418,15 @@ select.input   { appearance: none; cursor: pointer; }
 /* ─── BARRA DE PROGRESO ─────────────────────────────── */
 .pbar {
   height: 5px;
-  background: var(--border);
+  background: rgba(255,255,255,0.12);
   border-radius: 100px;
   overflow: hidden;
 }
 .pbar-fill {
   height: 100%;
-  background: #586875;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
   border-radius: 100px;
+  box-shadow: 0 0 16px rgba(var(--primary-rgb),0.20);
   transition: width 0.5s cubic-bezier(.34,1.56,.64,1);
 }
 
@@ -443,13 +527,9 @@ select.input   { appearance: none; cursor: pointer; }
   min-width: 52px;
 }
 .nav-item.active {
-  color: #586875;
-  background: rgba(88,104,117,0.14);
-}
-[data-theme="dark"] .nav-item.active {
-  color: #f6eddc;
-  background: rgba(246,237,220,0.14);
-  border: 1px solid rgba(246,237,220,0.12);
+  color: var(--primary);
+  background: rgba(var(--primary-rgb),0.16);
+  border: 1px solid rgba(var(--primary-rgb),0.16);
 }
 .nav-item:not(.active):hover { color: var(--text2); }
 .nav-item .nav-label {
@@ -478,7 +558,7 @@ body.hide-slogan .slogan-bar {
 .sponsors-ticker {
   margin-left: -18px;
   margin-right: -18px;
-  margin-bottom: 48px;
+  margin-bottom: 22px;
   height: 56px;
   overflow: hidden;
   background: transparent;
