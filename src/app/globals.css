@@ -555,9 +555,10 @@ select.input   { appearance: none; cursor: pointer; }
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(var(--nav-overlay), var(--nav-overlay)), var(--glass);
-  backdrop-filter: blur(56px) saturate(1.6);
-  -webkit-backdrop-filter: blur(56px) saturate(1.6);
+  /* Frosted glass: translucent surface + moderate blur */
+  background: var(--glass);
+  backdrop-filter: blur(32px) saturate(1.4);
+  -webkit-backdrop-filter: blur(32px) saturate(1.4);
   border-top: 1px solid var(--glass-edge);
   z-index: 0;
   pointer-events: none;
@@ -570,7 +571,7 @@ select.input   { appearance: none; cursor: pointer; }
   align-items: center;
   padding: 10px 8px 12px;
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 .nav-item {
   display: flex;
