@@ -38,9 +38,13 @@
   --accent:       var(--primary);
   --accent-rgb:   var(--primary-rgb);
 
-    /* Glass */
+  /* Glass */
   --glass:        rgba(255,252,245,0.78);
   --glass-edge:   rgba(255,255,255,0.92);
+  /* Navbar glass */
+  --navbar-glass: rgba(255,255,255,0.40);
+  --navbar-glass-edge: rgba(255,255,255,0.72);
+  --navbar-blur:  blur(22px) saturate(180%) contrast(1.08);
 
   /* Sombras */
   --shadow-sm:    0 2px 12px rgba(88,104,117,0.10);
@@ -63,13 +67,17 @@
   --radius-sm:    14px;
   --radius-xs:    10px;
   --nav-h:        68px;
-  /* Navbar glass (use a stronger, nearly-opaque glass by default) */
+  /* Navbar glass (dedicated translucent sheet for bottom nav) */
+  --navbar-glass: rgba(255,255,255,0.50);
+  --navbar-glass-edge: rgba(255,255,255,0.75);
   --nav-glass:    var(--glass);
   --nav-glass-edge: var(--glass-edge);
 }
 
 /* ─── TOKENS MODO OSCURO ────────────────────────────── */
 [data-theme="dark"] {
+  --navbar-glass: rgba(24,30,38,0.46);
+  --navbar-glass-edge: rgba(246,237,220,0.12);
   /* Fondos */
   --bg:           #1a2028;
   --bg2:          #212a33;
@@ -98,6 +106,8 @@
   --accent-rgb:   var(--primary-rgb);
 
   --nav-overlay:  transparent;
+  --navbar-glass: rgba(14,20,28,0.40);
+  --navbar-glass-edge: rgba(246,237,220,0.16);
 
   /* Glass */
   --glass:        rgba(26,32,40,0.82);
@@ -137,11 +147,11 @@
   --primary-rgb:  48,179,141;
   --accent:       #30b38d;
   --accent-rgb:   48,179,141;
+  --navbar-glass: rgba(8,10,12,0.30);
+  --navbar-glass-edge: rgba(48,179,141,0.16);
   --glass:        rgba(8,10,12,0.60); /* translucent so backdrop blur shows through */
   --nav-overlay:  transparent;
   --glass-edge:   rgba(48,179,141,0.10);
-  --nav-glass:    var(--glass);
-  --nav-glass-edge: var(--glass-edge);
   --shadow-sm:    0 2px 14px rgba(0,0,0,0.40);
   --shadow:       0 4px 30px rgba(0,0,0,0.55);
   --shadow-lg:    0 12px 54px rgba(0,0,0,0.70);
@@ -168,11 +178,11 @@
   --primary-rgb:  48,179,141;
   --accent:       #30b38d; /* esmeralda */
   --accent-rgb:   48,179,141;
+  --navbar-glass: rgba(10,18,16,0.32);
+  --navbar-glass-edge: rgba(48,179,141,0.16);
   --glass:        rgba(14,24,20,0.60);
   --nav-overlay:  rgba(8,12,10,0.88);
   --glass-edge:   rgba(48,179,141,0.10);
-  --nav-glass:    var(--glass);
-  --nav-glass-edge: var(--glass-edge);
   --shadow-sm:    0 2px 12px rgba(0,0,0,0.30);
   --shadow:       0 4px 28px rgba(0,0,0,0.44);
   --shadow-lg:    0 12px 48px rgba(0,0,0,0.58);
@@ -199,11 +209,11 @@
   --primary-rgb:  159,126,209;
   --accent:       #7c3aed; /* púrpura vibrante */
   --accent-rgb:   124,58,237;
+  --navbar-glass: rgba(18,10,30,0.34);
+  --navbar-glass-edge: rgba(124,58,237,0.16);
   --glass:        rgba(18,10,30,0.60);
   --nav-overlay:  transparent;
   --glass-edge:   rgba(124,58,237,0.10);
-  --nav-glass:    var(--glass);
-  --nav-glass-edge: var(--glass-edge);
   --shadow-sm:    0 2px 12px rgba(0,0,0,0.30);
   --shadow:       0 4px 28px rgba(0,0,0,0.45);
   --shadow-lg:    0 12px 48px rgba(0,0,0,0.58);
@@ -233,6 +243,8 @@
   --accent-rgb:   15,118,110;
   --glass:        rgba(255,255,255,0.88);
   --glass-edge:   rgba(15,23,42,0.08);
+  --navbar-glass: rgba(255,255,255,0.70);
+  --navbar-glass-edge: rgba(15,23,42,0.12);
   --shadow-sm:    0 2px 10px rgba(15,23,42,0.08);
   --shadow:       0 4px 22px rgba(15,23,42,0.10);
   --shadow-lg:    0 12px 40px rgba(15,23,42,0.12);
@@ -544,17 +556,18 @@ select.input   { appearance: none; cursor: pointer; }
 .navbar {
   position: fixed;
   bottom: 0; left: 0; right: 0;
-  background: var(--nav-glass);
-  backdrop-filter: blur(34px) saturate(180%) contrast(1.05);
-  -webkit-backdrop-filter: blur(34px) saturate(180%) contrast(1.05);
-  border-top: 1px solid var(--nav-glass-edge);
+  background: var(--navbar-glass);
+  backdrop-filter: blur(26px) saturate(200%) contrast(1.1);
+  -webkit-backdrop-filter: blur(26px) saturate(200%) contrast(1.1);
+  border-top: 1px solid var(--navbar-glass-edge);
   border-radius: 26px 26px 0 0;
   border: none;
   z-index: 999;
   padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.12),
-              0 10px 24px rgba(0,0,0,0.16);
+              0 10px 38px rgba(0,0,0,0.18);
   overflow: hidden;
+  background-clip: padding-box;
 }
 
 .nav-inner {
