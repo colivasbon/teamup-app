@@ -493,52 +493,55 @@ export default function Profile() {
               <div style={{ overflowX:'auto', paddingBottom:4, WebkitOverflowScrolling:'touch' }}>
                 <div style={{ display:'grid', gridTemplateColumns:'repeat(6,minmax(180px,1fr))', gap:8, minWidth:680 }}>
                   {THEME_OPTIONS.map(theme => (
-                    <button key={theme.id} onClick={() => {
-                    setAppTheme(theme.id)
-                    localStorage.setItem('tu-theme', theme.id)
-                    document.documentElement.setAttribute('data-theme', theme.id)
-                  }}
-                    style={{
-                      display:'flex', flexDirection:'column', alignItems:'stretch', justifyContent:'space-between', gap:10,
-                      padding:'14px', borderRadius:22, border: appTheme === theme.id ? '2px solid var(--primary)' : '1px solid rgba(255,255,255,0.12)',
-                      background: appTheme === theme.id ? 'rgba(255,255,255,0.10)' : 'rgba(255,255,255,0.04)',
-                      color: appTheme === theme.id ? 'var(--button-contrast)' : 'var(--text)',
-                      fontSize:12, fontWeight:700, cursor:'pointer', minHeight:118,
-                      transition:'all 0.18s ease',
-                      textAlign:'left',
-                      boxShadow: appTheme === theme.id ? '0 18px 40px rgba(0,0,0,0.10)' : '0 10px 24px rgba(0,0,0,0.06)',
-                    }}
-                  >
-                    <div style={{ position:'relative', borderRadius:16, overflow:'hidden', height:48, border: '1px solid rgba(255,255,255,0.12)', background:'var(--surface)' }}>
-                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', height:'100%' }}>
-                        <div style={{ background: THEME_SWATCHES[theme.id][0], minHeight:0 }} />
-                        <div style={{ background: THEME_SWATCHES[theme.id][1], minHeight:0 }} />
-                        <div style={{ background: THEME_SWATCHES[theme.id][2], minHeight:0 }} />
+                    <button
+                      key={theme.id}
+                      onClick={() => {
+                        setAppTheme(theme.id)
+                        localStorage.setItem('tu-theme', theme.id)
+                        document.documentElement.setAttribute('data-theme', theme.id)
+                      }}
+                      style={{
+                        display:'flex', flexDirection:'column', alignItems:'stretch', justifyContent:'space-between', gap:10,
+                        padding:'14px', borderRadius:22,
+                        border: appTheme === theme.id ? '2px solid var(--primary)' : '1px solid rgba(255,255,255,0.12)',
+                        background: appTheme === theme.id ? 'rgba(255,255,255,0.10)' : 'rgba(255,255,255,0.04)',
+                        color: appTheme === theme.id ? 'var(--button-contrast)' : 'var(--text)',
+                        fontSize:12, fontWeight:700, cursor:'pointer', minHeight:118,
+                        transition:'all 0.18s ease',
+                        textAlign:'left',
+                        boxShadow: appTheme === theme.id ? '0 18px 40px rgba(0,0,0,0.10)' : '0 10px 24px rgba(0,0,0,0.06)',
+                      }}
+                    >
+                      <div style={{ position:'relative', borderRadius:16, overflow:'hidden', height:48, border: '1px solid rgba(255,255,255,0.12)', background:'var(--surface)' }}>
+                        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', height:'100%' }}>
+                          <div style={{ background: THEME_SWATCHES[theme.id][0], minHeight:0 }} />
+                          <div style={{ background: THEME_SWATCHES[theme.id][1], minHeight:0 }} />
+                          <div style={{ background: THEME_SWATCHES[theme.id][2], minHeight:0 }} />
+                        </div>
+                        <span style={{ position:'absolute', top:8, right:8, width:24, height:24, borderRadius:16, background:'rgba(255,255,255,0.7)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12 }}>
+                          {theme.icon}
+                        </span>
                       </div>
-                      <span style={{ position:'absolute', top:8, right:8, width:24, height:24, borderRadius:16, background:'rgba(255,255,255,0.7)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12 }}>
-                        {theme.icon}
-                      </span>
-                    </div>
-                    <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:10 }}>
-                      <div>
-                        <div style={{ fontSize:14 }}>{theme.label}</div>
-                        <div style={{ fontSize:10, color:'var(--muted)', marginTop:4 }}>
-                          {theme.id === 'dark' ? 'Clásico' : theme.id === 'dark-amoled' ? 'Negro puro' : theme.id === 'dark-emerald' ? 'Oscuro con acentos esmeralda' : theme.id === 'dark-purple' ? 'Oscuro con acentos púrpura' : theme.id === 'pure-white' ? 'Blanco puro' : 'Claro'}
+                      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:10 }}>
+                        <div>
+                          <div style={{ fontSize:14 }}>{theme.label}</div>
+                          <div style={{ fontSize:10, color:'var(--muted)', marginTop:4 }}>
+                            {theme.id === 'dark' ? 'Clásico' : theme.id === 'dark-amoled' ? 'Negro puro' : theme.id === 'dark-emerald' ? 'Oscuro con acentos esmeralda' : theme.id === 'dark-purple' ? 'Oscuro con acentos púrpura' : theme.id === 'pure-white' ? 'Blanco puro' : 'Claro'}
+                          </div>
+                        </div>
+                        <div style={{ display:'grid', gridTemplateColumns:'repeat(3,10px)', gap:4, alignItems:'center' }}>
+                          <span style={{ width:10, height:10, borderRadius:999, background:'rgba(255,255,255,0.7)' }} />
+                          <span style={{ width:10, height:10, borderRadius:999, background:'rgba(255,255,255,0.4)' }} />
+                          <span style={{ width:10, height:10, borderRadius:999, background:'rgba(0,0,0,0.12)' }} />
                         </div>
                       </div>
-                      <div style={{ display:'grid', gridTemplateColumns:'repeat(3,10px)', gap:4, alignItems:'center' }}>
-                        <span style={{ width:10, height:10, borderRadius:999, background:'rgba(255,255,255,0.7)' }} />
-                        <span style={{ width:10, height:10, borderRadius:999, background:'rgba(255,255,255,0.4)' }} />
-                        <span style={{ width:10, height:10, borderRadius:999, background:'rgba(0,0,0,0.12)' }} />
-                      </div>
-                    </div>
-                    {appTheme === theme.id ? (
-                      <span style={{ fontSize:11, color:'var(--primary)', textAlign:'right' }}>Seleccionado</span>
-                    ) : null}
-                  </button>
-                ))}
+                      {appTheme === theme.id ? (
+                        <span style={{ fontSize:11, color:'var(--primary)', textAlign:'right' }}>Seleccionado</span>
+                      ) : null}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
             <div style={{ marginTop:16 }}>
               <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.06em', color:'var(--muted)', textTransform:'uppercase', marginBottom:10 }}>Tono de piel</div>
               <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
