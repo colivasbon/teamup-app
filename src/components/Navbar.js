@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
@@ -81,9 +82,16 @@ export default function Navbar() {
   const router   = useRouter()
   const { user, profile } = useAuth()
   const [showCreateMenu, setShowCreateMenu] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const isBusiness = profile?.account_type === 'business'
 
-  return (
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) return null
+
+  const navbar = (
     <>
       {/* Mini menú Evento / Torneo para cuentas business */}
       {showCreateMenu && (
@@ -148,4 +156,6 @@ export default function Navbar() {
       </nav>
     </>
   )
+
+  return createPortal(navbar, document.body)
 }
