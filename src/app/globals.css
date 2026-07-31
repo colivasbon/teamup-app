@@ -560,12 +560,10 @@ select.input   { appearance: none; cursor: pointer; }
   content: '';
   position: absolute;
   inset: 0;
-  /* Frosted glass: semi-opaque overlay tint + translucent glass + strong blur. The overlay
-     (`--nav-overlay`) provides opacity so content behind is not legible while the underlying
-     `--glass` keeps the frosted appearance. */
-  background: linear-gradient(var(--nav-overlay), var(--nav-overlay)), var(--glass);
-  backdrop-filter: blur(44px) saturate(1.6);
-  -webkit-backdrop-filter: blur(44px) saturate(1.6);
+  /* Frosted glass overlay: strong translucent layer with blur. No theme color changes here. */
+  background: var(--nav-overlay);
+  backdrop-filter: blur(48px) saturate(1.6);
+  -webkit-backdrop-filter: blur(48px) saturate(1.6);
   border-top: 1px solid var(--glass-edge);
   z-index: 0;
   pointer-events: none;
