@@ -38,9 +38,8 @@
   --accent:       var(--primary);
   --accent-rgb:   var(--primary-rgb);
 
-    /* Navbar overlay tint (top layer to obscure background) — translucent but strong enough
-      to prevent legible text being visible behind the frosted glass. Adjust per theme below. */
-    --nav-overlay:  rgba(255,255,255,0.90);
+    /* Navbar overlay tint is no longer used for the main navbar glass effect. */
+    --nav-overlay:  transparent;
 
   /* Glass */
   --glass:        rgba(255,252,245,0.78);
@@ -101,7 +100,7 @@
   --accent:       var(--primary);
   --accent-rgb:   var(--primary-rgb);
 
-  --nav-overlay:  rgba(6,8,10,0.90);
+  --nav-overlay:  transparent;
 
   /* Glass */
   --glass:        rgba(26,32,40,0.82);
@@ -142,7 +141,7 @@
   --accent:       #30b38d;
   --accent-rgb:   48,179,141;
   --glass:        rgba(8,10,12,0.60); /* translucent so backdrop blur shows through */
-  --nav-overlay:  rgba(0,0,0,0.86);
+  --nav-overlay:  transparent;
   --glass-edge:   rgba(48,179,141,0.10);
   --nav-glass:    var(--glass);
   --nav-glass-edge: var(--glass-edge);
@@ -204,7 +203,7 @@
   --accent:       #7c3aed; /* púrpura vibrante */
   --accent-rgb:   124,58,237;
   --glass:        rgba(18,10,30,0.60);
-  --nav-overlay:  rgba(12,8,20,0.88);
+  --nav-overlay:  transparent;
   --glass-edge:   rgba(124,58,237,0.10);
   --nav-glass:    var(--glass);
   --nav-glass-edge: var(--glass-edge);
@@ -548,25 +547,22 @@ select.input   { appearance: none; cursor: pointer; }
 .navbar {
   position: fixed;
   bottom: 0; left: 0; right: 0;
-  background: transparent; /* visual restored; overlay ::before will provide frosted glass */
-  border-top: 1px solid var(--border);
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-top: 1px solid rgba(255,255,255,0.18);
+  border-radius: 26px 26px 0 0;
   z-index: 100;
   padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
-  box-shadow: 0 -4px 24px rgba(0,0,0,0.08);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.25),
+              0 8px 32px rgba(0,0,0,0.15),
+              0 -4px 24px rgba(0,0,0,0.08);
   overflow: visible;
 }
 
 .navbar::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  /* Frosted glass overlay: strong translucent layer with blur. No theme color changes here. */
-  background: var(--nav-overlay);
-  backdrop-filter: blur(48px) saturate(1.6);
-  -webkit-backdrop-filter: blur(48px) saturate(1.6);
-  border-top: 1px solid var(--glass-edge);
-  z-index: 0;
-  pointer-events: none;
+  content: none;
 }
 .nav-inner {
   max-width: 480px;
