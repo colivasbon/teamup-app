@@ -512,7 +512,7 @@ export default function Profile() {
                         boxShadow: appTheme === theme.id ? '0 18px 40px rgba(0,0,0,0.10)' : '0 10px 24px rgba(0,0,0,0.06)',
                       }}
                     >
-                      <div style={{ position:'relative', borderRadius:16, overflow:'hidden', height:48, border: '1px solid rgba(255,255,255,0.12)', background:'var(--surface)' }}>
+                      <div style={{ position:'relative', borderRadius:16, overflow:'hidden', height:48, border:'1px solid rgba(255,255,255,0.12)', background:'var(--surface)' }}>
                         <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', height:'100%' }}>
                           <div style={{ background: THEME_SWATCHES[theme.id][0], minHeight:0 }} />
                           <div style={{ background: THEME_SWATCHES[theme.id][1], minHeight:0 }} />
@@ -542,6 +542,7 @@ export default function Profile() {
                   ))}
                 </div>
               </div>
+            </div>
             <div style={{ marginTop:16 }}>
               <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.06em', color:'var(--muted)', textTransform:'uppercase', marginBottom:10 }}>Tono de piel</div>
               <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
