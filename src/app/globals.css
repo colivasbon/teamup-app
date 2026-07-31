@@ -114,7 +114,7 @@
 }
 
 [data-theme="dark-amoled"] {
-  --bg:           #000000;
+  --bg:           #000000; /* AMOLED keeps pure black */
   --bg2:          #050505;
   --surface:      rgba(255,255,255,0.05);
   --surface2:     rgba(255,255,255,0.03);
@@ -129,8 +129,8 @@
   --primary-rgb:  48,179,141;
   --accent:       #30b38d;
   --accent-rgb:   48,179,141;
-  --glass:        rgba(10,12,15,0.76);
-  --glass-edge:   rgba(255,255,255,0.12);
+  --glass:        rgba(8,10,12,0.86); /* slightly more opaque so blur is visible */
+  --glass-edge:   rgba(48,179,141,0.12);
   --shadow-sm:    0 2px 14px rgba(0,0,0,0.40);
   --shadow:       0 4px 30px rgba(0,0,0,0.55);
   --shadow-lg:    0 12px 54px rgba(0,0,0,0.70);
@@ -142,8 +142,8 @@
 }
 
 [data-theme="dark-emerald"] {
-  --bg:           #090f0c;
-  --bg2:          #0f1a13;
+  --bg:           #0f1416; /* dark grey background for better legibility */
+  --bg2:          #12181a;
   --surface:      rgba(255,255,255,0.06);
   --surface2:     rgba(255,255,255,0.03);
   --solid:        #0a1b14;
@@ -157,8 +157,8 @@
   --primary-rgb:  48,179,141;
   --accent:       #30b38d; /* esmeralda */
   --accent-rgb:   48,179,141;
-  --glass:        rgba(12,24,18,0.75);
-  --glass-edge:   rgba(48,179,141,0.12);
+  --glass:        rgba(14,24,20,0.82);
+  --glass-edge:   rgba(48,179,141,0.14);
   --shadow-sm:    0 2px 12px rgba(0,0,0,0.30);
   --shadow:       0 4px 28px rgba(0,0,0,0.44);
   --shadow-lg:    0 12px 48px rgba(0,0,0,0.58);
@@ -170,8 +170,8 @@
 }
 
 [data-theme="dark-purple"] {
-  --bg:           #110418;
-  --bg2:          #1b0732;
+  --bg:           #0f1419; /* dark grey background with purple accents */
+  --bg2:          #171026;
   --surface:      rgba(255,255,255,0.05);
   --surface2:     rgba(255,255,255,0.03);
   --solid:        #17081f;
@@ -185,8 +185,8 @@
   --primary-rgb:  159,126,209;
   --accent:       #7c3aed; /* púrpura vibrante */
   --accent-rgb:   124,58,237;
-  --glass:        rgba(22,10,38,0.75);
-  --glass-edge:   rgba(159,126,209,0.12);
+  --glass:        rgba(18,10,30,0.82);
+  --glass-edge:   rgba(124,58,237,0.14);
   --shadow-sm:    0 2px 12px rgba(0,0,0,0.30);
   --shadow:       0 4px 28px rgba(0,0,0,0.45);
   --shadow-lg:    0 12px 48px rgba(0,0,0,0.58);
@@ -356,9 +356,9 @@ input, textarea, select { font-family: inherit; }
 
 /* Modo claro: fondo azul, texto crema */
 .btn-primary {
-  background: var(--primary);
+  background: var(--accent);
   color: var(--button-contrast);
-  box-shadow: 0 4px 20px rgba(var(--primary-rgb),0.28);
+  box-shadow: 0 4px 20px rgba(var(--accent-rgb),0.28);
 }
 .btn-primary:hover  { filter: brightness(1.08); transform: translateY(-2px); }
 .btn-primary:active { transform: scale(0.97); }
@@ -555,9 +555,9 @@ select.input   { appearance: none; cursor: pointer; }
   min-width: 52px;
 }
 .nav-item.active {
-  color: var(--primary);
-  background: rgba(var(--primary-rgb),0.16);
-  border: 1px solid rgba(var(--primary-rgb),0.16);
+  color: var(--accent);
+  background: rgba(var(--accent-rgb),0.16);
+  border: 1px solid rgba(var(--accent-rgb),0.16);
 }
 .nav-item:not(.active):hover { color: var(--text2); }
 .nav-item .nav-label {
