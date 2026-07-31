@@ -121,9 +121,10 @@ export default function Navbar() {
       )}
 
       <nav className="navbar" style={{
-          backdropFilter: 'blur(26px) saturate(200%) contrast(1.1)',
-          WebkitBackdropFilter: 'blur(26px) saturate(200%) contrast(1.1)',
-          backgroundColor: 'var(--navbar-glass)',
+          backdropFilter: 'blur(26px) saturate(130%) contrast(0.95)',
+          WebkitBackdropFilter: 'blur(26px) saturate(130%) contrast(0.95)',
+          backgroundColor: 'rgba(255,255,255,0.72)',
+          borderRadius: 0,
           isolation: 'isolate',
           transform: 'translateZ(0)',
           willChange: 'backdrop-filter',
