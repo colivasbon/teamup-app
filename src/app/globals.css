@@ -38,8 +38,9 @@
   --accent:       var(--primary);
   --accent-rgb:   var(--primary-rgb);
 
-  /* Navbar overlay tint (top layer to obscure background) */
-  --nav-overlay:  rgba(255,255,255,0.78);
+    /* Navbar overlay tint (top layer to obscure background) — translucent but strong enough
+      to prevent legible text being visible behind the frosted glass. Adjust per theme below. */
+    --nav-overlay:  rgba(255,255,255,0.90);
 
   /* Glass */
   --glass:        rgba(255,252,245,0.78);
@@ -100,7 +101,7 @@
   --accent:       var(--primary);
   --accent-rgb:   var(--primary-rgb);
 
-  --nav-overlay:  rgba(6,8,10,0.78);
+  --nav-overlay:  rgba(6,8,10,0.90);
 
   /* Glass */
   --glass:        rgba(26,32,40,0.82);
@@ -141,6 +142,7 @@
   --accent:       #30b38d;
   --accent-rgb:   48,179,141;
   --glass:        rgba(8,10,12,0.60); /* translucent so backdrop blur shows through */
+  --nav-overlay:  rgba(0,0,0,0.86);
   --glass-edge:   rgba(48,179,141,0.10);
   --nav-glass:    var(--glass);
   --nav-glass-edge: var(--glass-edge);
@@ -171,6 +173,7 @@
   --accent:       #30b38d; /* esmeralda */
   --accent-rgb:   48,179,141;
   --glass:        rgba(14,24,20,0.60);
+  --nav-overlay:  rgba(8,12,10,0.88);
   --glass-edge:   rgba(48,179,141,0.10);
   --nav-glass:    var(--glass);
   --nav-glass-edge: var(--glass-edge);
@@ -201,6 +204,7 @@
   --accent:       #7c3aed; /* púrpura vibrante */
   --accent-rgb:   124,58,237;
   --glass:        rgba(18,10,30,0.60);
+  --nav-overlay:  rgba(12,8,20,0.88);
   --glass-edge:   rgba(124,58,237,0.10);
   --nav-glass:    var(--glass);
   --nav-glass-edge: var(--glass-edge);
@@ -218,6 +222,7 @@
   --bg:           #ffffff;
   --bg2:          #f8fafc;
   --surface:      rgba(255,255,255,0.94);
+  --nav-overlay:  rgba(255,255,255,0.90);
   --surface2:     rgba(248,250,252,0.78);
   --solid:        #f1f5f9;
   --text:         #0f172a;
@@ -555,10 +560,12 @@ select.input   { appearance: none; cursor: pointer; }
   content: '';
   position: absolute;
   inset: 0;
-  /* Frosted glass: translucent surface + moderate blur */
-  background: var(--glass);
-  backdrop-filter: blur(32px) saturate(1.4);
-  -webkit-backdrop-filter: blur(32px) saturate(1.4);
+  /* Frosted glass: semi-opaque overlay tint + translucent glass + strong blur. The overlay
+     (`--nav-overlay`) provides opacity so content behind is not legible while the underlying
+     `--glass` keeps the frosted appearance. */
+  background: linear-gradient(var(--nav-overlay), var(--nav-overlay)), var(--glass);
+  backdrop-filter: blur(44px) saturate(1.6);
+  -webkit-backdrop-filter: blur(44px) saturate(1.6);
   border-top: 1px solid var(--glass-edge);
   z-index: 0;
   pointer-events: none;
