@@ -120,7 +120,14 @@ export default function Navbar() {
         </>
       )}
 
-      <nav className="navbar">
+      <nav className="navbar" style={{
+          backdropFilter: 'blur(26px) saturate(200%) contrast(1.1)',
+          WebkitBackdropFilter: 'blur(26px) saturate(200%) contrast(1.1)',
+          backgroundColor: 'rgba(24, 30, 38, 0.46)',
+          isolation: 'isolate',
+          transform: 'translateZ(0)',
+          willChange: 'backdrop-filter',
+        }}>
         {/* ── Iconos de navegación ── */}
         <div className="nav-inner">
           {NAV_ITEMS.map(({ href, label, icon }) => {
