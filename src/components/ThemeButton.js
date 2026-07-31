@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 
 const THEMES = [
   { id:'dark',         label:'Oscuro',       icon:'🌙' },
-  { id:'dark-amoled',  label:'AMOLED',       icon:'⚫' },
+  { id:'dark-amoled',  label:'AMOLED',       icon:'🌙' },
   { id:'dark-emerald', label:'Esmeralda',    icon:'💚' },
   { id:'pure-white',   label:'Puro',         icon:'☀️' },
   { id:'light',        label:'Claro',        icon:'🌤️' },

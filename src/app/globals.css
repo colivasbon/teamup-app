@@ -124,49 +124,77 @@
   --muted:        #94a3b8;
   --border:       rgba(248,250,252,0.10);
   --border2:      rgba(248,250,252,0.05);
-  --primary:      #22d3ee;
-  --primary-h:    #7dd3fc;
-  --primary-rgb:  34,211,238;
-  --accent:       #0ea5e9;
-  --accent-rgb:   14,165,233;
+  --primary:      #4db7c8;
+  --primary-h:    #82cddf;
+  --primary-rgb:  77,183,200;
+  --accent:       #5bb5a4;
+  --accent-rgb:   91,181,164;
   --glass:        rgba(255,255,255,0.08);
   --glass-edge:   rgba(255,255,255,0.12);
   --shadow-sm:    0 2px 14px rgba(0,0,0,0.35);
   --shadow:       0 4px 30px rgba(0,0,0,0.50);
   --shadow-lg:    0 12px 54px rgba(0,0,0,0.65);
   --grad:         linear-gradient(135deg, #0f172a 0%, #07101a 100%);
-  --grad-warm:    linear-gradient(135deg, #0d3b5d 0%, #072032 100%);
-  --bg-image: radial-gradient(ellipse 55% 40% at 12% 12%, rgba(34,211,238,0.09) 0%, transparent 52%),
-               radial-gradient(ellipse 40% 40% at 88% 88%, rgba(14,165,233,0.06) 0%, transparent 55%);
+  --grad-warm:    linear-gradient(135deg, #102d3a 0%, #07101a 100%);
+  --bg-image: radial-gradient(ellipse 55% 40% at 12% 12%, rgba(77,183,200,0.08) 0%, transparent 52%),
+               radial-gradient(ellipse 40% 40% at 88% 88%, rgba(91,181,164,0.06) 0%, transparent 55%);
   --button-contrast: #020617;
 }
 
 [data-theme="dark-emerald"] {
-  --bg:           #041b13;
-  --bg2:          #0b2f20;
-  --surface:      rgba(236,253,245,0.09);
-  --surface2:     rgba(236,253,245,0.05);
-  --solid:        #08261d;
-  --text:         #e9faf3;
-  --text2:        #a7f3d0;
-  --muted:        #8ed7b9;
-  --border:       rgba(236,253,245,0.12);
-  --border2:      rgba(236,253,245,0.06);
-  --primary:      #2dd4bf;
-  --primary-h:    #6ee7b7;
-  --primary-rgb:  45,212,191;
-  --accent:       #34d399;
-  --accent-rgb:   52,211,153;
-  --glass:        rgba(12,32,24,0.80);
-  --glass-edge:   rgba(236,253,245,0.10);
-  --shadow-sm:    0 2px 12px rgba(0,0,0,0.32);
+  --bg:           #041510;
+  --bg2:          #081e17;
+  --surface:      rgba(255,255,255,0.05);
+  --surface2:     rgba(255,255,255,0.03);
+  --solid:        #091d16;
+  --text:         #e6f7ef;
+  --text2:        #9cd8ba;
+  --muted:        #78b29a;
+  --border:       rgba(113,237,193,0.12);
+  --border2:      rgba(113,237,193,0.06);
+  --primary:      #30b38d;
+  --primary-h:    #76d7b1;
+  --primary-rgb:  48,179,141;
+  --accent:       #3aa985;
+  --accent-rgb:   58,169,133;
+  --glass:        rgba(12,24,18,0.75);
+  --glass-edge:   rgba(48,179,141,0.12);
+  --shadow-sm:    0 2px 12px rgba(0,0,0,0.30);
+  --shadow:       0 4px 28px rgba(0,0,0,0.44);
+  --shadow-lg:    0 12px 48px rgba(0,0,0,0.58);
+  --grad:         linear-gradient(135deg, #06221a 0%, #0b2d20 100%);
+  --grad-warm:    linear-gradient(135deg, #127761 0%, #0b2d20 100%);
+  --bg-image: radial-gradient(ellipse 48% 40% at 12% 14%, rgba(48,179,141,0.10) 0%, transparent 52%),
+               radial-gradient(ellipse 35% 34% at 86% 84%, rgba(28,159,114,0.07) 0%, transparent 60%);
+  --button-contrast: #081d14;
+}
+
+[data-theme="dark-purple"] {
+  --bg:           #13051e;
+  --bg2:          #1b0732;
+  --surface:      rgba(255,255,255,0.05);
+  --surface2:     rgba(255,255,255,0.03);
+  --solid:        #180921;
+  --text:         #efe7ff;
+  --text2:        #d8c4fc;
+  --muted:        #b9a7e6;
+  --border:       rgba(178,156,237,0.12);
+  --border2:      rgba(178,156,237,0.06);
+  --primary:      #9f7ed1;
+  --primary-h:    #bc9ee5;
+  --primary-rgb:  159,126,209;
+  --accent:       #8363c2;
+  --accent-rgb:   131,99,194;
+  --glass:        rgba(22,10,38,0.75);
+  --glass-edge:   rgba(159,126,209,0.12);
+  --shadow-sm:    0 2px 12px rgba(0,0,0,0.30);
   --shadow:       0 4px 28px rgba(0,0,0,0.45);
-  --shadow-lg:    0 12px 48px rgba(0,0,0,0.60);
-  --grad:         linear-gradient(135deg, #10b981 0%, #047857 100%);
-  --grad-warm:    linear-gradient(135deg, #22c55e 0%, #14532d 100%);
-  --bg-image: radial-gradient(ellipse 48% 40% at 12% 14%, rgba(45,212,191,0.10) 0%, transparent 52%),
-               radial-gradient(ellipse 35% 34% at 86% 84%, rgba(52,211,153,0.06) 0%, transparent 60%);
-  --button-contrast: #0a1910;
+  --shadow-lg:    0 12px 48px rgba(0,0,0,0.58);
+  --grad:         linear-gradient(135deg, #2a0f46 0%, #120420 100%);
+  --grad-warm:    linear-gradient(135deg, #6f4cb5 0%, #120420 100%);
+  --bg-image: radial-gradient(ellipse 48% 40% at 14% 16%, rgba(159,126,209,0.10) 0%, transparent 52%),
+               radial-gradient(ellipse 35% 34% at 84% 84%, rgba(131,99,194,0.07) 0%, transparent 60%);
+  --button-contrast: #f8f0ff;
 }
 
 [data-theme="pure-white"] {

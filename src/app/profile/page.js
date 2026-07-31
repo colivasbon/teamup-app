@@ -165,18 +165,20 @@ export default function Profile() {
 
   const THEME_OPTIONS = [
     { id:'dark',         label:'Oscuro',      icon:'🌙' },
-    { id:'dark-amoled',  label:'AMOLED',      icon:'⚫' },
+    { id:'dark-amoled',  label:'AMOLED',      icon:'🌙' },
     { id:'dark-emerald', label:'Esmeralda',   icon:'💚' },
+    { id:'dark-purple',  label:'Púrpura',     icon:'🟣' },
     { id:'pure-white',   label:'Puro',        icon:'☀️' },
     { id:'light',        label:'Claro',       icon:'🌤️' },
   ]
 
-  const THEME_PREVIEWS = {
-    dark: 'linear-gradient(135deg,#1f2937,#111827)',
-    'dark-amoled': 'linear-gradient(135deg,#020617,#050a10)',
-    'dark-emerald': 'linear-gradient(135deg,#064e3b,#0f766e)',
-    'pure-white': 'linear-gradient(135deg,#f8fafc,#ffffff)',
-    light: 'linear-gradient(135deg,#e2e8f0,#f8fafc)',
+  const THEME_SWATCHES = {
+    dark: ['#1f2937', '#111827', '#586875'],
+    'dark-amoled': ['#020617', '#050a10', '#4db7c8'],
+    'dark-emerald': ['#061b17', '#0b2c24', '#30b38d'],
+    'dark-purple': ['#170426', '#2d103f', '#9f7ed1'],
+    'pure-white': ['#f8fafc', '#ffffff', '#cbd5e1'],
+    light: ['#e2e8f0', '#f8fafc', '#94a3b8'],
   }
 
   // Notificaciones
@@ -488,24 +490,31 @@ export default function Profile() {
                 <div style={{ fontSize:12, color:'var(--muted)' }}>{THEME_OPTIONS.find(t => t.id === appTheme)?.label || 'Oscuro'}</div>
               </div>
 
-              <div style={{ display:'grid', gridTemplateColumns:'repeat(5,minmax(0,1fr))', gap:8 }}>
-                {THEME_OPTIONS.map(theme => (
-                  <button key={theme.id} onClick={() => {
+              <div style={{ overflowX:'auto', paddingBottom:4, WebkitOverflowScrolling:'touch' }}>
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(6,minmax(180px,1fr))', gap:8, minWidth:680 }}>
+                  {THEME_OPTIONS.map(theme => (
+                    <button key={theme.id} onClick={() => {
                     setAppTheme(theme.id)
                     localStorage.setItem('tu-theme', theme.id)
                     document.documentElement.setAttribute('data-theme', theme.id)
                   }}
                     style={{
                       display:'flex', flexDirection:'column', alignItems:'stretch', justifyContent:'space-between', gap:10,
-                      padding:'12px', borderRadius:18, border: appTheme === theme.id ? '2px solid var(--primary)' : '1px solid var(--border)',
-                      background: appTheme === theme.id ? 'rgba(255,255,255,0.08)' : 'var(--surface)',
+                      padding:'14px', borderRadius:22, border: appTheme === theme.id ? '2px solid var(--primary)' : '1px solid rgba(255,255,255,0.12)',
+                      background: appTheme === theme.id ? 'rgba(255,255,255,0.10)' : 'rgba(255,255,255,0.04)',
                       color: appTheme === theme.id ? 'var(--button-contrast)' : 'var(--text)',
-                      fontSize:12, fontWeight:700, cursor:'pointer', minHeight:108,
+                      fontSize:12, fontWeight:700, cursor:'pointer', minHeight:118,
                       transition:'all 0.18s ease',
                       textAlign:'left',
+                      boxShadow: appTheme === theme.id ? '0 18px 40px rgba(0,0,0,0.10)' : '0 10px 24px rgba(0,0,0,0.06)',
                     }}
                   >
-                    <div style={{ position:'relative', borderRadius:16, overflow:'hidden', height:48, background: THEME_PREVIEWS[theme.id], border: '1px solid rgba(255,255,255,0.12)' }}>
+                    <div style={{ position:'relative', borderRadius:16, overflow:'hidden', height:48, border: '1px solid rgba(255,255,255,0.12)', background:'var(--surface)' }}>
+                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', height:'100%' }}>
+                        <div style={{ background: THEME_SWATCHES[theme.id][0], minHeight:0 }} />
+                        <div style={{ background: THEME_SWATCHES[theme.id][1], minHeight:0 }} />
+                        <div style={{ background: THEME_SWATCHES[theme.id][2], minHeight:0 }} />
+                      </div>
                       <span style={{ position:'absolute', top:8, right:8, width:24, height:24, borderRadius:16, background:'rgba(255,255,255,0.7)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12 }}>
                         {theme.icon}
                       </span>
@@ -513,7 +522,9 @@ export default function Profile() {
                     <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:10 }}>
                       <div>
                         <div style={{ fontSize:14 }}>{theme.label}</div>
-                        <div style={{ fontSize:10, color:'var(--muted)', marginTop:4 }}>{theme.id === 'dark' ? 'Clásico' : theme.id === 'dark-amoled' ? 'Negro puro' : theme.id === 'dark-emerald' ? 'Verde' : theme.id === 'pure-white' ? 'Blanco puro' : 'Claro'}</div>
+                        <div style={{ fontSize:10, color:'var(--muted)', marginTop:4 }}>
+                          {theme.id === 'dark' ? 'Clásico' : theme.id === 'dark-amoled' ? 'Negro puro' : theme.id === 'dark-emerald' ? 'Oscuro con acentos esmeralda' : theme.id === 'dark-purple' ? 'Oscuro con acentos púrpura' : theme.id === 'pure-white' ? 'Blanco puro' : 'Claro'}
+                        </div>
                       </div>
                       <div style={{ display:'grid', gridTemplateColumns:'repeat(3,10px)', gap:4, alignItems:'center' }}>
                         <span style={{ width:10, height:10, borderRadius:999, background:'rgba(255,255,255,0.7)' }} />
