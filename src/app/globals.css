@@ -34,9 +34,12 @@
   --primary-h:    #3f4f5a;
   --primary-rgb:  88,104,117;
 
-  /* Acento cálido: crema oscura */
-  --accent:       #c8a96e;
-  --accent-rgb:   200,169,110;
+  /* Acento: por defecto sigue el color primario */
+  --accent:       var(--primary);
+  --accent-rgb:   var(--primary-rgb);
+
+  /* Navbar overlay tint (top layer to obscure background) */
+  --nav-overlay:  rgba(255,255,255,0.78);
 
   /* Glass */
   --glass:        rgba(255,252,245,0.78);
@@ -94,8 +97,10 @@
   --primary-rgb:  246,237,220;
 
   /* Acento */
-  --accent:       var(--primary); /* avoid gold highlight in default dark */
-  --accent-rgb:   246,237,220;
+  --accent:       var(--primary);
+  --accent-rgb:   var(--primary-rgb);
+
+  --nav-overlay:  rgba(6,8,10,0.78);
 
   /* Glass */
   --glass:        rgba(26,32,40,0.82);
@@ -550,9 +555,9 @@ select.input   { appearance: none; cursor: pointer; }
   content: '';
   position: absolute;
   inset: 0;
-  background: var(--glass);
-  backdrop-filter: blur(48px) saturate(1.6);
-  -webkit-backdrop-filter: blur(48px) saturate(1.6);
+  background: linear-gradient(var(--nav-overlay), var(--nav-overlay)), var(--glass);
+  backdrop-filter: blur(56px) saturate(1.6);
+  -webkit-backdrop-filter: blur(56px) saturate(1.6);
   border-top: 1px solid var(--glass-edge);
   z-index: 0;
   pointer-events: none;
