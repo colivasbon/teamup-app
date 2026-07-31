@@ -129,8 +129,8 @@
   --primary-rgb:  48,179,141;
   --accent:       #30b38d;
   --accent-rgb:   48,179,141;
-  --glass:        rgba(8,10,12,0.86); /* slightly more opaque so blur is visible */
-  --glass-edge:   rgba(48,179,141,0.12);
+  --glass:        rgba(8,10,12,0.60); /* translucent so backdrop blur shows through */
+  --glass-edge:   rgba(48,179,141,0.10);
   --shadow-sm:    0 2px 14px rgba(0,0,0,0.40);
   --shadow:       0 4px 30px rgba(0,0,0,0.55);
   --shadow-lg:    0 12px 54px rgba(0,0,0,0.70);
@@ -157,8 +157,8 @@
   --primary-rgb:  48,179,141;
   --accent:       #30b38d; /* esmeralda */
   --accent-rgb:   48,179,141;
-  --glass:        rgba(14,24,20,0.82);
-  --glass-edge:   rgba(48,179,141,0.14);
+  --glass:        rgba(14,24,20,0.60);
+  --glass-edge:   rgba(48,179,141,0.10);
   --shadow-sm:    0 2px 12px rgba(0,0,0,0.30);
   --shadow:       0 4px 28px rgba(0,0,0,0.44);
   --shadow-lg:    0 12px 48px rgba(0,0,0,0.58);
@@ -185,8 +185,8 @@
   --primary-rgb:  159,126,209;
   --accent:       #7c3aed; /* púrpura vibrante */
   --accent-rgb:   124,58,237;
-  --glass:        rgba(18,10,30,0.82);
-  --glass-edge:   rgba(124,58,237,0.14);
+  --glass:        rgba(18,10,30,0.60);
+  --glass-edge:   rgba(124,58,237,0.10);
   --shadow-sm:    0 2px 12px rgba(0,0,0,0.30);
   --shadow:       0 4px 28px rgba(0,0,0,0.45);
   --shadow-lg:    0 12px 48px rgba(0,0,0,0.58);
@@ -356,9 +356,9 @@ input, textarea, select { font-family: inherit; }
 
 /* Modo claro: fondo azul, texto crema */
 .btn-primary {
-  background: var(--accent);
+  background: var(--primary);
   color: var(--button-contrast);
-  box-shadow: 0 4px 20px rgba(var(--accent-rgb),0.28);
+  box-shadow: 0 4px 20px rgba(var(--primary-rgb),0.28);
 }
 .btn-primary:hover  { filter: brightness(1.08); transform: translateY(-2px); }
 .btn-primary:active { transform: scale(0.97); }
