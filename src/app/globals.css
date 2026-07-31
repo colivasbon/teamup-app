@@ -94,8 +94,8 @@
   --primary-rgb:  246,237,220;
 
   /* Acento */
-  --accent:       #c8a96e;
-  --accent-rgb:   200,169,110;
+  --accent:       var(--primary); /* avoid gold highlight in default dark */
+  --accent-rgb:   246,237,220;
 
   /* Glass */
   --glass:        rgba(26,32,40,0.82);
@@ -538,13 +538,24 @@ select.input   { appearance: none; cursor: pointer; }
 .navbar {
   position: fixed;
   bottom: 0; left: 0; right: 0;
-  background: var(--glass); /* restore original aesthetic */
-  backdrop-filter: blur(36px) saturate(1.6);
-  -webkit-backdrop-filter: blur(36px) saturate(1.6);
+  background: transparent; /* visual restored; overlay ::before will provide frosted glass */
   border-top: 1px solid var(--border);
   z-index: 100;
   padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
   box-shadow: 0 -4px 24px rgba(0,0,0,0.08);
+  overflow: visible;
+}
+
+.navbar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--glass);
+  backdrop-filter: blur(48px) saturate(1.6);
+  -webkit-backdrop-filter: blur(48px) saturate(1.6);
+  border-top: 1px solid var(--glass-edge);
+  z-index: 0;
+  pointer-events: none;
 }
 .nav-inner {
   max-width: 480px;
@@ -553,6 +564,8 @@ select.input   { appearance: none; cursor: pointer; }
   justify-content: space-around;
   align-items: center;
   padding: 10px 8px 12px;
+  position: relative;
+  z-index: 1;
 }
 .nav-item {
   display: flex;
