@@ -2,12 +2,9 @@
 
 import { useState, useEffect } from 'react'
 
-const THEMES = [
-  { id:'dark',         label:'Oscuro',       icon:'🌙' },
-  { id:'dark-amoled',  label:'AMOLED',       icon:'🌙' },
-  { id:'dark-emerald', label:'Esmeralda',    icon:'💚' },
-  { id:'pure-white',   label:'Puro',         icon:'☀️' },
-  { id:'light',        label:'Claro',        icon:'🌤️' },
+const VIEW_THEMES = [
+  { id:'dark',  label:'Oscuro', icon:'🌙' },
+  { id:'light', label:'Claro',  icon:'☀️' },
 ]
 
 export default function ThemeButton() {
@@ -16,23 +13,25 @@ export default function ThemeButton() {
 
   useEffect(() => {
     const saved = localStorage.getItem('tu-theme') || 'dark'
-    const current = THEMES.some(t => t.id === saved) ? saved : 'dark'
-    setTheme(current)
-    document.documentElement.setAttribute('data-theme', current)
+    setTheme(saved)
+    document.documentElement.setAttribute('data-theme', saved)
     setMounted(true)
   }, [])
 
   const toggle = () => {
-    const currentIndex = THEMES.findIndex(t => t.id === theme)
-    const nextIndex = (currentIndex + 1) % THEMES.length
-    const next = THEMES[nextIndex].id
+    const currentIndex = VIEW_THEMES.findIndex(t => t.id === theme)
+    const nextIndex = currentIndex === 0 ? 1 : 0
+    const next = VIEW_THEMES[nextIndex].id
     setTheme(next)
     document.documentElement.setAttribute('data-theme', next)
     localStorage.setItem('tu-theme', next)
   }
 
   if (!mounted) return null
-  const currentTheme = THEMES.find(t => t.id === theme) || THEMES[0]
+  const currentTheme = VIEW_THEMES.find(t => t.id === theme) || {
+    label: theme === 'light' || theme === 'pure-white' ? 'Claro' : 'Oscuro',
+    icon: theme === 'light' || theme === 'pure-white' ? '☀️' : '🌙',
+  }
 
   return (
     <button

@@ -173,12 +173,12 @@ export default function Profile() {
   ]
 
   const THEME_SWATCHES = {
-    dark: ['#1f2937', '#111827', '#586875'],
-    'dark-amoled': ['#020617', '#050a10', '#4db7c8'],
-    'dark-emerald': ['#061b17', '#0b2c24', '#30b38d'],
-    'dark-purple': ['#170426', '#2d103f', '#9f7ed1'],
+    dark: ['#111827', '#1f2937', '#586875'],
+    'dark-amoled': ['#000000', '#070707', '#30b38d'],
+    'dark-emerald': ['#050f0b', '#09140f', '#30b38d'],
+    'dark-purple': ['#12031a', '#1b0a2f', '#7c3aed'],
     'pure-white': ['#f8fafc', '#ffffff', '#cbd5e1'],
-    light: ['#e2e8f0', '#f8fafc', '#94a3b8'],
+    light: ['#f6eddc', '#ede3d0', '#586875'],
   }
 
   // Notificaciones
