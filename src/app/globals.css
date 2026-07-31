@@ -63,6 +63,9 @@
   --radius-sm:    14px;
   --radius-xs:    10px;
   --nav-h:        68px;
+  /* Navbar glass (use a stronger, nearly-opaque glass by default) */
+  --nav-glass:    rgba(255,252,245,0.92);
+  --nav-glass-edge: rgba(255,255,255,0.92);
 }
 
 /* ─── TOKENS MODO OSCURO ────────────────────────────── */
@@ -97,6 +100,8 @@
   /* Glass */
   --glass:        rgba(26,32,40,0.82);
   --glass-edge:   rgba(246,237,220,0.10);
+  --nav-glass:    rgba(18,20,24,0.96); /* almost solid to block background */
+  --nav-glass-edge: rgba(246,237,220,0.10);
 
   /* Sombras */
   --shadow-sm:    0 2px 12px rgba(0,0,0,0.30);
@@ -131,6 +136,8 @@
   --accent-rgb:   48,179,141;
   --glass:        rgba(8,10,12,0.60); /* translucent so backdrop blur shows through */
   --glass-edge:   rgba(48,179,141,0.10);
+  --nav-glass:    rgba(6,8,10,0.96); /* nearly opaque black for nav */
+  --nav-glass-edge: rgba(48,179,141,0.10);
   --shadow-sm:    0 2px 14px rgba(0,0,0,0.40);
   --shadow:       0 4px 30px rgba(0,0,0,0.55);
   --shadow-lg:    0 12px 54px rgba(0,0,0,0.70);
@@ -159,6 +166,8 @@
   --accent-rgb:   48,179,141;
   --glass:        rgba(14,24,20,0.60);
   --glass-edge:   rgba(48,179,141,0.10);
+  --nav-glass:    rgba(12,20,16,0.94); /* darker grey with emerald tint */
+  --nav-glass-edge: rgba(48,179,141,0.12);
   --shadow-sm:    0 2px 12px rgba(0,0,0,0.30);
   --shadow:       0 4px 28px rgba(0,0,0,0.44);
   --shadow-lg:    0 12px 48px rgba(0,0,0,0.58);
@@ -187,6 +196,8 @@
   --accent-rgb:   124,58,237;
   --glass:        rgba(18,10,30,0.60);
   --glass-edge:   rgba(124,58,237,0.10);
+  --nav-glass:    rgba(14,10,28,0.95); /* darker with purple tint */
+  --nav-glass-edge: rgba(124,58,237,0.12);
   --shadow-sm:    0 2px 12px rgba(0,0,0,0.30);
   --shadow:       0 4px 28px rgba(0,0,0,0.45);
   --shadow-lg:    0 12px 48px rgba(0,0,0,0.58);
@@ -526,9 +537,9 @@ select.input   { appearance: none; cursor: pointer; }
 .navbar {
   position: fixed;
   bottom: 0; left: 0; right: 0;
-  background: var(--glass);
-  backdrop-filter: blur(32px) saturate(1.5);
-  -webkit-backdrop-filter: blur(32px) saturate(1.5);
+  background: var(--nav-glass);
+  backdrop-filter: blur(40px) saturate(1.6);
+  -webkit-backdrop-filter: blur(40px) saturate(1.6);
   border-top: 1px solid var(--border);
   z-index: 100;
   padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
