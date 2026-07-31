@@ -121,7 +121,7 @@ export default function Navbar() {
       )}
 
       <nav className="navbar">
-
+        <div className="navbar-glass" />
         {/* ── Iconos de navegación ── */}
         <div className="nav-inner">
           {NAV_ITEMS.map(({ href, label, icon }) => {
