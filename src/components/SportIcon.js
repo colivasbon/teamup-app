@@ -73,6 +73,27 @@ export const SPORT_COLORS = {
   yoga:'#ec4899', baloncesto:'#f59e0b', voleibol:'#1a8c6e', badminton:'#8b5cf6',
 }
 
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max)
+}
+
+function adjustLightness(hex, amount) {
+  const normalized = hex.replace('#', '')
+  const bigint = parseInt(normalized, 16)
+  const r = (bigint >> 16) & 255
+  const g = (bigint >> 8) & 255
+  const b = bigint & 255
+  const newR = clamp(r + amount, 0, 255)
+  const newG = clamp(g + amount, 0, 255)
+  const newB = clamp(b + amount, 0, 255)
+  return `#${((1 << 24) + (newR << 16) + (newG << 8) + newB).toString(16).slice(1)}`
+}
+
+export function getSportColor(sport, theme = 'dark') {
+  const base = SPORT_COLORS[sport] || '#586875'
+  return theme === 'light' ? adjustLightness(base, -12) : adjustLightness(base, 12)
+}
+
 export const SPORT_LABELS = {
   running:'Running', padel:'Pádel', senderismo:'Senderismo', futbol:'Fútbol',
   gimnasio:'Gimnasio', tenis:'Tenis', natacion:'Natación', ciclismo:'Ciclismo',

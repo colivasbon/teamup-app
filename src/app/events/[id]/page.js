@@ -171,7 +171,7 @@ function EventDetailInner() {
       } catch(_) {}
     }
     loadP()
-  }, [tab, id])
+  }, [tab, id, joined])
 
   // ── Momentos del evento ──────────────────────────────────
   const fetchMoments = useCallback(async () => {
@@ -565,12 +565,19 @@ function EventDetailInner() {
             try {
               const sb = getSupabase()
               if (sb) {
-                if (joined) {
-                  await sb.from('event_participants').delete().eq('event_id', id).eq('user_id', user.id)
-                  setJoined(false); setPCount(p => Math.max(0, p-1))
+                      if (joined) {
+                  const { error } = await sb.from('event_participants')
+                    .delete().eq('event_id', id).eq('user_id', user.id)
+                  if (!error) {
+                    setJoined(false)
+                    setPCount(p => Math.max(0, p-1))
+                  }
                 } else {
                   const { error } = await sb.from('event_participants').insert({ event_id:id, user_id:user.id, status:'joined' })
-                  if (!error) { setJoined(true); setPCount(p => p+1) }
+                  if (!error) {
+                    setJoined(true)
+                    setPCount(p => p+1)
+                  }
                 }
               }
             } catch(_) {}

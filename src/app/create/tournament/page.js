@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
@@ -105,7 +105,14 @@ export default function CreateTournament() {
   }
 
   const selectedSport = SPORTS.find(s => s.id === form.sport)
+  const sportMode = selectedSport?.mode || 'pair'
   const accent = SPORT_COLORS[form.sport] || '#586875'
+
+  useEffect(() => {
+    if (selectedSport?.mode !== 'pair' && form.pair_mode) {
+      set('pair_mode', false)
+    }
+  }, [selectedSport?.mode])
 
   const handleSubmit = async () => {
     setLoading(true); setError('')
@@ -297,8 +304,6 @@ export default function CreateTournament() {
                 )
               }
               if (sportMode === 'individual') {
-                // Running, ciclismo, etc: siempre individual
-                if (form.pair_mode !== false) set('pair_mode', false)
                 return (
                   <div className="card" style={{ padding:'14px 16px', background:`${accent}08`, border:`1px solid ${accent}30` }}>
                     <div style={{ display:'flex', gap:10, alignItems:'center' }}>
