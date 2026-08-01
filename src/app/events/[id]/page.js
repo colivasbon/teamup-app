@@ -89,32 +89,18 @@ function EventDetailInner() {
       try {
         const sb = getSupabase()
         if (sb) {
-          const { data, error } = await sb.from('events_with_counts').select('*').eq('id', id).single()
+          const eventPromise = sb.from('events_with_counts').select('*').eq('id', id).single()
+          const joinedPromise = user
+            ? sb.from('event_participants').select('id').eq('event_id', id).eq('user_id', user.id).maybeSingle()
+            : Promise.resolve(null)
+
+          const [{ data, error }, joinedData] = await Promise.all([eventPromise, joinedPromise])
           if (!error && data) {
-            setEv(data); setPCount(data.participant_count || 0)
-            // Cargar account_type del creador para badge empresa
-            if (data.creator_id) {
-              const { data: cp } = await sb.from('profiles')
-                .select('account_type').eq('id', data.creator_id).maybeSingle()
-              if (cp?.account_type === 'business') {
-                setEv(prev => ({...prev, creator_account_type: 'business'}))
-              }
-            }
-            if (user) {
-              const { data: ep } = await sb.from('event_participants')
-                .select('id').eq('event_id', id).eq('user_id', user.id).maybeSingle()
-              setJoined(!!ep)
-              // Recargar el contador tras 1.5s para capturar el insert del creador
-              setTimeout(async () => {
-                const { data: fresh } = await sb.from('events_with_counts')
-                  .select('participant_count').eq('id', id).single()
-                if (fresh) setPCount(fresh.participant_count || 0)
-              }, 1500)
-            }
+            setEv(data)
+            setPCount(data.participant_count || 0)
+            setJoined(!!joinedData?.data)
             setLoad(false)
-            // Geocodificar la dirección para el mapa
-            // Si Nominatim no encuentra nada, se deja mapCoords como null
-            // y se muestra solo el boton de Google Maps
+
             if (data?.location) {
               const tryGeocode = async (query) => {
                 try {
@@ -126,13 +112,15 @@ function EventDetailInner() {
                   return results?.[0] ? { lat: parseFloat(results[0].lat), lon: parseFloat(results[0].lon) } : null
                 } catch { return null }
               }
-              // Intento 1: dirección completa
               const full = [data.location, data.province].filter(Boolean).join(', ')
-              let coords = await tryGeocode(full)
-              // Intento 2: solo el nombre del lugar sin dirección adicional
-              if (!coords && data.location) coords = await tryGeocode(data.location)
-              // Si encontró algo, usar—si no, mapCoords queda null y no se muestra el mapa
-              if (coords) setMapCoords(coords)
+              tryGeocode(full).then(coords => {
+                if (!coords && data.location) {
+                  return tryGeocode(data.location)
+                }
+                return coords
+              }).then(coords => {
+                if (coords) setMapCoords(coords)
+              }).catch(() => {})
             }
             return
           }
@@ -466,16 +454,16 @@ function EventDetailInner() {
         <div style={{ background:`linear-gradient(160deg,${c}ee,${c}88)`, padding:'58px 22px 28px', position:'relative', overflow:'hidden' }}>
           <div style={{ position:'absolute', top:-40, right:-40, width:180, height:180, borderRadius:'50%', background:'rgba(255,255,255,0.10)', pointerEvents:'none' }}/>
           <button onClick={()=>router.back()} style={{ position:'absolute', top:16, left:16, background:'rgba(255,255,255,0.22)', border:'1px solid rgba(255,255,255,0.32)', borderRadius:12, color:'white', width:38, height:38, display:'flex', alignItems:'center', justifyContent:'center', fontSize:18, cursor:'pointer' }}>←</button>
-          {/* Botón editar (solo creador) — abajo a la izquierda del hero */}
+          {/* Botón editar (solo creador) — arriba a la derecha del hero */}
           {user && (ev.creator_id === user.id || ev.creator_id === undefined) && !isDemo(id) && ev.creator_id && (
             <button
               onClick={(e) => { e.stopPropagation(); router.push(`/events/${id}/edit`) }}
-              style={{ position:'absolute', bottom:16, right:16, background:'rgba(255,255,255,0.22)', border:'1px solid rgba(255,255,255,0.32)', borderRadius:12, color:'white', padding:'7px 14px', fontSize:12, fontWeight:700, cursor:'pointer', display:'flex', alignItems:'center', gap:5, zIndex:10 }}>
+              style={{ position:'absolute', top:16, right:16, background:'rgba(255,255,255,0.22)', border:'1px solid rgba(255,255,255,0.32)', borderRadius:12, color:'white', padding:'7px 14px', fontSize:12, fontWeight:700, cursor:'pointer', display:'flex', alignItems:'center', gap:5, zIndex:10 }}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
               Editar evento
             </button>
           )}
-          {/* Botón compartir — al lado derecho del botón volver, no interfiere con el tema (fixed top-right) */}
+          {/* Botón compartir — al lado derecho del botón volver, no interfiere con el tema */}
           <button onClick={()=>{
             const url  = window.location.href
             const text = `¡Úntete a "${ev.title}" en TeamUp! ${ev.date ? new Date(ev.date+'T00:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}) : ''} · ${ev.location}`
@@ -500,13 +488,6 @@ function EventDetailInner() {
               {ev.creator_id
                 ? <a href={`/profile/${ev.creator_id}`} style={{ color:'white', fontWeight:700, textDecoration:'underline', textDecorationColor:'rgba(255,255,255,0.4)' }}>{ev.creator_name || 'Organizador'}</a>
                 : <span>{ev.creator_name || 'Organizador'}</span>}
-              {ev.creator_account_type === 'business' && (
-                <span style={{
-                  fontSize:10, fontWeight:800, letterSpacing:'0.05em',
-                  background:'rgba(255,255,255,0.22)', color:'white',
-                  borderRadius:20, padding:'2px 9px', border:'1px solid rgba(255,255,255,0.35)',
-                }}>CLUB VERIFICADO ✓</span>
-              )}
             </div>
           </div>
         </div>
