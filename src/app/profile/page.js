@@ -545,6 +545,9 @@ export default function Profile() {
             </div>
             <div style={{ marginTop:16 }}>
               <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.06em', color:'var(--muted)', textTransform:'uppercase', marginBottom:10 }}>Tono de piel</div>
+              <div style={{ fontSize:12, color:'var(--muted)', marginBottom:8, maxWidth:520 }}>
+                Elige el color con el que quieres que aparezcan los emojis de personas en tu perfil y en los eventos. Solo afecta a emojis de personas como 🏃, 🧘, 💪, 🏊 y 🚴.
+              </div>
               <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
                 {[
                   { id:'default',     color:'#FFCC22', label:'Amarillo'     },

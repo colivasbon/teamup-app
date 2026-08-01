@@ -78,6 +78,17 @@ export default function RootLayout({ children }) {
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <meta name="theme-color" content="#1a2028" />
+        <meta name="description" content="TeamUp ayuda a organizar y unirse a eventos deportivos cerca de ti. Corre, juega pádel, haz senderismo y conoce gente nueva de manera fácil." />
+        <meta name="keywords" content="TeamUp, deporte, eventos deportivos, running, pádel, yoga, ciclismo, senderismo, comunidad, actividad física" />
+        <meta name="robots" content="index, follow" />
+        <meta property="og:title" content="TeamUp — Haz deporte, conoce gente" />
+        <meta property="og:description" content="Organiza y únete a eventos deportivos cerca de ti. Encuentra compañeros para correr, pádel, yoga y más." />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="TeamUp" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="TeamUp — Haz deporte, conoce gente" />
+        <meta name="twitter:description" content="Organiza y únete a eventos deportivos cerca de ti. Encuentra compañeros para correr, pádel, yoga y más." />
+        <link rel="icon" href="/favicon.ico" />
         <title>TeamUp — Haz deporte, conoce gente</title>
         <script dangerouslySetInnerHTML={{ __html: "(function(){try{var t=localStorage.getItem('tu-theme'); if(t)document.documentElement.setAttribute('data-theme', t);}catch(e){}})();" }} />
       </head>

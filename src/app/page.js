@@ -185,7 +185,10 @@ export default function Home() {
       <div className="page-wrap">
 
         {/* ── Header ── */}
-        <header style={{ paddingTop:16, paddingBottom:20, display:'flex', alignItems:'center', justifyContent:'space-between', gap:8 }}>
+        <header style={{ paddingTop:16, paddingBottom:20, display:'flex', alignItems:'center', justifyContent:'space-between', gap:8, position:'relative' }}>
+          <h1 style={{ position:'absolute', width:1, height:1, padding:0, margin:-1, overflow:'hidden', clip:'rect(0,0,0,0)', whiteSpace:'nowrap', border:0 }}>
+            TeamUp — Haz deporte, conoce gente en tu zona
+          </h1>
 
           {/* Logo — color azul en claro, crema en oscuro */}
           <Link href="/" style={{
@@ -235,65 +238,69 @@ export default function Home() {
           </div>
         )}
 
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}>
-          <h3 style={{ fontSize:17, fontWeight:700, margin:0, letterSpacing:'-0.02em' }}>Actividad reciente</h3>
-          <Link href="/events" style={{ fontSize:13, fontWeight:600, color:'var(--primary)' }}>Ver todos →</Link>
-        </div>
+        {recentEvents.length >= recentVisibleCount && (
+          <>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}>
+              <h3 style={{ fontSize:18, fontWeight:800, margin:0, letterSpacing:'-0.02em', color:'var(--text)', lineHeight:1.2 }}>Actividad reciente</h3>
+              <Link href="/events" style={{ fontSize:13, fontWeight:600, color:'var(--primary)' }}>Ver todos →</Link>
+            </div>
 
-        <div style={{ position:'relative', marginBottom:24, minHeight:0 }}>
-          <div style={{ position:'absolute', right:0, top:0, fontSize:11, color:'var(--muted)', padding:'4px 0' }}>Mostrando {recentVisibleCount} de {recentEvents.length}</div>
-          <div style={{ overflow:'hidden', borderRadius:20, padding:'2px', background:'rgba(255,255,255,0.04)' }}>
-            <div
-              ref={recentListRef}
-              style={{
-                display:'grid',
-                gap:10,
-                transition:'transform 0.36s ease',
-                transform:`translateY(-${recentScrollIndex * 120}px)`,
-                gridAutoRows:'auto',
-              }}
-            >
-              {recentEvents.length > 0 ? recentEvents.map((ev, i) => {
-                const color = '#586875'
-                const pct = ev.max_players > 0 ? Math.round(((ev.participant_count||0) / ev.max_players) * 100) : 0
-                return (
-                  <Link key={ev.id} href={`/events/${ev.id}`} className={`card anim-${(i%6)+1}`} style={{
-                    display:'flex', alignItems:'center', gap:14, padding:'14px 16px',
-                    background:'var(--glass)',
-                    border:'1px solid transparent',
-                    boxShadow:'0 0 0 1px rgba(255,255,255,0.08), 0 16px 40px rgba(88,104,117,0.10)',
-                    minHeight:110,
-                    height:110,
-                  }}>
-                    <div style={{ width:52, height:52, background:`${color}18`, border:`1.5px solid ${color}30`, borderRadius:16, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, overflow:'hidden' }}>
-                      <SportIcon sport={ev.sport} size={36} />
-                    </div>
-                    <div style={{ flex:1, minWidth:0 }}>
-                      <div style={{ fontSize:14, fontWeight:700, color:'var(--text)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:3 }}>{ev.title}</div>
-                      <div style={{ fontSize:12, color:'var(--muted)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:8 }}>{ev.location}</div>
-                      <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-                        <span style={{ fontSize:11, color:'var(--muted)', whiteSpace:'nowrap' }}>{fmtDate(ev.date, ev.time)}</span>
-                        <div style={{ flex:1 }}><div className="pbar"><div className="pbar-fill" style={{ width:`${pct}%`, background:color }}/></div></div>
-                        <span style={{ fontSize:11, fontWeight:700, color:color, whiteSpace:'nowrap' }}>{ev.participant_count||0}/{ev.max_players||'–'}</span>
-                      </div>
-                    </div>
-                    <div style={{ fontSize:18, color:'var(--muted)', flexShrink:0 }}>›</div>
-                  </Link>
-                )
-              }) : (
-                <div className="card anim-1" style={{ padding:'18px 16px', background:'var(--glass)', color:'var(--muted)' }}>
-                  No hay eventos recientes.
+            <div style={{ position:'relative', marginBottom:24, minHeight:0 }}>
+              {recentEvents.length > 2 && (
+                <div style={{ position:'absolute', right:0, top:0, fontSize:11, color:'var(--muted)', padding:'4px 0' }}>
+                  Mostrando {recentVisibleCount} de {recentEvents.length}
                 </div>
               )}
+              <div style={{ overflow:'hidden', borderRadius:20, padding:'2px', background:'rgba(255,255,255,0.04)' }}>
+                <div
+                  ref={recentListRef}
+                  style={{
+                    display:'grid',
+                    gap:10,
+                    transition:'transform 0.36s ease',
+                    transform:`translateY(-${recentScrollIndex * 120}px)`,
+                    gridAutoRows:'auto',
+                  }}
+                >
+                  {recentEvents.map((ev, i) => {
+                    const color = '#586875'
+                    const pct = ev.max_players > 0 ? Math.round(((ev.participant_count||0) / ev.max_players) * 100) : 0
+                    return (
+                      <Link key={ev.id} href={`/events/${ev.id}`} className={`card anim-${(i%6)+1}`} style={{
+                        display:'flex', alignItems:'center', gap:14, padding:'14px 16px',
+                        background:'var(--glass)',
+                        border:'1px solid transparent',
+                        boxShadow:'0 0 0 1px rgba(255,255,255,0.08), 0 16px 40px rgba(88,104,117,0.10)',
+                        minHeight:110,
+                        height:110,
+                      }}>
+                        <div style={{ width:52, height:52, background:`${color}18`, border:`1.5px solid ${color}30`, borderRadius:16, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, overflow:'hidden' }}>
+                          <SportIcon sport={ev.sport} size={36} />
+                        </div>
+                        <div style={{ flex:1, minWidth:0 }}>
+                          <div style={{ fontSize:14, fontWeight:700, color:'var(--text)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:3 }}>{ev.title}</div>
+                          <div style={{ fontSize:12, color:'var(--muted)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:8 }}>{ev.location}</div>
+                          <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+                            <span style={{ fontSize:11, color:'var(--muted)', whiteSpace:'nowrap' }}>{fmtDate(ev.date, ev.time)}</span>
+                            <div style={{ flex:1 }}><div className="pbar"><div className="pbar-fill" style={{ width:`${pct}%`, background:color }}/></div></div>
+                            <span style={{ fontSize:11, fontWeight:700, color:color, whiteSpace:'nowrap' }}>{ev.participant_count||0}/{ev.max_players||'–'}</span>
+                          </div>
+                        </div>
+                        <div style={{ fontSize:18, color:'var(--muted)', flexShrink:0 }}>›</div>
+                      </Link>
+                    )
+                  })}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </>
+        )}
 
         {/* ── Mis próximos eventos (solo logueado) ── */}
         {user && myEvents.length > 0 && (
           <>
             <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}>
-              <h3 style={{ fontSize:17, fontWeight:700, margin:0, letterSpacing:'-0.02em' }}>Mis próximos eventos</h3>
+              <h3 style={{ fontSize:18, fontWeight:800, margin:0, letterSpacing:'-0.02em', color:'var(--text)', lineHeight:1.2 }}>Mis próximos eventos</h3>
               <Link href="/profile" style={{ fontSize:13, fontWeight:600, color:'var(--primary)' }}>Ver todos →</Link>
             </div>
             <div style={{ display:'flex', flexDirection:'column', gap:10, marginBottom:28 }}>
@@ -359,7 +366,7 @@ export default function Home() {
         )}
 
         {/* ── Deportes ── */}
-        <h2 style={{ fontSize:19, fontWeight:800, margin:'0 0 4px', letterSpacing:'-0.03em' }}>¿Qué hacemos hoy?</h2>
+        <h2 style={{ fontSize:22, fontWeight:900, margin:'0 0 6px', letterSpacing:'-0.04em', color:'var(--text)', lineHeight:1.1 }}>¿Qué hacemos hoy?</h2>
         <p style={{ fontSize:13, color:'var(--muted)', marginBottom:16 }}>Elige un deporte y únete a un evento</p>
 
         <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginBottom:32 }}>
@@ -389,7 +396,7 @@ export default function Home() {
 
         {/* ── Eventos cercanos ── */}
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:14 }}>
-          <h3 style={{ fontSize:17, fontWeight:700, margin:0, letterSpacing:'-0.02em' }}>Eventos cerca de ti</h3>
+          <h3 style={{ fontSize:18, fontWeight:800, margin:0, letterSpacing:'-0.02em', color:'var(--text)', lineHeight:1.2 }}>Eventos cerca de ti</h3>
           <Link href="/events" style={{ fontSize:13, fontWeight:600, color:'var(--primary)' }}>Ver todos →</Link>
         </div>
 
