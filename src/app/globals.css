@@ -301,15 +301,15 @@ input, textarea, select { font-family: inherit; }
   margin: 0 auto;
   width: 100%;
   padding: 0 18px;
-  /* navbar ~72px + safe area + margen generoso para que nunca tape */
-  padding-bottom: 96px;
+  /* navbar + safe area: suficiente espacio para que el contenido no quede oculto debajo del nav fijo */
+  padding-bottom: calc(112px + env(safe-area-inset-bottom, 0px));
 }
 .page-wrap-full {
   max-width: 480px;
   margin: 0 auto;
   width: 100%;
   padding: 0;
-  padding-bottom: 110px;
+  padding-bottom: calc(126px + env(safe-area-inset-bottom, 0px));
 }
 
 /* ─── SPINNER ───────────────────────────────────────── */
