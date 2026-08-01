@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import Navbar from '@/components/Navbar'
@@ -72,6 +72,9 @@ export default function Home() {
   const [participantCount, setParticipantCount] = useState(null)
   const [newEventCount,    setNewEventCount]    = useState(null)
   const [recentEvents,     setRecentEvents]     = useState([])
+  const [recentScrollIndex, setRecentScrollIndex] = useState(0)
+  const recentVisibleCount = 2
+  const recentListRef = useRef(null)
 
   // Cargar patrocinadores
   useEffect(() => {
@@ -104,7 +107,7 @@ export default function Home() {
             .select('id,title,sport,date,time,location,participant_count,max_players')
             .gte('created_at', sinceIso)
             .order('created_at', { ascending:false })
-            .limit(3),
+            .limit(15),
         ])
 
         if (activeEventsRes?.count != null) setActiveEventCount(activeEventsRes.count)
@@ -120,6 +123,20 @@ export default function Home() {
     }
     loadStats()
   }, [])
+
+  useEffect(() => {
+    if (recentEvents.length <= recentVisibleCount) {
+      setRecentScrollIndex(0)
+      return
+    }
+
+    const maxIndex = recentEvents.length - recentVisibleCount
+    const iv = setInterval(() => {
+      setRecentScrollIndex(prev => prev === maxIndex ? 0 : prev + 1)
+    }, 4000)
+
+    return () => clearInterval(iv)
+  }, [recentEvents])
 
   // Cargar notificaciones sin leer
   useEffect(() => {
@@ -203,55 +220,73 @@ export default function Home() {
         </header>
 
         {/* ── Actividad de la comunidad ── */}
-        <div className="card anim-1" style={{ display:'grid', gridTemplateColumns:'repeat(3, minmax(0,1fr))', gap:12, padding:'16px 12px', marginBottom:28 }}>
-          {[
-            [activeEventCount !== null ? activeEventCount : '—', 'Eventos activos'],
-            [participantCount !== null ? participantCount : '—', 'Participantes inscritos'],
-            [newEventCount !== null ? newEventCount : '—', 'Eventos nuevos 7d'],
-          ].map(([v,l])=>(
-            <div key={l} style={{ textAlign:'center' }}>
-              <div style={{ fontSize:22, fontWeight:800, color:'var(--primary)', letterSpacing:'-0.03em', lineHeight:1 }}>{v}</div>
-              <div style={{ fontSize:11, color:'var(--muted)', marginTop:4 }}>{l}</div>
-            </div>
-          ))}
-        </div>
+        {(activeEventCount > 0 && participantCount > 0 && newEventCount > 0) && (
+          <div className="card anim-1" style={{ display:'grid', gridTemplateColumns:'repeat(3, minmax(0,1fr))', gap:12, padding:'16px 12px', marginBottom:28 }}>
+            {[
+              [activeEventCount, 'Eventos activos'],
+              [participantCount, 'Usuarios totales'],
+              [newEventCount, 'Eventos nuevos 7d'],
+            ].map(([v,l])=>(
+              <div key={l} style={{ textAlign:'center' }}>
+                <div style={{ fontSize:22, fontWeight:800, color:'var(--primary)', letterSpacing:'-0.03em', lineHeight:1 }}>{v}</div>
+                <div style={{ fontSize:11, color:'var(--muted)', marginTop:4 }}>{l}</div>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}>
           <h3 style={{ fontSize:17, fontWeight:700, margin:0, letterSpacing:'-0.02em' }}>Actividad reciente</h3>
           <Link href="/events" style={{ fontSize:13, fontWeight:600, color:'var(--primary)' }}>Ver todos →</Link>
         </div>
 
-        <div style={{ display:'flex', flexDirection:'column', gap:10, marginBottom:24 }}>
-          {recentEvents.length > 0 ? recentEvents.map((ev, i) => {
-            const color = '#586875'
-            const pct = ev.max_players > 0 ? Math.round(((ev.participant_count||0) / ev.max_players) * 100) : 0
-            return (
-              <Link key={ev.id} href={`/events/${ev.id}`} className={`card anim-${i+1}`} style={{
-                display:'flex', alignItems:'center', gap:14, padding:'14px 16px',
-                background:'var(--glass)',
-                border:'1px solid transparent',
-                boxShadow:'0 0 0 1px rgba(255,255,255,0.08), 0 16px 40px rgba(88,104,117,0.10)',
-              }}>
-                <div style={{ width:52, height:52, background:`${color}18`, border:`1.5px solid ${color}30`, borderRadius:16, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, overflow:'hidden' }}>
-                  <SportIcon sport={ev.sport} size={36} />
+        <div style={{ position:'relative', marginBottom:24, minHeight:0 }}>
+          <div style={{ position:'absolute', right:0, top:0, fontSize:11, color:'var(--muted)', padding:'4px 0' }}>Mostrando {recentVisibleCount} de {recentEvents.length}</div>
+          <div style={{ overflow:'hidden', borderRadius:20, padding:'2px', background:'rgba(255,255,255,0.04)' }}>
+            <div
+              ref={recentListRef}
+              style={{
+                display:'grid',
+                gap:10,
+                transition:'transform 0.36s ease',
+                transform:`translateY(-${recentScrollIndex * 120}px)`,
+                gridAutoRows:'auto',
+              }}
+            >
+              {recentEvents.length > 0 ? recentEvents.map((ev, i) => {
+                const color = '#586875'
+                const pct = ev.max_players > 0 ? Math.round(((ev.participant_count||0) / ev.max_players) * 100) : 0
+                return (
+                  <Link key={ev.id} href={`/events/${ev.id}`} className={`card anim-${(i%6)+1}`} style={{
+                    display:'flex', alignItems:'center', gap:14, padding:'14px 16px',
+                    background:'var(--glass)',
+                    border:'1px solid transparent',
+                    boxShadow:'0 0 0 1px rgba(255,255,255,0.08), 0 16px 40px rgba(88,104,117,0.10)',
+                    minHeight:110,
+                    height:110,
+                  }}>
+                    <div style={{ width:52, height:52, background:`${color}18`, border:`1.5px solid ${color}30`, borderRadius:16, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, overflow:'hidden' }}>
+                      <SportIcon sport={ev.sport} size={36} />
+                    </div>
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div style={{ fontSize:14, fontWeight:700, color:'var(--text)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:3 }}>{ev.title}</div>
+                      <div style={{ fontSize:12, color:'var(--muted)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:8 }}>{ev.location}</div>
+                      <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+                        <span style={{ fontSize:11, color:'var(--muted)', whiteSpace:'nowrap' }}>{fmtDate(ev.date, ev.time)}</span>
+                        <div style={{ flex:1 }}><div className="pbar"><div className="pbar-fill" style={{ width:`${pct}%`, background:color }}/></div></div>
+                        <span style={{ fontSize:11, fontWeight:700, color:color, whiteSpace:'nowrap' }}>{ev.participant_count||0}/{ev.max_players||'–'}</span>
+                      </div>
+                    </div>
+                    <div style={{ fontSize:18, color:'var(--muted)', flexShrink:0 }}>›</div>
+                  </Link>
+                )
+              }) : (
+                <div className="card anim-1" style={{ padding:'18px 16px', background:'var(--glass)', color:'var(--muted)' }}>
+                  No hay eventos recientes.
                 </div>
-                <div style={{ flex:1, minWidth:0 }}>
-                  <div style={{ fontSize:14, fontWeight:700, color:'var(--text)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:3 }}>{ev.title}</div>
-                  <div style={{ fontSize:12, color:'var(--muted)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:8 }}>{ev.location}</div>
-                  <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-                    <span style={{ fontSize:11, color:'var(--muted)', whiteSpace:'nowrap' }}>{fmtDate(ev.date, ev.time)}</span>
-                    <div style={{ flex:1 }}><div className="pbar"><div className="pbar-fill" style={{ width:`${pct}%`, background:color }}/></div></div>
-                    <span style={{ fontSize:11, fontWeight:700, color:color, whiteSpace:'nowrap' }}>{ev.participant_count||0}/{ev.max_players||'–'}</span>
-                  </div>
-                </div>
-                <div style={{ fontSize:18, color:'var(--muted)', flexShrink:0 }}>›</div>
-              </Link>
-            )
-          }) : (
-            <div className="card anim-1" style={{ padding:'18px 16px', background:'var(--glass)', color:'var(--muted)' }}>
-              No hay eventos recientes.
+              )}
             </div>
-          )}
+          </div>
         </div>
 
         {/* ── Mis próximos eventos (solo logueado) ── */}
