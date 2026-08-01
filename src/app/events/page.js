@@ -163,10 +163,13 @@ function EventsContent() {
       const sb = getSupabase()
       if (sb) {
         const now = new Date().toISOString()
-        const { data, error } = await sb.from('events_with_counts').select('*').eq('cancelled', false).order('date', { ascending: true })
-        if (!error && data && data.length > 0) {
-          setEvents(data)
-          // Cargar eventos en los que ya participa el usuario
+        const { data, error } = await sb.from('events_with_counts')
+        .select('*')
+        .not('status', 'in', ['cancelled', 'completed'])
+        .order('date', { ascending: true })
+      if (!error && data && data.length > 0) {
+        setEvents(data)
+        // Cargar eventos en los que ya participa el usuario
           if (user) {
             const { data: ep } = await sb.from('event_participants')
               .select('event_id').eq('user_id', user.id)
@@ -192,6 +195,7 @@ function EventsContent() {
     e._color = e.color || color
 
     // FIX: mostrar eventos en curso (no ocultar si aún no ha terminado)
+    if (e.status === 'cancelled' || e.status === 'completed') return false
     if (e.date && e.time) {
       const startTime  = new Date(`${e.date}T${e.time}`)
       const durationMs = (e.duration_minutes || 120) * 60000

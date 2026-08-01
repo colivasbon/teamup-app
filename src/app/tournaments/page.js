@@ -39,6 +39,22 @@ export default function TournamentsPage() {
   const [sportFilter, setSportFilter] = useState('all')
   const [statusFilter,setStatusFilter]= useState('open')
 
+  const getEffectiveStatus = (tournament) => {
+    if (!tournament) return 'open'
+    if (tournament.status === 'cancelled') return 'cancelled'
+    if (tournament.status === 'finished') return 'finished'
+    if (!tournament.date) return tournament.status
+
+    const start = new Date(`${tournament.date}T${tournament.time || '00:00:00'}`)
+    const now = new Date()
+    const end = new Date(start)
+    end.setDate(end.getDate() + 1)
+
+    if (now > end) return 'finished'
+    if (now >= start) return 'in_progress'
+    return tournament.status
+  }
+
   useEffect(() => {
     const load = async () => {
       setLoading(true)
@@ -46,8 +62,7 @@ export default function TournamentsPage() {
       if (!sb) { setLoading(false); return }
 
       let q = sb.from('tournaments').select('*').order('date', { ascending: true })
-      if (statusFilter !== 'all') q = q.eq('status', statusFilter)
-      if (sportFilter  !== 'all') q = q.eq('sport',  sportFilter)
+      if (sportFilter !== 'all') q = q.eq('sport', sportFilter)
 
       const { data } = await q
       if (data) {
@@ -72,12 +87,17 @@ export default function TournamentsPage() {
           creator_name:    pMap[t.creator_id]?.full_name || 'Organizador',
           creator_verified: pMap[t.creator_id]?.account_type === 'business',
           pair_count:      countMap[t.id] || 0,
+          effective_status: getEffectiveStatus(t),
         })))
       }
       setLoading(false)
     }
     load()
-  }, [sportFilter, statusFilter])
+  }, [sportFilter])
+
+  const visibleTournaments = tournaments.filter(t =>
+    statusFilter === 'all' || t.effective_status === statusFilter
+  )
 
   const isMyBusiness = profile?.account_type === 'business'
   const now = new Date().toISOString()
@@ -144,20 +164,20 @@ export default function TournamentsPage() {
 
         {loading ? (
           <div style={{ textAlign:'center', padding:'60px 0' }}><div className="spinner"/></div>
-        ) : tournaments.length === 0 ? (
+        ) : visibleTournaments.length === 0 ? (
           <div className="card" style={{ padding:'48px 24px', textAlign:'center' }}>
             <div style={{ fontSize:48, marginBottom:12 }}>🏆</div>
-            <div style={{ fontWeight:700, fontSize:16, marginBottom:8 }}>No hay torneos disponibles</div>
+            <div style={{ fontWeight:700, fontSize:16, marginBottom:8 }}>No hay torneos en esta vista</div>
             <p style={{ fontSize:13, color:'var(--muted)', lineHeight:1.6 }}>
-              Aún no hay torneos en esta categoría. Los clubs y negocios deportivos pueden crear torneos desde su perfil verificado.
+              No hay torneos que coincidan con los filtros seleccionados. Prueba con otro estado o deporte.
             </p>
           </div>
         ) : (
           <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
-            {tournaments.map((t, i) => {
+            {visibleTournaments.map((t, i) => {
               const color    = SPORT_COLORS[t.sport] || '#586875'
               const icon     = SPORT_ICONS[t.sport]  || '🏅'
-              const status   = STATUS_LABELS[t.status] || STATUS_LABELS.open
+              const status   = STATUS_LABELS[t.effective_status || t.status] || STATUS_LABELS.open
               const pct      = t.max_pairs > 0 ? Math.round((t.pair_count / t.max_pairs) * 100) : 0
               const barColor = pct >= 90 ? '#ef4444' : pct >= 70 ? '#f59e0b' : color
               const isFeatured = t.featured_until && t.featured_until > now

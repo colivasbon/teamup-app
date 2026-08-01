@@ -162,9 +162,9 @@ export default function Create() {
         {/* ── PASO 0: Deporte ── */}
         {step===0 && (
           <div className="anim-1" style={{ paddingBottom:80 }}>
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginBottom:24 }}>
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(120px, 1fr))', gap:12, marginBottom:24 }}>
               {SPORTS.map(s=>(
-                <button key={s.id} onClick={()=>set('sport',s.id)} style={{
+                <button type="button" key={s.id} onClick={()=>set('sport',s.id)} style={{
                   background: form.sport===s.id?`linear-gradient(140deg,${s.color},${s.color}bb)`:'var(--glass)',
                   backdropFilter:'blur(14px)',
                   border: form.sport===s.id?'none':'1.5px solid var(--border)',
@@ -485,7 +485,7 @@ export default function Create() {
             </div>
 
             {/* Fecha, hora y duración */}
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(170px, 1fr))', gap:12 }}>
               <div>
                 <label className="label" style={{ marginBottom:8 }}>Fecha</label>
                 <input className="input" type="date" value={form.date} onChange={e=>set('date',e.target.value)}/>
@@ -541,7 +541,7 @@ export default function Create() {
                 value={form.location} onChange={e=>set('location',e.target.value)}/>
             </div>
 
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(170px, 1fr))', gap:12 }}>
               <div>
                 <label className="label" style={{ marginBottom:8 }}>Plazas máximas</label>
                 <input className="input" type="number" min={2} max={200}

@@ -137,7 +137,7 @@ export default function EditEventPage() {
     const supabase = getSupabase();
     await supabase
       .from('events')
-      .update({ cancelled: true })
+      .update({ status: 'cancelled' })
       .eq('id', id);
     setCancelling(false);
     router.push('/events');
