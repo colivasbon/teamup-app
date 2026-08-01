@@ -22,6 +22,14 @@ function AppShell({ children }) {
     setShowOnboarding(needsOnboarding)
   }, [user, profile])
 
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {
+        // Fallback: no-op if registration fails in unsupported browsers.
+      })
+    }
+  }, [])
+
   // Cargar patrocinadores desde Supabase
   useEffect(() => {
     const sb = getSupabase()
@@ -88,6 +96,8 @@ export default function RootLayout({ children }) {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="TeamUp — Haz deporte, conoce gente" />
         <meta name="twitter:description" content="Organiza y únete a eventos deportivos cerca de ti. Encuentra compañeros para correr, pádel, yoga y más." />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="icon" href="/favicon.ico" />
         <title>TeamUp — Haz deporte, conoce gente</title>
         <script dangerouslySetInnerHTML={{ __html: "(function(){try{var t=localStorage.getItem('tu-theme'); if(t)document.documentElement.setAttribute('data-theme', t);}catch(e){}})();" }} />

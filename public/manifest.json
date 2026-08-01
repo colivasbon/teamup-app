@@ -1,0 +1,16 @@
+{
+  "name": "TeamUp",
+  "short_name": "TeamUp",
+  "description": "TeamUp ayuda a organizar y unirse a eventos deportivos cerca de ti.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#1a2028",
+  "theme_color": "#1a2028",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/icons/icon-192x192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512x512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/maskable-icon.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
