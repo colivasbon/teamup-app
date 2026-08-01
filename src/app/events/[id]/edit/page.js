@@ -135,11 +135,15 @@ export default function EditEventPage() {
     if (!confirmed) return;
     setCancelling(true);
     const supabase = getSupabase();
-    await supabase
+    const { error } = await supabase
       .from('events')
       .update({ status: 'cancelled' })
       .eq('id', id);
     setCancelling(false);
+    if (error) {
+      setError('No se pudo cancelar el evento. Inténtalo de nuevo.');
+      return;
+    }
     router.push('/events');
   };
 

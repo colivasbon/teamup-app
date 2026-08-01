@@ -162,45 +162,33 @@ function EventsContent() {
     try {
       const sb = getSupabase()
       if (sb) {
-        const { data, error } = await sb.from('events').select('*').order('date', { ascending: true })
+        const eventQuery = sb.from('events_with_counts')
+          .select('*')
+          .order('date', { ascending: true })
+
+        let joinedPromise = null
+        if (user) {
+          joinedPromise = sb.from('event_participants')
+            .select('event_id')
+            .eq('user_id', user.id)
+        }
+
+        const [{ data, error }, joinedResult] = await Promise.all([
+          eventQuery,
+          joinedPromise,
+        ])
+
         if (!error && data) {
-          const uids = [...new Set(data.map(ev => ev.creator_id).filter(Boolean))]
-          let pMap = {}
-          if (uids.length > 0) {
-            const { data: pData } = await sb.from('profiles')
-              .select('id, full_name, username, avatar_url')
-              .in('id', uids)
-            if (pData) pData.forEach(p => { pMap[p.id] = p })
+          setEvents(data)
+
+          if (joinedResult?.data) {
+            const map = {}
+            joinedResult.data.forEach(e => { map[e.event_id] = true })
+            setJoined(map)
           }
 
-          const eids = data.map(ev => ev.id)
-          let countMap = {}
-          if (eids.length > 0) {
-            const { data: epData } = await sb.from('event_participants')
-              .select('event_id')
-              .in('event_id', eids)
-            if (epData) epData.forEach(ep => { countMap[ep.event_id] = (countMap[ep.event_id] || 0) + 1 })
-          }
-
-          setEvents(data.map(ev => ({
-            ...ev,
-            creator_name:     pMap[ev.creator_id]?.full_name || 'Organizador',
-            creator_username: pMap[ev.creator_id]?.username,
-            creator_avatar:   pMap[ev.creator_id]?.avatar_url,
-            participant_count: countMap[ev.id] || 0,
-          })))
-
-          // Cargar eventos en los que ya participa el usuario
-          if (user) {
-            const { data: ep } = await sb.from('event_participants')
-              .select('event_id').eq('user_id', user.id)
-            if (ep) {
-              const map = {}
-              ep.forEach(e => { map[e.event_id] = true })
-              setJoined(map)
-            }
-          }
-          setLoading(false); return
+          setLoading(false)
+          return
         }
       }
     } catch (_) {}
@@ -216,7 +204,8 @@ function EventsContent() {
     e._color = e.color || color
 
     // FIX: mostrar eventos en curso (no ocultar si aún no ha terminado)
-    if (e.status === 'cancelled' || e.status === 'completed') return false
+    const status = String(e.status || '').trim().toLowerCase()
+    if (status === 'cancelled' || status === 'completed') return false
     if (e.date && e.time) {
       const startTime  = new Date(`${e.date}T${e.time}`)
       const durationMs = (e.duration_minutes || 120) * 60000
