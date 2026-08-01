@@ -96,9 +96,9 @@ export default function Home() {
     const loadStats = async () => {
       try {
         const [activeEventsRes, usersRes, newEventsRes] = await Promise.all([
-          sb.from('events').select('id', { count:'exact', head:true }).gte('date', today),
+          sb.from('events').select('id', { count:'exact', head:true }).eq('cancelled', false).gte('date', today),
           sb.from('profiles').select('id', { count:'exact', head:true }),
-          sb.from('events').select('id', { count:'exact', head:true }).gte('created_at', sinceIso),
+          sb.from('events').select('id', { count:'exact', head:true }).eq('cancelled', false).gte('created_at', sinceIso),
         ])
 
         if (activeEventsRes?.count != null) setActiveEventCount(activeEventsRes.count)

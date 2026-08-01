@@ -149,7 +149,7 @@ function EventsContent() {
         if (closest && minDist < 200) {
           const label = PROVINCES.find(p => p.id === closest)?.name || closest
           setGeoLabel(`Cerca de ${label}`)
-          setProv(closest)
+          // no aplicamos el filtro de provincia automáticamente para no ocultar eventos reales
         }
       },
       () => {},

@@ -99,11 +99,11 @@ export default function Navbar() {
           <div onClick={() => setShowCreateMenu(false)}
             style={{ position:'fixed', inset:0, zIndex:199, background:'rgba(0,0,0,0.45)', backdropFilter:'blur(4px)' }}/>
           <div style={{
-            position:'fixed', bottom:'calc(env(safe-area-inset-bottom, 16px) + 88px)', left:'50%', transform:'translateX(-50%)',
+            position:'fixed', top:'50%', left:'50%', transform:'translate(-50%, -50%)',
             zIndex:200, background:'var(--bg)', borderRadius:20,
             border:'1px solid var(--border)', padding:'8px',
-            width:'min(280px, calc(100vw - 36px))', boxShadow:'0 14px 40px rgba(0,0,0,0.22)',
-            overflow:'hidden',
+            width:'min(320px, calc(100vw - 36px))', boxShadow:'0 14px 40px rgba(0,0,0,0.22)',
+            overflow:'hidden', maxHeight:'calc(100vh - 50px)',
           }}>
             <button onClick={() => { setShowCreateMenu(false); router.push('/create') }}
               style={{ display:'flex', alignItems:'center', gap:12, width:'100%', padding:'16px 18px',
