@@ -6,7 +6,7 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import { getSupabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
-import { SportIcon, SPORT_COLORS } from '@/components/SportIcon'
+import { SportIcon, SPORT_COLORS, getSportColor } from '@/components/SportIcon'
 import ThemeButton from '@/components/ThemeButton'
 
 const DEMO_EVENTS = [
@@ -163,7 +163,7 @@ function EventsContent() {
       const sb = getSupabase()
       if (sb) {
         const now = new Date().toISOString()
-        const { data, error } = await sb.from('events_with_counts').select('*').order('date', { ascending: true })
+        const { data, error } = await sb.from('events_with_counts').select('*').eq('cancelled', false).order('date', { ascending: true })
         if (!error && data && data.length > 0) {
           setEvents(data)
           // Cargar eventos en los que ya participa el usuario

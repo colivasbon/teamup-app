@@ -71,10 +71,6 @@ export default function Home() {
   const [activeEventCount, setActiveEventCount] = useState(null)
   const [participantCount, setParticipantCount] = useState(null)
   const [newEventCount,    setNewEventCount]    = useState(null)
-  const [recentEvents,     setRecentEvents]     = useState([])
-  const [recentScrollIndex, setRecentScrollIndex] = useState(0)
-  const recentVisibleCount = 2
-  const recentListRef = useRef(null)
 
   // Cargar patrocinadores
   useEffect(() => {
@@ -99,9 +95,9 @@ export default function Home() {
 
     const loadStats = async () => {
       try {
-        const [activeEventsRes, participantsRes, newEventsRes, recentRes] = await Promise.all([
+        const [activeEventsRes, usersRes, newEventsRes, recentRes] = await Promise.all([
           sb.from('events').select('id', { count:'exact', head:true }).gte('date', today),
-          sb.from('event_participants').select('id', { count:'exact', head:true }),
+          sb.from('profiles').select('id', { count:'exact', head:true }),
           sb.from('events').select('id', { count:'exact', head:true }).gte('created_at', sinceIso),
           sb.from('events_with_counts')
             .select('id,title,sport,date,time,location,participant_count,max_players')
@@ -111,32 +107,17 @@ export default function Home() {
         ])
 
         if (activeEventsRes?.count != null) setActiveEventCount(activeEventsRes.count)
-        if (participantsRes?.count != null) setParticipantCount(participantsRes.count)
+        if (usersRes?.count != null) setParticipantCount(usersRes.count)
         if (newEventsRes?.count != null) setNewEventCount(newEventsRes.count)
-        if (recentRes?.data) setRecentEvents(recentRes.data)
       } catch (_) {
         setActiveEventCount(0)
         setParticipantCount(0)
         setNewEventCount(0)
-        setRecentEvents([])
       }
     }
     loadStats()
   }, [])
 
-  useEffect(() => {
-    if (recentEvents.length <= recentVisibleCount) {
-      setRecentScrollIndex(0)
-      return
-    }
-
-    const maxIndex = recentEvents.length - recentVisibleCount
-    const iv = setInterval(() => {
-      setRecentScrollIndex(prev => prev === maxIndex ? 0 : prev + 1)
-    }, 4000)
-
-    return () => clearInterval(iv)
-  }, [recentEvents])
 
   // Cargar notificaciones sin leer
   useEffect(() => {

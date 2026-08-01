@@ -99,21 +99,23 @@ export default function Navbar() {
           <div onClick={() => setShowCreateMenu(false)}
             style={{ position:'fixed', inset:0, zIndex:199, background:'rgba(0,0,0,0.45)', backdropFilter:'blur(4px)' }}/>
           <div style={{
-            position:'fixed', bottom:82, left:'50%', transform:'translateX(-50%)',
+            position:'fixed', bottom:'calc(env(safe-area-inset-bottom, 16px) + 88px)', left:'50%', transform:'translateX(-50%)',
             zIndex:200, background:'var(--bg)', borderRadius:20,
             border:'1px solid var(--border)', padding:'8px',
-            width:220, boxShadow:'0 8px 32px rgba(0,0,0,0.22)',
+            width:'min(280px, calc(100vw - 36px))', boxShadow:'0 14px 40px rgba(0,0,0,0.22)',
+            overflow:'hidden',
           }}>
             <button onClick={() => { setShowCreateMenu(false); router.push('/create') }}
-              style={{ display:'flex', alignItems:'center', gap:12, width:'100%', padding:'13px 16px',
+              style={{ display:'flex', alignItems:'center', gap:12, width:'100%', padding:'16px 18px',
                 background:'none', border:'none', cursor:'pointer', fontFamily:'inherit',
-                borderRadius:14, fontSize:14, fontWeight:700, color:'var(--text)' }}>
+                borderBottom:'1px solid var(--border)', color:'var(--text)', textAlign:'left',
+                fontSize:14, fontWeight:700 }}>
               <span style={{ fontSize:24 }}>🗓</span> Crear evento
             </button>
             <button onClick={() => { setShowCreateMenu(false); router.push('/create/tournament') }}
-              style={{ display:'flex', alignItems:'center', gap:12, width:'100%', padding:'13px 16px',
+              style={{ display:'flex', alignItems:'center', gap:12, width:'100%', padding:'16px 18px',
                 background:'none', border:'none', cursor:'pointer', fontFamily:'inherit',
-                borderRadius:14, fontSize:14, fontWeight:700, color:'var(--text)' }}>
+                color:'var(--text)', textAlign:'left', fontSize:14, fontWeight:700 }}>
               <span style={{ fontSize:24 }}>🏆</span> Crear torneo
             </button>
           </div>

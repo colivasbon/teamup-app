@@ -7,6 +7,7 @@ import Navbar from '@/components/Navbar'
 import { getSupabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import PosterModal from '@/components/PosterModal'
+import { getSportColor } from '@/components/SportIcon'
 
 const S_COLORS = { running:'#5b6ef5', padel:'#06d6a0', senderismo:'#f59e0b', futbol:'#ef4444', gimnasio:'#8b5cf6', tenis:'#fbbf24', natacion:'#0ea5e9', ciclismo:'#f97316', yoga:'#ec4899', baloncesto:'#f59e0b', voleibol:'#06d6a0', badminton:'#8b5cf6' }
 const S_ICONS  = { running:'🏃', padel:'🎾', senderismo:'🥾', futbol:'⚽', gimnasio:'💪', tenis:'🎾', natacion:'🏊', ciclismo:'🚴', yoga:'🧘', baloncesto:'🏀', voleibol:'🏐', badminton:'🏸' }
@@ -445,10 +446,16 @@ function EventDetailInner() {
     </div>
   )
 
-  const c    = S_COLORS[ev.sport] || '#5b6ef5'
+  const theme = typeof document !== 'undefined' ? document.documentElement.dataset.theme : 'dark'
+  const c    = getSportColor(ev.sport, theme)
   const icon = S_ICONS[ev.sport]  || '🎯'
   const pct  = ev.max_players > 0 ? Math.round((pCount/ev.max_players)*100) : 0
   const free = ev.max_players - pCount
+  const eventEnd = ev.date ? new Date(`${ev.date}T${ev.time || '23:59:59'}`) : null
+  if (ev.duration_minutes && ev.time && eventEnd) {
+    eventEnd.setMinutes(eventEnd.getMinutes() + ev.duration_minutes)
+  }
+  const eventFinished = eventEnd ? new Date() > eventEnd : false
   const momentAllowed = canPostMoment(ev)
 
   return (
