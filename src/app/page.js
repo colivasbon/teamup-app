@@ -65,12 +65,13 @@ export default function Home() {
   const avatarUrl   = profile?.avatar_url || null
   const displayName = profile?.full_name || user?.user_metadata?.full_name || null
 
-  const [myEvents,    setMyEvents]    = useState([])
-  const [unreadCount, setUnreadCount] = useState(0)
-  const [sponsors,    setSponsors]    = useState([])
+  const [myEvents,        setMyEvents]        = useState([])
+  const [unreadCount,     setUnreadCount]     = useState(0)
+  const [sponsors,        setSponsors]        = useState([])
   const [activeEventCount, setActiveEventCount] = useState(null)
-  const [athleteCount,     setAthleteCount]     = useState(null)
-  const [provinceCount,    setProvinceCount]    = useState(null)
+  const [participantCount, setParticipantCount] = useState(null)
+  const [newEventCount,    setNewEventCount]    = useState(null)
+  const [recentEvents,     setRecentEvents]     = useState([])
 
   // Cargar patrocinadores
   useEffect(() => {
@@ -83,27 +84,38 @@ export default function Home() {
       .then(({ data }) => { if (data && data.length > 0) setSponsors(data) })
   }, [])
 
-  // Cargar estadísticas funcionales (solo mostrar cuando hay usuarios)
+  // Cargar estadísticas de comunidad y actividad
   useEffect(() => {
     const sb = getSupabase()
     if (!sb) return
 
     const today = new Date().toISOString().split('T')[0]
+    const since = new Date()
+    since.setDate(since.getDate() - 7)
+    const sinceIso = since.toISOString()
+
     const loadStats = async () => {
       try {
-        const [eventsRes, athletesRes, provincesRes] = await Promise.all([
+        const [activeEventsRes, participantsRes, newEventsRes, recentRes] = await Promise.all([
           sb.from('events').select('id', { count:'exact', head:true }).gte('date', today),
-          sb.from('profiles').select('id', { count:'exact', head:true }),
-          sb.from('events').select('province').neq('province', null).distinct(),
+          sb.from('event_participants').select('id', { count:'exact', head:true }),
+          sb.from('events').select('id', { count:'exact', head:true }).gte('created_at', sinceIso),
+          sb.from('events_with_counts')
+            .select('id,title,sport,date,time,location,participant_count,max_players')
+            .gte('created_at', sinceIso)
+            .order('created_at', { ascending:false })
+            .limit(3),
         ])
 
-        if (eventsRes?.count != null) setActiveEventCount(eventsRes.count)
-        if (athletesRes?.count != null) setAthleteCount(athletesRes.count)
-        if (provincesRes?.data) setProvinceCount(provincesRes.data.length)
+        if (activeEventsRes?.count != null) setActiveEventCount(activeEventsRes.count)
+        if (participantsRes?.count != null) setParticipantCount(participantsRes.count)
+        if (newEventsRes?.count != null) setNewEventCount(newEventsRes.count)
+        if (recentRes?.data) setRecentEvents(recentRes.data)
       } catch (_) {
         setActiveEventCount(0)
-        setAthleteCount(0)
-        setProvinceCount(0)
+        setParticipantCount(0)
+        setNewEventCount(0)
+        setRecentEvents([])
       }
     }
     loadStats()
@@ -190,21 +202,57 @@ export default function Home() {
           </div>
         </header>
 
-        {/* ── Stats ── */}
-        {athleteCount > 0 && (
-          <div className="card anim-1" style={{ display:'flex', justifyContent:'space-around', padding:'16px 12px', marginBottom:28 }}>
-            {[
-              [activeEventCount !== null ? activeEventCount : '—', 'Eventos activos'],
-              [athleteCount !== null ? athleteCount : '—', 'Deportistas'],
-              [provinceCount !== null ? provinceCount : '—', 'Provincias'],
-            ].map(([v,l])=>(
-              <div key={l} style={{ textAlign:'center' }}>
-                <div style={{ fontSize:22, fontWeight:800, color:'var(--primary)', letterSpacing:'-0.03em', lineHeight:1 }}>{v}</div>
-                <div style={{ fontSize:11, color:'var(--muted)', marginTop:4 }}>{l}</div>
-              </div>
-            ))}
-          </div>
-        )}
+        {/* ── Actividad de la comunidad ── */}
+        <div className="card anim-1" style={{ display:'grid', gridTemplateColumns:'repeat(3, minmax(0,1fr))', gap:12, padding:'16px 12px', marginBottom:28 }}>
+          {[
+            [activeEventCount !== null ? activeEventCount : '—', 'Eventos activos'],
+            [participantCount !== null ? participantCount : '—', 'Participantes inscritos'],
+            [newEventCount !== null ? newEventCount : '—', 'Eventos nuevos 7d'],
+          ].map(([v,l])=>(
+            <div key={l} style={{ textAlign:'center' }}>
+              <div style={{ fontSize:22, fontWeight:800, color:'var(--primary)', letterSpacing:'-0.03em', lineHeight:1 }}>{v}</div>
+              <div style={{ fontSize:11, color:'var(--muted)', marginTop:4 }}>{l}</div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}>
+          <h3 style={{ fontSize:17, fontWeight:700, margin:0, letterSpacing:'-0.02em' }}>Actividad reciente</h3>
+          <Link href="/events" style={{ fontSize:13, fontWeight:600, color:'var(--primary)' }}>Ver todos →</Link>
+        </div>
+
+        <div style={{ display:'flex', flexDirection:'column', gap:10, marginBottom:24 }}>
+          {recentEvents.length > 0 ? recentEvents.map((ev, i) => {
+            const color = '#586875'
+            const pct = ev.max_players > 0 ? Math.round(((ev.participant_count||0) / ev.max_players) * 100) : 0
+            return (
+              <Link key={ev.id} href={`/events/${ev.id}`} className={`card anim-${i+1}`} style={{
+                display:'flex', alignItems:'center', gap:14, padding:'14px 16px',
+                background:'var(--glass)',
+                border:'1px solid transparent',
+                boxShadow:'0 0 0 1px rgba(255,255,255,0.08), 0 16px 40px rgba(88,104,117,0.10)',
+              }}>
+                <div style={{ width:52, height:52, background:`${color}18`, border:`1.5px solid ${color}30`, borderRadius:16, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, overflow:'hidden' }}>
+                  <SportIcon sport={ev.sport} size={36} />
+                </div>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div style={{ fontSize:14, fontWeight:700, color:'var(--text)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:3 }}>{ev.title}</div>
+                  <div style={{ fontSize:12, color:'var(--muted)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:8 }}>{ev.location}</div>
+                  <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+                    <span style={{ fontSize:11, color:'var(--muted)', whiteSpace:'nowrap' }}>{fmtDate(ev.date, ev.time)}</span>
+                    <div style={{ flex:1 }}><div className="pbar"><div className="pbar-fill" style={{ width:`${pct}%`, background:color }}/></div></div>
+                    <span style={{ fontSize:11, fontWeight:700, color:color, whiteSpace:'nowrap' }}>{ev.participant_count||0}/{ev.max_players||'–'}</span>
+                  </div>
+                </div>
+                <div style={{ fontSize:18, color:'var(--muted)', flexShrink:0 }}>›</div>
+              </Link>
+            )
+          }) : (
+            <div className="card anim-1" style={{ padding:'18px 16px', background:'var(--glass)', color:'var(--muted)' }}>
+              No hay eventos recientes.
+            </div>
+          )}
+        </div>
 
         {/* ── Mis próximos eventos (solo logueado) ── */}
         {user && myEvents.length > 0 && (
