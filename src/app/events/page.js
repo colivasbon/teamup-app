@@ -162,14 +162,35 @@ function EventsContent() {
     try {
       const sb = getSupabase()
       if (sb) {
-        const now = new Date().toISOString()
-        const { data, error } = await sb.from('events_with_counts')
-        .select('*')
-        .not('status', 'in', ['cancelled', 'completed'])
-        .order('date', { ascending: true })
-      if (!error && data && data.length > 0) {
-        setEvents(data)
-        // Cargar eventos en los que ya participa el usuario
+        const { data, error } = await sb.from('events').select('*').order('date', { ascending: true })
+        if (!error && data) {
+          const uids = [...new Set(data.map(ev => ev.creator_id).filter(Boolean))]
+          let pMap = {}
+          if (uids.length > 0) {
+            const { data: pData } = await sb.from('profiles')
+              .select('id, full_name, username, avatar_url')
+              .in('id', uids)
+            if (pData) pData.forEach(p => { pMap[p.id] = p })
+          }
+
+          const eids = data.map(ev => ev.id)
+          let countMap = {}
+          if (eids.length > 0) {
+            const { data: epData } = await sb.from('event_participants')
+              .select('event_id')
+              .in('event_id', eids)
+            if (epData) epData.forEach(ep => { countMap[ep.event_id] = (countMap[ep.event_id] || 0) + 1 })
+          }
+
+          setEvents(data.map(ev => ({
+            ...ev,
+            creator_name:     pMap[ev.creator_id]?.full_name || 'Organizador',
+            creator_username: pMap[ev.creator_id]?.username,
+            creator_avatar:   pMap[ev.creator_id]?.avatar_url,
+            participant_count: countMap[ev.id] || 0,
+          })))
+
+          // Cargar eventos en los que ya participa el usuario
           if (user) {
             const { data: ep } = await sb.from('event_participants')
               .select('event_id').eq('user_id', user.id)
