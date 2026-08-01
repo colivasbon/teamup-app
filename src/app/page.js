@@ -68,6 +68,9 @@ export default function Home() {
   const [myEvents,    setMyEvents]    = useState([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [sponsors,    setSponsors]    = useState([])
+  const [activeEventCount, setActiveEventCount] = useState(null)
+  const [athleteCount,     setAthleteCount]     = useState(null)
+  const [provinceCount,    setProvinceCount]    = useState(null)
 
   // Cargar patrocinadores
   useEffect(() => {
@@ -78,6 +81,32 @@ export default function Home() {
       .eq('active', true)
       .order('sort_order', { ascending: true })
       .then(({ data }) => { if (data && data.length > 0) setSponsors(data) })
+  }, [])
+
+  // Cargar estadísticas funcionales (solo mostrar cuando hay usuarios)
+  useEffect(() => {
+    const sb = getSupabase()
+    if (!sb) return
+
+    const today = new Date().toISOString().split('T')[0]
+    const loadStats = async () => {
+      try {
+        const [eventsRes, athletesRes, provincesRes] = await Promise.all([
+          sb.from('events').select('id', { count:'exact', head:true }).gte('date', today),
+          sb.from('profiles').select('id', { count:'exact', head:true }),
+          sb.from('events').select('province').neq('province', null).distinct(),
+        ])
+
+        if (eventsRes?.count != null) setActiveEventCount(eventsRes.count)
+        if (athletesRes?.count != null) setAthleteCount(athletesRes.count)
+        if (provincesRes?.data) setProvinceCount(provincesRes.data.length)
+      } catch (_) {
+        setActiveEventCount(0)
+        setAthleteCount(0)
+        setProvinceCount(0)
+      }
+    }
+    loadStats()
   }, [])
 
   // Cargar notificaciones sin leer
@@ -162,14 +191,20 @@ export default function Home() {
         </header>
 
         {/* ── Stats ── */}
-        <div className="card anim-1" style={{ display:'flex', justifyContent:'space-around', padding:'16px 12px', marginBottom:28 }}>
-          {[['150+','Eventos activos'],['1.2k','Deportistas'],['47','Provincias']].map(([v,l])=>(
-            <div key={l} style={{ textAlign:'center' }}>
-              <div style={{ fontSize:22, fontWeight:800, color:'var(--primary)', letterSpacing:'-0.03em', lineHeight:1 }}>{v}</div>
-              <div style={{ fontSize:11, color:'var(--muted)', marginTop:4 }}>{l}</div>
-            </div>
-          ))}
-        </div>
+        {athleteCount > 0 && (
+          <div className="card anim-1" style={{ display:'flex', justifyContent:'space-around', padding:'16px 12px', marginBottom:28 }}>
+            {[
+              [activeEventCount !== null ? activeEventCount : '—', 'Eventos activos'],
+              [athleteCount !== null ? athleteCount : '—', 'Deportistas'],
+              [provinceCount !== null ? provinceCount : '—', 'Provincias'],
+            ].map(([v,l])=>(
+              <div key={l} style={{ textAlign:'center' }}>
+                <div style={{ fontSize:22, fontWeight:800, color:'var(--primary)', letterSpacing:'-0.03em', lineHeight:1 }}>{v}</div>
+                <div style={{ fontSize:11, color:'var(--muted)', marginTop:4 }}>{l}</div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* ── Mis próximos eventos (solo logueado) ── */}
         {user && myEvents.length > 0 && (
