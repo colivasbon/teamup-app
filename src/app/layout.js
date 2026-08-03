@@ -30,6 +30,46 @@ function AppShell({ children }) {
     }
   }, [])
 
+  const [deferredPrompt, setDeferredPrompt] = useState(null)
+  const [showInstallButton, setShowInstallButton] = useState(false)
+  const [isInstalled, setIsInstalled] = useState(false)
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (event) => {
+      event.preventDefault()
+      setDeferredPrompt(event)
+      setShowInstallButton(true)
+    }
+
+    const handleAppInstalled = () => {
+      setShowInstallButton(false)
+      setIsInstalled(true)
+      setDeferredPrompt(null)
+    }
+
+    const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true
+    setIsInstalled(standalone)
+    if (standalone) setShowInstallButton(false)
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+    window.addEventListener('appinstalled', handleAppInstalled)
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+      window.removeEventListener('appinstalled', handleAppInstalled)
+    }
+  }, [])
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return
+    deferredPrompt.prompt()
+    const { outcome } = await deferredPrompt.userChoice
+    if (outcome === 'accepted') {
+      setShowInstallButton(false)
+      setDeferredPrompt(null)
+    }
+  }
+
   // Cargar patrocinadores desde Supabase
   useEffect(() => {
     const sb = getSupabase()
@@ -76,6 +116,29 @@ function AppShell({ children }) {
       {/* Banner de cookies — solo aparece si no hay decisión guardada */}
       <CookieBanner />
 
+      {!isInstalled && showInstallButton && (
+        <button
+          onClick={handleInstallClick}
+          style={{
+            position: 'fixed',
+            right: 16,
+            bottom: 92,
+            zIndex: 9999,
+            border: 'none',
+            borderRadius: 999,
+            background: 'linear-gradient(135deg, #586875 0%, #2f4550 100%)',
+            color: '#f6eddc',
+            padding: '12px 16px',
+            fontSize: 14,
+            fontWeight: 700,
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.24)',
+            cursor: 'pointer',
+          }}
+        >
+          Instalar app
+        </button>
+      )}
+
     </div>
   )
 }
@@ -86,6 +149,10 @@ export default function RootLayout({ children }) {
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <meta name="theme-color" content="#1a2028" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="TeamUp" />
         <meta name="description" content="TeamUp ayuda a organizar y unirse a eventos deportivos cerca de ti. Corre, juega pádel, haz senderismo y conoce gente nueva de manera fácil." />
         <meta name="keywords" content="TeamUp, deporte, eventos deportivos, running, pádel, yoga, ciclismo, senderismo, comunidad, actividad física" />
         <meta name="robots" content="index, follow" />
@@ -97,8 +164,11 @@ export default function RootLayout({ children }) {
         <meta name="twitter:title" content="TeamUp — Haz deporte, conoce gente" />
         <meta name="twitter:description" content="Organiza y únete a eventos deportivos cerca de ti. Encuentra compañeros para correr, pádel, yoga y más." />
         <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/favicon.png" />
+        <link rel="icon" href="/favicon.png" />
+        <link rel="shortcut icon" href="/favicon.png" />
+        <link rel="icon" type="image/png" sizes="192x192" href="/favicon.png" />
+        <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png" />
         <title>TeamUp — Haz deporte, conoce gente</title>
         <script dangerouslySetInnerHTML={{ __html: "(function(){try{var t=localStorage.getItem('tu-theme'); if(t)document.documentElement.setAttribute('data-theme', t);}catch(e){}})();" }} />
       </head>
