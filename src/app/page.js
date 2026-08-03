@@ -71,6 +71,45 @@ export default function Home() {
   const [activeEventCount, setActiveEventCount] = useState(null)
   const [participantCount, setParticipantCount] = useState(null)
   const [newEventCount,    setNewEventCount]    = useState(null)
+  const [deferredPrompt,  setDeferredPrompt]  = useState(null)
+  const [showInstallButton, setShowInstallButton] = useState(false)
+  const [isInstalled,    setIsInstalled]    = useState(false)
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (event) => {
+      event.preventDefault()
+      setDeferredPrompt(event)
+      setShowInstallButton(true)
+    }
+
+    const handleAppInstalled = () => {
+      setShowInstallButton(false)
+      setIsInstalled(true)
+      setDeferredPrompt(null)
+    }
+
+    const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true
+    setIsInstalled(standalone)
+    if (standalone) setShowInstallButton(false)
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+    window.addEventListener('appinstalled', handleAppInstalled)
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+      window.removeEventListener('appinstalled', handleAppInstalled)
+    }
+  }, [])
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return
+    deferredPrompt.prompt()
+    const { outcome } = await deferredPrompt.userChoice
+    if (outcome === 'accepted') {
+      setShowInstallButton(false)
+      setDeferredPrompt(null)
+    }
+  }
 
   // Cargar patrocinadores
   useEffect(() => {
@@ -178,9 +217,18 @@ export default function Home() {
             </span>
           </Link>
 
-          {/* Lado derecho: ThemeButton + Avatar */}
+          {/* Lado derecho: ThemeButton + botón instalar + Avatar */}
           <div style={{ display:'flex', alignItems:'center', gap:8, flexShrink:0 }}>
             <ThemeButton />
+            {showInstallButton && !isInstalled && (
+              <button
+                onClick={handleInstallClick}
+                className="btn btn-primary"
+                style={{ minWidth:120, padding:'10px 14px', height:40, whiteSpace:'nowrap' }}
+              >
+                Instalar app
+              </button>
+            )}
             <Link href="/profile" style={{
               width:44, height:44, borderRadius:'50%',
               background: avatarUrl ? 'transparent' : 'var(--glass)',

@@ -1,7 +1,7 @@
 'use client'
 
 import './globals.css'
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { AuthProvider, useAuth } from '@/contexts/AuthContext'
 import OnboardingModal from '@/components/OnboardingModal'
 import { getSupabase } from '@/lib/supabase'
@@ -29,46 +29,6 @@ function AppShell({ children }) {
       })
     }
   }, [])
-
-  const [deferredPrompt, setDeferredPrompt] = useState(null)
-  const [showInstallButton, setShowInstallButton] = useState(false)
-  const [isInstalled, setIsInstalled] = useState(false)
-
-  useEffect(() => {
-    const handleBeforeInstallPrompt = (event) => {
-      event.preventDefault()
-      setDeferredPrompt(event)
-      setShowInstallButton(true)
-    }
-
-    const handleAppInstalled = () => {
-      setShowInstallButton(false)
-      setIsInstalled(true)
-      setDeferredPrompt(null)
-    }
-
-    const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true
-    setIsInstalled(standalone)
-    if (standalone) setShowInstallButton(false)
-
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-    window.addEventListener('appinstalled', handleAppInstalled)
-
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-      window.removeEventListener('appinstalled', handleAppInstalled)
-    }
-  }, [])
-
-  const handleInstallClick = async () => {
-    if (!deferredPrompt) return
-    deferredPrompt.prompt()
-    const { outcome } = await deferredPrompt.userChoice
-    if (outcome === 'accepted') {
-      setShowInstallButton(false)
-      setDeferredPrompt(null)
-    }
-  }
 
   // Cargar patrocinadores desde Supabase
   useEffect(() => {
@@ -116,29 +76,6 @@ function AppShell({ children }) {
       {/* Banner de cookies — solo aparece si no hay decisión guardada */}
       <CookieBanner />
 
-      {!isInstalled && showInstallButton && (
-        <button
-          onClick={handleInstallClick}
-          style={{
-            position: 'fixed',
-            right: 16,
-            bottom: 92,
-            zIndex: 9999,
-            border: 'none',
-            borderRadius: 999,
-            background: 'linear-gradient(135deg, #586875 0%, #2f4550 100%)',
-            color: '#f6eddc',
-            padding: '12px 16px',
-            fontSize: 14,
-            fontWeight: 700,
-            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.24)',
-            cursor: 'pointer',
-          }}
-        >
-          Instalar app
-        </button>
-      )}
-
     </div>
   )
 }
@@ -164,11 +101,10 @@ export default function RootLayout({ children }) {
         <meta name="twitter:title" content="TeamUp — Haz deporte, conoce gente" />
         <meta name="twitter:description" content="Organiza y únete a eventos deportivos cerca de ti. Encuentra compañeros para correr, pádel, yoga y más." />
         <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href="/favicon.png" />
-        <link rel="icon" href="/favicon.png" />
-        <link rel="shortcut icon" href="/favicon.png" />
-        <link rel="icon" type="image/png" sizes="192x192" href="/favicon.png" />
-        <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png" />
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="shortcut icon" href="/favicon.svg" />
+        <link rel="mask-icon" href="/favicon.svg" color="#1a2028" />
         <title>TeamUp — Haz deporte, conoce gente</title>
         <script dangerouslySetInnerHTML={{ __html: "(function(){try{var t=localStorage.getItem('tu-theme'); if(t)document.documentElement.setAttribute('data-theme', t);}catch(e){}})();" }} />
       </head>
