@@ -1,7 +1,7 @@
 'use client'
 
 import './globals.css'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { AuthProvider, useAuth } from '@/contexts/AuthContext'
 import OnboardingModal from '@/components/OnboardingModal'
 import { getSupabase } from '@/lib/supabase'
