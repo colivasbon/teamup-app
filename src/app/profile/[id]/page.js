@@ -20,6 +20,28 @@ function fmt(dateStr) {
   return d.toLocaleDateString('es-ES', { weekday:'short', day:'numeric', month:'short' })
 }
 
+function dateKey(date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
+}
+
+function monthLabelFromKey(key) {
+  const [year, month] = key.split('-').map(Number)
+  const d = new Date(year, month - 1, 1)
+  return d.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })
+}
+
+function monthRangeFromKey(key) {
+  const [year, month] = key.split('-').map(Number)
+  return {
+    start: new Date(year, month - 1, 1),
+    end: new Date(year, month, 0),
+  }
+}
+
+function formatDateKey(date) {
+  return date.toISOString().slice(0, 10)
+}
+
 export default function PublicProfile() {
   const { id }     = useParams()
   const router     = useRouter()
@@ -31,12 +53,13 @@ export default function PublicProfile() {
     document.documentElement.setAttribute('data-theme', saved)
   }, [])
 
-  const [profile,  setProfile]  = useState(null)
-  const [events,   setEvents]   = useState([])
-  const [moments,  setMoments]  = useState([])
-  const [loading,  setLoading]  = useState(true)
-  const [tab,      setTab]      = useState('eventos')
-  const [notFound, setNotFound] = useState(false)
+  const [profile,   setProfile]   = useState(null)
+  const [events,    setEvents]    = useState([])
+  const [moments,   setMoments]   = useState([])
+  const [loading,   setLoading]   = useState(true)
+  const [tab,       setTab]       = useState('eventos')
+  const [monthFilter, setMonthFilter] = useState(() => dateKey(new Date()))
+  const [notFound,  setNotFound]  = useState(false)
 
   const isOwnProfile = user?.id === id
 
@@ -45,12 +68,11 @@ export default function PublicProfile() {
     // Si es el propio perfil, redirigir a /profile
     if (isOwnProfile) { router.replace('/profile'); return }
 
-    const load = async () => {
+    const loadProfile = async () => {
       setLoading(true)
       const sb = getSupabase()
       if (!sb) { setLoading(false); return }
 
-      // Perfil del usuario
       const { data: pData, error: pErr } = await sb
         .from('profiles')
         .select('id, full_name, username, bio, avatar_url, sports, karma, created_at')
@@ -59,29 +81,38 @@ export default function PublicProfile() {
 
       if (pErr || !pData) { setNotFound(true); setLoading(false); return }
       setProfile(pData)
+      setLoading(false)
+    }
 
-      // Eventos creados por este usuario
-      const { data: evData } = await sb
+    loadProfile()
+  }, [id, isOwnProfile, router])
+
+  useEffect(() => {
+    if (!id) return
+    const loadEvents = async () => {
+      const sb = getSupabase()
+      if (!sb) return
+
+      let query = sb
         .from('events_with_counts')
         .select('id, title, sport, date, time, location, max_players, participant_count, price')
         .eq('creator_id', id)
         .order('date', { ascending: true })
-        .limit(10)
+
+      if (monthFilter === 'past') {
+        const today = new Date(); today.setHours(0,0,0,0)
+        query = query.lt('date', formatDateKey(today))
+      } else {
+        const { start, end } = monthRangeFromKey(monthFilter)
+        query = query.gte('date', formatDateKey(start)).lte('date', formatDateKey(end))
+      }
+
+      const { data: evData } = await query.limit(12)
       setEvents(evData || [])
-
-      // Momentos del usuario
-      const { data: mData } = await sb
-        .from('moments')
-        .select('id, text, sport, created_at')
-        .eq('user_id', id)
-        .order('created_at', { ascending: false })
-        .limit(6)
-      setMoments(mData || [])
-
-      setLoading(false)
     }
-    load()
-  }, [id, isOwnProfile, router])
+
+    loadEvents()
+  }, [id, monthFilter])
 
   if (loading) return (
     <div className="app-shell" style={{ display:'flex', alignItems:'center', justifyContent:'center', minHeight:'100dvh' }}>
@@ -100,6 +131,21 @@ export default function PublicProfile() {
 
   const sports = Array.isArray(profile?.sports) ? profile.sports : []
   const joinYear = profile?.created_at ? new Date(profile.created_at).getFullYear() : null
+
+  const monthOptions = [0, 1, 2].map((offset) => {
+    const d = new Date();
+    d.setDate(1)
+    d.setMonth(d.getMonth() + offset)
+    return {
+      key: dateKey(d),
+      label: d.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }),
+    }
+  })
+  monthOptions.push({ key: 'past', label: 'Pasados' })
+
+  const eventPeriodLabel = monthFilter === 'past'
+    ? 'eventos pasados'
+    : `eventos en ${monthLabelFromKey(monthFilter)}`
 
   return (
     <>
@@ -165,9 +211,9 @@ export default function PublicProfile() {
           )}
 
           {/* Info secundaria */}
-          <div style={{ display:'flex', gap:16, fontSize:12, color:'var(--muted)', marginBottom:16 }}>
+          <div style={{ display:'flex', gap:16, fontSize:12, color:'var(--muted)', marginBottom:16, flexWrap:'wrap', justifyContent:'center' }}>
             {joinYear && <span>📅 Desde {joinYear}</span>}
-            <span>🎯 {events.length} evento{events.length!==1?'s':''} creado{events.length!==1?'s':''}</span>
+            <span>🎯 {events.length} {eventPeriodLabel}</span>
           </div>
 
           {/* Deportes favoritos */}
@@ -209,10 +255,38 @@ export default function PublicProfile() {
         {/* ── Tab: Eventos ── */}
         {tab === 'eventos' && (
           <div style={{ padding:'0 18px', display:'flex', flexDirection:'column', gap:10 }}>
+            <div style={{ display:'flex', gap:10, flexWrap:'wrap', marginBottom:4 }}>
+              {monthOptions.map((option) => (
+                <button
+                  key={option.key}
+                  onClick={() => setMonthFilter(option.key)}
+                  style={{
+                    flex: option.key === 'past' ? '0 0 auto' : '1',
+                    minWidth: option.key === 'past' ? 100 : 0,
+                    padding: '10px 12px',
+                    borderRadius: 14,
+                    border: '1px solid var(--border)',
+                    background: monthFilter === option.key ? 'var(--primary)' : 'transparent',
+                    color: monthFilter === option.key ? 'white' : 'var(--muted)',
+                    fontWeight: 700,
+                    fontSize: 12,
+                    cursor: 'pointer',
+                    transition: 'all 0.18s ease',
+                  }}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+
             {events.length === 0 ? (
               <div className="card" style={{ padding:'32px 20px', textAlign:'center' }}>
                 <div style={{ fontSize:36, marginBottom:8 }}>📅</div>
-                <div style={{ fontSize:14, color:'var(--muted)' }}>Este usuario no ha creado eventos aún</div>
+                <div style={{ fontSize:14, color:'var(--muted)' }}>
+                  {monthFilter === 'past'
+                    ? 'Este usuario no ha creado eventos pasados'
+                    : `No hay eventos creados para ${monthLabelFromKey(monthFilter)}`}
+                </div>
               </div>
             ) : events.map((ev, i) => {
               const c = S_COLORS[ev.sport] || '#5b6ef5'
