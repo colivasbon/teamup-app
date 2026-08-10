@@ -1,112 +1,121 @@
-'use client'
-
 import './globals.css'
-import { useEffect, useState } from 'react'
-import { AuthProvider, useAuth } from '@/contexts/AuthContext'
-import OnboardingModal from '@/components/OnboardingModal'
-import { getSupabase } from '@/lib/supabase'
-import CookieBanner from '@/components/CookieBanner'
+import { AuthProvider } from '@/contexts/AuthContext'
+import AppShell from '@/components/AppShell'
 
-// Número de repeticiones del carrusel para que el loop sea fluido
-const REPEAT = 6
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: '#1a2028',
+}
 
-function AppShell({ children }) {
-  const { user, profile } = useAuth()
-  const [showOnboarding, setShowOnboarding] = useState(false)
-  const [sponsors, setSponsors] = useState([])
-
-  useEffect(() => {
-    if (!user) { setShowOnboarding(false); return }
-    if (profile === undefined) return
-    const needsOnboarding = profile !== null && (!profile?.location || !profile?.sports?.length)
-    setShowOnboarding(needsOnboarding)
-  }, [user, profile])
-
-  useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(() => {
-        // Fallback: no-op if registration fails in unsupported browsers.
-      })
-    }
-  }, [])
-
-  // Cargar patrocinadores desde Supabase
-  useEffect(() => {
-    const sb = getSupabase()
-    if (!sb) return
-    sb.from('sponsors')
-      .select('id, name, logo_url, website_url')
-      .eq('active', true)
-      .order('sort_order', { ascending: true })
-      .then(({ data }) => { if (data && data.length > 0) setSponsors(data) })
-  }, [])
-
-  return (
-    <div className="app-shell">
-
-      {/* Cinta del eslogan — elemento normal en el flujo, no fixed.
-          Aparece arriba al entrar en la app y desaparece al hacer scroll.
-          No tapa nada, no sigue al usuario. */}
-      <div className="slogan-bar" style={{
-        width: '100%',
-        height: 26, overflow: 'hidden',
-        background: '#586875',
-      }}>
-        <div style={{
-          display: 'flex', alignItems: 'center', height: '100%',
-          animation: 'marquee 80s linear infinite',
-          width: 'max-content',
-        }}>
-          {Array.from({length: 12}).map((_, i) => (
-            <span key={i} style={{
-              fontSize: 10, fontWeight: 800, letterSpacing: '0.2em',
-              color: '#f6eddc', textTransform: 'uppercase',
-              padding: '0 28px', flexShrink: 0, whiteSpace: 'nowrap',
-            }}>HAZ DEPORTE · CONOCE GENTE</span>
-          ))}
-        </div>
-      </div>
-
-      {children}
-
-      {showOnboarding && user && (
-        <OnboardingModal onComplete={() => setShowOnboarding(false)} />
-      )}
-
-      {/* Banner de cookies — solo aparece si no hay decisión guardada */}
-      <CookieBanner />
-
-    </div>
-  )
+export const metadata = {
+  metadataBase: new URL('https://teamupapp.es'),
+  title: {
+    default: 'TeamUp — App para Pachangas, Unirse a Partidos y Deporte Social en España',
+    template: '%s | TeamUp',
+  },
+  description: 'Organiza y únete a pachangas, partidos de pádel, fútbol 7, grupos de running y quedadas deportivas cerca de ti en España. ¡Únete gratis y conoce deportistas!',
+  keywords: [
+    'app para pachangas',
+    'unirse a partidos',
+    'quedadas deportivas',
+    'organizar pachangas',
+    'partidos de padel cerca de mi',
+    'futbol 7 quedadas',
+    'grupos de running',
+    'deporte social España',
+    'buscar compañeros deporte',
+    'TeamUp'
+  ],
+  authors: [{ name: 'TeamUp' }],
+  creator: 'TeamUp',
+  publisher: 'TeamUp',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'es_ES',
+    url: 'https://teamupapp.es',
+    siteName: 'TeamUp',
+    title: 'TeamUp — App para Pachangas, Unirse a Partidos y Deporte Social',
+    description: 'Organiza y únete a eventos deportivos cerca de ti en España. Pádel, fútbol, running, senderismo y más. ¡Haz deporte y conoce gente!',
+    images: [
+      {
+        url: '/favicon.png',
+        width: 512,
+        height: 512,
+        alt: 'TeamUp Logo',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'TeamUp — App para Pachangas y Deporte Social en España',
+    description: 'Organiza y únete a pachangas, partidos de pádel, grupos de running y eventos deportivos cerca de ti.',
+    images: ['/favicon.png'],
+  },
+  manifest: '/manifest.json',
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    shortcut: '/favicon.svg',
+    apple: '/icons/icon-192x192.png',
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'TeamUp',
+  },
 }
 
 export default function RootLayout({ children }) {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'SoftwareApplication',
+        '@id': 'https://teamupapp.es/#application',
+        'name': 'TeamUp',
+        'operatingSystem': 'Web, Android, iOS',
+        'applicationCategory': 'SportsApplication',
+        'offers': {
+          '@type': 'Offer',
+          'price': '0',
+          'priceCurrency': 'EUR'
+        },
+        'description': 'Aplicación web y PWA para organizar y unirse a pachangas, partidos de pádel, fútbol, running y quedadas deportivas cerca de ti en España.',
+        'url': 'https://teamupapp.es'
+      },
+      {
+        '@type': 'WebSite',
+        '@id': 'https://teamupapp.es/#website',
+        'url': 'https://teamupapp.es',
+        'name': 'TeamUp',
+        'description': 'Encuentra y organiza eventos deportivos, pachangas y partidos en toda España.',
+        'inLanguage': 'es-ES'
+      }
+    ]
+  }
+
   return (
     <html lang="es" data-theme="dark">
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-        <meta name="theme-color" content="#1a2028" />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="TeamUp" />
-        <meta name="description" content="TeamUp ayuda a organizar y unirse a eventos deportivos cerca de ti. Corre, juega pádel, haz senderismo y conoce gente nueva de manera fácil." />
-        <meta name="keywords" content="TeamUp, deporte, eventos deportivos, running, pádel, yoga, ciclismo, senderismo, comunidad, actividad física" />
-        <meta name="robots" content="index, follow" />
-        <meta property="og:title" content="TeamUp — Haz deporte, conoce gente" />
-        <meta property="og:description" content="Organiza y únete a eventos deportivos cerca de ti. Encuentra compañeros para correr, pádel, yoga y más." />
-        <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="TeamUp" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="TeamUp — Haz deporte, conoce gente" />
-        <meta name="twitter:description" content="Organiza y únete a eventos deportivos cerca de ti. Encuentra compañeros para correr, pádel, yoga y más." />
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="shortcut icon" href="/favicon.svg" />
-        <link rel="mask-icon" href="/favicon.svg" color="#1a2028" />
-        <title>TeamUp — Haz deporte, conoce gente</title>
         <script dangerouslySetInnerHTML={{ __html: "(function(){try{var t=localStorage.getItem('tu-theme'); if(t)document.documentElement.setAttribute('data-theme', t);}catch(e){}})();" }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </head>
       <body>
         <AuthProvider>

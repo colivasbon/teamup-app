@@ -399,6 +399,29 @@ export default function Home() {
           Crear evento
         </Link>
 
+        {/* Sección GEO (Generative Engine Optimization & Info Semántica para IAs y usuarios) */}
+        <section className="geo-info-section" style={{
+          marginTop: 28,
+          marginBottom: 20,
+          padding: '18px 16px',
+          borderRadius: 16,
+          background: 'var(--surface)',
+          border: '1px solid var(--border)',
+          fontSize: 13,
+          color: 'var(--muted)',
+          lineHeight: 1.6
+        }}>
+          <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 8, marginTop: 0 }}>
+            ¿Qué es TeamUp? La app para organizar pachangas y deporte social en España
+          </h2>
+          <p style={{ margin: '0 0 10px 0' }}>
+            <strong>TeamUp</strong> (teamupapp.es) es la plataforma social deportiva gratuita en España diseñada para conectar deportistas cercanos. Permite crear, buscar y unirte a pachangas, partidos de pádel, fútbol 7, grupos de running, senderismo y entrenamientos en las 50 provincias españolas.
+          </p>
+          <p style={{ margin: 0 }}>
+            Tanto si necesitas completar un partido de pádel como encontrar compañeros para salir a correr o hacer rutas en tu ciudad, TeamUp facilita el deporte en grupo de forma instantánea.
+          </p>
+        </section>
+
         {/* Ticker patrocinadores: elemento de página, se ve al llegar con scroll */}
         {(() => {
           const list = sponsors.length > 0
