@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, Suspense, useRef } from 'react'
 import Link from 'next/link'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import { getSupabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
@@ -119,31 +119,25 @@ function fmtDuration(min) {
 
 // ── Mapa con Leaflet cargado dinámicamente ────────────────────────────────────
 // ── Contenido principal ───────────────────────────────────────────────────────
-function EventsContent() {
-  const searchParams = useSearchParams()
+function EventsContent({ initialSport = 'all', initialProv = 'all', initialLevel = 'all' }) {
   const router       = useRouter()
   const { user }     = useAuth()
 
-  // Filtros iniciales desde la URL — permite enlaces SEO locales (?prov=)
-  const SPORT_IDS  = new Set(SPORT_FILTERS.map(f => f.id))
-  const PROV_IDS   = new Set(PROVINCES.map(p => p.id))
-  const LEVEL_IDS  = new Set(LEVEL_FILTERS.map(l => l.id))
-  const sp         = searchParams.get('sport')
-  const pv         = searchParams.get('prov')
-  const lv         = searchParams.get('level')
-  const initSport  = SPORT_IDS.has(sp) ? sp : 'all'
-  const initProv   = PROV_IDS.has(pv) ? pv : 'all'
-  const initLevel  = LEVEL_IDS.has(lv) ? lv : 'all'
-
-  const [sport,    setSport]   = useState(initSport)
-  const [level,    setLevel]   = useState(initLevel)
-  const [prov,     setProv]    = useState(initProv)
+  // Filtros iniciales desde la URL — se pasan desde el servidor (indexable, sin render vacío)
+  const [sport,    setSport]   = useState(initialSport)
+  const [level,    setLevel]   = useState(initialLevel)
+  const [prov,     setProv]    = useState(initialProv)
   const [search,   setSearch]  = useState('')
   const [events,   setEvents]  = useState([])
   const [loading,  setLoading] = useState(true)
   const [geoLabel, setGeoLabel] = useState('')
   const [joining,  setJoining] = useState({})   // { [eventId]: bool }
   const [joined,   setJoined]  = useState({})   // { [eventId]: bool }
+
+  // Sincronizar cuando llegan filtros nuevos del servidor (navegación por enlace)
+  useEffect(() => { setSport(initialSport) }, [initialSport])
+  useEffect(() => { setProv(initialProv) }, [initialProv])
+  useEffect(() => { setLevel(initialLevel) }, [initialLevel])
 
   // Sincronizar filtros con la URL (sport/prov/level) para enlaces compartibles
   useEffect(() => {
@@ -265,16 +259,9 @@ function EventsContent() {
         </header>
 
         {/* Toggle Eventos / Torneos */}
-        <div style={{ display:'flex', gap:0, background:'var(--surface)', border:'1px solid var(--border)',
-          borderRadius:14, overflow:'hidden', marginBottom:16 }}>
-          <Link href="/events" style={{ flex:1, padding:'11px 0', textAlign:'center', textDecoration:'none',
-            fontWeight:700, fontSize:13, background:'#586875', color:'#f6eddc' }}>
-            🗓 Eventos
-          </Link>
-          <Link href="/tournaments" style={{ flex:1, padding:'11px 0', textAlign:'center', textDecoration:'none',
-            fontWeight:600, fontSize:13, color:'var(--muted)' }}>
-            🏆 Torneos
-          </Link>
+        <div className="seg-toggle">
+          <Link href="/events" className="seg-active">🗓 Eventos</Link>
+          <Link href="/tournaments">🏆 Torneos</Link>
         </div>
 
         {/* Sin resultados — estado vacío enriquecido */}
@@ -347,34 +334,34 @@ function EventsContent() {
                       }}>DESTACADO</span>
                     )}
                   </div>
-                  <div style={{ padding: '16px 18px' }}>
-                    <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start', marginBottom: 12 }}>
+                  <div style={{ padding: '13px 14px' }}>
+                    <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', marginBottom: 10 }}>
                       {/* Icono SVG del deporte */}
                       <div style={{
                         background: `${color}18`,
                         border: `1.5px solid ${color}30`,
-                        borderRadius: 16,
-                        width: 48,
-                        height: 48,
+                        borderRadius: 14,
+                        width: 42,
+                        height: 42,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         flexShrink: 0,
                       }}>
-                        <SportIcon sport={ev.sport} size={38} />
+                        <SportIcon sport={ev.sport} size={33} />
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
-                          <h3 style={{ fontSize: 15, fontWeight: 700, margin: 0, letterSpacing: '-0.02em', lineHeight: 1.3, color: 'var(--text)' }}>{ev.title}</h3>
+                          <h3 style={{ fontSize: 14, fontWeight: 700, margin: 0, letterSpacing: '-0.02em', lineHeight: 1.3, color: 'var(--text)' }}>{ev.title}</h3>
                           {ev.third_place && <span className="badge" style={{ background: 'rgba(251,191,36,0.15)', color: '#f59e0b', flexShrink: 0 }}>🍺</span>}
                         </div>
-                        <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 3 }}>por {ev.creator_name || 'Organizador'}</div>
+                        <div style={{ fontSize: 11.5, color: 'var(--muted)', marginTop: 2 }}>por {ev.creator_name || 'Organizador'}</div>
                       </div>
                     </div>
                     {ev.description && (
-                      <p style={{ fontSize: 13, color: 'var(--text2)', margin: '0 0 12px', lineHeight: 1.6 }}>{ev.description}</p>
+                      <p style={{ fontSize: 12.5, color: 'var(--text2)', margin: '0 0 10px', lineHeight: 1.55, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{ev.description}</p>
                     )}
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px 14px', marginBottom: 12, fontSize: 12, color: 'var(--muted)' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 12px', marginBottom: 10, fontSize: 11.5, color: 'var(--muted)' }}>
                       <span>📅 {formatDate(ev.date)} · {(ev.time || '').slice(0, 5)}</span>
                       {ev.duration_minutes && <span>⏱ {fmtDuration(ev.duration_minutes)}</span>}
                       <span>📍 {ev.location}</span>
@@ -384,13 +371,13 @@ function EventsContent() {
                       <div style={{ flex: 1 }}>
                         <div className="pbar"><div className="pbar-fill" style={{ width: `${pct}%`, background: barC }}/></div>
                       </div>
-                      <span style={{ fontSize: 12, color: barC, fontWeight: 700, whiteSpace: 'nowrap' }}>
+                      <span style={{ fontSize: 11.5, color: barC, fontWeight: 700, whiteSpace: 'nowrap' }}>
                         {pCnt}/{ev.max_players}
                       </span>
                       {joined[ev.id] ? (
                         <span style={{
                           background: `${color}20`, color, border: `1.5px solid ${color}50`,
-                          borderRadius: 10, padding: '8px 14px', fontWeight: 700, fontSize: 12,
+                          borderRadius: 9, padding: '7px 12px', fontWeight: 700, fontSize: 11.5,
                           whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: 4,
                         }}>✓ Apuntado</span>
                       ) : (
@@ -416,10 +403,10 @@ function EventsContent() {
                           setJoining(p => ({ ...p, [ev.id]: false }))
                         }} style={{
                           background: `linear-gradient(135deg,${color},${color}bb)`,
-                          color: 'white', border: 'none', borderRadius: 10,
-                          padding: '9px 18px', fontWeight: 700, fontSize: 13,
+                          color: 'white', border: 'none', borderRadius: 9,
+                          padding: '7px 14px', fontWeight: 700, fontSize: 12,
                           cursor: 'pointer', letterSpacing: '-0.01em',
-                          boxShadow: `0 3px 14px ${color}44`,
+                          boxShadow: `0 2px 10px ${color}33`,
                           transition: 'all 0.16s ease', fontFamily: 'inherit',
                           opacity: joining[ev.id] ? 0.6 : 1,
                         }}>

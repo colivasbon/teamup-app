@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { useParams, useRouter, useSearchParams } from 'next/navigation'
-import { Suspense } from 'react'
+import { useParams, useRouter } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import { getSupabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
@@ -11,6 +10,7 @@ import { getSportColor } from '@/components/SportIcon'
 
 const S_COLORS = { running:'#5b6ef5', padel:'#06d6a0', senderismo:'#f59e0b', futbol:'#ef4444', gimnasio:'#8b5cf6', tenis:'#fbbf24', natacion:'#0ea5e9', ciclismo:'#f97316', yoga:'#ec4899', baloncesto:'#f59e0b', voleibol:'#06d6a0', badminton:'#8b5cf6' }
 const S_ICONS  = { running:'🏃', padel:'🎾', senderismo:'🥾', futbol:'⚽', gimnasio:'💪', tenis:'🎾', natacion:'🏊', ciclismo:'🚴', yoga:'🧘', baloncesto:'🏀', voleibol:'🏐', badminton:'🏸' }
+const S_LABELS = { running:'Running', padel:'Pádel', senderismo:'Senderismo', futbol:'Fútbol', gimnasio:'Gimnasio', tenis:'Tenis', natacion:'Natación', ciclismo:'Ciclismo', yoga:'Yoga', baloncesto:'Baloncesto', voleibol:'Voleibol', badminton:'Bádminton' }
 
 const DEMO = {
   'demo-1': { id:'demo-1', title:'Running Matutino',         sport:'running',    level:'any',          date:'2026-03-30', time:'07:30:00', location:'Alameda de Córdoba',      province:'Córdoba',  max_players:10, price:'Gratis',     third_place:false, description:'Ruta de running matutino por la Alameda. Ritmo medio 5:00–5:30/km. Todos los niveles bienvenidos. Llevar agua.',             creator_name:'Carlos O.', participant_count:7,  tags:['Aire libre','Todos los niveles','Grupo pequeño'] },
@@ -37,23 +37,21 @@ function canPostMoment(ev) {
   return diffH >= 0 && diffH <= 48
 }
 
-function EventDetailInner() {
+function EventDetailInner({ initialTab = 'Info', ssrEvent = null }) {
   const { id }      = useParams()
   const router       = useRouter()
-  const searchParams = useSearchParams()
   const { user }     = useAuth()
   const chatRef      = useRef(null)
   const chatPollRef  = useRef(null)
   const prevMsgCount = useRef(0)
   const fileRef      = useRef(null)
 
-  const [ev,           setEv]          = useState(null)
+  const [ev,           setEv]          = useState(ssrEvent)
   const [mapCoords,    setMapCoords]    = useState(null)
-  const [pCount,       setPCount]      = useState(0)
+  const [pCount,       setPCount]      = useState(ssrEvent?.participant_count ?? 0)
   const [participants, setParticipants]= useState([])
-  const [loading,      setLoad]        = useState(true)
-  const initTab = searchParams?.get('tab') || 'Info'
-  const [tab,          setTab]         = useState(initTab)
+  const [loading,      setLoad]        = useState(!ssrEvent)
+  const [tab,          setTab]         = useState(initialTab)
   const [joined,       setJoined]      = useState(false)
   const [joining,      setJoining]     = useState(false)
 
@@ -430,103 +428,90 @@ function EventDetailInner() {
   return (
     <>
       <div className="page-wrap" style={{ paddingBottom:100 }}>
-        {/* Banner del deporte */}
+        {/* Cabecera del deporte */}
         <div style={{
-          position:'relative', margin:'-16px -18px 0', padding:'24px 20px 20px',
+          position:'relative', margin:'-16px -18px 0', padding:'18px 18px 14px',
           background:`linear-gradient(180deg, ${c}33 0%, transparent 100%)`,
           borderBottom:'1px solid var(--border)',
         }}>
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}>
-            <button onClick={() => router.back()} style={{
-              background:'var(--surface)', border:'1px solid var(--border)',
-              borderRadius:10, width:36, height:36, display:'flex', alignItems:'center',
-              justifyContent:'center', fontSize:16, cursor:'pointer', color:'var(--text)',
-            }}>←</button>
+            <button onClick={() => router.back()} aria-label="Volver" className="icon-btn" style={{ fontSize:15 }}>←</button>
             <div style={{ display:'flex', gap:8 }}>
-              {/* Botón Compartir (Póster/QR) */}
-              <button onClick={() => setShowPoster(true)} style={{
-                background:'var(--surface)', border:'1px solid var(--border)',
-                borderRadius:10, padding:'6px 12px', display:'flex', alignItems:'center',
-                gap:6, fontSize:12, fontWeight:600, cursor:'pointer', color:'var(--text)',
-              }}>
-                📲 Compartir
-              </button>
+              {/* Compartir (Póster/QR) y Editar como acciones de icono, no cajas */}
+              <button onClick={() => setShowPoster(true)} aria-label="Compartir evento" className="icon-btn" style={{ fontSize:15 }}>📲</button>
               {user && ev.creator_id === user.id && (
-                <button onClick={() => router.push(`/events/${id}/edit`)} style={{
-                  background:'var(--surface)', border:'1px solid var(--border)',
-                  borderRadius:10, padding:'6px 12px', fontSize:12, fontWeight:600,
-                  cursor:'pointer', color:'var(--text)',
-                }}>
-                  ✏️ Editar
-                </button>
+                <button onClick={() => router.push(`/events/${id}/edit`)} aria-label="Editar evento" className="icon-btn" style={{ fontSize:15 }}>✏️</button>
               )}
             </div>
           </div>
 
-          <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:8 }}>
-            <span style={{ fontSize:36 }}>{icon}</span>
-            <div>
+          <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+            <span style={{
+              width:46, height:46, borderRadius:14, flexShrink:0,
+              background:`${c}22`, border:`1px solid ${c}40`,
+              display:'flex', alignItems:'center', justifyContent:'center', fontSize:24,
+            }}>{icon}</span>
+            <div style={{ minWidth:0, flex:1 }}>
               <span style={{
-                fontSize:11, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em',
-                color:c, background:`${c}22`, padding:'3px 8px', borderRadius:6,
-              }}>{ev.sport}</span>
-              <h1 style={{ fontSize:20, fontWeight:800, margin:'4px 0 0', lineHeight:1.2 }}>{ev.title}</h1>
+                display:'inline-flex', fontSize:10.5, fontWeight:800, textTransform:'uppercase',
+                letterSpacing:'0.08em', color:c, background:`${c}20`,
+                padding:'2px 7px', borderRadius:6,
+              }}>{S_LABELS[ev.sport] || ev.sport}</span>
+              <h1 style={{ fontSize:19, fontWeight:800, margin:'4px 0 0', lineHeight:1.2, letterSpacing:'-0.01em', overflow:'hidden', textOverflow:'ellipsis' }}>{ev.title}</h1>
             </div>
           </div>
 
-          <div style={{ display:'flex', gap:12, fontSize:12, color:'var(--muted)', marginTop:8 }}>
-            <span>📅 {fmt(ev.date)}</span>
-            <span>⏰ {ev.time?.slice(0,5)}h</span>
-            <span>📍 {ev.province}</span>
+          <div style={{ display:'flex', gap:14, fontSize:11.5, color:'var(--muted)', marginTop:10, flexWrap:'wrap' }}>
+            <span style={{ display:'inline-flex', alignItems:'center', gap:4 }}>📅 {fmt(ev.date)}</span>
+            <span style={{ display:'inline-flex', alignItems:'center', gap:4 }}>⏰ {ev.time?.slice(0,5)}h</span>
+            <span style={{ display:'inline-flex', alignItems:'center', gap:4 }}>📍 {ev.province}</span>
           </div>
         </div>
 
-        {/* Pestañas */}
-        <div style={{
-          display:'flex', gap:4, margin:'16px 0', background:'var(--surface)',
-          padding:4, borderRadius:12, border:'1px solid var(--border)',
-        }}>
+        {/* Pestañas — seguidas de la cabecera, sticky al hacer scroll */}
+        <div className="tabs tabs-sticky" role="tablist">
           {TABS.map(t => (
-            <button key={t} onClick={() => setTab(t)} style={{
-              flex:1, padding:'8px 0', borderRadius:8, border:'none',
-              background: tab === t ? 'var(--primary)' : 'transparent',
-              color: tab === t ? 'white' : 'var(--muted)',
-              fontSize:12, fontWeight:700, cursor:'pointer', transition:'all 0.2s',
-            }}>{t}</button>
+            <button
+              key={t}
+              role="tab"
+              aria-selected={tab === t}
+              onClick={() => setTab(t)}
+              className={`tab ${tab === t ? 'tab-active' : ''}`}
+            >{t}</button>
           ))}
         </div>
 
         {/* TAB INFO */}
         {tab === 'Info' && (
-          <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
-            <div className="card" style={{ padding:16 }}>
-              <h3 style={{ fontSize:14, fontWeight:700, marginBottom:8 }}>Descripción</h3>
-              <p style={{ fontSize:13, color:'var(--text)', lineHeight:1.5 }}>{ev.description || 'Sin descripción.'}</p>
+          <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
+            <div className="card" style={{ padding:14 }}>
+              <h3 style={{ fontSize:13, fontWeight:800, marginBottom:6, letterSpacing:'-0.01em' }}>Descripción</h3>
+              <p style={{ fontSize:13, color:'var(--text2)', lineHeight:1.55, margin:0 }}>{ev.description || 'Sin descripción.'}</p>
             </div>
 
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
-              <div className="card" style={{ padding:12, textAlign:'center' }}>
-                <span style={{ fontSize:11, color:'var(--muted)', display:'block' }}>Aforo</span>
-                <strong style={{ fontSize:16 }}>{pCount} / {ev.max_players}</strong>
+              <div className="card" style={{ padding:'10px 12px', textAlign:'center' }}>
+                <span style={{ fontSize:10.5, color:'var(--muted)', display:'block', fontWeight:600 }}>Aforo</span>
+                <strong style={{ fontSize:15, letterSpacing:'-0.01em' }}>{pCount} / {ev.max_players}</strong>
               </div>
-              <div className="card" style={{ padding:12, textAlign:'center' }}>
-                <span style={{ fontSize:11, color:'var(--muted)', display:'block' }}>Precio</span>
-                <strong style={{ fontSize:16, color:'var(--success)' }}>{ev.price}</strong>
+              <div className="card" style={{ padding:'10px 12px', textAlign:'center' }}>
+                <span style={{ fontSize:10.5, color:'var(--muted)', display:'block', fontWeight:600 }}>Precio</span>
+                <strong style={{ fontSize:15, color:'var(--success)', letterSpacing:'-0.01em' }}>{ev.price}</strong>
               </div>
             </div>
 
             {/* Mapa */}
             {ev.location && (
-              <div className="card" style={{ padding:16 }}>
-                <h3 style={{ fontSize:14, fontWeight:700, marginBottom:8 }}>Ubicación</h3>
-                <p style={{ fontSize:13, color:'var(--muted)', marginBottom:12 }}>📍 {ev.location}, {ev.province}</p>
-                <div id="map-container" style={{ width:'100%', height:180, borderRadius:12, overflow:'hidden', background:'var(--surface2)' }}/>
+              <div className="card" style={{ padding:14 }}>
+                <h3 style={{ fontSize:13, fontWeight:800, marginBottom:6, letterSpacing:'-0.01em' }}>Ubicación</h3>
+                <p style={{ fontSize:12.5, color:'var(--muted)', margin:'0 0 10px' }}>📍 {ev.location}, {ev.province}</p>
+                <div id="map-container" style={{ width:'100%', height:160, borderRadius:10, overflow:'hidden', background:'var(--surface2)' }}/>
               </div>
             )}
 
             {/* Botón unirse */}
             <button onClick={toggleJoin} disabled={joining} className={`btn ${joined ? 'btn-outline' : 'btn-primary'}`} style={{
-              width:'100%', padding:14, fontSize:15, fontWeight:700, borderRadius:14, marginTop:8,
+              width:'100%', padding:12, fontSize:15, fontWeight:700, borderRadius:12, marginTop:2,
               background: joined ? 'transparent' : `linear-gradient(135deg, ${c}, ${c}dd)`,
               borderColor: joined ? 'var(--border)' : 'transparent',
             }}>
@@ -709,14 +694,6 @@ function EventDetailInner() {
   )
 }
 
-export default function EventDetailClient() {
-  return (
-    <Suspense fallback={
-      <div className="app-shell" style={{ display:'flex', alignItems:'center', justifyContent:'center', minHeight:'100dvh' }}>
-        <div className="spinner"/>
-      </div>
-    }>
-      <EventDetailInner />
-    </Suspense>
-  )
+export default function EventDetailClient({ initialTab = 'Info', ssrEvent = null }) {
+  return <EventDetailInner initialTab={initialTab} ssrEvent={ssrEvent} />
 }

@@ -367,16 +367,13 @@ export default function TournamentDetail() {
         </div>
 
         {/* Tabs */}
-        <div style={{ display:'flex', borderBottom:'2px solid var(--border)', background:'var(--bg)' }}>
-          {['Info','Cuadro','Participantes'].map(t => (
-            <button key={t} onClick={() => setTab(t)} style={{
-              flex:1, padding:'12px 0', border:'none', background:'none', cursor:'pointer',
-              fontFamily:'inherit', fontSize:13, fontWeight:tab===t?700:500,
-              color:tab===t?color:'var(--muted)',
-              borderBottom:tab===t?`2px solid ${color}`:'2px solid transparent',
-              marginBottom:-2, transition:'all 0.15s ease',
-            }}>{t}</button>
-          ))}
+        <div className="page-wrap">
+          <div className="tabs tabs-sticky" style={{ marginTop:10 }} role="tablist">
+            {['Info','Cuadro','Participantes'].map(t => (
+              <button key={t} onClick={() => setTab(t)} role="tab" aria-selected={tab === t}
+                className={`tab ${tab === t ? 'tab-active' : ''}`}>{t}</button>
+            ))}
+          </div>
         </div>
 
         <div className="page-wrap" style={{ paddingTop:20, paddingBottom:110 }}>

@@ -68,9 +68,13 @@ export async function generateMetadata({ params }) {
   }
 }
 
-export default async function EventPage({ params }) {
+const EVENT_TABS = ['Info', 'Participantes', 'Momentos', 'Chat']
+
+export default async function EventPage({ params, searchParams }) {
   const { id } = await params
+  const sp = await searchParams
   const ev = await getEventData(id)
+  const initialTab = EVENT_TABS.includes(sp?.tab) ? sp.tab : 'Info'
 
   const startDate = ev.date && ev.time ? `${ev.date}T${ev.time}` : new Date().toISOString()
   const rawPrice = ev.price === 'Gratis' || !ev.price ? '0' : String(ev.price).replace(/[^0-9.]/g, '')
@@ -137,7 +141,7 @@ export default async function EventPage({ params }) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <EventDetailClient />
+      <EventDetailClient initialTab={initialTab} ssrEvent={ev} />
     </>
   )
 }

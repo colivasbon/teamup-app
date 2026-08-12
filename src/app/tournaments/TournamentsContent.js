@@ -121,16 +121,9 @@ export default function TournamentsPage() {
         </header>
 
         {/* Toggle Eventos / Torneos */}
-        <div style={{ display:'flex', gap:0, background:'var(--surface)', border:'1px solid var(--border)',
-          borderRadius:14, overflow:'hidden', marginBottom:16 }}>
-          <Link href="/events" style={{ flex:1, padding:'11px 0', textAlign:'center', textDecoration:'none',
-            fontWeight:600, fontSize:13, color:'var(--muted)' }}>
-            🗓 Eventos
-          </Link>
-          <Link href="/tournaments" style={{ flex:1, padding:'11px 0', textAlign:'center', textDecoration:'none',
-            fontWeight:700, fontSize:13, background:'#586875', color:'#f6eddc' }}>
-            🏆 Torneos
-          </Link>
+        <div className="seg-toggle">
+          <Link href="/events">🗓 Eventos</Link>
+          <Link href="/tournaments" className="seg-active">🏆 Torneos</Link>
         </div>
 
         {/* Filtro estado */}

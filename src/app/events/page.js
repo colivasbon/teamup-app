@@ -40,6 +40,17 @@ export const metadata = {
   },
 }
 
-export default function EventsPage() {
-  return <EventsContent />
+const SPORT_IDS = new Set(['all','running','padel','senderismo','futbol','gimnasio','tenis','natacion','ciclismo','yoga','baloncesto','voleibol','badminton'])
+const PROV_IDS  = new Set(['all','madrid','barcelona','valencia','sevilla','cordoba','granada','malaga','alicante','murcia','zaragoza','bilbao','cadiz','huelva','jaen','almeria'])
+const LEVEL_IDS = new Set(['all','beginner','intermediate','advanced'])
+
+export default async function EventsPage({ searchParams }) {
+  const sp = await searchParams
+  return (
+    <EventsContent
+      initialSport={SPORT_IDS.has(sp?.sport) ? sp.sport : 'all'}
+      initialProv={PROV_IDS.has(sp?.prov) ? sp.prov : 'all'}
+      initialLevel={LEVEL_IDS.has(sp?.level) ? sp.level : 'all'}
+    />
+  )
 }

@@ -246,17 +246,17 @@ export default function Home() {
           </div>
         </header>
 
-        {/* ── Actividad de la comunidad ── */}
+        {/* ── Actividad de la comunidad (tira compacta) ── */}
         {(activeEventCount > 0 && participantCount > 0 && newEventCount > 0) && (
-          <div className="card anim-1" style={{ display:'grid', gridTemplateColumns:'repeat(3, minmax(0,1fr))', gap:12, padding:'16px 12px', marginBottom:28 }}>
+          <div className="stats-strip anim-1" style={{ marginBottom: 22 }}>
             {[
               [activeEventCount, 'Eventos activos'],
-              [participantCount, 'Usuarios totales'],
-              [newEventCount, 'Eventos nuevos 7d'],
+              [participantCount, 'Deportistas'],
+              [newEventCount, 'Nuevos 7 días'],
             ].map(([v,l])=>(
-              <div key={l} style={{ textAlign:'center' }}>
-                <div style={{ fontSize:22, fontWeight:800, color:'var(--primary)', letterSpacing:'-0.03em', lineHeight:1 }}>{v}</div>
-                <div style={{ fontSize:11, color:'var(--muted)', marginTop:4 }}>{l}</div>
+              <div key={l}>
+                <div className="stat-value">{v}</div>
+                <div className="stat-label">{l}</div>
               </div>
             ))}
           </div>
@@ -333,56 +333,32 @@ export default function Home() {
         )}
 
         {/* ── Deportes ── */}
-        <h2 style={{ fontSize:22, fontWeight:900, margin:'0 0 6px', letterSpacing:'-0.04em', color:'var(--text)', lineHeight:1.1 }}>¿Qué hacemos hoy?</h2>
-        <p style={{ fontSize:13, color:'var(--muted)', marginBottom:16 }}>Elige un deporte y únete a un evento</p>
+        <h2 style={{ fontSize:18, fontWeight:900, margin:'0 0 4px', letterSpacing:'-0.03em', color:'var(--text)', lineHeight:1.15 }}>¿Qué hacemos hoy?</h2>
+        <p style={{ fontSize:12.5, color:'var(--muted)', margin:'0 0 10px' }}>Elige un deporte y únete a un evento</p>
 
-        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginBottom:32 }}>
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:8, marginBottom:22 }}>
           {SPORTS.map((s,i)=>(
             <Link key={s.id} href={`/events?sport=${s.id}`} className={`anim-${Math.min(i+1,6)}`} style={{
-              display:'block',
-              background:`linear-gradient(140deg,${s.from},${s.to})`,
-              borderRadius:20, padding:'0', paddingTop:'90px', position:'relative', overflow:'hidden',
-              boxShadow:`0 6px 24px ${s.from}55`,
-              transition:'transform 0.22s cubic-bezier(.34,1.56,.64,1), box-shadow 0.22s ease',
+              display:'flex', flexDirection:'column', alignItems:'center', gap:6,
+              background:`linear-gradient(160deg,${s.from}16,${s.from}06)`,
+              border:'1px solid var(--border)',
+              borderRadius:14, padding:'11px 4px 10px',
+              transition:'transform 0.18s ease, border-color 0.18s ease',
+              textDecoration:'none',
             }}
-            onMouseEnter={e=>{ e.currentTarget.style.transform='translateY(-4px) scale(1.02)'; e.currentTarget.style.boxShadow=`0 12px 36px ${s.from}77` }}
-            onMouseLeave={e=>{ e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=`0 6px 24px ${s.from}55` }}
+            onMouseEnter={e=>{ e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.borderColor='var(--primary)' }}
+            onMouseLeave={e=>{ e.currentTarget.style.transform=''; e.currentTarget.style.borderColor='var(--border)' }}
             >
-              {/* Icono de fondo semitransparente — esquina inferior derecha */}
-              <div style={{ position:'absolute', right:6, bottom:4, opacity:0.18, pointerEvents:'none' }}>
-                <SportIcon sport={s.id} size={72} />
-              </div>
-              {/* Contenido: icono + nombre abajo a la izquierda */}
-              <div style={{ position:'absolute', bottom:16, left:18, zIndex:1 }}>
-                <SportIcon sport={s.id} size={48} />
-                <div style={{ fontSize:15, fontWeight:700, color:'#f6eddc', letterSpacing:'-0.02em' }}>{s.name}</div>
-              </div>
+              <span style={{
+                width:32, height:32, borderRadius:11, flexShrink:0,
+                background:`linear-gradient(140deg,${s.from},${s.to})`,
+                display:'flex', alignItems:'center', justifyContent:'center',
+              }}>
+                <SportIcon sport={s.id} size={17} />
+              </span>
+              <span style={{ fontSize:11.5, fontWeight:700, color:'var(--text)', letterSpacing:'-0.01em', lineHeight:1.2, textAlign:'center' }}>{s.name}</span>
             </Link>
           ))}
-        </div>
-
-        {/* ── Pachangas por ciudad — SEO local ── */}
-        <div style={{ marginBottom: 28 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 800, margin: '0 0 6px', letterSpacing: '-0.02em', color: 'var(--text)', lineHeight: 1.2 }}>¿Buscas pachangas en tu ciudad?</h2>
-          <p style={{ fontSize: 13, color: 'var(--muted)', margin: '0 0 12px' }}>
-            Encuentra partidos de pádel, fútbol 7, grupos de running y quedadas deportivas en las principales provincias de España.
-          </p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0,1fr))', gap: 8 }}>
-            {[
-              ['madrid', 'Madrid'], ['barcelona', 'Barcelona'], ['valencia', 'Valencia'],
-              ['sevilla', 'Sevilla'], ['malaga', 'Málaga'], ['cordoba', 'Córdoba'],
-              ['granada', 'Granada'], ['alicante', 'Alicante'], ['murcia', 'Murcia'],
-              ['zaragoza', 'Zaragoza'], ['bilbao', 'Bilbao'], ['cadiz', 'Cádiz'],
-              ['huelva', 'Huelva'], ['jaen', 'Jaén'], ['almeria', 'Almería'],
-            ].map(([id, name]) => (
-              <Link key={id} href={`/events?prov=${id}`} style={{
-                fontSize: 12, fontWeight: 600, color: 'var(--text)',
-                background: 'var(--glass)', border: '1px solid var(--border)',
-                borderRadius: 12, padding: '10px 8px', textAlign: 'center',
-                textDecoration: 'none', transition: 'border-color .15s ease',
-              }}>{name}</Link>
-            ))}
-          </div>
         </div>
 
         {/* ── Eventos cercanos ── */}
@@ -416,73 +392,60 @@ export default function Home() {
           ))}
         </div>
 
-        <Link href="/create" className="btn btn-primary" style={{ display:'flex', width:'100%', fontSize:16, padding:'15px 24px', borderRadius:16, marginBottom:12, justifyContent:'center', gap:8 }}>
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+        <Link href="/create" className="btn btn-primary" style={{ display:'flex', width:'100%', fontSize:15, padding:'13px 24px', borderRadius:14, marginBottom:10, justifyContent:'center', gap:8 }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
           </svg>
           Crear evento
         </Link>
 
-        {/* Sección GEO (Generative Engine Optimization & Info Semántica para IAs y usuarios) */}
-        <section className="geo-info-section" style={{
-          marginTop: 28,
-          marginBottom: 20,
-          padding: '18px 16px',
-          borderRadius: 16,
-          background: 'var(--surface)',
-          border: '1px solid var(--border)',
-          fontSize: 13,
-          color: 'var(--muted)',
-          lineHeight: 1.6
-        }}>
-          <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 8, marginTop: 0 }}>
-            ¿Qué es TeamUp? La app para organizar pachangas y deporte social en España
-          </h2>
-          <p style={{ margin: '0 0 10px 0' }}>
-            <strong>TeamUp</strong> (teamupapp.es) es la plataforma social deportiva gratuita en España diseñada para conectar deportistas cercanos. Permite crear, buscar y unirte a pachangas, partidos de pádel, fútbol 7, grupos de running, senderismo y entrenamientos en las 50 provincias españolas.
-          </p>
-          <p style={{ margin: 0 }}>
-            Tanto si necesitas completar un partido de pádel como encontrar compañeros para salir a correr o hacer rutas en tu ciudad, TeamUp facilita el deporte en grupo de forma instantánea.
-          </p>
+        {/* ── Pachangas por ciudad — SEO local sin peso visual ── */}
+        <section style={{ marginBottom: 16 }}>
+          <div className="section-head" style={{ marginBottom: 8 }}>
+            <h2 style={{ fontSize:15, fontWeight:800, letterSpacing:'-0.02em', color:'var(--text)', margin:0, lineHeight:1.2 }}>¿Buscas pachangas en tu ciudad?</h2>
+            <Link href="/events" style={{ fontSize:12, fontWeight:600, color:'var(--primary)', textDecoration:'none' }}>Ver todos</Link>
+          </div>
+          <div className="chips-row">
+            {[
+              ['madrid', 'Madrid'], ['barcelona', 'Barcelona'], ['valencia', 'Valencia'],
+              ['sevilla', 'Sevilla'], ['malaga', 'Málaga'], ['cordoba', 'Córdoba'],
+              ['granada', 'Granada'], ['alicante', 'Alicante'], ['murcia', 'Murcia'],
+              ['zaragoza', 'Zaragoza'], ['bilbao', 'Bilbao'], ['cadiz', 'Cádiz'],
+              ['huelva', 'Huelva'], ['jaen', 'Jaén'], ['almeria', 'Almería'],
+            ].map(([id, name]) => (
+              <Link key={id} href={`/events?prov=${id}`} className="chip">{name}</Link>
+            ))}
+          </div>
         </section>
 
-        {/* Sección GEO: Cómo funciona (HowTo) */}
-        <section className="geo-info-section" style={{
-          marginTop: 12,
-          marginBottom: 12,
-          padding: '18px 16px',
-          borderRadius: 16,
-          background: 'var(--surface)',
-          border: '1px solid var(--border)',
-          fontSize: 13,
-          color: 'var(--muted)',
-          lineHeight: 1.6
-        }}>
-          <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 8, marginTop: 0 }}>
-            ¿Cómo funciona TeamUp? Únete a deportes en 3 pasos
-          </h2>
-          <ol style={{ margin: 0, paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <li><strong>1. Crea tu cuenta gratis</strong> — Regístrate con tu email o con Google en menos de un minuto.</li>
-            <li><strong>2. Elige deporte y ciudad</strong> — Busca pachangas y partidos de pádel, fútbol 7, running, senderismo y más en tu provincia, o crea tu propio evento.</li>
-            <li><strong>3. Apúntate y conoce gente</strong> — Reserva tu plaza, chatea con los participantes y comparte tus momentos tras el evento.</li>
-          </ol>
+        {/* ── SEO/GEO: qué es + cómo funciona, en una sola tarjeta ligera ── */}
+        <section className="geo-card" style={{ marginTop: 8 }}>
+          <h2>¿Qué es TeamUp? La app para organizar pachangas y deporte social en España</h2>
+          <p>
+            <strong>TeamUp</strong> (teamupapp.es) es la plataforma social deportiva gratuita en España para conectar deportistas cercanos: crea, busca y únete a pachangas, partidos de pádel, fútbol 7, running, senderismo y entrenamientos en las 50 provincias españolas.
+          </p>
+          <div className="geo-steps">
+            <div className="geo-step">
+              <div className="step-num">1</div>
+              <strong>Crea tu cuenta gratis</strong>
+              <p>Regístrate con tu email o con Google en menos de un minuto.</p>
+            </div>
+            <div className="geo-step">
+              <div className="step-num">2</div>
+              <strong>Elige deporte y ciudad</strong>
+              <p>Busca pachangas en tu provincia o crea tu propio evento.</p>
+            </div>
+            <div className="geo-step">
+              <div className="step-num">3</div>
+              <strong>Apúntate y conoce gente</strong>
+              <p>Reserva tu plaza, chatea y comparte tus momentos tras el evento.</p>
+            </div>
+          </div>
         </section>
 
-        {/* Sección GEO: FAQ — preguntas frecuentes */}
-        <section className="geo-info-section" style={{
-          marginTop: 12,
-          marginBottom: 20,
-          padding: '18px 16px',
-          borderRadius: 16,
-          background: 'var(--surface)',
-          border: '1px solid var(--border)',
-          fontSize: 13,
-          color: 'var(--muted)',
-          lineHeight: 1.6
-        }}>
-          <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 8, marginTop: 0 }}>
-            Preguntas frecuentes sobre TeamUp
-          </h2>
+        {/* ── SEO/GEO: FAQ en acordeón compacto ── */}
+        <section className="faq" style={{ marginTop: 12, marginBottom: 16 }}>
+          <h2 style={{ fontSize:13.5, fontWeight:800, letterSpacing:'-0.02em', color:'var(--text)', margin:0, padding:'12px 14px 8px' }}>Preguntas frecuentes sobre TeamUp</h2>
           {[
             ['¿Cómo puedo unirme a una pachanga o partido cerca de mí?', 'Entra en Eventos, filtra por deporte y provincia (o activa tu ubicación) y pulsa el botón "Unirse" en el evento que prefieras. Si no hay ninguno, puedes crear el tuyo propio en un minuto.'],
             ['¿Es gratis usar TeamUp?', 'Sí. Crear tu cuenta, unirte a eventos y organizar pachangas es totalmente gratuito. Solo algunos eventos pueden indicar un precio de pista o inscripción, que verás siempre antes de apuntarte.'],
@@ -492,11 +455,9 @@ export default function Home() {
             ['¿En qué ciudades funciona TeamUp?', 'TeamUp está disponible en las 50 provincias españolas: Madrid, Barcelona, Valencia, Sevilla, Málaga, Bilbao, Zaragoza, Murcia y muchas más.'],
             ['¿TeamUp es una app para el móvil?', 'TeamUp es una aplicación web progresiva (PWA): puedes instalarla en la pantalla de inicio de tu móvil Android o iOS y usarla como una app nativa, incluso con notificaciones.'],
           ].map(([q, a]) => (
-            <details key={q} style={{ borderBottom: '1px solid var(--border)', padding: '10px 2px' }}>
-              <summary style={{ cursor: 'pointer', fontWeight: 600, color: 'var(--text)', outline: 'none', fontSize: 13 }}>
-                {q}
-              </summary>
-              <p style={{ margin: '8px 0 2px', fontSize: 12.5 }}>{a}</p>
+            <details key={q}>
+              <summary>{q}</summary>
+              <p className="faq-item-body">{a}</p>
             </details>
           ))}
         </section>
