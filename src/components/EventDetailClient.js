@@ -91,13 +91,13 @@ function EventDetailInner({ initialTab = 'Info', ssrEvent = null }) {
             : Promise.resolve(null)
 
           const [{ data, error }, joinedData] = await Promise.all([eventPromise, joinedPromise])
-          if (!error && data) {
-            setEv(data)
-            setPCount(data.participant_count || 0)
-            setJoined(!!joinedData?.data)
-            setLoad(false)
+            if (!error && data) {
+              setEv(prev => ({ ...prev, ...data }))
+              setPCount(data.participant_count || 0)
+              setJoined(!!joinedData?.data)
+              setLoad(false)
 
-            if (data?.location) {
+            if (data?.location || data?.province) {
               const tryGeocode = async (query) => {
                 try {
                   const r = await fetch(
@@ -109,14 +109,11 @@ function EventDetailInner({ initialTab = 'Info', ssrEvent = null }) {
                 } catch { return null }
               }
               const full = [data.location, data.province].filter(Boolean).join(', ')
-              tryGeocode(full).then(coords => {
-                if (!coords && data.location) {
-                  return tryGeocode(data.location)
-                }
-                return coords
-              }).then(coords => {
-                if (coords) setMapCoords(coords)
-              }).catch(() => {})
+              tryGeocode(full)
+                .then(coords => coords || tryGeocode(data.location))
+                .then(coords => coords || tryGeocode(data.province))
+                .then(coords => { if (coords) setMapCoords(coords) })
+                .catch(() => {})
             }
             return
           }
@@ -430,7 +427,7 @@ function EventDetailInner({ initialTab = 'Info', ssrEvent = null }) {
       <div className="page-wrap" style={{ paddingBottom:100 }}>
         {/* Cabecera del deporte */}
         <div style={{
-          position:'relative', margin:'-16px -18px 0', padding:'18px 18px 14px',
+          position:'relative', margin:'0 -18px 0', padding:'18px 18px 14px',
           background:`linear-gradient(180deg, ${c}33 0%, transparent 100%)`,
           borderBottom:'1px solid var(--border)',
         }}>
@@ -500,12 +497,20 @@ function EventDetailInner({ initialTab = 'Info', ssrEvent = null }) {
               </div>
             </div>
 
-            {/* Mapa */}
-            {ev.location && (
+            {/* Mapa + ubicación */}
+            {(ev.location || ev.province) && (
               <div className="card" style={{ padding:14 }}>
-                <h3 style={{ fontSize:13, fontWeight:800, marginBottom:6, letterSpacing:'-0.01em' }}>Ubicación</h3>
-                <p style={{ fontSize:12.5, color:'var(--muted)', margin:'0 0 10px' }}>📍 {ev.location}, {ev.province}</p>
-                <div id="map-container" style={{ width:'100%', height:160, borderRadius:10, overflow:'hidden', background:'var(--surface2)' }}/>
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:6 }}>
+                  <h3 style={{ fontSize:13, fontWeight:800, letterSpacing:'-0.01em' }}>Ubicación</h3>
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([ev.location, ev.province].filter(Boolean).join(', '))}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ fontSize:11.5, fontWeight:700, color:c, textDecoration:'none', whiteSpace:'nowrap' }}
+                  >Google Maps →</a>
+                </div>
+                {ev.location && <p style={{ fontSize:12.5, color:'var(--muted)', margin:'0 0 10px' }}>📍 {ev.location}{ev.province ? `, ${ev.province}` : ''}</p>}
+                {mapCoords && <div id="map-container" style={{ width:'100%', height:160, borderRadius:10, overflow:'hidden', background:'var(--surface2)' }}/>}
               </div>
             )}
 
