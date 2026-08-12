@@ -1,7 +1,13 @@
-'use client'
-
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
+
+export const metadata = {
+  title: 'Política de Cookies',
+  description: 'Política de cookies de TeamUp: tipos de cookies que utiliza la aplicación, finalidad, gestión de preferencias y cookies de terceros.',
+  alternates: {
+    canonical: 'https://teamupapp.es/cookies',
+  },
+}
 
 const COOKIE_TYPES = [
   {

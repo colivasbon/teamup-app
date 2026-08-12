@@ -40,12 +40,16 @@ export async function generateMetadata({ params }) {
       'unirse a partido',
       'TeamUp'
     ],
+    alternates: {
+      canonical: `https://teamupapp.es/events/${id}`,
+    },
     openGraph: {
       title: `${title} | TeamUp`,
       description,
       type: 'website',
       url: `https://teamupapp.es/events/${id}`,
       siteName: 'TeamUp',
+      locale: 'es_ES',
       images: [
         {
           url: '/favicon.png',
@@ -70,33 +74,61 @@ export default async function EventPage({ params }) {
 
   const startDate = ev.date && ev.time ? `${ev.date}T${ev.time}` : new Date().toISOString()
   const rawPrice = ev.price === 'Gratis' || !ev.price ? '0' : String(ev.price).replace(/[^0-9.]/g, '')
+  const durationIso = ev.duration_minutes ? `PT${ev.duration_minutes}M` : null
+  const isPast = ev.date && ev.date < new Date().toISOString().slice(0, 10)
+  const eventStatus = ev.status === 'cancelled'
+    ? 'https://schema.org/EventCancelled'
+    : isPast
+      ? 'https://schema.org/EventPast'
+      : 'https://schema.org/EventScheduled'
 
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'SportsEvent',
-    'name': ev.title,
-    'description': ev.description || `Evento deportivo de ${ev.sport} en ${ev.province || 'España'}`,
-    'startDate': startDate,
-    'location': {
-      '@type': 'Place',
-      'name': ev.location || `Ubicación en ${ev.province || 'España'}`,
-      'address': {
-        '@type': 'PostalAddress',
-        'addressLocality': ev.province || 'España',
-        'addressCountry': 'ES'
-      }
-    },
-    'organizer': {
-      '@type': 'Person',
-      'name': ev.creator_name || 'Organizador TeamUp'
-    },
-    'offers': {
-      '@type': 'Offer',
-      'price': rawPrice || '0',
-      'priceCurrency': 'EUR',
-      'url': `https://teamupapp.es/events/${id}`,
-      'availability': 'https://schema.org/InStock'
-    }
+    '@graph': [
+      {
+        '@type': 'SportsEvent',
+        '@id': `https://teamupapp.es/events/${id}#event`,
+        'name': ev.title,
+        'description': ev.description || `Evento deportivo de ${ev.sport} en ${ev.province || 'España'}`,
+        'startDate': startDate,
+        ...(durationIso ? { 'duration': durationIso } : {}),
+        'eventStatus': eventStatus,
+        'eventAttendanceMode': 'https://schema.org/OfflineEventAttendanceMode',
+        'inLanguage': 'es-ES',
+        'image': 'https://teamupapp.es/favicon.png',
+        'location': {
+          '@type': 'Place',
+          'name': ev.location || `Ubicación en ${ev.province || 'España'}`,
+          'address': {
+            '@type': 'PostalAddress',
+            'addressLocality': ev.province || 'España',
+            'addressCountry': 'ES'
+          }
+        },
+        'organizer': {
+          '@type': 'Person',
+          'name': ev.creator_name || 'Organizador TeamUp'
+        },
+        'offers': {
+          '@type': 'Offer',
+          'price': rawPrice || '0',
+          'priceCurrency': 'EUR',
+          'url': `https://teamupapp.es/events/${id}`,
+          'availability': 'https://schema.org/InStock'
+        },
+        'url': `https://teamupapp.es/events/${id}`,
+        'mainEntityOfPage': `https://teamupapp.es/events/${id}`,
+      },
+      {
+        '@type': 'BreadcrumbList',
+        '@id': `https://teamupapp.es/events/${id}#breadcrumb`,
+        'itemListElement': [
+          { '@type': 'ListItem', 'position': 1, 'name': 'Inicio', 'item': 'https://teamupapp.es/' },
+          { '@type': 'ListItem', 'position': 2, 'name': 'Eventos', 'item': 'https://teamupapp.es/events' },
+          { '@type': 'ListItem', 'position': 3, 'name': ev.title, 'item': `https://teamupapp.es/events/${id}` },
+        ],
+      },
+    ],
   }
 
   return (

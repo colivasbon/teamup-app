@@ -1,4 +1,6 @@
-import { getSupabase } from '@/lib/supabase'
+import { getSupabaseServer } from '@/lib/supabase'
+
+export const dynamic = 'force-dynamic'
 
 export default async function sitemap() {
   const baseUrl = 'https://teamupapp.es'
@@ -18,39 +20,66 @@ export default async function sitemap() {
       priority: 0.9,
     },
     {
+      url: `${baseUrl}/tournaments`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.8,
+    },
+    {
       url: `${baseUrl}/moments`,
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/auth`,
+      url: `${baseUrl}/privacy`,
       lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
+      changeFrequency: 'yearly',
+      priority: 0.3,
+    },
+    {
+      url: `${baseUrl}/cookies`,
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
+      priority: 0.3,
     },
   ]
 
-  // Eventos dinámicos desde Supabase
-  let dynamicEventRoutes = []
+  // Eventos y torneos dinámicos desde Supabase (contexto servidor)
+  let dynamicRoutes = []
   try {
-    const sb = getSupabase()
+    const sb = getSupabaseServer()
     if (sb) {
-      const { data: events } = await sb
-        .from('events')
-        .select('id, created_at')
-        .eq('status', 'active')
-        .order('created_at', { ascending: false })
-        .limit(500)
+      const [eventsRes, tournamentsRes] = await Promise.all([
+        sb.from('events')
+          .select('id, created_at, updated_at')
+          .neq('status', 'cancelled')
+          .order('created_at', { ascending: false })
+          .limit(500),
+        sb.from('tournaments')
+          .select('id, created_at, updated_at')
+          .neq('status', 'cancelled')
+          .order('created_at', { ascending: false })
+          .limit(500),
+      ])
 
-      if (events && events.length > 0) {
-        dynamicEventRoutes = events.map((event) => ({
+      const events = eventsRes.data || []
+      const tournaments = tournamentsRes.data || []
+
+      dynamicRoutes = [
+        ...events.map((event) => ({
           url: `${baseUrl}/events/${event.id}`,
-          lastModified: event.created_at ? new Date(event.created_at) : new Date(),
+          lastModified: event.updated_at ? new Date(event.updated_at) : (event.created_at ? new Date(event.created_at) : new Date()),
           changeFrequency: 'daily',
           priority: 0.7,
-        }))
-      }
+        })),
+        ...tournaments.map((t) => ({
+          url: `${baseUrl}/tournaments/${t.id}`,
+          lastModified: t.updated_at ? new Date(t.updated_at) : (t.created_at ? new Date(t.created_at) : new Date()),
+          changeFrequency: 'daily',
+          priority: 0.7,
+        })),
+      ]
     }
   } catch (e) {
     // Si falla Supabase, el sitemap no se rompe
@@ -66,8 +95,8 @@ export default async function sitemap() {
   }))
 
   // Unificar evitando duplicados
-  const existingUrls = new Set(dynamicEventRoutes.map(r => r.url))
+  const existingUrls = new Set(dynamicRoutes.map(r => r.url))
   const uniqueDemoRoutes = demoRoutes.filter(r => !existingUrls.has(r.url))
 
-  return [...staticRoutes, ...dynamicEventRoutes, ...uniqueDemoRoutes]
+  return [...staticRoutes, ...dynamicRoutes, ...uniqueDemoRoutes]
 }

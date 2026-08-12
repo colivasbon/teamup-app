@@ -7,6 +7,7 @@ export const viewport = {
   initialScale: 1,
   viewportFit: 'cover',
   themeColor: '#1a2028',
+  colorScheme: 'dark light',
 }
 
 export const metadata = {
@@ -16,6 +17,8 @@ export const metadata = {
     template: '%s | TeamUp',
   },
   description: 'Organiza y únete a pachangas, partidos de pádel, fútbol 7, grupos de running y quedadas deportivas cerca de ti en España. ¡Únete gratis y conoce deportistas!',
+  applicationName: 'TeamUp',
+  category: 'Deportes',
   keywords: [
     'app para pachangas',
     'unirse a partidos',
@@ -28,9 +31,17 @@ export const metadata = {
     'buscar compañeros deporte',
     'TeamUp'
   ],
-  authors: [{ name: 'TeamUp' }],
+  authors: [{ name: 'TeamUp', url: 'https://teamupapp.es' }],
   creator: 'TeamUp',
   publisher: 'TeamUp',
+  alternates: {
+    canonical: 'https://teamupapp.es/',
+  },
+  formatDetection: {
+    telephone: false,
+    address: false,
+    email: false,
+  },
   robots: {
     index: true,
     follow: true,
@@ -47,14 +58,14 @@ export const metadata = {
     locale: 'es_ES',
     url: 'https://teamupapp.es',
     siteName: 'TeamUp',
-    title: 'TeamUp — App para Pachangas, Unirse a Partidos y Deporte Social',
-    description: 'Organiza y únete a eventos deportivos cerca de ti en España. Pádel, fútbol, running, senderismo y más. ¡Haz deporte y conoce gente!',
+    title: 'TeamUp — App para Pachangas, Unirse a Partidos y Deporte Social en España',
+    description: 'Organiza y únete a pachangas, partidos de pádel, fútbol 7, grupos de running y eventos deportivos cerca de ti en España. ¡Haz deporte y conoce gente!',
     images: [
       {
         url: '/favicon.png',
         width: 512,
         height: 512,
-        alt: 'TeamUp Logo',
+        alt: 'TeamUp — App de pachangas y deporte social en España',
       },
     ],
   },
@@ -68,9 +79,10 @@ export const metadata = {
   icons: {
     icon: [
       { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.png', type: 'image/png', sizes: '512x512' },
     ],
     shortcut: '/favicon.svg',
-    apple: '/icons/icon-192x192.png',
+    apple: '/apple-touch-icon.png',
   },
   appleWebApp: {
     capable: true,
@@ -84,6 +96,31 @@ export default function RootLayout({ children }) {
     '@context': 'https://schema.org',
     '@graph': [
       {
+        '@type': 'Organization',
+        '@id': 'https://teamupapp.es/#organization',
+        'name': 'TeamUp',
+        'url': 'https://teamupapp.es',
+        'logo': {
+          '@type': 'ImageObject',
+          '@id': 'https://teamupapp.es/#logo',
+          'url': 'https://teamupapp.es/favicon.png',
+          'width': 512,
+          'height': 512,
+        },
+        'description': 'Plataforma social deportiva en España para organizar y unirse a pachangas, partidos y quedadas deportivas.',
+        'address': {
+          '@type': 'PostalAddress',
+          'addressCountry': 'ES'
+        },
+        'areaServed': 'ES',
+        'contactPoint': {
+          '@type': 'ContactPoint',
+          'contactType': 'customer support',
+          'email': 'colivasbon@gmail.com',
+          'availableLanguage': 'es'
+        }
+      },
+      {
         '@type': 'SoftwareApplication',
         '@id': 'https://teamupapp.es/#application',
         'name': 'TeamUp',
@@ -95,14 +132,16 @@ export default function RootLayout({ children }) {
           'priceCurrency': 'EUR'
         },
         'description': 'Aplicación web y PWA para organizar y unirse a pachangas, partidos de pádel, fútbol, running y quedadas deportivas cerca de ti en España.',
-        'url': 'https://teamupapp.es'
+        'url': 'https://teamupapp.es',
+        'publisher': { '@id': 'https://teamupapp.es/#organization' }
       },
       {
         '@type': 'WebSite',
         '@id': 'https://teamupapp.es/#website',
         'url': 'https://teamupapp.es',
         'name': 'TeamUp',
-        'description': 'Encuentra y organiza eventos deportivos, pachangas y partidos en toda España.',
+        'description': 'Encuentra y organiza eventos deportivos, pachangas y partidos en todas las provincias de España.',
+        'publisher': { '@id': 'https://teamupapp.es/#organization' },
         'inLanguage': 'es-ES'
       }
     ]
@@ -111,6 +150,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="es" data-theme="dark">
       <head>
+        <meta name="geo.region" content="ES" />
+        <meta name="geo.placename" content="España" />
         <script dangerouslySetInnerHTML={{ __html: "(function(){try{var t=localStorage.getItem('tu-theme'); if(t)document.documentElement.setAttribute('data-theme', t);}catch(e){}})();" }} />
         <script
           type="application/ld+json"

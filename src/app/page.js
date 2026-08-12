@@ -361,6 +361,30 @@ export default function Home() {
           ))}
         </div>
 
+        {/* ── Pachangas por ciudad — SEO local ── */}
+        <div style={{ marginBottom: 28 }}>
+          <h2 style={{ fontSize: 18, fontWeight: 800, margin: '0 0 6px', letterSpacing: '-0.02em', color: 'var(--text)', lineHeight: 1.2 }}>¿Buscas pachangas en tu ciudad?</h2>
+          <p style={{ fontSize: 13, color: 'var(--muted)', margin: '0 0 12px' }}>
+            Encuentra partidos de pádel, fútbol 7, grupos de running y quedadas deportivas en las principales provincias de España.
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0,1fr))', gap: 8 }}>
+            {[
+              ['madrid', 'Madrid'], ['barcelona', 'Barcelona'], ['valencia', 'Valencia'],
+              ['sevilla', 'Sevilla'], ['malaga', 'Málaga'], ['cordoba', 'Córdoba'],
+              ['granada', 'Granada'], ['alicante', 'Alicante'], ['murcia', 'Murcia'],
+              ['zaragoza', 'Zaragoza'], ['bilbao', 'Bilbao'], ['cadiz', 'Cádiz'],
+              ['huelva', 'Huelva'], ['jaen', 'Jaén'], ['almeria', 'Almería'],
+            ].map(([id, name]) => (
+              <Link key={id} href={`/events?prov=${id}`} style={{
+                fontSize: 12, fontWeight: 600, color: 'var(--text)',
+                background: 'var(--glass)', border: '1px solid var(--border)',
+                borderRadius: 12, padding: '10px 8px', textAlign: 'center',
+                textDecoration: 'none', transition: 'border-color .15s ease',
+              }}>{name}</Link>
+            ))}
+          </div>
+        </div>
+
         {/* ── Eventos cercanos ── */}
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:14 }}>
           <h3 style={{ fontSize:18, fontWeight:800, margin:0, letterSpacing:'-0.02em', color:'var(--text)', lineHeight:1.2 }}>Eventos cerca de ti</h3>
@@ -421,6 +445,98 @@ export default function Home() {
             Tanto si necesitas completar un partido de pádel como encontrar compañeros para salir a correr o hacer rutas en tu ciudad, TeamUp facilita el deporte en grupo de forma instantánea.
           </p>
         </section>
+
+        {/* Sección GEO: Cómo funciona (HowTo) */}
+        <section className="geo-info-section" style={{
+          marginTop: 12,
+          marginBottom: 12,
+          padding: '18px 16px',
+          borderRadius: 16,
+          background: 'var(--surface)',
+          border: '1px solid var(--border)',
+          fontSize: 13,
+          color: 'var(--muted)',
+          lineHeight: 1.6
+        }}>
+          <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 8, marginTop: 0 }}>
+            ¿Cómo funciona TeamUp? Únete a deportes en 3 pasos
+          </h2>
+          <ol style={{ margin: 0, paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <li><strong>1. Crea tu cuenta gratis</strong> — Regístrate con tu email o con Google en menos de un minuto.</li>
+            <li><strong>2. Elige deporte y ciudad</strong> — Busca pachangas y partidos de pádel, fútbol 7, running, senderismo y más en tu provincia, o crea tu propio evento.</li>
+            <li><strong>3. Apúntate y conoce gente</strong> — Reserva tu plaza, chatea con los participantes y comparte tus momentos tras el evento.</li>
+          </ol>
+        </section>
+
+        {/* Sección GEO: FAQ — preguntas frecuentes */}
+        <section className="geo-info-section" style={{
+          marginTop: 12,
+          marginBottom: 20,
+          padding: '18px 16px',
+          borderRadius: 16,
+          background: 'var(--surface)',
+          border: '1px solid var(--border)',
+          fontSize: 13,
+          color: 'var(--muted)',
+          lineHeight: 1.6
+        }}>
+          <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 8, marginTop: 0 }}>
+            Preguntas frecuentes sobre TeamUp
+          </h2>
+          {[
+            ['¿Cómo puedo unirme a una pachanga o partido cerca de mí?', 'Entra en Eventos, filtra por deporte y provincia (o activa tu ubicación) y pulsa el botón "Unirse" en el evento que prefieras. Si no hay ninguno, puedes crear el tuyo propio en un minuto.'],
+            ['¿Es gratis usar TeamUp?', 'Sí. Crear tu cuenta, unirte a eventos y organizar pachangas es totalmente gratuito. Solo algunos eventos pueden indicar un precio de pista o inscripción, que verás siempre antes de apuntarte.'],
+            ['¿Qué deportes puedo encontrar en TeamUp?', 'Running, pádel, fútbol 7, tenis, senderismo, natación, ciclismo, gimnasio, yoga, baloncesto, voleibol y bádminton, entre otros. Cada evento indica el nivel necesario.'],
+            ['¿Necesito ser un deportista experimentado?', 'No. Hay eventos para todos los niveles: principiante, intermedio y avanzado. Cada partido indica el nivel mínimo, y muchos organizadores dan la bienvenida a quien empieza.'],
+            ['¿Puedo crear mi propio evento deportivo?', 'Sí. Desde el botón "Crear evento" eliges deporte, fecha, hora, ubicación y número de plazas. Tu evento aparecerá en el listado para que otros deportistas de tu zona puedan unirse.'],
+            ['¿En qué ciudades funciona TeamUp?', 'TeamUp está disponible en las 50 provincias españolas: Madrid, Barcelona, Valencia, Sevilla, Málaga, Bilbao, Zaragoza, Murcia y muchas más.'],
+            ['¿TeamUp es una app para el móvil?', 'TeamUp es una aplicación web progresiva (PWA): puedes instalarla en la pantalla de inicio de tu móvil Android o iOS y usarla como una app nativa, incluso con notificaciones.'],
+          ].map(([q, a]) => (
+            <details key={q} style={{ borderBottom: '1px solid var(--border)', padding: '10px 2px' }}>
+              <summary style={{ cursor: 'pointer', fontWeight: 600, color: 'var(--text)', outline: 'none', fontSize: 13 }}>
+                {q}
+              </summary>
+              <p style={{ margin: '8px 0 2px', fontSize: 12.5 }}>{a}</p>
+            </details>
+          ))}
+        </section>
+
+        {/* JSON-LD: FAQPage + HowTo — GEO para motores de respuesta e IA */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            'mainEntity': [
+              ['¿Cómo puedo unirme a una pachanga o partido cerca de mí?', 'Entra en Eventos, filtra por deporte y provincia (o activa tu ubicación) y pulsa el botón "Unirse" en el evento que prefieras. Si no hay ninguno, puedes crear el tuyo propio en un minuto.'],
+              ['¿Es gratis usar TeamUp?', 'Sí. Crear tu cuenta, unirte a eventos y organizar pachangas es totalmente gratuito. Solo algunos eventos pueden indicar un precio de pista o inscripción, que verás siempre antes de apuntarte.'],
+              ['¿Qué deportes puedo encontrar en TeamUp?', 'Running, pádel, fútbol 7, tenis, senderismo, natación, ciclismo, gimnasio, yoga, baloncesto, voleibol y bádminton, entre otros. Cada evento indica el nivel necesario.'],
+              ['¿Necesito ser un deportista experimentado?', 'No. Hay eventos para todos los niveles: principiante, intermedio y avanzado. Cada partido indica el nivel mínimo, y muchos organizadores dan la bienvenida a quien empieza.'],
+              ['¿Puedo crear mi propio evento deportivo?', 'Sí. Desde el botón "Crear evento" eliges deporte, fecha, hora, ubicación y número de plazas. Tu evento aparecerá en el listado para que otros deportistas de tu zona puedan unirse.'],
+              ['¿En qué ciudades funciona TeamUp?', 'TeamUp está disponible en las 50 provincias españolas: Madrid, Barcelona, Valencia, Sevilla, Málaga, Bilbao, Zaragoza, Murcia y muchas más.'],
+              ['¿TeamUp es una app para el móvil?', 'TeamUp es una aplicación web progresiva (PWA): puedes instalarla en la pantalla de inicio de tu móvil Android o iOS y usarla como una app nativa, incluso con notificaciones.'],
+            ].map(([q, a]) => ({
+              '@type': 'Question',
+              'name': q,
+              'acceptedAnswer': { '@type': 'Answer', 'text': a },
+            }))
+          }) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'HowTo',
+            'name': 'Cómo unirse a una pachanga con TeamUp',
+            'description': 'Crea tu cuenta, elige deporte y ciudad, y apúntate a eventos deportivos cerca de ti en España.',
+            'step': [
+              { '@type': 'HowToStep', 'position': 1, 'name': 'Crea tu cuenta gratis', 'text': 'Regístrate con tu email o con Google en menos de un minuto.' },
+              { '@type': 'HowToStep', 'position': 2, 'name': 'Elige deporte y ciudad', 'text': 'Busca pachangas y partidos de pádel, fútbol 7, running, senderismo y más en tu provincia, o crea tu propio evento.' },
+              { '@type': 'HowToStep', 'position': 3, 'name': 'Apúntate y conoce gente', 'text': 'Reserva tu plaza, chatea con los participantes y comparte tus momentos tras el evento.' },
+            ],
+            'totalTime': 'PT1M'
+          }) }}
+        />
 
         {/* Ticker patrocinadores: elemento de página, se ve al llegar con scroll */}
         {(() => {

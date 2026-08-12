@@ -1,7 +1,13 @@
-'use client'
-
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
+
+export const metadata = {
+  title: 'Política de Privacidad',
+  description: 'Política de privacidad de TeamUp: datos que recogemos, finalidad del tratamiento, base jurídica, derechos del usuario (RGPD) y contacto.',
+  alternates: {
+    canonical: 'https://teamupapp.es/privacy',
+  },
+}
 
 export default function PrivacyPolicy() {
   return (

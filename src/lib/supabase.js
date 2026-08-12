@@ -6,6 +6,7 @@ const SUPABASE_URL = 'https://kbhidlhdpjcpazkubcvq.supabase.co'
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtiaGlkbGhkcGpjcGF6a3ViY3ZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxOTc0NDEsImV4cCI6MjA4OTc3MzQ0MX0.GiYgTOHpc9gWUK7IG2G9piog_R9ONrfxR7dzjvD58vQ'
 
 let _client = null
+let _serverClient = null
 
 export function getSupabase() {
   if (_client) return _client
@@ -19,6 +20,17 @@ export function getSupabase() {
     },
   })
   return _client
+}
+
+// Cliente para contexto servidor (sitemap, generateMetadata, JSON-LD).
+// La anon key es pública por diseño y las queries están protegidas por RLS.
+export function getSupabaseServer() {
+  if (typeof window !== 'undefined') return null
+  if (_serverClient) return _serverClient
+  _serverClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  })
+  return _serverClient
 }
 
 // Proxy para compatibilidad con imports existentes (supabase.auth, supabase.from, etc.)
