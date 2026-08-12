@@ -101,15 +101,19 @@ function EventDetailInner({ initialTab = 'Info', ssrEvent = null }) {
               const tryGeocode = async (query) => {
                 try {
                   const r = await fetch(
-                    `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=es`,
+                    `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=es&addressdetails=1`,
                     { headers: { 'Accept-Language': 'es', 'User-Agent': 'TeamUpApp/1.0' } }
                   )
                   const results = await r.json()
                   return results?.[0] ? { lat: parseFloat(results[0].lat), lon: parseFloat(results[0].lon) } : null
                 } catch { return null }
               }
-              const full = [data.location, data.province].filter(Boolean).join(', ')
-              tryGeocode(full)
+              // Limpiar duplicados: "+quepadel, Albacete, albacete" → "+quepadel, Albacete"
+              const parts = [data.location, data.province].filter(Boolean)
+              const uniqueParts = parts.filter((p, i) => i === 0 || p.toLowerCase() !== parts[0].toLowerCase())
+              const cleaned = uniqueParts.join(', ')
+
+              tryGeocode(cleaned)
                 .then(coords => coords || tryGeocode(data.location))
                 .then(coords => coords || tryGeocode(data.province))
                 .then(coords => { if (coords) setMapCoords(coords) })
