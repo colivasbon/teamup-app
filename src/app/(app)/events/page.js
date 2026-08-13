@@ -1,11 +1,11 @@
 import EventsContent from './EventsContent'
 
 export const metadata = {
-  title: 'Eventos y Pachangas — Pádel, Fútbol 7, Running y Más Cerca de Ti',
-  description: 'Explora y únete a pachangas, partidos de pádel, fútbol 7, grupos de running, senderismo y otros eventos deportivos cerca de ti en España. Filtra por deporte, nivel y provincia. Gratis.',
+  title: 'Eventos y Eventos deportivos — Pádel, Fútbol 7, Running y Más Cerca de Ti',
+  description: 'Explora y únete a eventos deportivos, partidos de pádel, fútbol 7, grupos de running, senderismo y otros eventos deportivos cerca de ti en España. Filtra por deporte, nivel y provincia. Gratis.',
   keywords: [
     'eventos deportivos España',
-    'pachangas cerca de mi',
+    'eventos deportivos cerca de mi',
     'partidos de padel',
     'futbol 7',
     'grupos de running',
@@ -17,8 +17,8 @@ export const metadata = {
     canonical: 'https://teamupapp.es/events',
   },
   openGraph: {
-    title: 'Eventos y Pachangas — Pádel, Fútbol 7, Running y Más | TeamUp',
-    description: 'Únete a pachangas, partidos de pádel, fútbol 7, grupos de running y quedadas deportivas cerca de ti en España. Filtra por deporte, nivel y provincia. Gratis.',
+    title: 'Eventos y Eventos deportivos — Pádel, Fútbol 7, Running y Más | TeamUp',
+    description: 'Únete a eventos deportivos, partidos de pádel, fútbol 7, grupos de running y quedadas deportivas cerca de ti en España. Filtra por deporte, nivel y provincia. Gratis.',
     type: 'website',
     url: 'https://teamupapp.es/events',
     siteName: 'TeamUp',
@@ -28,14 +28,14 @@ export const metadata = {
         url: '/favicon.png',
         width: 512,
         height: 512,
-        alt: 'TeamUp — Eventos deportivos y pachangas en España',
+        alt: 'TeamUp — Eventos deportivos y eventos deportivos en España',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Eventos y Pachangas — Pádel, Fútbol 7, Running y Más | TeamUp',
-    description: 'Únete a pachangas y eventos deportivos cerca de ti en España. Gratis.',
+    title: 'Eventos y Eventos deportivos — Pádel, Fútbol 7, Running y Más | TeamUp',
+    description: 'Únete a eventos deportivos y eventos deportivos cerca de ti en España. Gratis.',
     images: ['/favicon.png'],
   },
 }

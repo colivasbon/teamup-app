@@ -8,9 +8,9 @@ export const revalidate = 3600
 
 export const metadata = {
   title: {
-    absolute: 'TeamUp — App para organizar pachangas, unirse a partidos y deporte social en España',
+    absolute: 'TeamUp — App para organizar eventos deportivos, unirse a partidos y deporte social en España',
   },
-  description: 'TeamUp es la app gratuita para organizar y unirse a pachangas, partidos de pádel, fútbol 7, grupos de running, senderismo y quedadas deportivas cerca de ti en España. Haz deporte y conoce gente.',
+  description: 'TeamUp es la app gratuita para organizar y unirse a eventos deportivos, partidos de pádel, fútbol 7, grupos de running, senderismo y quedadas deportivas cerca de ti en España. Haz deporte y conoce gente.',
   alternates: {
     canonical: 'https://teamupapp.es/',
   },
@@ -20,13 +20,13 @@ export const metadata = {
     url: 'https://teamupapp.es',
     siteName: 'TeamUp',
     title: 'TeamUp — Haz deporte, conoce gente en tu zona',
-    description: 'Organiza y únete a pachangas, partidos de pádel, fútbol 7, grupos de running y eventos deportivos cerca de ti en España. Gratis.',
+    description: 'Organiza y únete a eventos deportivos, partidos de pádel, fútbol 7, grupos de running y eventos deportivos cerca de ti en España. Gratis.',
     images: [
       {
         url: '/favicon.png',
         width: 512,
         height: 512,
-        alt: 'TeamUp — App de pachangas y deporte social en España',
+        alt: 'TeamUp — App de eventos deportivos y deporte social en España',
       },
     ],
   },
@@ -73,8 +73,8 @@ const CITIES = [
 ]
 
 const FEATURES = [
-  { icon: '🗓', title: 'Crea un evento en 1 minuto', text: 'Elige deporte, fecha, hora y lugar. Publica tu pachanga y deja que la gente de tu zona se apunte.' },
-  { icon: '📍', title: 'Pachangas cerca de ti', text: 'Filtra por deporte y provincia o activa tu ubicación para encontrar partidos de pádel, fútbol 7, running…' },
+  { icon: '🗓', title: 'Crea un evento en 1 minuto', text: 'Elige deporte, fecha, hora y lugar. Publica tu evento deportivo y deja que la gente de tu zona se apunte.' },
+  { icon: '📍', title: 'Eventos deportivos cerca de ti', text: 'Filtra por deporte y provincia o activa tu ubicación para encontrar partidos de pádel, fútbol 7, running…' },
   { icon: '💬', title: 'Chat por evento', text: 'Habla con los participantes antes de quedar: confirma plazas, cambiad la hora o queda para llegar juntos.' },
   { icon: '📸', title: 'Momentos y fotos', text: 'Comparte fotos y la resaca de partido con la gente con la que jugaste. El buen rollo continúa en la app.' },
   { icon: '🏆', title: 'Torneos para clubs y empresas', text: 'Crea torneos y ligas para tu club, centro deportivo o empresa, con marcadores y seguimiento de participantes.' },
@@ -84,12 +84,12 @@ const FEATURES = [
 ]
 
 const FAQ = [
-  ['¿Cómo puedo unirme a una pachanga o partido cerca de mí?', 'Entra en la app (botón "Entrar a la app"), pulsa en Explorar, filtra por deporte y provincia o activa tu ubicación, y pulsa el botón "Unirse" en el evento que prefieras. Si no hay ninguno, puedes crear el tuyo propio en un minuto.'],
-  ['¿Es gratis usar TeamUp?', 'Sí. Crear tu cuenta, unirte a eventos y organizar pachangas es totalmente gratuito. Solo algunos eventos pueden indicar un precio de pista o inscripción, que verás siempre antes de apuntarte.'],
+  ['¿Cómo puedo unirme a una evento deportivo o partido cerca de mí?', 'Entra en la app (botón "Entrar a la app"), pulsa en Explorar, filtra por deporte y provincia o activa tu ubicación, y pulsa el botón "Unirse" en el evento que prefieras. Si no hay ninguno, puedes crear el tuyo propio en un minuto.'],
+  ['¿Es gratis usar TeamUp?', 'Sí. Crear tu cuenta, unirte a eventos y organizar eventos deportivos es totalmente gratuito. Solo algunos eventos pueden indicar un precio de pista o inscripción, que verás siempre antes de apuntarte.'],
   ['¿Qué deportes puedo encontrar en TeamUp?', 'Running, pádel, fútbol 7, tenis, senderismo, natación, ciclismo, gimnasio, yoga, baloncesto, voleibol y bádminton, entre otros. Cada evento indica el nivel necesario para participar.'],
   ['¿Necesito ser un deportista experimentado?', 'No. Hay eventos para todos los niveles: principiante, intermedio y avanzado. Cada partido indica el nivel mínimo, y muchos organizadores dan la bienvenida a quien empieza.'],
   ['¿Puedo crear mi propio evento deportivo?', 'Sí. Desde el botón "Crear evento" eliges deporte, fecha, hora, ubicación y número de plazas. Tu evento aparecerá en el listado para que otros deportistas de tu zona puedan unirse.'],
-  ['¿En qué ciudades funciona TeamUp?', 'TeamUp está disponible en las 50 provincias españolas: Madrid, Barcelona, Valencia, Sevilla, Málaga, Bilbao, Zaragoza, Murcia y muchas más. Busca pachangas en tu provincia desde la app.'],
+  ['¿En qué ciudades funciona TeamUp?', 'TeamUp está disponible en las 50 provincias españolas: Madrid, Barcelona, Valencia, Sevilla, Málaga, Bilbao, Zaragoza, Murcia y muchas más. Busca eventos deportivos en tu provincia desde la app.'],
   ['¿TeamUp es una app para el móvil?', 'TeamUp es una aplicación web progresiva (PWA): puedes instalarla en la pantalla de inicio de tu móvil Android o iOS y usarla como una app nativa, incluso con notificaciones.'],
   ['¿Cómo funciona el karma y las valoraciones?', 'Tras un evento, los participantes valoran la experiencia. Así, el karma refleja la fiabilidad y el buen ambiente de cada deportista: puntualidad, respeto y ganas de jugar.'],
 ]
@@ -144,11 +144,11 @@ export default async function Landing() {
   const howToJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'HowTo',
-    'name': 'Cómo unirse a una pachanga con TeamUp',
+    'name': 'Cómo unirse a una evento deportivo con TeamUp',
     'description': 'Crea tu cuenta, elige deporte y ciudad, y apúntate a eventos deportivos cerca de ti en España.',
     'step': [
       { '@type': 'HowToStep', 'position': 1, 'name': 'Crea tu cuenta gratis', 'text': 'Regístrate con tu email o con Google en menos de un minuto.' },
-      { '@type': 'HowToStep', 'position': 2, 'name': 'Elige deporte y ciudad', 'text': 'Busca pachangas y partidos de pádel, fútbol 7, running, senderismo y más en tu provincia, o crea tu propio evento.' },
+      { '@type': 'HowToStep', 'position': 2, 'name': 'Elige deporte y ciudad', 'text': 'Busca eventos deportivos y partidos de pádel, fútbol 7, running, senderismo y más en tu provincia, o crea tu propio evento.' },
       { '@type': 'HowToStep', 'position': 3, 'name': 'Apúntate y conoce gente', 'text': 'Reserva tu plaza, chatea con los participantes y comparte tus momentos tras el evento.' },
     ],
     'totalTime': 'PT1M',
@@ -188,7 +188,7 @@ export default async function Landing() {
               <span className="landing-kicker">Haz deporte · Conoce gente</span>
               <h1>Haz deporte y conoce gente en tu zona</h1>
               <p className="lead">
-                TeamUp es la app gratuita para organizar y unirse a pachangas, partidos de pádel,
+                TeamUp es la app gratuita para organizar y unirse a eventos deportivos, partidos de pádel,
                 fútbol 7, grupos de running y quedadas deportivas cerca de ti. En toda España.
               </p>
               <div className="landing-cta-row">
@@ -296,7 +296,7 @@ export default async function Landing() {
           <div className="landing-step">
             <div className="step-num">2</div>
             <h3>Elige deporte y ciudad</h3>
-            <p>Busca pachangas en tu provincia o crea tu propio evento con deporte, fecha, hora y lugar.</p>
+            <p>Busca eventos deportivos en tu provincia o crea tu propio evento con deporte, fecha, hora y lugar.</p>
           </div>
           <div className="landing-step">
             <div className="step-num">3</div>
@@ -310,7 +310,7 @@ export default async function Landing() {
       <section className="landing-wrap landing-section" id="deportes">
         <span className="landing-section-kicker">Deportes</span>
         <h2>Todo tu deporte, en un solo sitio</h2>
-        <p className="landing-sub">Pachangas y quedadas de los deportes más practicados en España, con niveles para todos.</p>
+        <p className="landing-sub">Eventos deportivos y quedadas de los deportes más practicados en España, con niveles para todos.</p>
         <div className="landing-sports">
           {SPORTS.map((s) => (
             <Link key={s.id} href={`/events?sport=${s.id}`} className="landing-sport">
@@ -345,8 +345,8 @@ export default async function Landing() {
       {/* ── Ciudades ── */}
       <section className="landing-wrap landing-section" id="ciudades">
         <span className="landing-section-kicker">Ciudades</span>
-        <h2>Pachangas en tu ciudad</h2>
-        <p className="landing-sub">Busca deporte social cerca de ti. Estas son algunas de las ciudades donde ya hay pachangas:</p>
+        <h2>Eventos deportivos en tu ciudad</h2>
+        <p className="landing-sub">Busca deporte social cerca de ti. Estas son algunas de las ciudades donde ya hay eventos deportivos:</p>
         <div className="landing-cities">
           {CITIES.map(([id, name]) => (
             <Link key={id} href={`/events?prov=${id}`} className="chip">{name}</Link>
@@ -358,10 +358,10 @@ export default async function Landing() {
       <section className="landing-wrap landing-section">
         <span className="landing-section-kicker">Qué es TeamUp</span>
         <div className="landing-article">
-          <h3>La app para organizar pachangas y deporte social en España</h3>
+          <h3>La app para organizar eventos deportivos y deporte social en España</h3>
           <p>
             <strong>TeamUp</strong> (teamupapp.es) es la plataforma social deportiva gratuita en España
-            para conectar deportistas cercanos: crea, busca y únete a pachangas, partidos de pádel,
+            para conectar deportistas cercanos: crea, busca y únete a eventos deportivos, partidos de pádel,
             fútbol 7, running, senderismo y entrenamientos en las 50 provincias españolas.
           </p>
           <p>
@@ -424,7 +424,7 @@ export default async function Landing() {
       {/* ── CTA final ── */}
       <section className="landing-final landing-wrap">
         <h2>¿Preparado para jugar?</h2>
-        <p>Crea tu cuenta gratis y encuentra tu primera pachanga en menos de un minuto.</p>
+        <p>Crea tu cuenta gratis y encuentra tu primera evento deportivo en menos de un minuto.</p>
         <div className="landing-cta-row">
           <Link href="/start" className="btn btn-primary">
             Entrar a la app

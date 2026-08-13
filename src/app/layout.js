@@ -11,17 +11,17 @@ export const viewport = {
 export const metadata = {
   metadataBase: new URL('https://teamupapp.es'),
   title: {
-    default: 'TeamUp — App para Pachangas, Unirse a Partidos y Deporte Social en España',
+    default: 'TeamUp — App para Eventos deportivos, Unirse a Partidos y Deporte Social en España',
     template: '%s | TeamUp',
   },
-  description: 'Organiza y únete a pachangas, partidos de pádel, fútbol 7, grupos de running y quedadas deportivas cerca de ti en España. ¡Únete gratis y conoce deportistas!',
+  description: 'Organiza y únete a eventos deportivos, partidos de pádel, fútbol 7, grupos de running y quedadas deportivas cerca de ti en España. ¡Únete gratis y conoce deportistas!',
   applicationName: 'TeamUp',
   category: 'Deportes',
   keywords: [
-    'app para pachangas',
+    'app para eventos deportivos',
     'unirse a partidos',
     'quedadas deportivas',
-    'organizar pachangas',
+    'organizar eventos deportivos',
     'partidos de padel cerca de mi',
     'futbol 7 quedadas',
     'grupos de running',
@@ -56,21 +56,21 @@ export const metadata = {
     locale: 'es_ES',
     url: 'https://teamupapp.es',
     siteName: 'TeamUp',
-    title: 'TeamUp — App para Pachangas, Unirse a Partidos y Deporte Social en España',
-    description: 'Organiza y únete a pachangas, partidos de pádel, fútbol 7, grupos de running y eventos deportivos cerca de ti en España. ¡Haz deporte y conoce gente!',
+    title: 'TeamUp — App para Eventos deportivos, Unirse a Partidos y Deporte Social en España',
+    description: 'Organiza y únete a eventos deportivos, partidos de pádel, fútbol 7, grupos de running y eventos deportivos cerca de ti en España. ¡Haz deporte y conoce gente!',
     images: [
       {
         url: '/favicon.png',
         width: 512,
         height: 512,
-        alt: 'TeamUp — App de pachangas y deporte social en España',
+        alt: 'TeamUp — App de eventos deportivos y deporte social en España',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'TeamUp — App para Pachangas y Deporte Social en España',
-    description: 'Organiza y únete a pachangas, partidos de pádel, grupos de running y eventos deportivos cerca de ti.',
+    title: 'TeamUp — App para Eventos deportivos y Deporte Social en España',
+    description: 'Organiza y únete a eventos deportivos, partidos de pádel, grupos de running y eventos deportivos cerca de ti.',
     images: ['/favicon.png'],
   },
   manifest: '/manifest.json',
@@ -105,7 +105,7 @@ export default function RootLayout({ children }) {
           'width': 512,
           'height': 512,
         },
-        'description': 'Plataforma social deportiva en España para organizar y unirse a pachangas, partidos y quedadas deportivas.',
+        'description': 'Plataforma social deportiva en España para organizar y unirse a eventos deportivos, partidos y quedadas deportivas.',
         'address': {
           '@type': 'PostalAddress',
           'addressCountry': 'ES'
@@ -129,7 +129,7 @@ export default function RootLayout({ children }) {
           'price': '0',
           'priceCurrency': 'EUR'
         },
-        'description': 'Aplicación web y PWA para organizar y unirse a pachangas, partidos de pádel, fútbol, running y quedadas deportivas cerca de ti en España.',
+        'description': 'Aplicación web y PWA para organizar y unirse a eventos deportivos, partidos de pádel, fútbol, running y quedadas deportivas cerca de ti en España.',
         'url': 'https://teamupapp.es',
         'publisher': { '@id': 'https://teamupapp.es/#organization' }
       },
@@ -138,7 +138,7 @@ export default function RootLayout({ children }) {
         '@id': 'https://teamupapp.es/#website',
         'url': 'https://teamupapp.es',
         'name': 'TeamUp',
-        'description': 'Encuentra y organiza eventos deportivos, pachangas y partidos en todas las provincias de España.',
+        'description': 'Encuentra y organiza eventos deportivos, eventos deportivos y partidos en todas las provincias de España.',
         'publisher': { '@id': 'https://teamupapp.es/#organization' },
         'inLanguage': 'es-ES'
       }

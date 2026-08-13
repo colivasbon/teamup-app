@@ -2,10 +2,10 @@ import MomentsContent from './MomentsContent'
 
 export const metadata = {
   title: 'Momentos Deportivos — Fotos e Historias de la Comunidad TeamUp',
-  description: 'Descubre los momentos más destacados de la comunidad deportiva de TeamUp: fotos y crónicas de pachangas, partidos de pádel, rutas de running y senderismo en toda España.',
+  description: 'Descubre los momentos más destacados de la comunidad deportiva de TeamUp: fotos y crónicas de eventos deportivos, partidos de pádel, rutas de running y senderismo en toda España.',
   keywords: [
     'momentos deportivos',
-    'fotos de pachangas',
+    'fotos de eventos deportivos',
     'comunidad deportiva España',
     'experiencias deporte',
     'TeamUp'

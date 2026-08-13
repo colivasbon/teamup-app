@@ -34,7 +34,7 @@ export async function generateMetadata({ params }) {
     description,
     keywords: [
       ev.sport,
-      `pachanga ${ev.sport}`,
+      `evento deportivo ${ev.sport}`,
       `jugar ${ev.sport} ${ev.province}`,
       `evento deportivo ${ev.province}`,
       'unirse a partido',
