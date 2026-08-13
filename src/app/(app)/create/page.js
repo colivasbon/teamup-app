@@ -170,7 +170,7 @@ export default function Create() {
                   border: form.sport===s.id?'none':'1.5px solid var(--border)',
                   borderRadius:18, padding:'20px 16px', cursor:'pointer', textAlign:'left',
                   boxShadow: form.sport===s.id?`0 6px 22px ${s.color}40`:'none',
-                  transition:'all 0.20s cubic-bezier(.34,1.56,.64,1)',
+                  transition:'transform 0.20s cubic-bezier(0.16, 1, 0.3, 1), background 0.20s ease-out, box-shadow 0.20s ease-out',
                   transform: form.sport===s.id?'scale(1.03)':'',
                   fontFamily:'inherit',
                 }}>
@@ -189,7 +189,7 @@ export default function Create() {
                   backdropFilter:'blur(14px)',
                   border: form.level===lv.id?'2px solid var(--primary)':'1.5px solid var(--border)',
                   borderRadius:14, padding:'14px 16px', cursor:'pointer', textAlign:'left',
-                  transition:'all 0.18s ease', fontFamily:'inherit',
+                  transition:'background 0.18s ease-out, border-color 0.18s ease-out', fontFamily:'inherit',
                 }}>
                   <span style={{ fontSize:22 }}>{lv.icon}</span>
                   <div style={{ flex:1 }}>
@@ -507,7 +507,7 @@ export default function Create() {
                     background: form.duration_minutes===d.value ? '#586875' : 'var(--glass)',
                     color: form.duration_minutes===d.value ? '#f6eddc' : 'var(--text)',
                     fontSize:13, fontWeight:600, cursor:'pointer', fontFamily:'inherit',
-                    transition:'all 0.15s ease',
+                    transition:'background 0.15s ease-out, color 0.15s ease-out, box-shadow 0.15s ease-out',
                     boxShadow: form.duration_minutes===d.value ? '0 3px 12px rgba(88,104,117,0.30)' : 'none',
                   }}>
                     {d.label}

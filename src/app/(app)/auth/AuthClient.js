@@ -176,7 +176,7 @@ export default function Auth() {
                   background: mode===m ? 'var(--solid)' : 'transparent',
                   color:      mode===m ? 'var(--text)'  : 'var(--muted)',
                   boxShadow:  mode===m ? '0 2px 8px rgba(0,0,0,0.12)' : 'none',
-                  transition: 'all 0.18s ease',
+                  transition: 'background 0.18s ease-out, color 0.18s ease-out, box-shadow 0.18s ease-out',
                 }}>
                   {m==='login' ? 'Entrar' : 'Registrarse'}
                 </button>

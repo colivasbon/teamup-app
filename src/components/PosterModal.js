@@ -324,7 +324,7 @@ export default function PosterModal({ event, onClose }) {
             fontFamily:'inherit', fontSize:13, fontWeight:700,
             background: mode===m.id ? 'rgba(255,255,255,0.18)' : 'transparent',
             color: mode===m.id ? '#f6eddc' : 'rgba(246,237,220,0.45)',
-            transition:'all 0.15s ease',
+            transition:'background 0.15s ease-out, color 0.15s ease-out',
           }}>{m.label}</button>
         ))}
       </div>
@@ -343,7 +343,7 @@ export default function PosterModal({ event, onClose }) {
             borderRadius:12, background: style===s.id ? 'rgba(255,255,255,0.12)' : 'transparent',
             color: style===s.id ? '#f6eddc' : 'rgba(246,237,220,0.5)',
             fontWeight:700, fontSize:13, cursor:'pointer', fontFamily:'inherit',
-            transition:'all 0.15s ease',
+            transition:'border-color 0.15s ease-out, background 0.15s ease-out, color 0.15s ease-out',
           }}>{s.label}</button>
         ))}
       </div>
@@ -370,7 +370,7 @@ export default function PosterModal({ event, onClose }) {
           cursor: rendered ? 'pointer' : 'default',
           opacity: rendered ? 1 : 0.5,
           fontFamily:'inherit', letterSpacing:'-0.02em',
-          transition:'opacity 0.2s ease',
+          transition:'opacity 0.2s ease-out',
         }}
       >
         {rendered ? '⬇ Descargar PNG' : 'Generando...'}

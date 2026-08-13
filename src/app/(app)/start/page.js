@@ -343,7 +343,7 @@ export default function Home() {
               background:`linear-gradient(160deg,${s.from}16,${s.from}06)`,
               border:'1px solid var(--border)',
               borderRadius:14, padding:'11px 4px 10px',
-              transition:'transform 0.18s ease, border-color 0.18s ease',
+              transition:'transform 0.18s ease-out, border-color 0.18s ease-out',
               textDecoration:'none',
             }}
             onMouseEnter={e=>{ e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.borderColor='var(--primary)' }}

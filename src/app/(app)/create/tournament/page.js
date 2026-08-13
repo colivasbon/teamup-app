@@ -266,13 +266,13 @@ export default function CreateTournament() {
                   style={{
                     width:44, height:24, borderRadius:12, border:'none', cursor:'pointer',
                     background: form.prize_enabled ? accent : 'var(--border)',
-                    position:'relative', transition:'background 0.2s ease',
+                    position:'relative', transition:'background 0.2s ease-out',
                   }}>
                   <div style={{
                     width:18, height:18, borderRadius:'50%', background:'white',
                     position:'absolute', top:3,
                     left: form.prize_enabled ? 23 : 3,
-                    transition:'left 0.2s ease',
+                    transition:'left 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
                     boxShadow:'0 1px 3px rgba(0,0,0,0.2)',
                   }}/>
                 </button>
@@ -323,14 +323,14 @@ export default function CreateTournament() {
                   <div style={{ display:'flex', gap:0, background:'var(--surface)', border:'1px solid var(--border)', borderRadius:14, overflow:'hidden' }}>
                     <button onClick={() => set('pair_mode', true)}
                       style={{ flex:1, padding:'13px 0', border:'none', cursor:'pointer', fontFamily:'inherit',
-                        fontSize:13, fontWeight:700, transition:'all 0.15s ease',
+                        fontSize:13, fontWeight:700, transition:'background 0.15s ease-out, color 0.15s ease-out',
                         background: form.pair_mode ? accent : 'transparent',
                         color: form.pair_mode ? '#f6eddc' : 'var(--muted)' }}>
                       👥 Por parejas
                     </button>
                     <button onClick={() => set('pair_mode', false)}
                       style={{ flex:1, padding:'13px 0', border:'none', cursor:'pointer', fontFamily:'inherit',
-                        fontSize:13, fontWeight:700, transition:'all 0.15s ease',
+                        fontSize:13, fontWeight:700, transition:'background 0.15s ease-out, color 0.15s ease-out',
                         background: !form.pair_mode ? accent : 'transparent',
                         color: !form.pair_mode ? '#f6eddc' : 'var(--muted)' }}>
                       👤 Individual

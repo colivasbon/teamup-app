@@ -407,7 +407,7 @@ function EventsContent({ initialSport = 'all', initialProv = 'all', initialLevel
                           padding: '7px 14px', fontWeight: 700, fontSize: 12,
                           cursor: 'pointer', letterSpacing: '-0.01em',
                           boxShadow: `0 2px 10px ${color}33`,
-                          transition: 'all 0.16s ease', fontFamily: 'inherit',
+                          transition: 'opacity 0.16s ease-out', fontFamily: 'inherit',
                           opacity: joining[ev.id] ? 0.6 : 1,
                         }}>
                           {joining[ev.id] ? '...' : 'Unirse'}

@@ -384,7 +384,7 @@ input, textarea, select { font-family: inherit; }
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-sm);
-  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+  transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.16s ease-out, border-color 0.16s ease-out;
 }
 .card:hover {
   transform: translateY(-1px);
@@ -412,7 +412,7 @@ input, textarea, select { font-family: inherit; }
   border-radius: var(--radius-sm);
   border: none;
   cursor: pointer;
-  transition: all 0.18s cubic-bezier(.34,1.56,.64,1);
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), background 0.18s ease-out;
   letter-spacing: -0.01em;
   white-space: nowrap;
   position: relative;
@@ -471,7 +471,7 @@ input, textarea, select { font-family: inherit; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.18s ease;
+  transition: color 0.18s ease-out, border-color 0.18s ease-out, transform 0.18s ease-out;
   flex-shrink: 0;
 }
 .btn-icon:hover { color: var(--primary); border-color: var(--primary); transform: scale(1.08); }
@@ -489,7 +489,7 @@ input, textarea, select { font-family: inherit; }
   font-size: 15px;
   font-family: inherit;
   outline: none;
-  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  transition: border-color 0.18s ease-out, box-shadow 0.18s ease-out;
   display: block;
 }
 .input::placeholder { color: var(--muted); }
@@ -512,7 +512,7 @@ select.input   { appearance: none; cursor: pointer; }
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
-  transition: all 0.16s ease;
+  transition: background 0.16s ease-out, color 0.16s ease-out, border-color 0.16s ease-out;
   border: 1px solid transparent;
   background: none;
   font-family: inherit;
@@ -543,7 +543,7 @@ select.input   { appearance: none; cursor: pointer; }
   background: linear-gradient(90deg, var(--primary), var(--accent));
   border-radius: 100px;
   box-shadow: 0 0 16px rgba(var(--primary-rgb),0.20);
-  transition: width 0.5s cubic-bezier(.34,1.56,.64,1);
+  transition: width 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ─── BADGE ─────────────────────────────────────────── */
@@ -596,7 +596,7 @@ select.input   { appearance: none; cursor: pointer; }
   border-radius: 100px;
   position: relative;
   cursor: pointer;
-  transition: background 0.22s ease;
+  transition: background 0.22s ease-out;
   flex-shrink: 0;
   border: none;
 }
@@ -606,7 +606,7 @@ select.input   { appearance: none; cursor: pointer; }
   border-radius: 50%;
   position: absolute;
   top: 3px;
-  transition: left 0.22s cubic-bezier(.34,1.56,.64,1);
+  transition: left 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 1px 6px rgba(0,0,0,0.22);
 }
 
@@ -657,7 +657,7 @@ select.input   { appearance: none; cursor: pointer; }
   gap: 4px;
   padding: 6px 14px;
   border-radius: 14px;
-  transition: all 0.16s ease;
+  transition: color 0.08s ease-out;
   text-decoration: none;
   color: var(--muted);
   min-width: 52px;
@@ -737,24 +737,24 @@ body.hide-slogan .slogan-bar {
   to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
-@keyframes scaleIn { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: scale(1); } }
+@keyframes scaleIn { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
 @keyframes spin    { to { transform: rotate(360deg); } }
 @keyframes pulse   { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-.anim-1 { animation: fadeUp 0.38s ease both; }
-.anim-2 { animation: fadeUp 0.38s 0.06s ease both; }
-.anim-3 { animation: fadeUp 0.38s 0.12s ease both; }
-.anim-4 { animation: fadeUp 0.38s 0.18s ease both; }
-.anim-5 { animation: fadeUp 0.38s 0.24s ease both; }
-.anim-6 { animation: fadeUp 0.38s 0.30s ease both; }
-.fade-in  { animation: fadeIn  0.28s ease both; }
-.scale-in { animation: scaleIn 0.28s ease both; }
+.anim-1 { animation: fadeUp 0.38s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.anim-2 { animation: fadeUp 0.38s 0.06s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.anim-3 { animation: fadeUp 0.38s 0.12s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.anim-4 { animation: fadeUp 0.38s 0.18s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.anim-5 { animation: fadeUp 0.38s 0.24s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.anim-6 { animation: fadeUp 0.38s 0.30s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.fade-in  { animation: fadeIn  0.28s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.scale-in { animation: scaleIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
 /* ─── STEP BAR ──────────────────────────────────────── */
 .step-bar {
   height: 3px;
   border-radius: 100px;
-  transition: all 0.3s ease;
+  transition: width 0.28s cubic-bezier(0.16, 1, 0.3, 1), background 0.28s ease-out;
 }
 
 /* ─── AVATAR UPLOAD ─────────────────────────────────── */
@@ -784,7 +784,7 @@ body.hide-slogan .slogan-bar {
   cursor: pointer;
   font-size: 13px;
   color: #f6eddc;
-  transition: transform 0.16s ease;
+  transition: transform 0.16s ease-out;
 }
 .avatar-edit-btn:hover { transform: scale(1.12); }
 
@@ -810,7 +810,7 @@ body.hide-slogan .slogan-bar {
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background 0.15s ease-out, color 0.15s ease-out, border-color 0.15s ease-out;
   border: 1.5px solid transparent;
   font-family: inherit;
   white-space: nowrap;
@@ -859,7 +859,7 @@ body.hide-slogan .slogan-bar {
   font-weight: 700;
   letter-spacing: -0.01em;
   cursor: pointer;
-  transition: all 0.18s ease;
+  transition: color 0.18s ease-out, background 0.18s ease-out;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -898,7 +898,7 @@ body.hide-slogan .slogan-bar {
   text-decoration: none;
   flex-shrink: 0;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(.34,1.56,.64,1);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease-out, color 0.2s ease-out, background 0.2s ease-out;
 }
 .chip:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-soft); transform: translateY(-1px); }
 .chip::before { content: "📍"; font-size: 10px; opacity: 0.75; }
@@ -1038,7 +1038,7 @@ body.hide-slogan .slogan-bar {
   font-size: 12.5px;
   font-weight: 700;
   color: var(--text);
-  transition: background 0.15s ease;
+  transition: background 0.15s ease-out;
 }
 .faq summary::-webkit-details-marker { display: none; }
 .faq summary::after {
@@ -1048,7 +1048,7 @@ body.hide-slogan .slogan-bar {
   border-right: 1.5px solid var(--muted);
   border-bottom: 1.5px solid var(--muted);
   transform: rotate(45deg);
-  transition: transform 0.2s ease;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1);
   margin-top: -3px;
 }
 .faq details[open] summary { background: var(--surface); }
@@ -1073,7 +1073,7 @@ body.hide-slogan .slogan-bar {
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
-  transition: all 0.16s ease;
+  transition: color 0.16s ease-out, border-color 0.16s ease-out;
 }
 .icon-btn:hover { border-color: var(--primary); color: var(--primary); }
 .icon-btn.solid { background: var(--primary); color: var(--button-contrast); border-color: transparent; }
@@ -1096,7 +1096,7 @@ body.hide-slogan .slogan-bar {
   font-weight: 700;
   font-size: 12.5px;
   color: var(--muted);
-  transition: all 0.15s ease;
+  transition: color 0.15s ease-out;
 }
 .seg-toggle a.seg-active {
   background: var(--primary);
@@ -1133,7 +1133,7 @@ body.hide-slogan .slogan-bar {
   font-size: 13px;
   font-weight: 700;
   transform: translateY(-150%);
-  transition: transform 0.2s ease;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .skip-link:focus { transform: none; outline: 2px solid var(--accent); }
 
@@ -1204,7 +1204,7 @@ body.hide-slogan .slogan-bar {
   font-size: 13.5px;
   font-weight: 600;
   color: var(--muted);
-  transition: color 0.15s ease;
+  transition: color 0.15s ease-out;
   white-space: nowrap;
 }
 .landing-nav a:hover { color: var(--text); }
@@ -1653,9 +1653,9 @@ body.hide-slogan .slogan-bar {
   gap: 16px;
   padding: 22px 0;
   border-bottom: 1px solid var(--border2);
-  transition: padding-left 0.25s cubic-bezier(.34,1.56,.64,1);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.landing-feature:hover { padding-left: 8px; }
+.landing-feature:hover { transform: translateX(8px); }
 .landing-feature .f-icon {
   width: 42px;
   height: 42px;
@@ -1708,7 +1708,7 @@ body.hide-slogan .slogan-bar {
   text-align: center;
   border: 1px solid var(--border);
   background: var(--surface2);
-  transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), border-color 0.18s ease, box-shadow 0.18s ease;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.18s ease-out, box-shadow 0.18s ease-out;
 }
 .landing-sport:hover {
   transform: translateY(-4px) scale(1.02);
@@ -1791,7 +1791,7 @@ body.hide-slogan .slogan-bar {
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 18px 20px;
-  transition: border-color 0.18s ease, transform 0.18s ease;
+  transition: border-color 0.18s ease-out, transform 0.18s ease-out;
 }
 .landing-faq .faq-item:hover {
   border-color: var(--primary);
@@ -1887,7 +1887,7 @@ body.hide-slogan .slogan-bar {
 .landing-footer .f-links a {
   font-size: 13px;
   color: var(--muted);
-  transition: color 0.15s ease;
+  transition: color 0.15s ease-out;
 }
 .landing-footer .f-links a:hover { color: var(--primary); }
 .landing-footer .f-copy {
@@ -1896,3 +1896,16 @@ body.hide-slogan .slogan-bar {
 }
 .landing-footer .f-copy a { color: var(--muted); text-decoration: underline; }
 .landing-footer .f-copy a:hover { color: var(--primary); }
+
+/* ─── ACCESSIBILITY — reduced motion ────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .sponsors-ticker__inner { animation: none; }
+}

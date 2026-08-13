@@ -121,7 +121,7 @@ export default function NotificationsPage() {
               fontFamily:'inherit', fontSize:14, fontWeight:700,
               background: activeTab===t.id ? '#586875' : 'transparent',
               color: activeTab===t.id ? '#f6eddc' : 'var(--muted)',
-              transition:'all 0.18s ease',
+              transition:'background 0.18s ease-out, color 0.18s ease-out',
               display:'flex', alignItems:'center', justifyContent:'center', gap:6,
             }}>
               <span style={{ fontSize:16 }}>{t.icon}</span>
@@ -176,7 +176,7 @@ export default function NotificationsPage() {
                     borderRadius:16, padding:'14px 16px',
                     cursor: (notif.event_id || notif.type === 'like' || notif.type === 'comment') ? 'pointer' : 'default',
                     textAlign:'left', fontFamily:'inherit',
-                    transition:'all 0.15s ease',
+                    transition:'background 0.15s ease-out, border-color 0.15s ease-out',
                     backdropFilter:'blur(14px)',
                   }}
                 >

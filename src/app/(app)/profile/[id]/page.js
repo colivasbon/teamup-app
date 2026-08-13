@@ -244,7 +244,7 @@ export default function PublicProfile() {
                 fontSize:13, fontWeight:600, cursor:'pointer', fontFamily:'inherit',
                 background: tab===key ? 'var(--primary)' : 'transparent',
                 color: tab===key ? 'white' : 'var(--muted)',
-                transition:'all 0.18s ease',
+                transition:'background 0.18s ease-out, color 0.18s ease-out',
               }}>
                 {label}
               </button>
@@ -271,7 +271,7 @@ export default function PublicProfile() {
                     fontWeight: 700,
                     fontSize: 12,
                     cursor: 'pointer',
-                    transition: 'all 0.18s ease',
+                    transition: 'background 0.18s ease-out, color 0.18s ease-out',
                   }}
                 >
                   {option.label}

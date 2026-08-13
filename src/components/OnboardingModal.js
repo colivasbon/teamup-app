@@ -55,11 +55,11 @@ export default function OnboardingModal({ onComplete }) {
     <>
       <style>{`
         @keyframes onboardingFadeIn {
-          from { opacity: 0; transform: scale(0.96); }
+          from { opacity: 0; transform: scale(0.97); }
           to   { opacity: 1; transform: scale(1); }
         }
         .onboarding-panel {
-          animation: onboardingFadeIn 0.22s ease-out both;
+          animation: onboardingFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
         .sport-btn {
           display: flex;
@@ -75,7 +75,7 @@ export default function OnboardingModal({ onComplete }) {
           font-size: 12px;
           font-weight: 500;
           color: inherit;
-          transition: background 0.15s, color 0.15s, border-color 0.15s;
+          transition: background 0.15s ease-out, color 0.15s ease-out, border-color 0.15s ease-out;
         }
         .sport-btn.selected {
           background: #586875;
@@ -96,7 +96,7 @@ export default function OnboardingModal({ onComplete }) {
           height: 100%;
           border-radius: 2px;
           background: #586875;
-          transition: width 0.3s ease;
+          transition: width 0.28s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .onboarding-btn-primary {
           display: block;
@@ -110,7 +110,7 @@ export default function OnboardingModal({ onComplete }) {
           font-weight: 600;
           cursor: pointer;
           margin-top: 20px;
-          transition: opacity 0.15s;
+          transition: opacity 0.15s ease-out;
         }
         .onboarding-btn-primary:disabled {
           opacity: 0.4;

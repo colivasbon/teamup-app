@@ -47,7 +47,7 @@ export default function ThemeButton() {
         color: 'var(--text)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         cursor: 'pointer', flexShrink: 0,
-        transition: 'all 0.18s ease',
+        transition: 'transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), background 0.18s ease-out',
         boxShadow: 'var(--shadow-sm)',
       }}
     >

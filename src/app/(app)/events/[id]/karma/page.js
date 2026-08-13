@@ -474,7 +474,7 @@ export default function KarmaPage() {
                         fontSize: 13,
                         fontWeight: 600,
                         color: voted ? '#16a34a' : 'var(--text)',
-                        transition: 'all 0.15s',
+                        transition: 'background 0.15s ease-out, color 0.15s ease-out',
                         whiteSpace: 'nowrap',
                       }}
                     >

@@ -452,7 +452,7 @@ export default function Moments() {
                       background:'none', border:'none', cursor:'pointer', padding:0, fontFamily:'inherit',
                       display:'flex', alignItems:'center', gap:5, fontSize:13, fontWeight:600,
                       color: isLiked ? '#ef4444' : 'var(--muted)',
-                      transition:'all 0.15s ease', transform: isLiked ? 'scale(1.1)' : 'scale(1)',
+                      transition:'transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), color 0.15s ease-out', transform: isLiked ? 'scale(1.1)' : 'scale(1)',
                     }}>
                       <span style={{ fontSize:16 }}>{isLiked?'❤️':'🤍'}</span>
                     </button>

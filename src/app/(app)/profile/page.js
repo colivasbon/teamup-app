@@ -461,7 +461,7 @@ export default function Profile() {
                   border: banner === b.id && !bannerUrl ? '3px solid var(--primary)' : '2px solid var(--border)',
                   cursor:'pointer',
                   boxShadow: banner === b.id && !bannerUrl ? '0 0 0 2px rgba(88,104,117,0.35)' : 'none',
-                  transition:'all 0.15s ease',
+                  transition:'background 0.15s ease-out, border-color 0.15s ease-out, box-shadow 0.15s ease-out',
                   outline:'none',
                 }}/>
                 )
@@ -507,7 +507,7 @@ export default function Profile() {
                         background: appTheme === theme.id ? 'rgba(255,255,255,0.10)' : 'rgba(255,255,255,0.04)',
                         color: appTheme === theme.id ? 'var(--button-contrast)' : 'var(--text)',
                         fontSize:12, fontWeight:700, cursor:'pointer', minHeight:118,
-                        transition:'all 0.18s ease',
+                        transition:'border-color 0.18s ease-out, background 0.18s ease-out, color 0.18s ease-out, box-shadow 0.18s ease-out',
                         textAlign:'left',
                         boxShadow: appTheme === theme.id ? '0 18px 40px rgba(0,0,0,0.10)' : '0 10px 24px rgba(0,0,0,0.06)',
                       }}
@@ -565,7 +565,7 @@ export default function Profile() {
                       border: skinTone === t.id ? '3px solid var(--primary)' : '2px solid var(--border)',
                       cursor:'pointer',
                       boxShadow: skinTone === t.id ? '0 0 0 2px rgba(88,104,117,0.35)' : 'none',
-                      transition:'all 0.15s ease',
+                      transition:'background 0.15s ease-out, border-color 0.15s ease-out, box-shadow 0.15s ease-out',
                       position:'relative', overflow:'hidden',
                     }}>
                     {skinTone === t.id && (
@@ -668,7 +668,7 @@ export default function Profile() {
                 cursor:'pointer', fontFamily:'inherit', whiteSpace:'nowrap', position:'relative',
                 background: tab === t ? 'var(--grad)' : 'transparent',
                 color: tab === t ? 'white' : 'var(--muted)',
-                transition:'all 0.18s ease',
+                transition:'background 0.18s ease-out, color 0.18s ease-out',
                 minWidth: t === 'Notificaciones' ? 106 : 'auto',
               }}>
                 {t}
@@ -751,7 +751,7 @@ export default function Profile() {
                       <button key={s.id} onClick={() => toggleSport(s.id)} style={{
                         display:'inline-flex', alignItems:'center', gap:6,
                         padding:'8px 16px', borderRadius:100, fontSize:13, fontWeight:600,
-                        cursor:'pointer', fontFamily:'inherit', transition:'all 0.15s ease',
+                        cursor:'pointer', fontFamily:'inherit', transition:'background 0.15s ease-out, color 0.15s ease-out, border-color 0.15s ease-out, box-shadow 0.15s ease-out',
                         background: sel ? `linear-gradient(135deg,${c},${c}bb)` : 'var(--glass)',
                         backdropFilter:'blur(12px)',
                         border: sel ? 'none' : '1.5px solid var(--border)',
@@ -892,7 +892,7 @@ export default function Profile() {
                     fontFamily:'inherit', fontSize:13, fontWeight:700,
                     background: notifTab===t.id ? '#586875' : 'transparent',
                     color: notifTab===t.id ? '#f6eddc' : 'var(--muted)',
-                    transition:'all 0.18s ease',
+                    transition:'background 0.18s ease-out, color 0.18s ease-out',
                     display:'flex', alignItems:'center', justifyContent:'center', gap:6,
                   }}>
                     <span style={{ fontSize:15 }}>{t.icon}</span>
@@ -942,7 +942,7 @@ export default function Profile() {
                           borderRadius:16,
                           cursor: isClickable ? 'pointer' : 'default',
                           fontFamily:'inherit', textAlign:'left', width:'100%',
-                          transition:'background 0.15s ease', position:'relative',
+                          transition:'background 0.15s ease-out', position:'relative',
                         }}
                       >
                         {!notif.read && (

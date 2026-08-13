@@ -428,7 +428,7 @@ export default function TournamentDetail() {
                           <div style={{ height:4, background:'var(--border)', borderRadius:8, overflow:'hidden' }}>
                             <div style={{ height:'100%', width:`${catPct}%`,
                               background: catFull ? '#ef4444' : color,
-                              borderRadius:8, transition:'width 0.4s ease' }}/>
+                              borderRadius:8, transition:'width 0.28s cubic-bezier(0.16, 1, 0.3, 1)' }}/>
                           </div>
                           {catFull && <div style={{ fontSize:11, color:'#ef4444', marginTop:4 }}>Categoría completa</div>}
                         </div>

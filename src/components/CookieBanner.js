@@ -32,7 +32,7 @@ export default function CookieBanner() {
     flex: 1, padding: '12px 0', border: '1px solid var(--border)', borderRadius: 12,
     cursor: 'pointer', fontFamily: 'inherit', fontSize: 13, fontWeight: 700,
     background: 'var(--surface)', color: 'var(--text)',
-    transition: 'background 0.15s ease',
+    transition: 'background 0.15s ease-out',
   }
 
   return (
@@ -90,11 +90,11 @@ export default function CookieBanner() {
             <button onClick={() => setAnalytics(p => !p)}
               style={{ width: 44, height: 24, borderRadius: 12, border: 'none', cursor: 'pointer',
                 background: analytics ? '#586875' : 'var(--border)', position: 'relative',
-                transition: 'background 0.2s ease', flexShrink: 0, marginTop: 2 }}>
+                transition: 'background 0.2s ease-out', flexShrink: 0, marginTop: 2 }}>
               <div style={{
                 width: 18, height: 18, borderRadius: '50%', background: 'white',
                 position: 'absolute', top: 3, left: analytics ? 23 : 3,
-                transition: 'left 0.2s ease', boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                transition: 'left 0.2s cubic-bezier(0.16, 1, 0.3, 1)', boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
               }}/>
             </button>
           </div>
