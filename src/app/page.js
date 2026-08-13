@@ -385,12 +385,12 @@ export default async function Landing() {
         <span className="landing-section-kicker">FAQ</span>
         <h2>Preguntas frecuentes</h2>
         <p className="landing-sub">Todas las dudas sobre cómo funciona TeamUp, respondidas.</p>
-        <div className="faq landing-faq">
+        <div className="landing-faq">
           {FAQ.map(([q, a]) => (
-            <details key={q}>
-              <summary>{q}</summary>
-              <p className="faq-item-body">{a}</p>
-            </details>
+            <div key={q} className="faq-item">
+              <p className="faq-q">{q}</p>
+              <p className="faq-a">{a}</p>
+            </div>
           ))}
         </div>
       </section>
