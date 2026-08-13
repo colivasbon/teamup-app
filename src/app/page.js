@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import ThemeButton from '@/components/ThemeButton'
 import MobileRedirect from '@/components/MobileRedirect'
-import { getSportEmoji } from '@/lib/sportEmoji'
+import { getSportEmoji } from '@/lib/sportConfig'
 import { getSupabaseServer } from '@/lib/supabase'
 
 export const revalidate = 3600

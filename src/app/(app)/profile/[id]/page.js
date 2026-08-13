@@ -6,9 +6,18 @@ import Navbar from '@/components/Navbar'
 import { getSupabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 
-const S_COLORS = { running:'#5b6ef5', padel:'#06d6a0', senderismo:'#f59e0b', futbol:'#ef4444', gimnasio:'#8b5cf6', tenis:'#fbbf24', natacion:'#0ea5e9', ciclismo:'#f97316', yoga:'#ec4899', baloncesto:'#f59e0b', voleibol:'#06d6a0', badminton:'#8b5cf6' }
-const S_ICONS  = { running:'🏃', padel:'🎾', senderismo:'🥾', futbol:'⚽', gimnasio:'💪', tenis:'🎾', natacion:'🏊', ciclismo:'🚴', yoga:'🧘', baloncesto:'🏀', voleibol:'🏐', badminton:'🏸' }
-const S_LABELS = { running:'Running', padel:'Pádel', senderismo:'Senderismo', futbol:'Fútbol', gimnasio:'Gimnasio', tenis:'Tenis', natacion:'Natación', ciclismo:'Ciclismo', yoga:'Yoga', baloncesto:'Baloncesto', voleibol:'Voleibol', badminton:'Bádminton' }
+import { SPORT_COLORS, SPORT_LABELS, getSportEmoji } from '@/lib/sportConfig'
+
+const S_COLORS = SPORT_COLORS
+const S_ICONS = {
+  running: getSportEmoji('running'), padel: getSportEmoji('padel'),
+  senderismo: getSportEmoji('senderismo'), futbol: getSportEmoji('futbol'),
+  gimnasio: getSportEmoji('gimnasio'), tenis: getSportEmoji('tenis'),
+  natacion: getSportEmoji('natacion'), ciclismo: getSportEmoji('ciclismo'),
+  yoga: getSportEmoji('yoga'), baloncesto: getSportEmoji('baloncesto'),
+  voleibol: getSportEmoji('voleibol'), badminton: getSportEmoji('badminton'),
+}
+const S_LABELS = SPORT_LABELS
 
 function fmt(dateStr) {
   if (!dateStr) return ''

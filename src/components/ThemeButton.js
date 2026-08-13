@@ -29,8 +29,8 @@ export default function ThemeButton() {
 
   if (!mounted) return null
   const currentTheme = VIEW_THEMES.find(t => t.id === theme) || {
-    label: theme === 'light' || theme === 'pure-white' ? 'Claro' : 'Oscuro',
-    icon: theme === 'light' || theme === 'pure-white' ? '☀️' : '🌙',
+    label: theme === 'light' ? 'Claro' : 'Oscuro',
+    icon: theme === 'light' ? '☀️' : '🌙',
   }
 
   return (

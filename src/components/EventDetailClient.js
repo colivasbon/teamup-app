@@ -7,10 +7,18 @@ import { getSupabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import PosterModal from '@/components/PosterModal'
 import { getSportColor } from '@/components/SportIcon'
+import { SPORT_COLORS, SPORT_LABELS, getSportEmoji } from '@/lib/sportConfig'
 
-const S_COLORS = { running:'#5b6ef5', padel:'#06d6a0', senderismo:'#f59e0b', futbol:'#ef4444', gimnasio:'#8b5cf6', tenis:'#fbbf24', natacion:'#0ea5e9', ciclismo:'#f97316', yoga:'#ec4899', baloncesto:'#f59e0b', voleibol:'#06d6a0', badminton:'#8b5cf6' }
-const S_ICONS  = { running:'🏃', padel:'🎾', senderismo:'🥾', futbol:'⚽', gimnasio:'💪', tenis:'🎾', natacion:'🏊', ciclismo:'🚴', yoga:'🧘', baloncesto:'🏀', voleibol:'🏐', badminton:'🏸' }
-const S_LABELS = { running:'Running', padel:'Pádel', senderismo:'Senderismo', futbol:'Fútbol', gimnasio:'Gimnasio', tenis:'Tenis', natacion:'Natación', ciclismo:'Ciclismo', yoga:'Yoga', baloncesto:'Baloncesto', voleibol:'Voleibol', badminton:'Bádminton' }
+const S_COLORS = SPORT_COLORS
+const S_ICONS = {
+  running: getSportEmoji('running'), padel: getSportEmoji('padel'),
+  senderismo: getSportEmoji('senderismo'), futbol: getSportEmoji('futbol'),
+  gimnasio: getSportEmoji('gimnasio'), tenis: getSportEmoji('tenis'),
+  natacion: getSportEmoji('natacion'), ciclismo: getSportEmoji('ciclismo'),
+  yoga: getSportEmoji('yoga'), baloncesto: getSportEmoji('baloncesto'),
+  voleibol: getSportEmoji('voleibol'), badminton: getSportEmoji('badminton'),
+}
+const S_LABELS = SPORT_LABELS
 
 const DEMO = {
   'demo-1': { id:'demo-1', title:'Running Matutino',         sport:'running',    level:'any',          date:'2026-03-30', time:'07:30:00', location:'Alameda de Córdoba',      province:'Córdoba',  max_players:10, price:'Gratis',     third_place:false, description:'Ruta de running matutino por la Alameda. Ritmo medio 5:00–5:30/km. Todos los niveles bienvenidos. Llevar agua.',             creator_name:'Carlos O.', participant_count:7,  tags:['Aire libre','Todos los niveles','Grupo pequeño'] },

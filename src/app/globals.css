@@ -1,11 +1,50 @@
+@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 /* ═══════════════════════════════════════════════════════
-   TEAMUP — DESIGN SYSTEM v5
+   TEAMUP — DESIGN SYSTEM v6
    Paleta: azul #586875 · crema #f6eddc
-   CSS puro. Sin Tailwind.
+   Tailwind v4 + CSS tokens + Phosphor icons
 ═══════════════════════════════════════════════════════ */
+
+@theme {
+  --color-bg: var(--bg);
+  --color-bg2: var(--bg2);
+  --color-surface: var(--surface);
+  --color-surface2: var(--surface2);
+  --color-solid: var(--solid);
+  --color-text: var(--text);
+  --color-text2: var(--text2);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-border2: var(--border2);
+  --color-primary: var(--primary);
+  --color-primary-h: var(--primary-h);
+  --color-accent: var(--accent);
+  --color-glass: var(--glass);
+  --color-glass-edge: var(--glass-edge);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+  --color-button-contrast: var(--button-contrast);
+
+  --font-outfit: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-grotesk: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --radius-card: var(--radius);
+  --radius-card-sm: var(--radius-sm);
+  --radius-card-xs: var(--radius-xs);
+
+  --animate-fade-in: fade-in 0.6s ease-out both;
+  --animate-scale-in: scale-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-fade-up-1: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+  --animate-fade-up-2: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+  --animate-fade-up-3: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+  --animate-fade-up-4: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+  --animate-fade-up-5: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+  --animate-fade-up-6: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+}
 
 /* ─── TOKENS MODO CLARO ─────────────────────────────── */
 :root {
@@ -157,37 +196,6 @@
   --button-contrast: #1a2028;
 }
 
-[data-theme="dark-amoled"] {
-  --bg:           #0a0a0a; /* AMOLED: near-black but not pure */
-  --bg2:          #0f0f0f;
-  --surface:      rgba(255,255,255,0.05);
-  --surface2:     rgba(255,255,255,0.03);
-  --solid:        #080808;
-  --text:         #f8fafc;
-  --text2:        #c9d2db;
-  --muted:        #8998a8;
-  --border:       rgba(255,255,255,0.08);
-  --border2:      rgba(255,255,255,0.04);
-  --primary:      #30b38d;
-  --primary-h:    #76d7b1;
-  --primary-rgb:  48,179,141;
-  --accent:       #30b38d;
-  --accent-rgb:   48,179,141;
-  --navbar-glass: rgba(8,10,12,0.30);
-  --navbar-glass-edge: rgba(48,179,141,0.16);
-  --glass:        rgba(8,10,12,0.60); /* translucent so backdrop blur shows through */
-  --nav-overlay:  transparent;
-  --glass-edge:   rgba(48,179,141,0.10);
-  --shadow-sm:    0 2px 14px rgba(6,6,8,0.50);
-  --shadow:       0 4px 30px rgba(6,6,8,0.65);
-  --shadow-lg:    0 12px 54px rgba(6,6,8,0.80);
-  --grad:         linear-gradient(135deg, #000000 0%, #040404 100%);
-  --grad-warm:    linear-gradient(135deg, #050d0b 0%, #020303 100%);
-  --bg-image: radial-gradient(ellipse 55% 40% at 12% 12%, rgba(48,179,141,0.08) 0%, transparent 52%),
-               radial-gradient(ellipse 40% 40% at 88% 88%, rgba(48,179,141,0.05) 0%, transparent 55%);
-  --button-contrast: #f8fafc;
-}
-
 [data-theme="dark-emerald"] {
   --bg:           #0f1416; /* dark grey background for better legibility */
   --bg2:          #12181a;
@@ -248,37 +256,6 @@
   --bg-image: radial-gradient(ellipse 48% 40% at 14% 16%, rgba(159,126,209,0.08) 0%, transparent 52%),
                radial-gradient(ellipse 35% 34% at 84% 84%, rgba(131,99,194,0.04) 0%, transparent 60%);
   --button-contrast: #f8f0ff;
-}
-
-[data-theme="pure-white"] {
-  --bg:           #ffffff;
-  --bg2:          #f8fafc;
-  --surface:      rgba(255,255,255,0.94);
-  --nav-overlay:  rgba(255,255,255,0.90);
-  --surface2:     rgba(248,250,252,0.78);
-  --solid:        #f1f5f9;
-  --text:         #0f172a;
-  --text2:        #475569;
-  --muted:        #64748b;
-  --border:       rgba(15,23,42,0.08);
-  --border2:      rgba(15,23,42,0.04);
-  --primary:      #0f172a;
-  --primary-h:    #334155;
-  --primary-rgb:  15,23,42;
-  --accent:       #0f766e;
-  --accent-rgb:   15,118,110;
-  --glass:        rgba(255,255,255,0.88);
-  --glass-edge:   rgba(15,23,42,0.08);
-  --navbar-glass: rgba(255,255,255,0.92);
-  --navbar-glass-edge: rgba(15,23,42,0.12);
-  --shadow-sm:    0 2px 10px rgba(15,23,42,0.08);
-  --shadow:       0 4px 22px rgba(15,23,42,0.10);
-  --shadow-lg:    0 12px 40px rgba(15,23,42,0.12);
-  --grad:         linear-gradient(135deg, #334155 0%, #1e293b 100%);
-  --grad-warm:    linear-gradient(135deg, #0f766e 0%, #064e3b 100%);
-  --bg-image: radial-gradient(ellipse 55% 50% at 12% 14%, rgba(15,23,42,0.05) 0%, transparent 52%),
-               radial-gradient(ellipse 35% 30% at 86% 84%, rgba(15,23,42,0.02) 0%, transparent 60%);
-  --button-contrast: #ffffff;
 }
 
 /* ─── RESET ─────────────────────────────────────────── */
@@ -630,16 +607,6 @@ select.input   { appearance: none; cursor: pointer; }
   will-change: backdrop-filter;
 }
 
-.nav-inner {
-  max-width: 480px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding: 10px 8px 12px;
-  position: relative;
-  z-index: 1;
-}
 .nav-inner {
   max-width: 480px;
   margin: 0 auto;
@@ -1192,7 +1159,6 @@ body.hide-slogan .slogan-bar {
   min-width: 0;
 }
 [data-theme="dark"] .landing-logo,
-[data-theme="dark-amoled"] .landing-logo,
 [data-theme="dark-emerald"] .landing-logo,
 [data-theme="dark-purple"] .landing-logo { color: #f6eddc; }
 .landing-nav {

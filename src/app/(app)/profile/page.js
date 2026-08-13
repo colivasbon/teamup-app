@@ -7,26 +7,13 @@ import Navbar from '@/components/Navbar'
 import { getSupabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 
-const ALL_SPORTS = [
-  {id:'running',    label:'Running',    icon:'🏃'},
-  {id:'padel',      label:'Pádel',      icon:'🎾'},
-  {id:'senderismo', label:'Senderismo', icon:'🥾'},
-  {id:'futbol',     label:'Fútbol',     icon:'⚽'},
-  {id:'gimnasio',   label:'Gimnasio',   icon:'💪'},
-  {id:'tenis',      label:'Tenis',      icon:'🎾'},
-  {id:'natacion',   label:'Natación',   icon:'🏊'},
-  {id:'ciclismo',   label:'Ciclismo',   icon:'🚴'},
-  {id:'yoga',       label:'Yoga',       icon:'🧘'},
-  {id:'baloncesto', label:'Baloncesto', icon:'🏀'},
-  {id:'voleibol',   label:'Voleibol',   icon:'🏐'},
-  {id:'badminton',  label:'Bádminton',  icon:'🏸'},
-]
+import { SPORT_COLORS, SPORT_LABELS, getSportEmoji } from '@/lib/sportConfig'
 
-const SPORT_COLORS = {
-  running:'#5b6ef5', padel:'#06d6a0', senderismo:'#f59e0b', futbol:'#ef4444',
-  gimnasio:'#8b5cf6', tenis:'#fbbf24', natacion:'#0ea5e9', ciclismo:'#f97316',
-  yoga:'#ec4899', baloncesto:'#f59e0b', voleibol:'#06d6a0', badminton:'#8b5cf6',
-}
+const ALL_SPORTS = Object.entries(SPORT_LABELS).map(([id, label]) => ({
+  id,
+  label,
+  icon: getSportEmoji(id),
+}))
 
 // Formas SVG orgánicas — blobs y círculos que se superponen
 const BLOB_SHAPES = {
@@ -165,19 +152,15 @@ export default function Profile() {
 
   const THEME_OPTIONS = [
     { id:'dark',         label:'Oscuro',      icon:'🌙' },
-    { id:'dark-amoled',  label:'AMOLED',      icon:'🌙' },
     { id:'dark-emerald', label:'Esmeralda',   icon:'💚' },
     { id:'dark-purple',  label:'Púrpura',     icon:'🟣' },
-    { id:'pure-white',   label:'Puro',        icon:'☀️' },
     { id:'light',        label:'Claro',       icon:'🌤️' },
   ]
 
   const THEME_SWATCHES = {
     dark: ['#111827', '#1f2937', '#586875'],
-    'dark-amoled': ['#000000', '#070707', '#30b38d'],
     'dark-emerald': ['#050f0b', '#09140f', '#30b38d'],
     'dark-purple': ['#12031a', '#1b0a2f', '#7c3aed'],
-    'pure-white': ['#f8fafc', '#ffffff', '#cbd5e1'],
     light: ['#f6eddc', '#ede3d0', '#586875'],
   }
 
@@ -526,7 +509,7 @@ export default function Profile() {
                         <div>
                           <div style={{ fontSize:14 }}>{theme.label}</div>
                           <div style={{ fontSize:10, color:'var(--muted)', marginTop:4 }}>
-                            {theme.id === 'dark' ? 'Clásico' : theme.id === 'dark-amoled' ? 'Negro puro' : theme.id === 'dark-emerald' ? 'Oscuro con acentos esmeralda' : theme.id === 'dark-purple' ? 'Oscuro con acentos púrpura' : theme.id === 'pure-white' ? 'Blanco puro' : 'Claro'}
+                            {theme.id === 'dark' ? 'Clásico' : theme.id === 'dark-emerald' ? 'Oscuro con acentos esmeralda' : theme.id === 'dark-purple' ? 'Oscuro con acentos púrpura' : 'Claro'}
                           </div>
                         </div>
                         <div style={{ display:'grid', gridTemplateColumns:'repeat(3,10px)', gap:4, alignItems:'center' }}>

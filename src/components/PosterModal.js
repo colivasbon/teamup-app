@@ -3,16 +3,15 @@
 import { useEffect, useRef, useState } from 'react'
 import QRCode from 'qrcode'
 
-const SPORT_COLORS = {
-  running:'#5b6ef5', padel:'#06d6a0', senderismo:'#f59e0b',
-  futbol:'#ef4444',  gimnasio:'#8b5cf6', tenis:'#fbbf24',
-  natacion:'#0ea5e9', ciclismo:'#f97316', yoga:'#ec4899',
-  baloncesto:'#f59e0b', voleibol:'#06d6a0', badminton:'#8b5cf6',
-}
+import { SPORT_COLORS, getSportEmoji } from '@/lib/sportConfig'
+
 const SPORT_ICONS = {
-  running:'🏃', padel:'🎾', senderismo:'🥾', futbol:'⚽',
-  gimnasio:'💪', tenis:'🎾', natacion:'🏊', ciclismo:'🚴',
-  yoga:'🧘', baloncesto:'🏀', voleibol:'🏐', badminton:'🏸',
+  running: getSportEmoji('running'), padel: getSportEmoji('padel'),
+  senderismo: getSportEmoji('senderismo'), futbol: getSportEmoji('futbol'),
+  gimnasio: getSportEmoji('gimnasio'), tenis: getSportEmoji('tenis'),
+  natacion: getSportEmoji('natacion'), ciclismo: getSportEmoji('ciclismo'),
+  yoga: getSportEmoji('yoga'), baloncesto: getSportEmoji('baloncesto'),
+  voleibol: getSportEmoji('voleibol'), badminton: getSportEmoji('badminton'),
 }
 const LEVEL_LABELS = {
   any:'Todos los niveles', beginner:'Principiante',

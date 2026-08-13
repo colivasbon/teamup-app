@@ -7,16 +7,9 @@ import { getSupabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import ThemeButton from '@/components/ThemeButton'
 
-const S_COLORS = {
-  running:'#5b6ef5', padel:'#06d6a0', senderismo:'#f59e0b', futbol:'#ef4444',
-  gimnasio:'#8b5cf6', tenis:'#fbbf24', natacion:'#0ea5e9', ciclismo:'#f97316',
-  yoga:'#ec4899', baloncesto:'#f59e0b', voleibol:'#06d6a0', badminton:'#8b5cf6',
-}
-const SPORT_LABELS = {
-  running:'Running', padel:'Pádel', senderismo:'Senderismo', futbol:'Fútbol',
-  gimnasio:'Gimnasio', tenis:'Tenis', natacion:'Natación', ciclismo:'Ciclismo',
-  yoga:'Yoga', baloncesto:'Baloncesto', voleibol:'Voleibol', badminton:'Bádminton',
-}
+import { SPORT_COLORS, SPORT_LABELS } from '@/lib/sportConfig'
+
+const S_COLORS = SPORT_COLORS
 const PROVINCE_LABELS = {
   madrid:'Madrid', barcelona:'Barcelona', valencia:'Valencia', sevilla:'Sevilla',
   cordoba:'Córdoba', granada:'Granada', malaga:'Málaga', alicante:'Alicante',
