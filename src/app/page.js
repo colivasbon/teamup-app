@@ -3,6 +3,8 @@ import ThemeButton from '@/components/ThemeButton'
 import MobileRedirect from '@/components/MobileRedirect'
 import { getSportEmoji } from '@/lib/sportConfig'
 import { getSupabaseServer } from '@/lib/supabase'
+import ParallaxBg from '@/components/landing/ParallaxBg'
+import ScrollReveal from '@/components/landing/ScrollReveal'
 
 export const revalidate = 3600
 
@@ -60,14 +62,14 @@ const CITIES = [
 ]
 
 const FEATURES = [
-  { icon: '🗓', title: 'Un minuto', subtitle: 'Crea tu evento', text: 'Deporte, fecha, hora y lugar. Publica y deja que tu zona se apunte.' },
-  { icon: '📍', subtitle: 'Encuentra', title: 'Cerca de ti', text: 'Filtra por deporte y provincia. Partidos de pádel, fútbol, running a minutos de casa.' },
-  { icon: '💬', subtitle: 'Habla', title: 'Chat por evento', text: 'Confirma plazas, cambiad la hora, queda para llegar juntos.' },
-  { icon: '📸', subtitle: 'Comparte', title: 'Momentos', text: 'Fotos y la resaca de partido con la gente con la que jugaste.' },
-  { icon: '🏆', subtitle: 'Compite', title: 'Torneos', text: 'Ligas para clubs, centros deportivos y empresas con marcadores.' },
-  { icon: '⭐', subtitle: 'Confía', title: 'Karma', text: 'Puntualidad, fair play y buen ambiente. Juega con gente que aparece.' },
-  { icon: '🔔', subtitle: 'Entérate', title: 'Alertas', text: 'Última plaza, cancelaciones, recordatorios antes del partido.' },
-  { icon: '📱', subtitle: 'Instala', title: 'PWA', text: 'Añádela a tu pantalla. Funciona como app nativa, incluso sin conexión.' },
+  { icon: '⏱', title: 'Un minuto', subtitle: 'Crear evento', text: 'Deporte, fecha, hora y lugar. Publica y deja que tu zona se apunte.' },
+  { icon: '🔍', subtitle: 'Buscar', title: 'Cerca de ti', text: 'Filtra por deporte y provincia. Partidos de pádel, fútbol, running a minutos de casa.' },
+  { icon: '💬', subtitle: 'Hablar', title: 'Chat por evento', text: 'Confirma plazas, cambiad la hora, queda para llegar juntos.' },
+  { icon: '📸', subtitle: 'Compartir', title: 'Momentos', text: 'Fotos y la resaca de partido con la gente con la que jugaste.' },
+  { icon: '🏆', subtitle: 'Competir', title: 'Torneos', text: 'Ligas para clubs, centros deportivos y empresas con marcadores.' },
+  { icon: '⭐', subtitle: 'Confiar', title: 'Karma', text: 'Puntualidad, fair play y buen ambiente. Juega con gente que aparece.' },
+  { icon: '🔔', subtitle: 'Avisos', title: 'Alertas', text: 'Última plaza, cancelaciones, recordatorios antes del partido.' },
+  { icon: '📱', subtitle: 'Instalar', title: 'PWA', text: 'Añádela a tu pantalla. Funciona como app nativa, incluso sin conexión.' },
 ]
 
 const FAQ = [
@@ -127,14 +129,15 @@ export default async function Landing() {
 
   return (
     <div className="ln">
+      <ParallaxBg />
       <MobileRedirect />
       <a className="skip-link" href="#main">Saltar al contenido</a>
 
-      {/* ═══ NAVBAR — Floating glass pill ═══ */}
+      {/* NAVBAR */}
       <header className="ln-nav-wrap">
         <nav className="ln-nav" aria-label="Navegación principal">
-          <Link href="/" className="ln-logo" aria-label="TeamUp — Inicio">
-            <LogoTeamUp height={28} />
+          <Link href="/" className="ln-logo" aria-label="TeamUp - Inicio">
+            <LogoTeamUp height={24} />
           </Link>
           <div className="ln-nav-links">
             <a href="#como">Cómo funciona</a>
@@ -145,49 +148,47 @@ export default async function Landing() {
             <ThemeButton />
             <Link href="/start" className="ln-btn ln-btn-primary">
               Entrar
-              <span className="ln-btn-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
             </Link>
           </div>
         </nav>
       </header>
 
       <main id="main">
-        {/* ═══ HERO — Massive editorial typography ═══ */}
+        {/* HERO */}
         <section className="ln-hero">
           <div className="ln-hero-inner">
-            <span className="ln-eyebrow">Haz deporte · Conoce gente</span>
             <h1 className="ln-hero-h1">
               Haz deporte<br />
               <span className="ln-hero-accent">y conoce gente</span><br />
               en tu zona
             </h1>
             <p className="ln-hero-lead">
-              Organiza eventos deportivos, partidos de pádel, fútbol 7, grupos de running
-              y quedadas deportivas cerca de ti. En toda España. Gratis.
+              Organiza partidos de pádel, fútbol, running y quedadas deportivas
+              cerca de ti. En toda España. Gratis.
             </p>
             <div className="ln-hero-cta">
               <Link href="/start" className="ln-btn ln-btn-primary ln-btn-lg">
                 Entrar a la app
-                <span className="ln-btn-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
               </Link>
               <Link href="/events" className="ln-btn ln-btn-ghost">Explorar eventos</Link>
             </div>
-            <p className="ln-hero-note">Gratis · Sin cuotas · Para todos los niveles</p>
           </div>
 
           {stats && (
-            <div className="ln-stats anim-1">
-              {[[stats.active, 'Eventos activos'], [stats.users, 'Deportistas'], [stats.recent, 'Nuevos 7d']].map(([v, l]) => (
-                <div key={l} className="ln-stat">
-                  <div className="ln-stat-val">{v}</div>
-                  <div className="ln-stat-lbl">{l}</div>
-                </div>
-              ))}
-            </div>
+            <ScrollReveal>
+              <div className="ln-stats">
+                {[[stats.active, 'Eventos activos'], [stats.users, 'Deportistas'], [stats.recent, 'Nuevos 7d']].map(([v, l]) => (
+                  <div key={l} className="ln-stat">
+                    <div className="ln-stat-val">{v}</div>
+                    <div className="ln-stat-lbl">{l}</div>
+                  </div>
+                ))}
+              </div>
+            </ScrollReveal>
           )}
         </section>
 
-        {/* ═══ SPORTS MARQUEE — Infinite horizontal scroll ═══ */}
+        {/* SPORTS MARQUEE */}
         <section className="ln-marquee-section" aria-label="Deportes disponibles">
           <div className="ln-marquee">
             <div className="ln-marquee-track">
@@ -201,12 +202,13 @@ export default async function Landing() {
           </div>
         </section>
 
-        {/* ═══ BENTO FEATURES — Asymmetric grid ═══ */}
+        {/* FEATURES - BENTO */}
         <section className="ln-section" id="features">
           <div className="ln-section-inner">
-            <span className="ln-eyebrow">La app</span>
-            <h2 className="ln-section-title">Todo lo que necesitas<br />para quedar a jugar</h2>
-            <p className="ln-section-sub">Pensada para que organizar deporte sea fácil, y para que quedar siempre acabe en buen rollo.</p>
+            <ScrollReveal>
+              <h2 className="ln-section-title">Todo lo que necesitas<br />para quedar a jugar</h2>
+              <p className="ln-section-sub">Pensada para que organizar deporte sea fácil, y para que quedar siempre acabe en buen rollo.</p>
+            </ScrollReveal>
 
             <div className="ln-bento">
               {FEATURES.map((f, i) => (
@@ -225,12 +227,13 @@ export default async function Landing() {
           </div>
         </section>
 
-        {/* ═══ CÓMO FUNCIONA — Vertical timeline ═══ */}
+        {/* COMO FUNCIONA */}
         <section className="ln-section ln-section-alt" id="como">
           <div className="ln-section-inner">
-            <span className="ln-eyebrow">Cómo funciona</span>
-            <h2 className="ln-section-title">Empieza a jugar<br />en tres pasos</h2>
-            <p className="ln-section-sub">Nada de papeleo ni compromisos. Entras, eliges y quedas para hacer deporte.</p>
+            <ScrollReveal>
+              <h2 className="ln-section-title">Empieza a jugar<br />en tres pasos</h2>
+              <p className="ln-section-sub">Nada de papeleo ni compromisos. Entras, eliges y quedas para hacer deporte.</p>
+            </ScrollReveal>
 
             <div className="ln-timeline">
               <div className="ln-timeline-line" />
@@ -238,50 +241,44 @@ export default async function Landing() {
                 { num: '01', title: 'Crea tu cuenta', text: 'Regístrate con email o Google en menos de un minuto. Sin tarjeta, sin cuotas.' },
                 { num: '02', title: 'Elige deporte y ciudad', text: 'Busca eventos en tu provincia o crea el tuyo con deporte, fecha, hora y lugar.' },
                 { num: '03', title: 'Apúntate y conoce gente', text: 'Reserva tu plaza, chatea con los participantes y comparte tus momentos.' },
-              ].map((s) => (
-                <div key={s.num} className="ln-timeline-step">
-                  <div className="ln-timeline-dot">{s.num}</div>
-                  <div className="ln-timeline-content">
-                    <h3>{s.title}</h3>
-                    <p>{s.text}</p>
+              ].map((s, i) => (
+                <ScrollReveal key={s.num} delay={i * 100}>
+                  <div className="ln-timeline-step">
+                    <div className="ln-timeline-dot">{s.num}</div>
+                    <div className="ln-timeline-content">
+                      <h3>{s.title}</h3>
+                      <p>{s.text}</p>
+                    </div>
                   </div>
-                </div>
+                </ScrollReveal>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ═══ CIUDADES — Chips ═══ */}
+        {/* CIUDADES */}
         <section className="ln-section" id="ciudades">
           <div className="ln-section-inner">
-            <span className="ln-eyebrow">Ciudades</span>
-            <h2 className="ln-section-title">Eventos deportivos<br />en tu ciudad</h2>
-            <p className="ln-section-sub">Busca deporte social cerca de ti en las 50 provincias españolas.</p>
-            <div className="ln-cities">
-              {CITIES.map(([id, name]) => (
-                <Link key={id} href={`/events?prov=${id}`} className="ln-chip">{name}</Link>
-              ))}
-            </div>
+            <ScrollReveal>
+              <h2 className="ln-section-title">Eventos deportivos<br />en tu ciudad</h2>
+              <p className="ln-section-sub">Busca deporte social cerca de ti en las 50 provincias españolas.</p>
+            </ScrollReveal>
+            <ScrollReveal delay={100}>
+              <div className="ln-cities">
+                {CITIES.map(([id, name]) => (
+                  <Link key={id} href={`/events?prov=${id}`} className="ln-chip">{name}</Link>
+                ))}
+              </div>
+            </ScrollReveal>
           </div>
         </section>
 
-        {/* ═══ SEO/GEO ═══ */}
-        <section className="ln-section ln-section-alt">
+        {/* FAQ */}
+        <section className="ln-section ln-section-alt" id="faq">
           <div className="ln-section-inner">
-            <div className="ln-article">
-              <h3>La app para organizar eventos deportivos y deporte social en España</h3>
-              <p><strong>TeamUp</strong> (teamupapp.es) es la plataforma social deportiva gratuita en España para conectar deportistas cercanos: crea, busca y únete a eventos deportivos, partidos de pádel, fútbol 7, running, senderismo y entrenamientos en las 50 provincias españolas.</p>
-              <p>¿Te falta pareja para el pádel? ¿Quieres un grupo de running por la mañana? ¿Buscas un once para el fútbol del finde? En TeamUp, cualquier persona puede publicar un evento con deporte, fecha, hora y lugar, y el resto de la comunidad se apunta con un toque. Es la forma más sencilla de <strong>hacer deporte y conocer gente nueva en tu zona</strong>.</p>
-              <p>TeamUp funciona también para clubs, centros deportivos y empresas: crea torneos, ligas y quedadas recurrentes. Es una PWA: puedes instalarla en tu móvil y usarla como una app nativa.</p>
-            </div>
-          </div>
-        </section>
-
-        {/* ═══ FAQ — Clean list ═══ */}
-        <section className="ln-section" id="faq">
-          <div className="ln-section-inner">
-            <span className="ln-eyebrow">FAQ</span>
-            <h2 className="ln-section-title">Preguntas frecuentes</h2>
+            <ScrollReveal>
+              <h2 className="ln-section-title">Preguntas frecuentes</h2>
+            </ScrollReveal>
             <div className="ln-faq">
               {FAQ.map(([q, a]) => (
                 <div key={q} className="ln-faq-item">
@@ -293,9 +290,9 @@ export default async function Landing() {
           </div>
         </section>
 
-        {/* ═══ SPONSORS ═══ */}
+        {/* SPONSORS */}
         {sponsors.length > 0 && (
-          <section className="ln-section ln-section-alt">
+          <section className="ln-section">
             <div className="ln-section-inner">
               <div className="ln-sponsor-label">Con la colaboración de</div>
               <div className="sponsors-ticker">
@@ -315,27 +312,27 @@ export default async function Landing() {
           </section>
         )}
 
-        {/* ═══ CTA FINAL ═══ */}
+        {/* CTA FINAL */}
         <section className="ln-section ln-cta-section">
           <div className="ln-section-inner ln-cta-inner">
-            <span className="ln-eyebrow" style={{ color: 'var(--button-contrast)', opacity: 0.7 }}>Empieza hoy</span>
-            <h2 className="ln-section-title" style={{ color: 'var(--button-contrast)' }}>¿Preparado para jugar?</h2>
-            <p className="ln-section-sub" style={{ color: 'var(--button-contrast)', opacity: 0.8 }}>Crea tu cuenta gratis y encuentra tu primer evento en menos de un minuto.</p>
-            <div className="ln-hero-cta" style={{ justifyContent: 'center' }}>
-              <Link href="/start" className="ln-btn ln-btn-primary ln-btn-lg" style={{ background: 'var(--button-contrast)', color: 'var(--bg)' }}>
-                Entrar a la app
-                <span className="ln-btn-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
-              </Link>
-            </div>
+            <ScrollReveal>
+              <h2 className="ln-section-title" style={{ color: 'var(--button-contrast)' }}>¿Preparado para jugar?</h2>
+              <p className="ln-section-sub" style={{ color: 'var(--button-contrast)', opacity: 0.8 }}>Crea tu cuenta gratis y encuentra tu primer evento en menos de un minuto.</p>
+              <div className="ln-hero-cta" style={{ justifyContent: 'center' }}>
+                <Link href="/start" className="ln-btn ln-btn-primary ln-btn-lg" style={{ background: 'var(--button-contrast)', color: 'var(--bg)' }}>
+                  Crear cuenta gratis
+                </Link>
+              </div>
+            </ScrollReveal>
           </div>
         </section>
       </main>
 
-      {/* ═══ FOOTER ═══ */}
+      {/* FOOTER */}
       <footer className="ln-footer">
         <div className="ln-footer-inner">
           <div className="ln-logo" style={{ justifyContent: 'center', flex: 'none' }}>
-            <LogoTeamUp height={24} />
+            <LogoTeamUp height={20} />
           </div>
           <div className="ln-footer-links">
             <a href="#como">Cómo funciona</a>
@@ -347,7 +344,7 @@ export default async function Landing() {
             <Link href="/cookies">Cookies</Link>
           </div>
           <div className="ln-footer-copy">
-            © 2026 TeamUp · <a href="mailto:colivasbon@gmail.com">colivasbon@gmail.com</a> · <Link href="/start">Entrar a la app</Link>
+            © 2026 TeamUp · <a href="mailto:colivasbon@gmail.com">colivasbon@gmail.com</a> · <Link href="/start">Crear cuenta</Link>
           </div>
         </div>
       </footer>
