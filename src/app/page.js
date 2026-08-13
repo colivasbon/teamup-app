@@ -156,6 +156,8 @@ export default async function Landing() {
   return (
     <div className="landing">
 
+      <a className="skip-link" href="#landing-main">Saltar al contenido</a>
+
       {/* ── Header ── */}
       <header className="landing-wrap" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14 }}>
         <Link href="/" className="landing-logo" aria-label="TeamUp — Inicio">
@@ -176,39 +178,106 @@ export default async function Landing() {
       </header>
 
       {/* ── Hero ── */}
-      <section className="landing-hero landing-wrap">
-        <span className="landing-kicker">Haz deporte · Conoce gente</span>
-        <h1>Haz deporte y conoce gente en tu zona</h1>
-        <p className="lead">
-          TeamUp es la app gratuita para organizar y unirse a pachangas, partidos de pádel,
-          fútbol 7, grupos de running y quedadas deportivas cerca de ti. En toda España.
-        </p>
-        <div className="landing-cta-row">
-          <Link href="/start" className="btn btn-primary">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
-            Entrar a la app
-          </Link>
-          <Link href="/events" className="btn btn-outline">Explorar eventos</Link>
-        </div>
-        <p className="hero-note">Gratis · Sin cuotas · Para todos los niveles</p>
-
-        {stats && (
-          <div className="stats-strip landing-stats anim-1" style={{ marginTop: 40 }}>
-            {[
-              [stats.active, 'Eventos activos'],
-              [stats.users, 'Deportistas'],
-              [stats.recent, 'Nuevos en 7 días'],
-            ].map(([v, l]) => (
-              <div key={l}>
-                <div className="stat-value">{v}</div>
-                <div className="stat-label">{l}</div>
+      <main id="landing-main">
+        <section className="landing-hero landing-wrap">
+          <div className="landing-hero-grid">
+            <div className="landing-hero-copy">
+              <span className="landing-kicker">Haz deporte · Conoce gente</span>
+              <h1>Haz deporte y conoce gente en tu zona</h1>
+              <p className="lead">
+                TeamUp es la app gratuita para organizar y unirse a pachangas, partidos de pádel,
+                fútbol 7, grupos de running y quedadas deportivas cerca de ti. En toda España.
+              </p>
+              <div className="landing-cta-row">
+                <Link href="/start" className="btn btn-primary">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
+                  Entrar a la app
+                </Link>
+                <Link href="/events" className="btn btn-outline">Explorar eventos</Link>
               </div>
-            ))}
+              <p className="hero-note">Gratis · Sin cuotas · Para todos los niveles</p>
+
+              {stats && (
+                <div className="stats-strip landing-stats anim-1">
+                  {[
+                    [stats.active, 'Eventos activos'],
+                    [stats.users, 'Deportistas'],
+                    [stats.recent, 'Nuevos en 7 días'],
+                  ].map(([v, l]) => (
+                    <div key={l}>
+                      <div className="stat-value">{v}</div>
+                      <div className="stat-label">{l}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="landing-hero-visual" aria-hidden="true">
+              <div className="landing-phone">
+                <div className="phone-notch" />
+                <div className="phone-row">
+                  <span className="phone-appname">TeamUp</span>
+                  <span className="phone-avatar">👤</span>
+                </div>
+                <div className="phone-stats">
+                  <div className="phone-stat"><strong>124</strong><span>Eventos</span></div>
+                  <div className="phone-stat"><strong>382</strong><span>Deportistas</span></div>
+                  <div className="phone-stat"><strong>31</strong><span>Nuevos 7d</span></div>
+                </div>
+                <div className="phone-label">¿Qué hacemos hoy?</div>
+                <div className="phone-sports">
+                  <div className="phone-sport">
+                    <span className="ps-emoji" style={{ background: 'linear-gradient(140deg,#5b6ef5,#3f4f5a)' }}>{getSportEmoji('running')}</span>
+                    <span className="ps-name">Running</span>
+                  </div>
+                  <div className="phone-sport">
+                    <span className="ps-emoji" style={{ background: 'linear-gradient(140deg,#2d9e7a,#1a6e56)' }}>{getSportEmoji('padel')}</span>
+                    <span className="ps-name">Pádel</span>
+                  </div>
+                  <div className="phone-sport">
+                    <span className="ps-emoji" style={{ background: 'linear-gradient(140deg,#ef4444,#b91c1c)' }}>{getSportEmoji('futbol')}</span>
+                    <span className="ps-name">Fútbol</span>
+                  </div>
+                </div>
+                <div className="phone-label" style={{ marginTop: 2 }}>Eventos cerca de ti</div>
+                <div className="phone-event">
+                  <div className="pe-icon">{getSportEmoji('running')}</div>
+                  <div className="pe-body">
+                    <div className="pe-title">Running Matutino</div>
+                    <div className="pe-meta">Alameda de Córdoba · Hoy 07:30</div>
+                    <div className="pbar"><div className="pbar-fill" style={{ width: '70%', background: '#5b6ef5' }} /></div>
+                  </div>
+                  <div className="pe-count">7/10</div>
+                </div>
+                <div className="phone-event">
+                  <div className="pe-icon">{getSportEmoji('padel')}</div>
+                  <div className="pe-body">
+                    <div className="pe-title">Torneo Pádel Medio</div>
+                    <div className="pe-meta">Club Pádel Centro · Mañana 18:00</div>
+                    <div className="pbar"><div className="pbar-fill" style={{ width: '50%', background: '#2d9e7a' }} /></div>
+                  </div>
+                  <div className="pe-count">2/4</div>
+                </div>
+                <div className="phone-nav">
+                  <span className="on"><i>🏠</i>Inicio</span>
+                  <span><i>🔍</i>Explorar</span>
+                  <span><i>＋</i>Crear</span>
+                  <span><i>📸</i>Momentos</span>
+                </div>
+              </div>
+              <div className="landing-float">
+                <span className="pf-icon">🔔</span>
+                <div>
+                  <div className="pf-title">Queda 1 plaza</div>
+                  <div className="pf-text">Pádel Medio · Mañana 18:00</div>
+                </div>
+              </div>
+            </div>
           </div>
-        )}
-      </section>
+        </section>
 
       {/* ── Cómo funciona ── */}
       <section className="landing-wrap landing-section" id="como-funciona">
@@ -360,6 +429,8 @@ export default async function Landing() {
           <Link href="/auth" className="btn btn-outline">Crear cuenta</Link>
         </div>
       </section>
+
+      </main>
 
       {/* ── Footer ── */}
       <footer className="landing-footer">
