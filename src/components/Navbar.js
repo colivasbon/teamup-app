@@ -6,14 +6,14 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { NotifBadge } from '@/components/NotifBadge'
-import { House, HouseFill, Compass, CompassFill, PlusCircle, PlusCircleFill, Images, ImagesFill, User, UserFill, CalendarBlank, Trophy } from '@phosphor-icons/react'
+import { House, Compass, PlusCircle, Images, User, CalendarBlank, Trophy } from '@phosphor-icons/react'
 
 const NAV_ITEMS = [
-  { href: '/start',   label: 'Inicio',   Icon: House, IconFill: HouseFill },
-  { href: '/events',  label: 'Explorar', Icon: Compass, IconFill: CompassFill },
-  { href: '/create',  label: 'Crear',    Icon: PlusCircle, IconFill: PlusCircleFill },
-  { href: '/moments', label: 'Momentos', Icon: Images, IconFill: ImagesFill },
-  { href: '/profile', label: 'Perfil',   Icon: User, IconFill: UserFill },
+  { href: '/start',   label: 'Inicio',   Icon: House },
+  { href: '/events',  label: 'Explorar', Icon: Compass },
+  { href: '/create',  label: 'Crear',    Icon: PlusCircle },
+  { href: '/moments', label: 'Momentos', Icon: Images },
+  { href: '/profile', label: 'Perfil',   Icon: User },
 ]
 
 export default function Navbar() {
@@ -70,36 +70,27 @@ export default function Navbar() {
           willChange: 'backdrop-filter',
         }}>
         <div className="nav-inner">
-          {NAV_ITEMS.map(({ href, label, Icon, IconFill }) => {
+          {NAV_ITEMS.map(({ href, label, Icon }) => {
             const active = path === href || (href !== '/' && path?.startsWith(href))
             const isActive = active || (label === 'Crear' && showCreateMenu)
 
-            // Botón Crear especial (caja redondeada)
             if (label === 'Crear' && isBusiness) {
               return (
                 <button key={href} onClick={() => setShowCreateMenu(p => !p)}
                   className={`nav-item${isActive ? ' active' : ''}`}
                   style={{ background:'none', border:'none', cursor:'pointer', fontFamily:'inherit' }}>
                   <div style={{ position:'relative', display:'inline-flex', alignItems:'center', justifyContent:'center' }}>
-                    {isActive
-                      ? <PlusCircleFill size={23} weight="fill" />
-                      : <PlusCircle size={23} weight="light" />
-                    }
+                    <Icon size={23} weight={isActive ? 'fill' : 'light'} />
                   </div>
                   <span className="nav-label">Crear</span>
                 </button>
               )
             }
 
-            const ActiveIcon = IconFill
-
             return (
               <Link key={href} href={href} className={`nav-item${isActive ? ' active' : ''}`}>
                 <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {isActive
-                    ? <ActiveIcon size={23} weight="fill" />
-                    : <Icon size={23} weight="light" />
-                  }
+                  <Icon size={23} weight={isActive ? 'fill' : 'light'} />
                   {label === 'Perfil' && user && <NotifBadge userId={user.id} />}
                 </div>
                 <span className="nav-label">{label}</span>
