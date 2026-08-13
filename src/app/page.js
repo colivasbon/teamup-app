@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import ThemeButton from '@/components/ThemeButton'
+import MobileRedirect from '@/components/MobileRedirect'
 import { getSportEmoji } from '@/lib/sportEmoji'
 import { getSupabaseServer } from '@/lib/supabase'
 
@@ -156,10 +157,12 @@ export default async function Landing() {
   return (
     <div className="landing">
 
+      <MobileRedirect />
+
       <a className="skip-link" href="#landing-main">Saltar al contenido</a>
 
       {/* ── Header ── */}
-      <header className="landing-wrap" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14 }}>
+      <header className="landing-wrap landing-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14 }}>
         <Link href="/" className="landing-logo" aria-label="TeamUp — Inicio">
           <LogoTeamUp height={34} />
         </Link>
