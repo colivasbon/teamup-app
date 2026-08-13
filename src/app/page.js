@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import ThemeButton from '@/components/ThemeButton'
-import { getSportEmoji } from '@/components/SportIcon'
+import { getSportEmoji } from '@/lib/sportEmoji'
 import { getSupabaseServer } from '@/lib/supabase'
 
 export const revalidate = 3600
