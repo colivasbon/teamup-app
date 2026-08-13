@@ -69,7 +69,7 @@ const IconProfile = ({ a }) => (
 )
 
 const NAV_ITEMS = [
-  { href: '/',        label: 'Inicio',   icon: (a) => <IconHome a={a}/> },
+  { href: '/start',   label: 'Inicio',   icon: (a) => <IconHome a={a}/> },
   { href: '/events',  label: 'Explorar', icon: (a) => <IconSearch a={a}/> },
   { href: '/create',  label: 'Crear',    icon: (a) => <IconCreate a={a}/> },
   { href: '/moments', label: 'Momentos', icon: (a) => <IconMoments a={a}/> },

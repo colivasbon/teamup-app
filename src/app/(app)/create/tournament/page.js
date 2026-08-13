@@ -94,7 +94,7 @@ export default function CreateTournament() {
               className="btn btn-primary" style={{ display:'block', textAlign:'center' }}>
               Solicitar perfil de empresa
             </a>
-            <Link href="/" style={{ display:'block', marginTop:16, fontSize:13, color:'var(--muted)' }}>
+            <Link href="/start" style={{ display:'block', marginTop:16, fontSize:13, color:'var(--muted)' }}>
               ← Volver al inicio
             </Link>
           </div>
@@ -151,7 +151,7 @@ export default function CreateTournament() {
 
         {/* Header */}
         <header style={{ display:'flex', alignItems:'center', gap:12, marginBottom:24, paddingBottom:16, borderBottom:'1px solid var(--border)' }}>
-          <Link href="/" style={{ color:'var(--muted)', fontSize:20, textDecoration:'none' }}>←</Link>
+          <Link href="/start" style={{ color:'var(--muted)', fontSize:20, textDecoration:'none' }}>←</Link>
           <div>
             <h1 style={{ fontWeight:900, fontSize:20, margin:0 }}>Crear torneo</h1>
             <p style={{ fontSize:12, color:'var(--muted)', margin:0 }}>Solo para perfiles verificados</p>

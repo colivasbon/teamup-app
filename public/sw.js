@@ -17,7 +17,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  if (url.pathname.startsWith('/_next/') || url.pathname === '/' || url.pathname.startsWith('/icons/') || url.pathname === '/manifest.json') {
+  if (url.pathname.startsWith('/_next/') || url.pathname === '/' || url.pathname === '/start' || url.pathname.startsWith('/icons/') || url.pathname === '/manifest.json') {
     event.respondWith(
       caches.open('teamup-assets-v1').then((cache) =>
         cache.match(request).then((cachedResponse) => {
