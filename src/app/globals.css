@@ -3,8 +3,7 @@
 @import "tailwindcss";
 
 /* ═══════════════════════════════════════════════════════
-   TEAMUP — DESIGN SYSTEM v6
-   Paleta: azul #586875 · crema #f6eddc
+   TEAMUP — DESIGN SYSTEM
    Tailwind v4 + CSS tokens + Phosphor icons
 ═══════════════════════════════════════════════════════ */
 
@@ -50,67 +49,66 @@
 /* ─── TOKENS MODO CLARO ─────────────────────────────── */
 :root {
   /* Altura del navbar — usada por el carrusel de patrocinadores */
-  --navbar-height: 80px; /* aprox: 26px cinta + 10+12+labels+icon ~ 68px */
+  --navbar-height: 80px;
 
   /* Fondos */
-  --bg:           #f6eddc;
-  --bg2:          #ede3d0;
+  --bg:           #f8f9fa;
+  --bg2:          #f1f3f5;
 
   /* Superficies */
-  --surface:      rgba(246,237,220,0.85);
-  --surface2:     rgba(246,237,220,0.55);
+  --surface:      rgba(255,255,255,0.85);
+  --surface2:     rgba(241,243,245,0.65);
   --solid:        #ffffff;
 
   /* Texto */
-  --text:         #1a2028;
-  --text2:        #3a4450;
-  --muted:        #7a8a96;
+  --text:         #1a1d21;
+  --text2:        #3a3f47;
+  --muted:        #6b7280;
 
   /* Bordes */
-  --border:       rgba(88,104,117,0.18);
-  --border2:      rgba(88,104,117,0.09);
+  --border:       rgba(0,0,0,0.10);
+  --border2:      rgba(0,0,0,0.05);
 
-  /* Color primario: azul */
+  /* Color primario */
   --primary:      #586875;
   --primary-h:    #3f4f5a;
   --primary-rgb:  88,104,117;
 
-  /* Acento: por defecto sigue el color primario */
+  /* Acento */
   --accent:       var(--primary);
   --accent-rgb:   var(--primary-rgb);
 
   /* Glass */
-  --glass:        rgba(255,252,245,0.78);
+  --glass:        rgba(255,255,255,0.78);
   --glass-edge:   rgba(255,255,255,0.92);
   /* Navbar glass */
-  --navbar-glass: rgba(255,255,255,0.55);
-  --navbar-glass-edge: rgba(255,255,255,0.72);
-  --navbar-blur:  blur(22px) saturate(180%) contrast(1.08);
+  --navbar-glass: rgba(255,255,255,0.88);
+  --navbar-glass-edge: rgba(0,0,0,0.06);
+  --navbar-blur:  blur(20px) saturate(1.4);
 
   /* Sombras */
-  --shadow-sm:    0 2px 12px rgba(88,104,117,0.10);
-  --shadow:       0 4px 28px rgba(88,104,117,0.13);
-  --shadow-lg:    0 12px 48px rgba(88,104,117,0.18);
+  --shadow-sm:    0 1px 8px rgba(0,0,0,0.06);
+  --shadow:       0 4px 24px rgba(0,0,0,0.08);
+  --shadow-lg:    0 12px 48px rgba(0,0,0,0.12);
 
   /* Gradiente principal */
   --grad:         linear-gradient(135deg, #586875 0%, #3f4f5a 100%);
-  --grad-warm:    linear-gradient(135deg, #c8a96e 0%, #a07840 100%);
+  --grad-warm:    linear-gradient(135deg, #586875 0%, #3f4f5a 100%);
 
   /* UI helpers */
-  --button-contrast: #f6eddc;
-  --bg-image: radial-gradient(ellipse 60% 40% at 10% 15%, rgba(88,104,117,0.10) 0%, transparent 55%),
-               radial-gradient(ellipse 48% 52% at 90% 85%, rgba(200,169,110,0.08) 0%, transparent 55%),
-               radial-gradient(ellipse 34% 42% at 70% 2%, rgba(88,104,117,0.06) 0%, transparent 55%),
-               radial-gradient(ellipse 28% 28% at 20% 90%, rgba(200,169,110,0.05) 0%, transparent 55%);
+  --button-contrast: #f8f9fa;
+  --bg-image: radial-gradient(ellipse 60% 40% at 10% 15%, rgba(88,104,117,0.06) 0%, transparent 55%),
+               radial-gradient(ellipse 48% 52% at 90% 85%, rgba(88,104,117,0.04) 0%, transparent 55%),
+               radial-gradient(ellipse 34% 42% at 70% 2%, rgba(88,104,117,0.03) 0%, transparent 55%);
 
   /* Radios */
   --radius:       18px;
   --radius-sm:    12px;
   --radius-xs:    8px;
   --nav-h:        68px;
-  /* Navbar glass (dedicated translucent sheet for bottom nav) */
-  --navbar-glass: rgba(255,255,255,0.50);
-  --navbar-glass-edge: rgba(255,255,255,0.75);
+  /* Navbar glass */
+  --navbar-glass: rgba(255,255,255,0.88);
+  --navbar-glass-edge: rgba(0,0,0,0.06);
   --nav-glass:    var(--glass);
   --nav-glass-edge: var(--glass-edge);
 
@@ -154,64 +152,59 @@
 
 /* ─── TOKENS MODO OSCURO ────────────────────────────── */
 [data-theme="dark"] {
-  --navbar-glass: rgba(24,30,38,0.46);
-  --navbar-glass-edge: rgba(246,237,220,0.12);
   /* Fondos */
-  --bg:           #1a2028;
-  --bg2:          #212a33;
+  --bg:           #111318;
+  --bg2:          #181b22;
 
   /* Superficies */
   --surface:      rgba(255,255,255,0.06);
   --surface2:     rgba(255,255,255,0.03);
-  --solid:        #252f38;
+  --solid:        #1e2128;
 
   /* Texto */
-  --text:         #f6eddc;
-  --text2:        #c8bfaf;
-  --muted:        #8a98a4;
+  --text:         #e8eaed;
+  --text2:        #b0b5bd;
+  --muted:        #6b7280;
 
   /* Bordes */
-  --border:       rgba(246,237,220,0.12);
-  --border2:      rgba(246,237,220,0.06);
+  --border:       rgba(255,255,255,0.10);
+  --border2:      rgba(255,255,255,0.05);
 
-  /* Color primario: crema */
-  --primary:      #f6eddc;
-  --primary-h:    #fffaf2;
-  --primary-rgb:  246,237,220;
+  /* Color primario */
+  --primary:      #e8eaed;
+  --primary-h:    #ffffff;
+  --primary-rgb:  232,234,237;
 
   /* Acento */
   --accent:       var(--primary);
   --accent-rgb:   var(--primary-rgb);
 
-  --nav-overlay:  transparent;
-  --navbar-glass: rgba(14,20,28,0.40);
-  --navbar-glass-edge: rgba(246,237,220,0.16);
+  --navbar-glass: rgba(17,19,24,0.82);
+  --navbar-glass-edge: rgba(255,255,255,0.08);
 
   /* Glass */
-  --glass:        rgba(26,32,40,0.82);
-  --glass-edge:   rgba(246,237,220,0.10);
-  /* keep nav glass same as theme glass */
+  --glass:        rgba(17,19,24,0.82);
+  --glass-edge:   rgba(255,255,255,0.08);
   --nav-glass:    var(--glass);
   --nav-glass-edge: var(--glass-edge);
 
   /* Sombras */
-  --shadow-sm:    0 2px 12px rgba(10,16,24,0.40);
-  --shadow:       0 4px 28px rgba(10,16,24,0.52);
-  --shadow-lg:    0 12px 48px rgba(10,16,24,0.65);
+  --shadow-sm:    0 1px 8px rgba(0,0,0,0.30);
+  --shadow:       0 4px 24px rgba(0,0,0,0.40);
+  --shadow-lg:    0 12px 48px rgba(0,0,0,0.50);
 
   /* Gradiente principal */
   --grad:         linear-gradient(135deg, #586875 0%, #3f4f5a 100%);
-  --grad-warm:    linear-gradient(135deg, #c8a96e 0%, #a07840 100%);
+  --grad-warm:    linear-gradient(135deg, #586875 0%, #3f4f5a 100%);
 
   /* Background extras */
-  --bg-image: radial-gradient(ellipse 55% 45% at 12% 12%, rgba(246,237,220,0.08) 0%, transparent 58%),
-               radial-gradient(ellipse 42% 38% at 84% 84%, rgba(200,169,110,0.07) 0%, transparent 56%);
-  --button-contrast: #1a2028;
-  --danger-rgb: 239,68,68;
+  --bg-image: radial-gradient(ellipse 55% 45% at 12% 12%, rgba(255,255,255,0.04) 0%, transparent 58%),
+               radial-gradient(ellipse 42% 38% at 84% 84%, rgba(255,255,255,0.03) 0%, transparent 56%);
+  --button-contrast: #111318;
 }
 
 [data-theme="dark-emerald"] {
-  --bg:           #0f1416; /* dark grey background for better legibility */
+  --bg:           #0f1416;
   --bg2:          #12181a;
   --surface:      rgba(255,255,255,0.06);
   --surface2:     rgba(255,255,255,0.03);
@@ -224,52 +217,50 @@
   --primary:      #30b38d;
   --primary-h:    #76d7b1;
   --primary-rgb:  48,179,141;
-  --accent:       #30b38d; /* esmeralda */
+  --accent:       #30b38d;
   --accent-rgb:   48,179,141;
-  --navbar-glass: rgba(10,18,16,0.32);
-  --navbar-glass-edge: rgba(48,179,141,0.16);
-  --glass:        rgba(14,24,20,0.60);
-  --nav-overlay:  rgba(8,12,10,0.88);
-  --glass-edge:   rgba(48,179,141,0.10);
-  --shadow-sm:    0 2px 12px rgba(0,0,0,0.30);
-  --shadow:       0 4px 28px rgba(0,0,0,0.44);
-  --shadow-lg:    0 12px 48px rgba(0,0,0,0.58);
-  --grad:         linear-gradient(135deg, #09120c 0%, #0f1b13 100%);
-  --grad-warm:    linear-gradient(135deg, #0f5d49 0%, #081c14 100%);
+  --navbar-glass: rgba(10,18,16,0.82);
+  --navbar-glass-edge: rgba(48,179,141,0.10);
+  --glass:        rgba(14,24,20,0.82);
+  --glass-edge:   rgba(48,179,141,0.08);
+  --shadow-sm:    0 1px 8px rgba(0,0,0,0.30);
+  --shadow:       0 4px 24px rgba(0,0,0,0.40);
+  --shadow-lg:    0 12px 48px rgba(0,0,0,0.50);
+  --grad:         linear-gradient(135deg, #30b38d 0%, #1a8c6a 100%);
+  --grad-warm:    linear-gradient(135deg, #30b38d 0%, #1a8c6a 100%);
   --bg-image: radial-gradient(ellipse 48% 40% at 12% 14%, rgba(48,179,141,0.08) 0%, transparent 52%),
                radial-gradient(ellipse 35% 34% at 86% 84%, rgba(48,179,141,0.04) 0%, transparent 60%);
-  --button-contrast: #eef6f0;
+  --button-contrast: #0f1416;
 }
 
 [data-theme="dark-purple"] {
-  --bg:           #0f1419; /* dark grey background with purple accents */
-  --bg2:          #171026;
+  --bg:           #0f1419;
+  --bg2:          #141820;
   --surface:      rgba(255,255,255,0.05);
   --surface2:     rgba(255,255,255,0.03);
-  --solid:        #17081f;
-  --text:         #efe7ff;
-  --text2:        #d8c4fc;
-  --muted:        #b9a7e6;
+  --solid:        #17181f;
+  --text:         #e8e4f0;
+  --text2:        #b8b0cc;
+  --muted:        #7a7290;
   --border:       rgba(178,156,237,0.12);
   --border2:      rgba(178,156,237,0.06);
   --primary:      #9f7ed1;
   --primary-h:    #bc9ee5;
   --primary-rgb:  159,126,209;
-  --accent:       #7c3aed; /* púrpura vibrante */
+  --accent:       #7c3aed;
   --accent-rgb:   124,58,237;
-  --navbar-glass: rgba(18,10,30,0.34);
-  --navbar-glass-edge: rgba(124,58,237,0.16);
-  --glass:        rgba(18,10,30,0.60);
-  --nav-overlay:  transparent;
-  --glass-edge:   rgba(124,58,237,0.10);
-  --shadow-sm:    0 2px 12px rgba(12,6,20,0.40);
-  --shadow:       0 4px 28px rgba(12,6,20,0.55);
-  --shadow-lg:    0 12px 48px rgba(12,6,20,0.68);
-  --grad:         linear-gradient(135deg, #20093f 0%, #120318 100%);
-  --grad-warm:    linear-gradient(135deg, #5b3b99 0%, #120318 100%);
+  --navbar-glass: rgba(15,20,25,0.82);
+  --navbar-glass-edge: rgba(124,58,237,0.10);
+  --glass:        rgba(15,20,25,0.82);
+  --glass-edge:   rgba(124,58,237,0.08);
+  --shadow-sm:    0 1px 8px rgba(0,0,0,0.35);
+  --shadow:       0 4px 24px rgba(0,0,0,0.45);
+  --shadow-lg:    0 12px 48px rgba(0,0,0,0.55);
+  --grad:         linear-gradient(135deg, #9f7ed1 0%, #7c3aed 100%);
+  --grad-warm:    linear-gradient(135deg, #9f7ed1 0%, #7c3aed 100%);
   --bg-image: radial-gradient(ellipse 48% 40% at 14% 16%, rgba(159,126,209,0.08) 0%, transparent 52%),
                radial-gradient(ellipse 35% 34% at 84% 84%, rgba(131,99,194,0.04) 0%, transparent 60%);
-  --button-contrast: #f8f0ff;
+  --button-contrast: #0f1419;
 }
 
 /* ─── RESET ─────────────────────────────────────────── */
@@ -758,22 +749,22 @@ body.hide-slogan .slogan-bar {
   width: 90px; height: 90px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid rgba(246,237,220,0.55);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+  border: 3px solid var(--border);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
 }
 .avatar-edit-btn {
   position: absolute;
   bottom: 0; right: 0;
   width: 28px; height: 28px;
   border-radius: 50%;
-  background: #586875;
-  border: 2px solid #f6eddc;
+  background: var(--primary);
+  border: 2px solid var(--bg);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   font-size: 13px;
-  color: #f6eddc;
+  color: var(--button-contrast);
   transition: transform 0.16s ease-out;
 }
 .avatar-edit-btn:hover { transform: scale(1.12); }
@@ -1094,8 +1085,7 @@ body.hide-slogan .slogan-bar {
 }
 
 /* ═══════════════════════════════════════════════════════
-   LANDING V2 — Editorial Luxury + Asymmetrical Bento
-   Skill: Vanguard_UI_Architect
+   LANDING
 ═══════════════════════════════════════════════════════ */
 
 .ln {
@@ -1201,9 +1191,7 @@ body.hide-slogan .slogan-bar {
   display: flex;
   align-items: center;
   gap: 28px;
-  background: rgba(var(--primary-rgb), 0.04);
-  backdrop-filter: blur(20px) saturate(1.4);
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 8px 10px 8px 20px;
@@ -1325,10 +1313,7 @@ body.hide-slogan .slogan-bar {
   text-wrap: balance;
 }
 .ln-hero-accent {
-  background: var(--grad);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--primary);
 }
 .ln-hero-lead {
   font-size: clamp(16px, 2.2vw, 20px);
@@ -2067,10 +2052,10 @@ body.hide-slogan .slogan-bar {
 
 /* ─── APP SHELL — Slogan bar using tokens ──────────── */
 .slogan-bar {
-  background: #586875;
+  background: var(--primary);
 }
 .slogan-bar span {
-  color: #f6eddc;
+  color: var(--button-contrast);
 }
 
 /* ─── COOKIE BANNER — using tokens ─────────────────── */
