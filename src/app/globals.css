@@ -886,6 +886,15 @@ body.hide-slogan .slogan-bar {
   border: 3px solid var(--border);
   box-shadow: 0 4px 16px rgba(0,0,0,0.12);
 }
+.avatar-wrap--sm {
+  width: 36px !important; height: 36px !important;
+}
+.avatar-wrap--sm img,
+.avatar-wrap--sm .avatar-placeholder {
+  width: 36px !important; height: 36px !important;
+  border: 2px solid var(--border) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10) !important;
+}
 .avatar-edit-btn {
   position: absolute;
   bottom: 0; right: 0;

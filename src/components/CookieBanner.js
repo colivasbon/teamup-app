@@ -39,7 +39,7 @@ export default function CookieBanner() {
     <div style={{
       position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1000,
       background: 'var(--bg)', borderTop: '1px solid var(--border)',
-      padding: '20px 18px calc(28px + 72px)',
+      padding: '16px 16px 14px',
       boxShadow: '0 -8px 32px rgba(0,0,0,0.18)',
       maxWidth: 480, margin: '0 auto',
     }}>

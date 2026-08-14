@@ -221,10 +221,10 @@ export default function Home() {
                 Instalar app
               </button>
             )}
-            <Link href="/profile" className="avatar-wrap" style={{ width:44, height:44 }}>
+            <Link href="/profile" className="avatar-wrap avatar-wrap--sm">
               {avatarUrl
-                ? <Image src={avatarUrl} alt={displayName || 'Perfil'} width={44} height={44} style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'50%' }} />
-                : <span className="avatar-placeholder" style={{ display:'flex', alignItems:'center', justifyContent:'center', fontSize:20 }}>👤</span>
+                ? <Image src={avatarUrl} alt={displayName || 'Perfil'} width={36} height={36} style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'50%' }} />
+                : <span className="avatar-placeholder" style={{ display:'flex', alignItems:'center', justifyContent:'center', fontSize:16 }}>👤</span>
               }
             </Link>
           </div>
