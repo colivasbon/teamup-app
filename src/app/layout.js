@@ -4,7 +4,7 @@ export const viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  themeColor: '#1a2028',
+  themeColor: '#f8f9fa',
   colorScheme: 'dark light',
 }
 
@@ -146,7 +146,7 @@ export default function RootLayout({ children }) {
   }
 
   return (
-    <html lang="es" data-theme="dark">
+    <html lang="es" data-theme="light">
       <head>
         <meta name="geo.region" content="ES" />
         <meta name="geo.placename" content="España" />

@@ -150,7 +150,40 @@
   --z-navbar: 999;
 }
 
-/* ─── TOKENS MODO OSCURO ────────────────────────────── */
+/* ─── TOKENS TEMA CLARO (alias de :root) ─────────────── */
+[data-theme="light"] {
+  --bg:           #f8f9fa;
+  --bg2:          #f1f3f5;
+  --surface:      rgba(255,255,255,0.85);
+  --surface2:     rgba(241,243,245,0.65);
+  --solid:        #ffffff;
+  --text:         #1a1d21;
+  --text2:        #3a3f47;
+  --muted:        #6b7280;
+  --border:       rgba(0,0,0,0.10);
+  --border2:      rgba(0,0,0,0.05);
+  --primary:      #586875;
+  --primary-h:    #3f4f5a;
+  --primary-rgb:  88,104,117;
+  --accent:       var(--primary);
+  --accent-rgb:   var(--primary-rgb);
+  --navbar-glass: rgba(255,255,255,0.88);
+  --navbar-glass-edge: rgba(0,0,0,0.06);
+  --glass:        rgba(255,255,255,0.78);
+  --glass-edge:   rgba(255,255,255,0.92);
+  --nav-glass:    var(--glass);
+  --nav-glass-edge: var(--glass-edge);
+  --shadow-sm:    0 1px 8px rgba(0,0,0,0.06);
+  --shadow:       0 4px 24px rgba(0,0,0,0.08);
+  --shadow-lg:    0 12px 48px rgba(0,0,0,0.12);
+  --grad:         linear-gradient(135deg, #586875 0%, #3f4f5a 100%);
+  --grad-warm:    linear-gradient(135deg, #586875 0%, #3f4f5a 100%);
+  --bg-image: radial-gradient(ellipse 60% 40% at 10% 15%, rgba(88,104,117,0.06) 0%, transparent 55%),
+               radial-gradient(ellipse 48% 52% at 90% 85%, rgba(88,104,117,0.04) 0%, transparent 55%);
+  --button-contrast: #f8f9fa;
+}
+
+/* ─── TOKENS TEMA OSCURO ────────────────────────────── */
 [data-theme="dark"] {
   /* Fondos */
   --bg:           #111318;
@@ -261,6 +294,104 @@
   --bg-image: radial-gradient(ellipse 48% 40% at 14% 16%, rgba(159,126,209,0.08) 0%, transparent 52%),
                radial-gradient(ellipse 35% 34% at 84% 84%, rgba(131,99,194,0.04) 0%, transparent 60%);
   --button-contrast: #0f1419;
+}
+
+/* ─── TOKENS TEMA AMOLED (puro negro) ───────────────── */
+[data-theme="amoled"] {
+  --bg:           #000000;
+  --bg2:          #0a0a0a;
+  --surface:      rgba(255,255,255,0.06);
+  --surface2:     rgba(255,255,255,0.03);
+  --solid:        #111111;
+  --text:         #e8eaed;
+  --text2:        #b0b5bd;
+  --muted:        #6b7280;
+  --border:       rgba(255,255,255,0.10);
+  --border2:      rgba(255,255,255,0.05);
+  --primary:      #e8eaed;
+  --primary-h:    #ffffff;
+  --primary-rgb:  232,234,237;
+  --accent:       var(--primary);
+  --accent-rgb:   var(--primary-rgb);
+  --navbar-glass: rgba(0,0,0,0.88);
+  --navbar-glass-edge: rgba(255,255,255,0.08);
+  --glass:        rgba(0,0,0,0.82);
+  --glass-edge:   rgba(255,255,255,0.08);
+  --nav-glass:    var(--glass);
+  --nav-glass-edge: var(--glass-edge);
+  --shadow-sm:    0 1px 8px rgba(0,0,0,0.50);
+  --shadow:       0 4px 24px rgba(0,0,0,0.60);
+  --shadow-lg:    0 12px 48px rgba(0,0,0,0.70);
+  --grad:         linear-gradient(135deg, #586875 0%, #3f4f5a 100%);
+  --grad-warm:    linear-gradient(135deg, #586875 0%, #3f4f5a 100%);
+  --bg-image: none;
+  --button-contrast: #000000;
+}
+
+/* ─── TOKENS TEMA CALA (crema cálida) ───────────────── */
+[data-theme="cream"] {
+  --bg:           #f6eddc;
+  --bg2:          #ede3d0;
+  --surface:      rgba(255,255,255,0.80);
+  --surface2:     rgba(237,227,208,0.60);
+  --solid:        #ffffff;
+  --text:         #1a2028;
+  --text2:        #3a4450;
+  --muted:        #7a8a96;
+  --border:       rgba(88,104,117,0.18);
+  --border2:      rgba(88,104,117,0.09);
+  --primary:      #586875;
+  --primary-h:    #3f4f5a;
+  --primary-rgb:  88,104,117;
+  --accent:       var(--primary);
+  --accent-rgb:   var(--primary-rgb);
+  --navbar-glass: rgba(255,255,255,0.88);
+  --navbar-glass-edge: rgba(88,104,117,0.10);
+  --glass:        rgba(255,252,245,0.78);
+  --glass-edge:   rgba(255,255,255,0.92);
+  --nav-glass:    var(--glass);
+  --nav-glass-edge: var(--glass-edge);
+  --shadow-sm:    0 1px 8px rgba(88,104,117,0.10);
+  --shadow:       0 4px 24px rgba(88,104,117,0.13);
+  --shadow-lg:    0 12px 48px rgba(88,104,117,0.18);
+  --grad:         linear-gradient(135deg, #586875 0%, #3f4f5a 100%);
+  --grad-warm:    linear-gradient(135deg, #c8a96e 0%, #a07840 100%);
+  --bg-image: radial-gradient(ellipse 60% 40% at 10% 15%, rgba(88,104,117,0.08) 0%, transparent 55%),
+               radial-gradient(ellipse 48% 52% at 90% 85%, rgba(200,169,110,0.06) 0%, transparent 55%);
+  --button-contrast: #f6eddc;
+}
+
+/* ─── TOKENS TEMA OCÉANO (azul profundo) ────────────── */
+[data-theme="ocean"] {
+  --bg:           #f0f4f8;
+  --bg2:          #e4eaf2;
+  --surface:      rgba(255,255,255,0.82);
+  --surface2:     rgba(228,234,242,0.60);
+  --solid:        #ffffff;
+  --text:         #0f172a;
+  --text2:        #334155;
+  --muted:        #64748b;
+  --border:       rgba(30,58,95,0.12);
+  --border2:      rgba(30,58,95,0.06);
+  --primary:      #1e3a5f;
+  --primary-h:    #172e4a;
+  --primary-rgb:  30,58,95;
+  --accent:       #2563eb;
+  --accent-rgb:   37,99,235;
+  --navbar-glass: rgba(255,255,255,0.88);
+  --navbar-glass-edge: rgba(30,58,95,0.10);
+  --glass:        rgba(255,255,255,0.78);
+  --glass-edge:   rgba(255,255,255,0.92);
+  --nav-glass:    var(--glass);
+  --nav-glass-edge: var(--glass-edge);
+  --shadow-sm:    0 1px 8px rgba(30,58,95,0.08);
+  --shadow:       0 4px 24px rgba(30,58,95,0.10);
+  --shadow-lg:    0 12px 48px rgba(30,58,95,0.14);
+  --grad:         linear-gradient(135deg, #1e3a5f 0%, #172e4a 100%);
+  --grad-warm:    linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  --bg-image: radial-gradient(ellipse 60% 40% at 10% 15%, rgba(30,58,95,0.06) 0%, transparent 55%),
+               radial-gradient(ellipse 48% 52% at 90% 85%, rgba(37,99,235,0.05) 0%, transparent 55%);
+  --button-contrast: #f0f4f8;
 }
 
 /* ─── RESET ─────────────────────────────────────────── */
@@ -709,14 +840,19 @@ body.hide-slogan .slogan-bar {
   flex-shrink: 0;
 }
 
-[data-theme="light"] .sponsors-ticker__item {
+[data-theme="light"] .sponsors-ticker__item,
+[data-theme="cream"] .sponsors-ticker__item,
+[data-theme="ocean"] .sponsors-ticker__item {
   opacity: 0.6;
-  color: #1a2028;
+  color: #1a1d21;
 }
 
 /* Logos monocromo PNG: en oscuro blanco semitransparente, en claro negro semitransparente */
-:root { --sponsor-filter: brightness(10) opacity(0.35); }
+:root { --sponsor-filter: brightness(0) opacity(0.55); }
 [data-theme="light"] { --sponsor-filter: brightness(0) opacity(0.55); }
+[data-theme="cream"] { --sponsor-filter: brightness(0) opacity(0.55); }
+[data-theme="ocean"] { --sponsor-filter: brightness(0) opacity(0.55); }
+[data-theme="amoled"] { --sponsor-filter: brightness(10) opacity(0.35); }
 
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }

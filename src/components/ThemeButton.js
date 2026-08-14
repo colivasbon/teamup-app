@@ -4,19 +4,22 @@ import { useState, useEffect, useRef } from 'react'
 
 const VIEW_THEMES = [
   { id:'dark',         label:'Oscuro',      icon:'🌙' },
+  { id:'amoled',       label:'AMOLED',      icon:'⚫' },
   { id:'light',        label:'Claro',        icon:'☀️' },
+  { id:'cream',        label:'Cala',         icon:'🏖️' },
+  { id:'ocean',        label:'Océano',       icon:'🌊' },
   { id:'dark-emerald', label:'Esmeralda',    icon:'💚' },
   { id:'dark-purple',  label:'Púrpura',      icon:'💜' },
 ]
 
 export default function ThemeButton() {
-  const [theme, setTheme] = useState('dark')
+  const [theme, setTheme] = useState('light')
   const [mounted, setMounted] = useState(false)
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
 
   useEffect(() => {
-    const saved = localStorage.getItem('tu-theme') || 'dark'
+    const saved = localStorage.getItem('tu-theme') || 'light'
     setTheme(saved)
     document.documentElement.setAttribute('data-theme', saved)
     setMounted(true)
