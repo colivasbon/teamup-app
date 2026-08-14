@@ -135,9 +135,21 @@
 
   /* ── ESTADOS ── */
   --success:  #16a34a;
+  --success-rgb: 22,163,74;
   --danger:   #ef4444;
+  --danger-rgb: 239,68,68;
   --warning:  #f59e0b;
+  --warning-rgb: 245,158,11;
   --primary-soft: rgba(var(--primary-rgb), 0.12);
+  --danger-soft: rgba(var(--danger-rgb), 0.12);
+
+  /* ── Z-INDEX SCALE ── */
+  --z-base: 1;
+  --z-dropdown: 10;
+  --z-sticky: 40;
+  --z-overlay: 100;
+  --z-modal: 200;
+  --z-navbar: 999;
 }
 
 /* ─── TOKENS MODO OSCURO ────────────────────────────── */
@@ -195,6 +207,7 @@
   --bg-image: radial-gradient(ellipse 55% 45% at 12% 12%, rgba(246,237,220,0.08) 0%, transparent 58%),
                radial-gradient(ellipse 42% 38% at 84% 84%, rgba(200,169,110,0.07) 0%, transparent 56%);
   --button-contrast: #1a2028;
+  --danger-rgb: 239,68,68;
 }
 
 [data-theme="dark-emerald"] {
@@ -288,6 +301,19 @@ body {
 a { text-decoration: none; color: inherit; }
 button { font-family: inherit; cursor: pointer; }
 input, textarea, select { font-family: inherit; }
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 
 /* ─── FONDO MESH ────────────────────────────────────── */
 .app-shell {
@@ -598,7 +624,7 @@ select.input   { appearance: none; cursor: pointer; }
   -webkit-backdrop-filter: blur(26px) saturate(200%) contrast(1.1);
   border-top: 1px solid var(--navbar-glass-edge);
   border-radius: 26px 26px 0 0;
-  z-index: 999;
+  z-index: var(--z-navbar);
   padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.12),
               0 10px 38px rgba(0,0,0,0.18);
@@ -800,7 +826,7 @@ body.hide-slogan .slogan-bar {
 .tabs-sticky {
   position: sticky;
   top: 0;
-  z-index: 40;
+  z-index: var(--z-sticky);
   margin-top: 12px;
   margin-bottom: 14px;
   background: color-mix(in srgb, var(--bg) 88%, transparent);
@@ -1153,7 +1179,7 @@ body.hide-slogan .slogan-bar {
   position: fixed;
   top: 10px;
   left: 10px;
-  z-index: 200;
+  z-index: var(--z-modal);
   background: var(--primary);
   color: var(--button-contrast);
   padding: 10px 16px;
@@ -1171,7 +1197,7 @@ body.hide-slogan .slogan-bar {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 100;
+  z-index: var(--z-overlay);
   display: flex;
   justify-content: center;
   padding: 20px 28px 0;
@@ -1726,11 +1752,27 @@ body.hide-slogan .slogan-bar {
 .ln-footer-inner {
   max-width: 1100px;
   margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: start;
+}
+.ln-footer-brand {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  align-items: center;
-  text-align: center;
+  gap: 8px;
+}
+.ln-footer-copy {
+  font-size: 12px;
+  color: var(--muted);
+}
+.ln-footer-copy a { color: var(--muted); text-decoration: underline; }
+.ln-footer-copy a:hover { color: var(--primary); }
+.ln-footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  justify-content: flex-end;
 }
 .ln-footer-links {
   display: flex;
@@ -1744,12 +1786,13 @@ body.hide-slogan .slogan-bar {
   transition: color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .ln-footer-links a:hover { color: var(--primary); }
-.ln-footer-copy {
-  font-size: 12px;
-  color: var(--muted);
+@media (max-width: 600px) {
+  .ln-footer-inner {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .ln-footer-nav { justify-content: center; }
 }
-.ln-footer-copy a { color: var(--muted); text-decoration: underline; }
-.ln-footer-copy a:hover { color: var(--primary); }
 
 /* ─── ACCESSIBILITY — reduced motion ────────────────── */
 @media (prefers-reduced-motion: reduce) {
@@ -1759,4 +1802,349 @@ body.hide-slogan .slogan-bar {
   .ln-bento-card { animation: none; opacity: 1; }
   .sponsors-ticker__inner { animation: none; }
   .ln-marquee-track { animation: none; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   UPGRADES — Redesign pass
+   Noise texture, skeleton loaders, extracted classes
+═══════════════════════════════════════════════════════ */
+
+/* ─── NOISE / GRAIN OVERLAY ────────────────────────── */
+.app-shell::after,
+.ln::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+}
+
+/* ─── SKELETON LOADERS ─────────────────────────────── */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.15; }
+}
+.skeleton {
+  background: var(--border);
+  border-radius: var(--radius-xs);
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+.skeleton-text {
+  height: 12px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+.skeleton-text:last-child { width: 60%; }
+.skeleton-circle {
+  border-radius: 50%;
+}
+.skeleton-card {
+  height: 80px;
+  border-radius: var(--radius-sm);
+}
+
+/* ─── START PAGE — Extracted classes ───────────────── */
+.start-header {
+  padding-top: 16px;
+  padding-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  position: relative;
+}
+.start-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.start-logo-link {
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+[data-theme="dark"] .start-logo-link { color: var(--button-contrast); }
+
+.start-sport-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 22px;
+}
+.start-sport-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 11px 4px 10px;
+  transition: transform 0.18s ease-out, border-color 0.18s ease-out;
+  text-decoration: none;
+}
+.start-sport-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+}
+.start-sport-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 11px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.start-sport-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.start-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.start-section-head h3 {
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  line-height: 1.2;
+}
+.start-section-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.start-event-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--glass);
+  border: 1px solid transparent;
+  text-decoration: none;
+}
+.start-event-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.start-event-info {
+  flex: 1;
+  min-width: 0;
+}
+.start-event-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  overflow: hidden;
+  textOverflow: ellipsis;
+  whiteSpace: nowrap;
+  margin-bottom: 3px;
+}
+.start-event-loc {
+  font-size: 12px;
+  color: var(--muted);
+  overflow: hidden;
+  textOverflow: ellipsis;
+  whiteSpace: nowrap;
+  margin-bottom: 7px;
+}
+.start-event-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.start-event-date {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.start-event-count {
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.start-event-arrow {
+  font-size: 18px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.start-notif-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  text-decoration: none;
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.18), rgba(var(--primary-rgb), 0.08));
+  border: 1.5px solid rgba(var(--primary-rgb), 0.30);
+}
+.start-notif-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  position: relative;
+}
+.start-notif-badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 16px;
+  height: 16px;
+  background: var(--danger);
+  border-radius: 50%;
+  border: 2px solid var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 800;
+  color: white;
+  line-height: 1;
+}
+.start-notif-text {
+  flex: 1;
+  min-width: 0;
+}
+.start-notif-title {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.start-notif-sub {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ─── NAVBAR — Extracted inline styles ─────────────── */
+.nav-create-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+.nav-create-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.18s ease-out, box-shadow 0.18s ease-out;
+}
+.nav-create-icon--inactive {
+  background: var(--glass);
+  border: 1.5px solid var(--border);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.nav-create-icon--active {
+  background: var(--primary);
+  box-shadow: 0 4px 18px rgba(var(--primary-rgb), 0.42);
+}
+
+/* ─── APP SHELL — Slogan bar using tokens ──────────── */
+.slogan-bar {
+  background: var(--primary);
+}
+.slogan-bar span {
+  color: var(--button-contrast);
+}
+
+/* ─── COOKIE BANNER — using tokens ─────────────────── */
+.cookie-toggle {
+  width: 40px;
+  height: 22px;
+  border-radius: 100px;
+  border: none;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.22s ease-out;
+}
+.cookie-toggle::after {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  transition: left 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+}
+.cookie-toggle--on {
+  background: var(--primary);
+}
+.cookie-toggle--on::after {
+  left: 21px;
+}
+.cookie-toggle--off {
+  background: var(--border);
+}
+
+/* ─── ERROR STATES — using tokens ──────────────────── */
+.error-inline {
+  font-size: 13px;
+  color: var(--danger);
+  margin-bottom: 8px;
+}
+.error-box {
+  padding: 8px;
+  background: var(--danger-soft);
+  border: 1px solid var(--danger);
+  border-radius: 8px;
+  color: var(--danger);
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+.warning-box {
+  background: rgba(var(--danger-rgb), 0.1);
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  color: var(--danger);
+  font-size: 13px;
+}
+
+/* ─── FORM TOGGLE — using tokens ───────────────────── */
+.form-toggle-active {
+  background: var(--primary);
+  color: var(--button-contrast);
+}
+.form-toggle-inactive {
+  background: var(--glass);
+  color: var(--muted);
 }

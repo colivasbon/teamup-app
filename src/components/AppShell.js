@@ -46,7 +46,6 @@ export default function AppShell({ children }) {
       <div className="slogan-bar" style={{
         width: '100%',
         height: 26, overflow: 'hidden',
-        background: '#586875',
       }}>
         <div style={{
           display: 'flex', alignItems: 'center', height: '100%',
@@ -56,7 +55,7 @@ export default function AppShell({ children }) {
           {Array.from({length: 12}).map((_, i) => (
             <span key={i} style={{
               fontSize: 10, fontWeight: 800, letterSpacing: '0.2em',
-              color: '#f6eddc', textTransform: 'uppercase',
+              textTransform: 'uppercase',
               padding: '0 28px', flexShrink: 0, whiteSpace: 'nowrap',
             }}>HAZ DEPORTE · CONOCE GENTE</span>
           ))}

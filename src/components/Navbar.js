@@ -42,16 +42,9 @@ const IconMoments = ({ a }) => (
 )
 
 const IconCreate = ({ a }) => (
-  <div style={{
-    width: 44, height: 44, borderRadius: 15,
-    background: a ? '#586875' : 'var(--glass)',
-    border: a ? 'none' : '1.5px solid var(--border)',
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    boxShadow: a ? '0 4px 18px rgba(88,104,117,0.42)' : 'none',
-    backdropFilter: 'blur(14px)',
-  }}>
+  <div className={`nav-create-icon ${a ? 'nav-create-icon--active' : 'nav-create-icon--inactive'}`}>
     <svg width="19" height="19" viewBox="0 0 24 24" fill="none"
-      stroke={a ? '#f6eddc' : 'currentColor'} strokeWidth="2.4" strokeLinecap="round">
+      stroke={a ? 'var(--button-contrast)' : 'currentColor'} strokeWidth="2.4" strokeLinecap="round">
       <line x1="12" y1="5" x2="12" y2="19"/>
       <line x1="5" y1="12" x2="19" y2="12"/>
     </svg>

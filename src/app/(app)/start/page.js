@@ -34,10 +34,10 @@ function LogoTeamUp({ height = 36 }) {
 const SPORT_ICONS  = { running:'🏃', padel:'🎾', senderismo:'🥾', futbol:'⚽', gimnasio:'💪', tenis:'🎾', natacion:'🏊', ciclismo:'🚴', yoga:'🧘', baloncesto:'🏀', voleibol:'🏐', badminton:'🏸' }
 
 const SPORTS = [
-  { id:'running',    name:'Running',    icon:'🏃', from:'#586875', to:'#3f4f5a' },
+  { id:'running',    name:'Running',    icon:'🏃', from:'var(--primary)', to:'var(--primary-h)' },
   { id:'padel',      name:'Pádel',      icon:'🎾', from:'#7a9a8a', to:'#5a7a6a' },
   { id:'senderismo', name:'Senderismo', icon:'🥾', from:'#a07840', to:'#c8a96e' },
-  { id:'futbol',     name:'Fútbol',     icon:'⚽', from:'#5a6870', to:'#3a4850' },
+  { id:'futbol',     name:'Fútbol',     icon:'⚽', from:'var(--danger)', to:'#c53030' },
   { id:'gimnasio',   name:'Gimnasio',   icon:'💪', from:'#7a6858', to:'#5a4838' },
   { id:'tenis',      name:'Tenis',      icon:'🎾', from:'#8a9878', to:'#6a7858' },
 ]
@@ -200,25 +200,16 @@ export default function Home() {
       <div className="page-wrap">
 
         {/* ── Header ── */}
-        <header style={{ paddingTop:16, paddingBottom:20, display:'flex', alignItems:'center', justifyContent:'space-between', gap:8, position:'relative' }}>
-          <h1 style={{ position:'absolute', width:1, height:1, padding:0, margin:-1, overflow:'hidden', clip:'rect(0,0,0,0)', whiteSpace:'nowrap', border:0 }}>
+        <header className="start-header">
+          <h1 className="sr-only">
             TeamUp — Haz deporte, conoce gente en tu zona
           </h1>
 
-          {/* Logo — color azul en claro, crema en oscuro */}
-          <Link href="/start" style={{
-            color:'#586875',
-            display:'flex', alignItems:'center',
-            flex:1, minWidth:0,
-          }}>
-            <style>{`[data-theme="dark"] .home-logo { color: #f6eddc !important; }`}</style>
-            <span className="home-logo" style={{ color:'inherit', display:'flex', alignItems:'center' }}>
-              <LogoTeamUp height={36} />
-            </span>
+          <Link href="/start" className="start-logo-link">
+            <LogoTeamUp height={36} />
           </Link>
 
-          {/* Lado derecho: ThemeButton + botón instalar + Avatar */}
-          <div style={{ display:'flex', alignItems:'center', gap:8, flexShrink:0 }}>
+          <div className="start-header-actions">
             <ThemeButton />
             {showInstallButton && !isInstalled && (
               <button
@@ -229,18 +220,10 @@ export default function Home() {
                 Instalar app
               </button>
             )}
-            <Link href="/profile" style={{
-              width:44, height:44, borderRadius:'50%',
-              background: avatarUrl ? 'transparent' : 'var(--glass)',
-              border:'2px solid var(--border)',
-              display:'flex', alignItems:'center', justifyContent:'center',
-              fontSize:20, backdropFilter:'blur(14px)',
-              overflow:'hidden', flexShrink:0,
-              boxShadow:'var(--shadow-sm)',
-            }}>
+            <Link href="/profile" className="avatar-wrap" style={{ width:44, height:44 }}>
               {avatarUrl
-                ? <img src={avatarUrl} alt={displayName || 'Perfil'} style={{ width:'100%', height:'100%', objectFit:'cover' }}/>
-                : <span>👤</span>
+                ? <img src={avatarUrl} alt={displayName || 'Perfil'} style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'50%' }}/>
+                : <span className="avatar-placeholder" style={{ display:'flex', alignItems:'center', justifyContent:'center', fontSize:20 }}>👤</span>
               }
             </Link>
           </div>
@@ -266,34 +249,29 @@ export default function Home() {
         {/* ── Mis próximos eventos (solo logueado) ── */}
         {user && myEvents.length > 0 && (
           <>
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}>
-              <h3 style={{ fontSize:18, fontWeight:800, margin:0, letterSpacing:'-0.02em', color:'var(--text)', lineHeight:1.2 }}>Mis próximos eventos</h3>
-              <Link href="/profile" style={{ fontSize:13, fontWeight:600, color:'var(--primary)' }}>Ver todos →</Link>
+            <div className="start-section-head">
+              <h3>Mis próximos eventos</h3>
+              <Link href="/profile" className="start-section-link">Ver todos →</Link>
             </div>
             <div style={{ display:'flex', flexDirection:'column', gap:10, marginBottom:28 }}>
               {myEvents.map((ev, i) => {
-                const color = '#586875'
+                const color = 'var(--primary)'
                 const pct   = ev.max_players > 0 ? Math.round(((ev.participant_count||0) / ev.max_players) * 100) : 0
                 return (
-                  <Link key={ev.id} href={`/events/${ev.id}`} className={`card anim-${i+1}`} style={{
-                    display:'flex', alignItems:'center', gap:14, padding:'14px 16px',
-                    background:'var(--glass)',
-                    border:'1px solid transparent',
-                    boxShadow:'0 0 0 1px rgba(255,255,255,0.09), 0 20px 36px rgba(88,104,117,0.10)',
-                  }}>
-                    <div style={{ width:48, height:48, borderRadius:14, background:'rgba(88,104,117,0.10)', border:'1.5px solid rgba(88,104,117,0.20)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, overflow:'hidden' }}>
+                  <Link key={ev.id} href={`/events/${ev.id}`} className={`start-event-card card anim-${i+1}`}>
+                    <div className="start-event-icon" style={{ background:'rgba(var(--primary-rgb),0.10)', border:'1.5px solid rgba(var(--primary-rgb),0.20)' }}>
                       <SportIcon sport={ev.sport} size={36} />
                     </div>
-                    <div style={{ flex:1, minWidth:0 }}>
-                      <div style={{ fontSize:14, fontWeight:700, color:'var(--text)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:3 }}>{ev.title}</div>
-                      <div style={{ fontSize:12, color:'var(--muted)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:7 }}>{ev.location}</div>
-                      <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-                        <span style={{ fontSize:11, color:'var(--muted)', whiteSpace:'nowrap' }}>{fmtDate(ev.date, ev.time)}</span>
-                        <div style={{ flex:1 }}><div className="pbar"><div className="pbar-fill" style={{ width:`${pct}%`, background:color }}/></div></div>
-                        <span style={{ fontSize:11, fontWeight:700, color:color, whiteSpace:'nowrap' }}>{ev.participant_count||0}/{ev.max_players}</span>
+                    <div className="start-event-info">
+                      <div className="start-event-title">{ev.title}</div>
+                      <div className="start-event-loc">{ev.location}</div>
+                      <div className="start-event-meta">
+                        <span className="start-event-date">{fmtDate(ev.date, ev.time)}</span>
+                        <div style={{ flex:1 }}><div className="pbar"><div className="pbar-fill" style={{ width:`${pct}%` }}/></div></div>
+                        <span className="start-event-count" style={{ color }}>{ev.participant_count||0}/{ev.max_players}</span>
                       </div>
                     </div>
-                    <div style={{ fontSize:18, color:'var(--muted)', flexShrink:0 }}>›</div>
+                    <span className="start-event-arrow">›</span>
                   </Link>
                 )
               })}
@@ -303,32 +281,18 @@ export default function Home() {
 
         {/* ── Banner notificaciones (solo si hay sin leer) ── */}
         {user && unreadCount > 0 && (
-          <Link href="/profile" className="card anim-1" style={{
-            display:'flex', alignItems:'center', gap:14, padding:'14px 16px',
-            marginBottom:20, textDecoration:'none',
-            background:'linear-gradient(135deg, rgba(88,104,117,0.18), rgba(88,104,117,0.08))',
-            border:'1.5px solid rgba(88,104,117,0.30)',
-          }}>
-            <div style={{
-              width:42, height:42, borderRadius:'50%', flexShrink:0,
-              background:'#586875', display:'flex', alignItems:'center', justifyContent:'center',
-              fontSize:20, position:'relative',
-            }}>
+          <Link href="/profile" className="start-notif-banner card anim-1">
+            <div className="start-notif-icon">
               🔔
-              <span style={{
-                position:'absolute', top:-3, right:-3, width:16, height:16,
-                background:'#ef4444', borderRadius:'50%', border:'2px solid var(--bg)',
-                display:'flex', alignItems:'center', justifyContent:'center',
-                fontSize:9, fontWeight:800, color:'white', lineHeight:1,
-              }}>{unreadCount > 9 ? '9+' : unreadCount}</span>
+              <span className="start-notif-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>
             </div>
-            <div style={{ flex:1, minWidth:0 }}>
-              <div style={{ fontWeight:700, fontSize:14, color:'var(--text)', marginBottom:2 }}>
+            <div className="start-notif-text">
+              <div className="start-notif-title">
                 {unreadCount === 1 ? '1 notificación nueva' : `${unreadCount} notificaciones nuevas`}
               </div>
-              <div style={{ fontSize:12, color:'var(--muted)' }}>Ver en tu perfil</div>
+              <div className="start-notif-sub">Ver en tu perfil</div>
             </div>
-            <span style={{ fontSize:18, color:'var(--muted)' }}>›</span>
+            <span className="start-event-arrow">›</span>
           </Link>
         )}
 
@@ -336,58 +300,39 @@ export default function Home() {
         <h2 style={{ fontSize:18, fontWeight:900, margin:'0 0 4px', letterSpacing:'-0.03em', color:'var(--text)', lineHeight:1.15 }}>¿Qué hacemos hoy?</h2>
         <p style={{ fontSize:12.5, color:'var(--muted)', margin:'0 0 10px' }}>Elige un deporte y únete a un evento</p>
 
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:8, marginBottom:22 }}>
+        <div className="start-sport-grid">
           {SPORTS.map((s,i)=>(
-            <Link key={s.id} href={`/events?sport=${s.id}`} className={`anim-${Math.min(i+1,6)}`} style={{
-              display:'flex', flexDirection:'column', alignItems:'center', gap:6,
-              background:`linear-gradient(160deg,${s.from}16,${s.from}06)`,
-              border:'1px solid var(--border)',
-              borderRadius:14, padding:'11px 4px 10px',
-              transition:'transform 0.18s ease-out, border-color 0.18s ease-out',
-              textDecoration:'none',
-            }}
-            onMouseEnter={e=>{ e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.borderColor='var(--primary)' }}
-            onMouseLeave={e=>{ e.currentTarget.style.transform=''; e.currentTarget.style.borderColor='var(--border)' }}
-            >
-              <span style={{
-                width:32, height:32, borderRadius:11, flexShrink:0,
-                background:`linear-gradient(140deg,${s.from},${s.to})`,
-                display:'flex', alignItems:'center', justifyContent:'center',
-              }}>
+            <Link key={s.id} href={`/events?sport=${s.id}`} className={`start-sport-card anim-${Math.min(i+1,6)}`}>
+              <span className="start-sport-icon" style={{ background:`linear-gradient(140deg,${s.from},${s.to})` }}>
                 <SportIcon sport={s.id} size={17} />
               </span>
-              <span style={{ fontSize:11.5, fontWeight:700, color:'var(--text)', letterSpacing:'-0.01em', lineHeight:1.2, textAlign:'center' }}>{s.name}</span>
+              <span className="start-sport-label">{s.name}</span>
             </Link>
           ))}
         </div>
 
         {/* ── Eventos cercanos ── */}
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:14 }}>
-          <h3 style={{ fontSize:18, fontWeight:800, margin:0, letterSpacing:'-0.02em', color:'var(--text)', lineHeight:1.2 }}>Eventos cerca de ti</h3>
-          <Link href="/events" style={{ fontSize:13, fontWeight:600, color:'var(--primary)' }}>Ver todos →</Link>
+        <div className="start-section-head">
+          <h3>Eventos cerca de ti</h3>
+          <Link href="/events" className="start-section-link">Ver todos →</Link>
         </div>
 
         <div style={{ display:'flex', flexDirection:'column', gap:10, marginBottom:24 }}>
           {DEMO_NEARBY.map((ev,i)=>(
-            <Link key={ev.id} href={`/events/${ev.id}`} className={`card anim-${i+4}`} style={{
-              display:'flex', alignItems:'center', gap:14, padding:'14px 16px',
-              background:'var(--glass)',
-              border:'1px solid transparent',
-              boxShadow:`0 0 0 1px rgba(255,255,255,0.08), 0 16px 40px ${ev.color}15`,
-            }}>
-              <div style={{ width:52, height:52, background:`${ev.color}18`, border:`1.5px solid ${ev.color}30`, borderRadius:16, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, overflow:'hidden' }}>
+            <Link key={ev.id} href={`/events/${ev.id}`} className={`start-event-card card anim-${i+4}`}>
+              <div className="start-event-icon" style={{ background:`${ev.color}18`, border:`1.5px solid ${ev.color}30` }}>
                 <SportIcon sport={ev.sport} size={36} />
               </div>
-              <div style={{ flex:1, minWidth:0 }}>
-                <div style={{ fontSize:14, fontWeight:700, color:'var(--text)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:3 }}>{ev.title}</div>
-                <div style={{ fontSize:12, color:'var(--muted)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:8 }}>{ev.loc}</div>
-                <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-                  <span style={{ fontSize:11, color:'var(--muted)', whiteSpace:'nowrap' }}>{ev.time}</span>
+              <div className="start-event-info">
+                <div className="start-event-title">{ev.title}</div>
+                <div className="start-event-loc">{ev.loc}</div>
+                <div className="start-event-meta">
+                  <span className="start-event-date">{ev.time}</span>
                   <div style={{ flex:1 }}><div className="pbar"><div className="pbar-fill" style={{ width:`${Math.round((ev.p/ev.max)*100)}%`, background:ev.color }}/></div></div>
-                  <span style={{ fontSize:11, fontWeight:700, color:ev.color, whiteSpace:'nowrap' }}>{ev.p}/{ev.max}</span>
+                  <span className="start-event-count" style={{ color:ev.color }}>{ev.p}/{ev.max}</span>
                 </div>
               </div>
-              <div style={{ fontSize:18, color:'var(--muted)', flexShrink:0 }}>›</div>
+              <span className="start-event-arrow">›</span>
             </Link>
           ))}
         </div>

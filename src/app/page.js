@@ -156,17 +156,17 @@ export default async function Landing() {
       <main id="main">
         {/* HERO */}
         <section className="ln-hero">
-          <div className="ln-hero-inner">
-            <h1 className="ln-hero-h1">
+          <div className="ln-hero-inner" style={{ textAlign: 'left', maxWidth: '900px' }}>
+            <h1 className="ln-hero-h1" style={{ textAlign: 'left' }}>
               Haz deporte<br />
               <span className="ln-hero-accent">y conoce gente</span><br />
               en tu zona
             </h1>
-            <p className="ln-hero-lead">
+            <p className="ln-hero-lead" style={{ textAlign: 'left', margin: '0 0 36px' }}>
               Organiza partidos de pádel, fútbol, running y quedadas deportivas
               cerca de ti. En toda España. Gratis.
             </p>
-            <div className="ln-hero-cta">
+            <div className="ln-hero-cta" style={{ justifyContent: 'flex-start' }}>
               <Link href="/start" className="ln-btn ln-btn-primary ln-btn-lg">
                 Entrar a la app
               </Link>
@@ -176,7 +176,7 @@ export default async function Landing() {
 
           {stats && (
             <ScrollReveal>
-              <div className="ln-stats">
+              <div className="ln-stats" style={{ margin: '40px 0 0' }}>
                 {[[stats.active, 'Eventos activos'], [stats.users, 'Deportistas'], [stats.recent, 'Nuevos 7d']].map(([v, l]) => (
                   <div key={l} className="ln-stat">
                     <div className="ln-stat-val">{v}</div>
@@ -331,21 +331,24 @@ export default async function Landing() {
       {/* FOOTER */}
       <footer className="ln-footer">
         <div className="ln-footer-inner">
-          <div className="ln-logo" style={{ justifyContent: 'center', flex: 'none' }}>
-            <LogoTeamUp height={20} />
+          <div className="ln-footer-brand">
+            <div className="ln-logo" style={{ justifyContent: 'flex-start', flex: 'none' }}>
+              <LogoTeamUp height={20} />
+            </div>
+            <div className="ln-footer-copy">
+              © 2026 TeamUp · <a href="mailto:colivasbon@gmail.com">colivasbon@gmail.com</a>
+            </div>
           </div>
-          <div className="ln-footer-links">
+          <nav className="ln-footer-nav" aria-label="Enlaces del pie de página">
+            <Link href="/start">Crear cuenta</Link>
+            <Link href="/events">Explorar</Link>
             <a href="#como">Cómo funciona</a>
             <a href="#features">Features</a>
             <a href="#ciudades">Ciudades</a>
             <a href="#faq">Preguntas</a>
-            <Link href="/events">Explorar</Link>
             <Link href="/privacy">Privacidad</Link>
             <Link href="/cookies">Cookies</Link>
-          </div>
-          <div className="ln-footer-copy">
-            © 2026 TeamUp · <a href="mailto:colivasbon@gmail.com">colivasbon@gmail.com</a> · <Link href="/start">Crear cuenta</Link>
-          </div>
+          </nav>
         </div>
       </footer>
 
