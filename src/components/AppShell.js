@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import OnboardingModal from '@/components/OnboardingModal'
 import { getSupabase } from '@/lib/supabase'
-import CookieBanner from '@/components/CookieBanner'
+
 
 export default function AppShell({ children }) {
   const { user, profile } = useAuth()
@@ -67,9 +67,6 @@ export default function AppShell({ children }) {
       {showOnboarding && user && (
         <OnboardingModal onComplete={() => setShowOnboarding(false)} />
       )}
-
-      {/* Banner de cookies — solo aparece si no hay decisión guardada */}
-      <CookieBanner />
 
     </div>
   )

@@ -1,5 +1,6 @@
 import { Outfit, Space_Grotesk } from 'next/font/google'
 import './globals.css'
+import CookieBanner from '@/components/CookieBanner'
 
 const outfit = Outfit({
   subsets: ['latin'],
@@ -186,6 +187,7 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         {children}
+        <CookieBanner />
       </body>
     </html>
   )
