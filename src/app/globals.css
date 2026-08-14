@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 /* ═══════════════════════════════════════════════════════
@@ -28,8 +26,8 @@
   --color-warning: var(--warning);
   --color-button-contrast: var(--button-contrast);
 
-  --font-outfit: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-grotesk: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-outfit: var(--font-outfit), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-grotesk: var(--font-grotesk), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
   --radius-card: var(--radius);
   --radius-card-sm: var(--radius-sm);
@@ -408,7 +406,7 @@ html {
 }
 body {
   overscroll-behavior-y: none;
-  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--font-outfit), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background-color: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;

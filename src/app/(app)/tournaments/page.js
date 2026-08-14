@@ -39,5 +39,22 @@ export const metadata = {
 }
 
 export default function TournamentsPage() {
-  return <TournamentsContent />
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    'itemListElement': [
+      { '@type': 'ListItem', 'position': 1, 'name': 'Inicio', 'item': 'https://teamupapp.es/' },
+      { '@type': 'ListItem', 'position': 2, 'name': 'Torneos', 'item': 'https://teamupapp.es/tournaments' },
+    ],
+  }
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <TournamentsContent />
+    </>
+  )
 }

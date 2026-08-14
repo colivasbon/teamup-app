@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import Image from 'next/image'
 import Navbar from '@/components/Navbar'
 import { getSupabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
@@ -871,7 +872,7 @@ export default function TournamentDetail() {
                           borderRadius:12, cursor:'pointer', fontFamily:'inherit', textAlign:'left' }}>
                         <div style={{ width:36, height:36, borderRadius:'50%', background:`${color}20`,
                           display:'flex', alignItems:'center', justifyContent:'center', fontSize:16, flexShrink:0 }}>
-                          {p.avatar_url ? <img src={p.avatar_url} style={{ width:36,height:36,borderRadius:'50%',objectFit:'cover' }}/> : '👤'}
+                          {p.avatar_url ? <Image src={p.avatar_url} alt="" width={36} height={36} style={{ width:36,height:36,borderRadius:'50%',objectFit:'cover' }} /> : '👤'}
                         </div>
                         <div>
                           <div style={{ fontWeight:700, fontSize:13 }}>{p.full_name || p.username}</div>

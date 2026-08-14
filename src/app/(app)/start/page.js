@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useAuth } from '@/contexts/AuthContext'
 import Navbar from '@/components/Navbar'
 import { getSupabase } from '@/lib/supabase'
@@ -222,7 +223,7 @@ export default function Home() {
             )}
             <Link href="/profile" className="avatar-wrap" style={{ width:44, height:44 }}>
               {avatarUrl
-                ? <img src={avatarUrl} alt={displayName || 'Perfil'} style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'50%' }}/>
+                ? <Image src={avatarUrl} alt={displayName || 'Perfil'} width={44} height={44} style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'50%' }} />
                 : <span className="avatar-placeholder" style={{ display:'flex', alignItems:'center', justifyContent:'center', fontSize:20 }}>👤</span>
               }
             </Link>
@@ -358,13 +359,13 @@ export default function Home() {
                   s.website_url
                     ? <a key={i} href={s.website_url} target="_blank" rel="noopener noreferrer" className="sponsors-ticker__item" style={{ textDecoration:'none', cursor:'pointer' }}>
                         {s.logo_url
-                          ? <img src={s.logo_url} alt={s.name} style={{ height:36, maxWidth:140, objectFit:'contain', verticalAlign:'middle', filter:'var(--sponsor-filter)' }} />
+                          ? <Image src={s.logo_url} alt={s.name} width={140} height={36} style={{ height:36, width:'auto', maxWidth:140, objectFit:'contain', verticalAlign:'middle', filter:'var(--sponsor-filter)' }} />
                           : s.name
                         }
                       </a>
                     : <span key={i} className="sponsors-ticker__item">
                         {s.logo_url
-                          ? <img src={s.logo_url} alt={s.name} style={{ height:36, maxWidth:140, objectFit:'contain', verticalAlign:'middle', filter:'var(--sponsor-filter)' }} />
+                          ? <Image src={s.logo_url} alt={s.name} width={140} height={36} style={{ height:36, width:'auto', maxWidth:140, objectFit:'contain', verticalAlign:'middle', filter:'var(--sponsor-filter)' }} />
                           : s.name
                         }
                       </span>

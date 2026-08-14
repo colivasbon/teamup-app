@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import Navbar from '@/components/Navbar'
 import { getSupabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
@@ -386,7 +387,7 @@ export default function Moments() {
                     <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10 }}>
                       <a href={`/profile/${m.user_id}`} style={{ textDecoration:'none', flexShrink:0 }}>
                         <div style={{ width:38, height:38, borderRadius:'50%', overflow:'hidden', background:`${c}20`, border:`2px solid ${c}35`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:18 }}>
-                          {m.avatar_url ? <img src={m.avatar_url} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }}/> : '👤'}
+                          {m.avatar_url ? <Image src={m.avatar_url} alt="" width={38} height={38} style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : '👤'}
                         </div>
                       </a>
                       <div style={{ flex:1, minWidth:0 }}>
@@ -398,7 +399,7 @@ export default function Moments() {
                     </div>
                     <p style={{ fontSize:14, color:'var(--text)', lineHeight:1.6, margin:'0 0 10px' }}>{m.text}</p>
                     {m.image_url && (
-                      <img src={m.image_url} alt="" style={{ width:'100%', borderRadius:12, marginBottom:10, objectFit:'cover', maxHeight:280 }}/>
+                      <Image src={m.image_url} alt="" width={400} height={280} style={{ width:'100%', borderRadius:12, marginBottom:10, objectFit:'cover', maxHeight:280 }} />
                     )}
                   </div>
                   {openComments[m.id] && (
@@ -407,7 +408,7 @@ export default function Moments() {
                         {(comments[m.id]||[]).map(c => (
                           <div key={c.id} style={{display:'flex', gap:8, alignItems:'flex-start'}}>
                             <div style={{width:28,height:28,borderRadius:'50%',background:'var(--surface)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,overflow:'hidden',flexShrink:0}}>
-                              {c.avatar ? <img src={c.avatar} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/> : '👤'}
+                              {c.avatar ? <Image src={c.avatar} alt="" width={28} height={28} style={{width:'100%',height:'100%',objectFit:'cover'}} /> : '👤'}
                             </div>
                             <div style={{flex:1, background:'var(--surface2)', borderRadius:'4px 12px 12px 12px', padding:'8px 12px'}}>
                               <span style={{fontWeight:700,fontSize:12,color:'var(--primary)'}}>{c.author} </span>
@@ -512,7 +513,7 @@ export default function Moments() {
             ) : likers.map((p,i) => (
               <div key={i} style={{display:'flex', alignItems:'center', gap:12, marginBottom:12}}>
                 <div style={{width:40,height:40,borderRadius:'50%',background:'var(--surface)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,overflow:'hidden',flexShrink:0}}>
-                  {p.avatar_url ? <img src={p.avatar_url} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/> : '👤'}
+                  {p.avatar_url ? <Image src={p.avatar_url} alt="" width={40} height={40} style={{width:'100%',height:'100%',objectFit:'cover'}} /> : '👤'}
                 </div>
                 <div>
                   <div style={{fontWeight:600,fontSize:14,color:'var(--text)'}}>{p.full_name||'Usuario'}</div>

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import Navbar from '@/components/Navbar'
 import { getSupabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
@@ -417,7 +418,7 @@ export default function Profile() {
             <div className="avatar-wrap" style={{ cursor: editing ? 'pointer' : 'default' }}
               onClick={() => editing && fileRef.current?.click()}>
               {avatarUrl
-                ? <img src={avatarUrl} alt="Avatar" style={{ width:88, height:88, borderRadius:'50%', objectFit:'cover', border:'3px solid white', boxShadow:'0 6px 24px rgba(0,0,0,0.22)' }}/>
+                ? <Image src={avatarUrl} alt="Avatar" width={88} height={88} style={{ width:88, height:88, borderRadius:'50%', objectFit:'cover', border:'3px solid white', boxShadow:'0 6px 24px rgba(0,0,0,0.22)' }} />
                 : <div className="avatar-placeholder" style={{ width:88, height:88, borderRadius:'50%', background:'#c8c0b4', border:'3px solid white', display:'flex', alignItems:'center', justifyContent:'center', fontSize:40, boxShadow:'0 6px 24px rgba(0,0,0,0.18)' }}>👤</div>
               }
               {editing && (

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import ThemeButton from '@/components/ThemeButton'
 import MobileRedirect from '@/components/MobileRedirect'
 import { getSportEmoji } from '@/lib/sportConfig'
@@ -15,11 +16,15 @@ export const metadata = {
   },
   description: 'TeamUp es la app gratuita para organizar y unirse a eventos deportivos, partidos de pádel, fútbol 7, grupos de running, senderismo y quedadas deportivas cerca de ti en España. Haz deporte y conoce gente.',
   alternates: { canonical: 'https://teamupapp.es/' },
+  other: {
+    'article:modified_time': '2026-08-14',
+  },
   openGraph: {
     type: 'website', locale: 'es_ES', url: 'https://teamupapp.es', siteName: 'TeamUp',
     title: 'TeamUp — Haz deporte, conoce gente en tu zona',
     description: 'Organiza y únete a eventos deportivos, partidos de pádel, fútbol 7, grupos de running y eventos deportivos cerca de ti en España. Gratis.',
     images: [{ url: '/favicon.png', width: 512, height: 512, alt: 'TeamUp — App de eventos deportivos y deporte social en España' }],
+    modifiedTime: '2026-08-14',
   },
 }
 
@@ -74,14 +79,14 @@ const FEATURES = [
 ]
 
 const FAQ = [
-  ['¿Cómo me apunto a un partido?', 'Entra en Explorar, filtra por deporte y provincia, y pulsa "Unirse". Si no hay ninguno, crea el tuyo en un minuto.'],
-  ['¿Es gratis?', 'Sí. Crear cuenta, unirse a eventos y organizar eventos es totalmente gratuito.'],
-  ['¿Qué deportes hay?', 'Running, pádel, fútbol 7, tenis, senderismo, natación, ciclismo, gimnasio, yoga, baloncesto, voleibol y bádminton.'],
-  ['¿Necesito ser experto?', 'No. Hay eventos para todos los niveles: principiante, intermedio y avanzado.'],
-  ['¿Puedo crear mi evento?', 'Sí. Deporte, fecha, hora, ubicación y plazas. Tu evento aparece en el listado.'],
-  ['¿En qué ciudades?', 'Las 50 provincias españolas: Madrid, Barcelona, Valencia, Sevilla, Málaga, Bilbao y muchas más.'],
-  ['¿Es app de móvil?', 'Es una PWA: instálala en tu pantalla de inicio y úsala como app nativa.'],
-  ['¿Cómo funciona el karma?', 'Tras cada evento, los jugadores se valoran entre sí. Puntualidad, respeto y ganas de jugar.'],
+  ['¿Cómo me apunto a un partido?', 'Entra en la sección Explorar, filtra por deporte y provincia, y pulsa "Unirse" en el evento que te interese. Si no hay ninguno disponible en tu zona, puedes crear el tuyo en menos de un minuto: elige deporte, fecha, hora, lugar y número de plazas. Tu evento aparecerá en el listado y otros usuarios de tu zona podrán apuntarse.'],
+  ['¿Es gratis?', 'Sí, TeamUp es totalmente gratuita. Crear cuenta, buscar eventos, unirse a partidos y organizar tus propios eventos deportivos no tiene ningún coste. No se requiere tarjeta de crédito ni suscripción.'],
+  ['¿Qué deportes hay?', 'TeamUp cubre 12 deportes: running, pádel, fútbol 7, tenis, senderismo, natación, ciclismo, gimnasio, yoga, baloncesto, voleibol y bádminton. Cada deporte tiene sus propios filtros de nivel (principiante, intermedio, avanzado) y ubicación.'],
+  ['¿Necesito ser experto?', 'No. TeamUp está pensado para todos los niveles. Cada evento indica el nivel requerido: principiante, intermedio o avanzado. Hay eventos recreativos para jugar por diversión y eventos más competitivos para quienes buscan reto.'],
+  ['¿Puedo crear mi evento?', 'Sí. Selecciona el deporte, fecha, hora, ubicación y número de plazas disponibles. Tu evento aparecerá en el listado de eventos de tu provincia y los usuarios cercanos podrán apuntarse. También puedes añadir un chat grupal para coordinar con los participantes.'],
+  ['¿En qué ciudades?', 'TeamUp cubre las 50 provincias españolas: Madrid, Barcelona, Valencia, Sevilla, Málaga, Bilbao, Alicante, Zaragoza, Murcia, Córdoba, Granada, Cádiz, Huelva, Jaén, Almería y todas las demás. Puedes filtrar eventos por provincia en cualquier momento.'],
+  ['¿Es app de móvil?', 'Es una Progressive Web App (PWA): instálala en la pantalla de inicio de tu móvil y úsala como una app nativa. Funciona sin instalación desde Google Play o App Store, se actualiza automáticamente y funciona incluso sin conexión a internet.'],
+  ['¿Cómo funciona el karma?', 'Tras cada evento, los participantes se valoran entre sí en tres categorías: puntualidad, fair play y ambiente. El karma es un sistema de reputación que te ayuda a elegir con quién jugar. Un karma alto indica que eres un compañero fiable y agradable.'],
 ]
 
 async function getStats() {
@@ -165,6 +170,9 @@ export default async function Landing() {
               <span className="ln-hero-accent">y conoce gente</span><br />
               en tu zona
             </h1>
+            <p style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 8, fontWeight: 600 }}>
+              TeamUp es una app gratuita para organizar y unirse a partidos de pádel, fútbol, running y otros deportes en tu ciudad.
+            </p>
             <p className="ln-hero-lead">
               Organiza partidos de pádel, fútbol, running y quedadas deportivas
               cerca de ti. En toda España. Gratis.
@@ -303,10 +311,10 @@ export default async function Landing() {
                   {Array.from({ length: 6 }).flatMap(() => sponsors).map((s, i) => (
                     s.website_url
                       ? <a key={i} href={s.website_url} target="_blank" rel="noopener noreferrer" className="sponsors-ticker__item" style={{ textDecoration: 'none', cursor: 'pointer' }}>
-                          {s.logo_url ? <img src={s.logo_url} alt={s.name} style={{ height: 36, maxWidth: 140, objectFit: 'contain', verticalAlign: 'middle', filter: 'var(--sponsor-filter)' }} /> : s.name}
+                          {s.logo_url ? <Image src={s.logo_url} alt={s.name} width={140} height={36} style={{ height: 36, width: 'auto', maxWidth: 140, objectFit: 'contain', verticalAlign: 'middle', filter: 'var(--sponsor-filter)' }} /> : s.name}
                         </a>
                       : <span key={i} className="sponsors-ticker__item">
-                          {s.logo_url ? <img src={s.logo_url} alt={s.name} style={{ height: 36, maxWidth: 140, objectFit: 'contain', verticalAlign: 'middle', filter: 'var(--sponsor-filter)' }} /> : s.name}
+                          {s.logo_url ? <Image src={s.logo_url} alt={s.name} width={140} height={36} style={{ height: 36, width: 'auto', maxWidth: 140, objectFit: 'contain', verticalAlign: 'middle', filter: 'var(--sponsor-filter)' }} /> : s.name}
                         </span>
                   ))}
                 </div>
@@ -339,7 +347,9 @@ export default async function Landing() {
               <LogoTeamUp height={20} />
             </div>
             <div className="ln-footer-copy">
-              © 2026 TeamUp · <a href="mailto:colivasbon@gmail.com">colivasbon@gmail.com</a>
+              © 2026 TeamUp · <a href="mailto:soporte@teamupapp.es">soporte@teamupapp.es</a>
+              <br />
+              <span style={{ fontSize: 11, color: 'var(--muted)' }}>Última actualización: 14 de agosto de 2026</span>
             </div>
           </div>
           <nav className="ln-footer-nav" aria-label="Enlaces del pie de página">

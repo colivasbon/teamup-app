@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import Image from 'next/image'
 import Navbar from '@/components/Navbar'
 import { getSupabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
@@ -551,7 +552,7 @@ function EventDetailInner({ initialTab = 'Info', ssrEvent = null }) {
                     width:40, height:40, borderRadius:'50%', background:'var(--surface2)',
                     display:'flex', alignItems:'center', justifyContent:'center', fontWeight:700,
                   }}>
-                    {p.avatar_url ? <img src={p.avatar_url} alt="" style={{ width:'100%', height:'100%', borderRadius:'50%' }}/> : p.full_name?.[0] || 'U'}
+                    {p.avatar_url ? <Image src={p.avatar_url} alt="" width={40} height={40} style={{ width:'100%', height:'100%', borderRadius:'50%' }} /> : p.full_name?.[0] || 'U'}
                   </div>
                   <div>
                     <strong style={{ fontSize:14, display:'block' }}>{p.full_name}</strong>
@@ -581,7 +582,7 @@ function EventDetailInner({ initialTab = 'Info', ssrEvent = null }) {
                   style={{ width:'100%', background:'var(--bg)', border:'1px solid var(--border)', borderRadius:10, padding:10, color:'var(--text)', minHeight:80 }}
                 />
                 {newMoment.imagePreview && (
-                  <img src={newMoment.imagePreview} alt="Preview" style={{ width:'100%', maxHeight:200, objectFit:'cover', borderRadius:10 }}/>
+                  <Image src={newMoment.imagePreview} alt="Preview" width={400} height={200} style={{ width:'100%', maxHeight:200, objectFit:'cover', borderRadius:10 }} />
                 )}
                 <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
                   <input ref={fileRef} type="file" accept="image/*" onChange={handleImageSelect} style={{ display:'none' }}/>
@@ -614,7 +615,7 @@ function EventDetailInner({ initialTab = 'Info', ssrEvent = null }) {
                     </div>
                   </div>
                   {m.text && <p style={{ fontSize:13, margin:0, lineHeight:1.4 }}>{m.text}</p>}
-                  {m.image_url && <img src={m.image_url} alt="" style={{ width:'100%', borderRadius:10, maxHeight:300, objectFit:'cover' }}/>}
+                  {m.image_url && <Image src={m.image_url} alt="" width={400} height={300} style={{ width:'100%', borderRadius:10, maxHeight:300, objectFit:'cover' }} />}
                   <div style={{ display:'flex', alignItems:'center', gap:12, fontSize:12, color:'var(--muted)' }}>
                     <button onClick={() => toggleMomentLike(m.id)} style={{ background:'none', border:'none', cursor:'pointer', fontSize:14 }}>
                       {momentLikes[m.id] ? '❤️' : '🤍'} {momentCounts[m.id] || 0}

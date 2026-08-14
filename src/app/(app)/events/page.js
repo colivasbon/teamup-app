@@ -46,11 +46,27 @@ const LEVEL_IDS = new Set(['all','beginner','intermediate','advanced'])
 
 export default async function EventsPage({ searchParams }) {
   const sp = await searchParams
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    'itemListElement': [
+      { '@type': 'ListItem', 'position': 1, 'name': 'Inicio', 'item': 'https://teamupapp.es/' },
+      { '@type': 'ListItem', 'position': 2, 'name': 'Eventos', 'item': 'https://teamupapp.es/events' },
+    ],
+  }
+
   return (
-    <EventsContent
-      initialSport={SPORT_IDS.has(sp?.sport) ? sp.sport : 'all'}
-      initialProv={PROV_IDS.has(sp?.prov) ? sp.prov : 'all'}
-      initialLevel={LEVEL_IDS.has(sp?.level) ? sp.level : 'all'}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <EventsContent
+        initialSport={SPORT_IDS.has(sp?.sport) ? sp.sport : 'all'}
+        initialProv={PROV_IDS.has(sp?.prov) ? sp.prov : 'all'}
+        initialLevel={LEVEL_IDS.has(sp?.level) ? sp.level : 'all'}
+      />
+    </>
   )
 }

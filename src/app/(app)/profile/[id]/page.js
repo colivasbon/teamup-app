@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import Image from 'next/image'
 import Navbar from '@/components/Navbar'
 import { getSupabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
@@ -181,7 +182,7 @@ export default function PublicProfile() {
             fontSize:36, marginBottom:14, boxShadow:'0 4px 20px rgba(0,0,0,0.25)',
           }}>
             {profile.avatar_url
-              ? <img src={profile.avatar_url} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }}/>
+              ? <Image src={profile.avatar_url} alt="" width={86} height={86} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
               : '👤'
             }
           </div>

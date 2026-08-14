@@ -1,4 +1,19 @@
+import { Outfit, Space_Grotesk } from 'next/font/google'
 import './globals.css'
+
+const outfit = Outfit({
+  subsets: ['latin'],
+  variable: '--font-outfit',
+  display: 'swap',
+  weight: ['300', '400', '500', '600', '700', '800', '900'],
+})
+
+const grotesk = Space_Grotesk({
+  subsets: ['latin'],
+  variable: '--font-grotesk',
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
+})
 
 export const viewport = {
   width: 'device-width',
@@ -105,18 +120,29 @@ export default function RootLayout({ children }) {
           'width': 512,
           'height': 512,
         },
-        'description': 'Plataforma social deportiva en España para organizar y unirse a eventos deportivos, partidos y quedadas deportivas.',
+        'description': 'TeamUp es una plataforma social deportiva gratuita para organizar y unirse a eventos deportivos, partidos de pádel, fútbol, running y quedadas deportivas en España.',
+        'foundingDate': '2024',
         'address': {
           '@type': 'PostalAddress',
+          'addressLocality': 'Albacete',
+          'addressRegion': 'Castilla-La Mancha',
+          'postalCode': '02001',
           'addressCountry': 'ES'
         },
-        'areaServed': 'ES',
+        'areaServed': {
+          '@type': 'Country',
+          'name': 'España'
+        },
         'contactPoint': {
           '@type': 'ContactPoint',
           'contactType': 'customer support',
-          'email': 'colivasbon@gmail.com',
+          'email': 'soporte@teamupapp.es',
           'availableLanguage': 'es'
-        }
+        },
+        'sameAs': [
+          'https://www.instagram.com/teamupapp',
+          'https://www.tiktok.com/@teamupapp'
+        ]
       },
       {
         '@type': 'SoftwareApplication',
@@ -140,13 +166,15 @@ export default function RootLayout({ children }) {
         'name': 'TeamUp',
         'description': 'Encuentra y organiza eventos deportivos, eventos deportivos y partidos en todas las provincias de España.',
         'publisher': { '@id': 'https://teamupapp.es/#organization' },
-        'inLanguage': 'es-ES'
+        'inLanguage': 'es-ES',
+        'datePublished': '2024-01-01',
+        'dateModified': '2026-08-14'
       }
     ]
   }
 
   return (
-    <html lang="es" data-theme="light">
+    <html lang="es-ES" data-theme="light" className={`${outfit.variable} ${grotesk.variable}`}>
       <head>
         <meta name="geo.region" content="ES" />
         <meta name="geo.placename" content="España" />
