@@ -345,13 +345,9 @@ export default function Home() {
           Crear evento
         </Link>
 
-        {/* Ticker patrocinadores: elemento de página, se ve al llegar con scroll */}
-        {(() => {
-          const list = sponsors.length > 0
-            ? sponsors
-            : Array.from({length:4}).map((_,i) => ({ id:i, name:'PATROCINADOR', logo_url:null, website_url:null }))
-          // Repetir la secuencia completa para que el loop sea fluido
-          const repeated = Array.from({length: 10}).flatMap(() => list)
+        {/* Ticker patrocinadores: solo se muestra si hay sponsors reales */}
+        {sponsors.length > 0 && (() => {
+          const repeated = Array.from({length: 10}).flatMap(() => sponsors)
           return (
             <div className="sponsors-ticker">
               <div className="sponsors-ticker__inner">

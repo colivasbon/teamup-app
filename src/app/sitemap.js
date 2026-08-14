@@ -102,18 +102,5 @@ export default async function sitemap() {
     // Si falla Supabase, el sitemap no se rompe
   }
 
-  // Eventos demo estáticos de respaldo
-  const demoIds = ['demo-1', 'demo-2', 'demo-3', 'demo-4', 'demo-5', 'demo-6']
-  const demoRoutes = demoIds.map((id) => ({
-    url: `${baseUrl}/events/${id}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly',
-    priority: 0.6,
-  }))
-
-  // Unificar evitando duplicados
-  const existingUrls = new Set(dynamicRoutes.map(r => r.url))
-  const uniqueDemoRoutes = demoRoutes.filter(r => !existingUrls.has(r.url))
-
-  return [...staticRoutes, ...dynamicRoutes, ...uniqueDemoRoutes]
+  return [...staticRoutes, ...dynamicRoutes]
 }
