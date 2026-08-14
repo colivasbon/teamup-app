@@ -37,7 +37,7 @@ export default function CookieBanner() {
 
   return (
     <div style={{
-      position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 9999,
+      position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 'var(--z-modal)',
       background: 'var(--bg)', borderTop: '1px solid var(--border)',
       padding: '20px 18px 28px',
       boxShadow: '0 -8px 32px rgba(0,0,0,0.18)',
@@ -72,7 +72,7 @@ export default function CookieBanner() {
                 Autenticación, sesión y preferencias básicas. No pueden desactivarse.
               </div>
             </div>
-            <span style={{ fontSize: 11, fontWeight: 800, color: '#586875', background: 'rgba(88,104,117,0.12)',
+            <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--primary)', background: 'var(--primary-soft)',
               borderRadius: 20, padding: '3px 9px', whiteSpace: 'nowrap', flexShrink: 0, marginTop: 2 }}>
               Siempre activas
             </span>
@@ -88,9 +88,13 @@ export default function CookieBanner() {
               </div>
             </div>
             <button onClick={() => setAnalytics(p => !p)}
-              style={{ width: 44, height: 24, borderRadius: 12, border: 'none', cursor: 'pointer',
-                background: analytics ? '#586875' : 'var(--border)', position: 'relative',
-                transition: 'background 0.2s ease-out', flexShrink: 0, marginTop: 2 }}>
+              aria-label={analytics ? 'Desactivar analíticas' : 'Activar analíticas'}
+              style={{ display: 'flex', alignItems: 'center', gap: 8, height: 24, borderRadius: 12, border: 'none', cursor: 'pointer',
+                background: analytics ? 'var(--primary)' : 'var(--border)', position: 'relative',
+                transition: 'background 0.2s ease-out', flexShrink: 0, marginTop: 2, padding: '0 8px' }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: analytics ? 'var(--button-contrast)' : 'var(--muted)' }}>
+                {analytics ? 'Sí' : 'No'}
+              </span>
               <div style={{
                 width: 18, height: 18, borderRadius: '50%', background: 'white',
                 position: 'absolute', top: 3, left: analytics ? 23 : 3,

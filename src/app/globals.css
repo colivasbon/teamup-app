@@ -1193,11 +1193,6 @@ body.hide-slogan .slogan-bar {
 
 /* ── Navbar ────────────────────────────────────────── */
 .ln-nav-wrap {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: var(--z-overlay);
   display: flex;
   justify-content: center;
   padding: 20px 28px 0;
@@ -1221,9 +1216,6 @@ body.hide-slogan .slogan-bar {
   align-items: center;
   flex-shrink: 0;
 }
-[data-theme="dark"] .ln-logo,
-[data-theme="dark-emerald"] .ln-logo,
-[data-theme="dark-purple"] .ln-logo { color: var(--button-contrast); }
 .ln-nav-links {
   display: flex;
   gap: 20px;
@@ -1870,7 +1862,6 @@ body.hide-slogan .slogan-bar {
   flex: 1;
   min-width: 0;
 }
-[data-theme="dark"] .start-logo-link { color: var(--button-contrast); }
 
 .start-sport-grid {
   display: grid;
@@ -2076,10 +2067,10 @@ body.hide-slogan .slogan-bar {
 
 /* ─── APP SHELL — Slogan bar using tokens ──────────── */
 .slogan-bar {
-  background: var(--primary);
+  background: #586875;
 }
 .slogan-bar span {
-  color: var(--button-contrast);
+  color: #f6eddc;
 }
 
 /* ─── COOKIE BANNER — using tokens ─────────────────── */

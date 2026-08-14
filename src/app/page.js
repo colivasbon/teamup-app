@@ -5,6 +5,7 @@ import { getSportEmoji } from '@/lib/sportConfig'
 import { getSupabaseServer } from '@/lib/supabase'
 import ParallaxBg from '@/components/landing/ParallaxBg'
 import ScrollReveal from '@/components/landing/ScrollReveal'
+import ScrollHideNav from '@/components/landing/ScrollHideNav'
 
 export const revalidate = 3600
 
@@ -134,39 +135,41 @@ export default async function Landing() {
       <a className="skip-link" href="#main">Saltar al contenido</a>
 
       {/* NAVBAR */}
-      <header className="ln-nav-wrap">
-        <nav className="ln-nav" aria-label="Navegación principal">
-          <Link href="/" className="ln-logo" aria-label="TeamUp - Inicio">
-            <LogoTeamUp height={24} />
-          </Link>
-          <div className="ln-nav-links">
-            <a href="#como">Cómo funciona</a>
-            <a href="#features">Features</a>
-            <a href="#faq">Preguntas</a>
-          </div>
-          <div className="ln-nav-right">
-            <ThemeButton />
-            <Link href="/start" className="ln-btn ln-btn-primary">
-              Entrar
+      <ScrollHideNav>
+        <header className="ln-nav-wrap">
+          <nav className="ln-nav" aria-label="Navegación principal">
+            <Link href="/" className="ln-logo" aria-label="TeamUp - Inicio">
+              <LogoTeamUp height={24} />
             </Link>
-          </div>
-        </nav>
-      </header>
+            <div className="ln-nav-links">
+              <a href="#como">Cómo funciona</a>
+              <a href="#features">Features</a>
+              <a href="#faq">Preguntas</a>
+            </div>
+            <div className="ln-nav-right">
+              <ThemeButton />
+              <Link href="/start" className="ln-btn ln-btn-primary">
+                Entrar
+              </Link>
+            </div>
+          </nav>
+        </header>
+      </ScrollHideNav>
 
       <main id="main">
         {/* HERO */}
         <section className="ln-hero">
-          <div className="ln-hero-inner" style={{ textAlign: 'left', maxWidth: '900px' }}>
-            <h1 className="ln-hero-h1" style={{ textAlign: 'left' }}>
+          <div className="ln-hero-inner">
+            <h1 className="ln-hero-h1">
               Haz deporte<br />
               <span className="ln-hero-accent">y conoce gente</span><br />
               en tu zona
             </h1>
-            <p className="ln-hero-lead" style={{ textAlign: 'left', margin: '0 0 36px' }}>
+            <p className="ln-hero-lead">
               Organiza partidos de pádel, fútbol, running y quedadas deportivas
               cerca de ti. En toda España. Gratis.
             </p>
-            <div className="ln-hero-cta" style={{ justifyContent: 'flex-start' }}>
+            <div className="ln-hero-cta">
               <Link href="/start" className="ln-btn ln-btn-primary ln-btn-lg">
                 Entrar a la app
               </Link>
@@ -176,7 +179,7 @@ export default async function Landing() {
 
           {stats && (
             <ScrollReveal>
-              <div className="ln-stats" style={{ margin: '40px 0 0' }}>
+              <div className="ln-stats">
                 {[[stats.active, 'Eventos activos'], [stats.users, 'Deportistas'], [stats.recent, 'Nuevos 7d']].map(([v, l]) => (
                   <div key={l} className="ln-stat">
                     <div className="ln-stat-val">{v}</div>
@@ -319,7 +322,7 @@ export default async function Landing() {
               <h2 className="ln-section-title" style={{ color: 'var(--button-contrast)' }}>¿Preparado para jugar?</h2>
               <p className="ln-section-sub" style={{ color: 'var(--button-contrast)', opacity: 0.8 }}>Crea tu cuenta gratis y encuentra tu primer evento en menos de un minuto.</p>
               <div className="ln-hero-cta" style={{ justifyContent: 'center' }}>
-                <Link href="/start" className="ln-btn ln-btn-primary ln-btn-lg" style={{ background: 'var(--button-contrast)', color: 'var(--bg)' }}>
+                <Link href="/start" className="ln-btn ln-btn-primary ln-btn-lg" style={{ background: 'var(--button-contrast)', color: 'var(--primary)' }}>
                   Crear cuenta gratis
                 </Link>
               </div>
