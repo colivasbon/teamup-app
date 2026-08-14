@@ -36,14 +36,14 @@
   --radius-card-sm: var(--radius-sm);
   --radius-card-xs: var(--radius-xs);
 
-  --animate-fade-in: fade-in 0.6s ease-out both;
-  --animate-scale-in: scale-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
-  --animate-fade-up-1: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
-  --animate-fade-up-2: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
-  --animate-fade-up-3: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
-  --animate-fade-up-4: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
-  --animate-fade-up-5: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
-  --animate-fade-up-6: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+  --animate-fade-in: fade-in 0.25s ease-out both;
+  --animate-scale-in: scale-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-fade-up-1: fadeUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
+  --animate-fade-up-2: fadeUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+  --animate-fade-up-3: fadeUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+  --animate-fade-up-4: fadeUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+  --animate-fade-up-5: fadeUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+  --animate-fade-up-6: fadeUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
   --animate-ln-marquee: ln-marquee 40s linear infinite;
 }
 
@@ -365,7 +365,7 @@ input, textarea, select { font-family: inherit; }
   transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.16s ease-out, border-color 0.16s ease-out;
 }
 .card:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   border-color: var(--border);
   box-shadow: var(--shadow);
 }
@@ -521,7 +521,8 @@ select.input   { appearance: none; cursor: pointer; }
   background: linear-gradient(90deg, var(--primary), var(--accent));
   border-radius: 100px;
   box-shadow: 0 0 16px rgba(var(--primary-rgb),0.20);
-  transition: width 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: left;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ─── BADGE ─────────────────────────────────────────── */
@@ -716,7 +717,8 @@ body.hide-slogan .slogan-bar {
 .step-bar {
   height: 3px;
   border-radius: 100px;
-  transition: width 0.28s cubic-bezier(0.16, 1, 0.3, 1), background 0.28s ease-out;
+  transform-origin: left;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), background 0.28s ease-out;
 }
 
 /* ─── AVATAR UPLOAD ─────────────────────────────────── */
@@ -1094,7 +1096,7 @@ body.hide-slogan .slogan-bar {
   border-radius: 50%;
   opacity: 0.06;
   will-change: transform;
-  animation: float-shape 20s ease-in-out infinite alternate;
+  animation: float-shape 20s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
   transform: translate3d(0, 0, 0);
 }
 .parallax-shape--square { border-radius: 24%; }
@@ -1117,7 +1119,7 @@ body.hide-slogan .slogan-bar {
     radial-gradient(ellipse 60% 50% at 15% 20%, rgba(var(--primary-rgb), 0.08) 0%, transparent 60%),
     radial-gradient(ellipse 45% 45% at 85% 75%, rgba(var(--primary-rgb), 0.05) 0%, transparent 55%),
     radial-gradient(ellipse 35% 40% at 50% 10%, rgba(var(--primary-rgb), 0.04) 0%, transparent 50%);
-  animation: gradient-shift 30s ease-in-out infinite alternate;
+  animation: gradient-shift 30s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
 }
 @keyframes gradient-shift {
   0% { opacity: 1; transform: scale(1); }
@@ -1129,8 +1131,8 @@ body.hide-slogan .slogan-bar {
 .scroll-reveal {
   opacity: 0;
   transform: translateY(28px);
-  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .scroll-reveal.revealed {
   opacity: 1;
@@ -1525,16 +1527,16 @@ body.hide-slogan .slogan-bar {
 }
 
 .ln-bento-card {
-  animation: bento-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: bento-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
-.ln-bento-card:nth-child(1) { animation-delay: 0.05s; }
-.ln-bento-card:nth-child(2) { animation-delay: 0.1s; }
-.ln-bento-card:nth-child(3) { animation-delay: 0.15s; }
-.ln-bento-card:nth-child(4) { animation-delay: 0.2s; }
-.ln-bento-card:nth-child(5) { animation-delay: 0.25s; }
-.ln-bento-card:nth-child(6) { animation-delay: 0.3s; }
-.ln-bento-card:nth-child(7) { animation-delay: 0.35s; }
-.ln-bento-card:nth-child(8) { animation-delay: 0.4s; }
+.ln-bento-card:nth-child(1) { animation-delay: 0.03s; }
+.ln-bento-card:nth-child(2) { animation-delay: 0.06s; }
+.ln-bento-card:nth-child(3) { animation-delay: 0.09s; }
+.ln-bento-card:nth-child(4) { animation-delay: 0.12s; }
+.ln-bento-card:nth-child(5) { animation-delay: 0.15s; }
+.ln-bento-card:nth-child(6) { animation-delay: 0.18s; }
+.ln-bento-card:nth-child(7) { animation-delay: 0.21s; }
+.ln-bento-card:nth-child(8) { animation-delay: 0.24s; }
 
 @keyframes bento-in {
   from { opacity: 0; transform: translateY(16px) scale(0.98); }
@@ -1751,13 +1753,10 @@ body.hide-slogan .slogan-bar {
 
 /* ─── ACCESSIBILITY — reduced motion ────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+  .scroll-reveal { opacity: 1; transform: none; transition: none; }
+  .parallax-shape { animation: none; }
+  .parallax-gradient { animation: none; }
+  .ln-bento-card { animation: none; opacity: 1; }
   .sponsors-ticker__inner { animation: none; }
+  .ln-marquee-track { animation: none; }
 }

@@ -34,12 +34,25 @@ export function useInView({ threshold = 0.15, rootMargin = '0px 0px -40px 0px', 
   return [ref, inView]
 }
 
+function usePrefersReducedMotion() {
+  const [prefersReduced, setPrefersReduced] = useState(false)
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setPrefersReduced(mq.matches)
+    const handler = (e) => setPrefersReduced(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
+  return prefersReduced
+}
+
 /**
  * Componente wrapper para scroll reveal.
  * Uso: <Reveal><div>...</div></Reveal>
  */
 export function Reveal({ children, className = '', delay = 0 }) {
   const [ref, inView] = useInView()
+  const reduced = usePrefersReducedMotion()
 
   return (
     <div
@@ -47,10 +60,10 @@ export function Reveal({ children, className = '', delay = 0 }) {
       className={className}
       style={{
         opacity: inView ? 1 : 0,
-        transform: inView ? 'translateY(0)' : 'translateY(24px)',
-        filter: inView ? 'blur(0)' : 'blur(4px)',
-        transition: `opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms, filter 0.7s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms`,
-        willChange: 'transform',
+        transform: reduced ? 'none' : (inView ? 'translateY(0)' : 'translateY(24px)'),
+        transition: reduced
+          ? 'opacity 0.01ms'
+          : `opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms`,
       }}
     >
       {children}

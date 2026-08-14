@@ -231,7 +231,7 @@ export default function Create() {
                           width:20, height:20, background:'white', borderRadius:'50%',
                           position:'absolute', top:3,
                           left: sportDetails.has_spare_racket ? 21 : 3,
-                          transition:'left 0.2s cubic-bezier(.34,1.56,.64,1)',
+                          transition:'left 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
                           boxShadow:'0 1px 4px rgba(0,0,0,0.2)',
                         }}/>
                       </div>
@@ -263,7 +263,7 @@ export default function Create() {
                           width:20, height:20, background:'white', borderRadius:'50%',
                           position:'absolute', top:3,
                           left: sportDetails.has_spare_racket ? 21 : 3,
-                          transition:'left 0.2s cubic-bezier(.34,1.56,.64,1)',
+                          transition:'left 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
                           boxShadow:'0 1px 4px rgba(0,0,0,0.2)',
                         }}/>
                       </div>
@@ -300,7 +300,7 @@ export default function Create() {
                           width:20, height:20, background:'white', borderRadius:'50%',
                           position:'absolute', top:3,
                           left: sportDetails.adapt_pace ? 21 : 3,
-                          transition:'left 0.2s cubic-bezier(.34,1.56,.64,1)',
+                          transition:'left 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
                           boxShadow:'0 1px 4px rgba(0,0,0,0.2)',
                         }}/>
                       </div>
@@ -417,7 +417,7 @@ export default function Create() {
                           width:20, height:20, background:'white', borderRadius:'50%',
                           position:'absolute', top:3,
                           left: sportDetails.has_locker_rooms ? 21 : 3,
-                          transition:'left 0.2s cubic-bezier(.34,1.56,.64,1)',
+                          transition:'left 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
                           boxShadow:'0 1px 4px rgba(0,0,0,0.2)',
                         }}/>
                       </div>
@@ -437,7 +437,7 @@ export default function Create() {
                           width:20, height:20, background:'white', borderRadius:'50%',
                           position:'absolute', top:3,
                           left: sportDetails.has_referee ? 21 : 3,
-                          transition:'left 0.2s cubic-bezier(.34,1.56,.64,1)',
+                          transition:'left 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
                           boxShadow:'0 1px 4px rgba(0,0,0,0.2)',
                         }}/>
                       </div>
@@ -565,7 +565,7 @@ export default function Create() {
                 background: form.thirdPlace?'var(--primary)':'var(--border)',
                 cursor:'pointer', position:'relative', transition:'background 0.22s', flexShrink:0,
               }}>
-                <div style={{ width:22, height:22, background:'white', borderRadius:'50%', position:'absolute', top:3, left: form.thirdPlace?'23px':'3px', transition:'left 0.22s cubic-bezier(.34,1.56,.64,1)', boxShadow:'0 1px 6px rgba(0,0,0,0.22)' }}/>
+                <div style={{ width:22, height:22, background:'white', borderRadius:'50%', position:'absolute', top:3, left: form.thirdPlace?'23px':'3px',                  transition:'left 0.18s cubic-bezier(0.16, 1, 0.3, 1)', boxShadow:'0 1px 6px rgba(0,0,0,0.22)' }}/>
               </button>
             </div>
 

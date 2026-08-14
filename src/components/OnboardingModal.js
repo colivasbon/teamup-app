@@ -54,13 +54,6 @@ export default function OnboardingModal({ onComplete }) {
   return (
     <>
       <style>{`
-        @keyframes onboardingFadeIn {
-          from { opacity: 0; transform: scale(0.97); }
-          to   { opacity: 1; transform: scale(1); }
-        }
-        .onboarding-panel {
-          animation: onboardingFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
-        }
         .sport-btn {
           display: flex;
           flex-direction: column;
@@ -96,7 +89,8 @@ export default function OnboardingModal({ onComplete }) {
           height: 100%;
           border-radius: 2px;
           background: #586875;
-          transition: width 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+          transform-origin: left;
+          transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .onboarding-btn-primary {
           display: block;
@@ -153,7 +147,7 @@ export default function OnboardingModal({ onComplete }) {
       >
         {/* Panel */}
         <div
-          className="onboarding-panel"
+          className="scale-in"
           style={{
             background: 'var(--solid, #fff)',
             borderRadius: 24,
@@ -168,7 +162,7 @@ export default function OnboardingModal({ onComplete }) {
           <div className="progress-bar-track">
             <div
               className="progress-bar-fill"
-              style={{ width: step === 1 ? '50%' : '100%' }}
+              style={{ transform: `scaleX(${step === 1 ? 0.5 : 1})` }}
             />
           </div>
 

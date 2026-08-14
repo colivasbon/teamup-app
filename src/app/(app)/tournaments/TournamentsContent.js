@@ -241,7 +241,7 @@ export default function TournamentsPage() {
                     {/* Barra de ocupación */}
                     <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:8 }}>
                       <div style={{ flex:1, height:5, background:'var(--border)', borderRadius:8, overflow:'hidden' }}>
-                        <div style={{ height:'100%', width:`${pct}%`, background:barColor, borderRadius:8, transition:'width 0.28s cubic-bezier(0.16, 1, 0.3, 1)' }}/>
+                        <div style={{ height:'100%', background:barColor, borderRadius:8, transformOrigin:'left', transition:'transform 0.28s cubic-bezier(0.16, 1, 0.3, 1)', transform:`scaleX(${pct/100})` }}/>
                       </div>
                       <span style={{ fontSize:12, fontWeight:700, color: pct>=90?'#ef4444': pct>=70?'#f59e0b': color, flexShrink:0 }}>
                         {t.pair_count}/{t.max_pairs}

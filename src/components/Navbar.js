@@ -129,7 +129,6 @@ export default function Navbar() {
           borderRadius: 0,
           isolation: 'isolate',
           transform: 'translateZ(0)',
-          willChange: 'backdrop-filter',
         }}>
         {/* ── Iconos de navegación ── */}
         <div className="nav-inner">
