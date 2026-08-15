@@ -327,10 +327,10 @@ export default async function Landing() {
         <section className="ln-section ln-cta-section">
           <div className="ln-section-inner ln-cta-inner">
             <ScrollReveal>
-              <h2 className="ln-section-title" style={{ color: 'var(--button-contrast)' }}>¿Preparado para jugar?</h2>
-              <p className="ln-section-sub" style={{ color: 'var(--button-contrast)', opacity: 0.8 }}>Crea tu cuenta gratis y encuentra tu primer evento en menos de un minuto.</p>
+              <h2 className="ln-section-title ln-cta-title">¿Preparado para jugar?</h2>
+              <p className="ln-section-sub ln-cta-sub">Crea tu cuenta gratis y encuentra tu primer evento en menos de un minuto.</p>
               <div className="ln-hero-cta" style={{ justifyContent: 'center' }}>
-                <Link href="/start" className="ln-btn ln-btn-primary ln-btn-lg" style={{ background: 'var(--button-contrast)', color: 'var(--primary)' }}>
+                <Link href="/start" className="ln-btn ln-btn-primary ln-btn-lg">
                   Crear cuenta gratis
                 </Link>
               </div>

@@ -194,8 +194,8 @@
 
   /* Texto — crema del tema Cala */
   --text:         #f6eddc;
-  --text2:        #b8b8c0;
-  --muted:        #7a8088;
+  --text2:        #c0c0c8;
+  --muted:        #909aa4;
 
   /* Bordes */
   --border:       rgba(246,237,220,0.12);
@@ -241,8 +241,8 @@
   --surface2:     rgba(48,179,141,0.03);
   --solid:        #0f2a20;
   --text:         #e7f7ee;
-  --text2:        #9fd9bc;
-  --muted:        #5a8a72;
+  --text2:        #b0e4ca;
+  --muted:        #72a88e;
   --border:       rgba(48,179,141,0.12);
   --border2:      rgba(48,179,141,0.06);
   --primary:      #30b38d;
@@ -271,8 +271,8 @@
   --surface2:     rgba(159,126,209,0.03);
   --solid:        #1c1828;
   --text:         #ede8f5;
-  --text2:        #b8b0cc;
-  --muted:        #6a6280;
+  --text2:        #c4bcd6;
+  --muted:        #887ea0;
   --border:       rgba(159,126,209,0.12);
   --border2:      rgba(159,126,209,0.06);
   --primary:      #9f7ed1;
@@ -302,8 +302,8 @@
   --surface2:     rgba(246,237,220,0.03);
   --solid:        #0a0a0f;
   --text:         #f0ebe3;
-  --text2:        #b8c0cc;
-  --muted:        #6b7a8a;
+  --text2:        #c4ccd8;
+  --muted:        #8898a8;
   --border:       rgba(246,237,220,0.10);
   --border2:      rgba(246,237,220,0.05);
   --primary:      #f6eddc;
@@ -1330,6 +1330,23 @@ body.hide-slogan .slogan-bar {
   justify-content: center;
   padding: 20px 28px 0;
 }
+.ln-nav-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  transition: padding 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 20px 28px 0;
+}
+.ln-nav-scrolled .ln-nav-wrap {
+  padding: 12px 28px 0;
+}
+.ln-nav-scrolled .ln-nav {
+  border-radius: 50px;
+  padding: 6px 8px 6px 16px;
+  max-width: 480px;
+}
 .ln-nav {
   display: flex;
   align-items: center;
@@ -1340,6 +1357,9 @@ body.hide-slogan .slogan-bar {
   padding: 8px 10px 8px 20px;
   width: 100%;
   max-width: 680px;
+  transition: border-radius 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              padding 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              max-width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .ln-logo {
   color: var(--primary);
@@ -1370,6 +1390,9 @@ body.hide-slogan .slogan-bar {
 @media (max-width: 720px) {
   .ln-nav { padding: 6px 6px 6px 14px; gap: 10px; }
   .ln-nav-links { display: none; }
+  .ln-nav-fixed { padding: 12px 16px 0; }
+  .ln-nav-scrolled .ln-nav-wrap { padding: 8px 16px 0; }
+  .ln-nav-scrolled .ln-nav { max-width: 100%; }
 }
 
 /* ── Eyebrow tag ───────────────────────────────────── */
@@ -1557,7 +1580,7 @@ body.hide-slogan .slogan-bar {
 
 /* ── Sections ──────────────────────────────────────── */
 .ln-section {
-  padding: clamp(60px, 10vw, 100px) 28px;
+  padding: clamp(40px, 8vw, 80px) 28px;
 }
 .ln-section-alt {
   background: var(--surface2);
@@ -1590,7 +1613,7 @@ body.hide-slogan .slogan-bar {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: auto auto;
-  gap: 16px;
+  gap: 10px;
 }
 .ln-bento-card:nth-child(1) { grid-column: span 2; }
 .ln-bento-card:nth-child(2) { grid-column: span 1; grid-row: span 2; }
@@ -1664,7 +1687,7 @@ body.hide-slogan .slogan-bar {
 @media (max-width: 768px) {
   .ln-bento {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 8px;
   }
   .ln-bento-card:nth-child(n) {
     grid-column: span 1;
@@ -1850,6 +1873,12 @@ body.hide-slogan .slogan-bar {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+.ln-cta-title {
+  color: var(--text);
+}
+.ln-cta-sub {
+  color: var(--text2);
 }
 
 /* ── Sponsor label ─────────────────────────────────── */
