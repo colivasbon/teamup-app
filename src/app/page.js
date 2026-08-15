@@ -267,6 +267,28 @@ export default async function Landing() {
           </div>
         </section>
 
+        {/* SPONSORS */}
+        {sponsors.length > 0 && (
+          <section className="ln-section">
+            <div className="ln-section-inner">
+              <div className="ln-sponsor-label">Con la colaboración de</div>
+              <div className="sponsors-ticker">
+                <div className="sponsors-ticker__inner">
+                  {Array.from({ length: 6 }).flatMap(() => sponsors).map((s, i) => (
+                    s.website_url
+                      ? <a key={i} href={s.website_url} target="_blank" rel="noopener noreferrer" className="sponsors-ticker__item" style={{ textDecoration: 'none', cursor: 'pointer' }}>
+                          {s.logo_url ? <Image src={s.logo_url} alt={s.name} width={140} height={36} style={{ height: 36, width: 'auto', maxWidth: 140, objectFit: 'contain', verticalAlign: 'middle', filter: 'var(--sponsor-filter)' }} /> : s.name}
+                        </a>
+                      : <span key={i} className="sponsors-ticker__item">
+                          {s.logo_url ? <Image src={s.logo_url} alt={s.name} width={140} height={36} style={{ height: 36, width: 'auto', maxWidth: 140, objectFit: 'contain', verticalAlign: 'middle', filter: 'var(--sponsor-filter)' }} /> : s.name}
+                        </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* CIUDADES */}
         <section className="ln-section" id="ciudades">
           <div className="ln-section-inner">
@@ -300,28 +322,6 @@ export default async function Landing() {
             </div>
           </div>
         </section>
-
-        {/* SPONSORS */}
-        {sponsors.length > 0 && (
-          <section className="ln-section">
-            <div className="ln-section-inner">
-              <div className="ln-sponsor-label">Con la colaboración de</div>
-              <div className="sponsors-ticker">
-                <div className="sponsors-ticker__inner">
-                  {Array.from({ length: 6 }).flatMap(() => sponsors).map((s, i) => (
-                    s.website_url
-                      ? <a key={i} href={s.website_url} target="_blank" rel="noopener noreferrer" className="sponsors-ticker__item" style={{ textDecoration: 'none', cursor: 'pointer' }}>
-                          {s.logo_url ? <Image src={s.logo_url} alt={s.name} width={140} height={36} style={{ height: 36, width: 'auto', maxWidth: 140, objectFit: 'contain', verticalAlign: 'middle', filter: 'var(--sponsor-filter)' }} /> : s.name}
-                        </a>
-                      : <span key={i} className="sponsors-ticker__item">
-                          {s.logo_url ? <Image src={s.logo_url} alt={s.name} width={140} height={36} style={{ height: 36, width: 'auto', maxWidth: 140, objectFit: 'contain', verticalAlign: 'middle', filter: 'var(--sponsor-filter)' }} /> : s.name}
-                        </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
 
         {/* CTA FINAL */}
         <section className="ln-section ln-cta-section">
