@@ -1329,7 +1329,6 @@ body.hide-slogan .slogan-bar {
   top: 0;
   z-index: 100;
   padding: 12px 28px 0;
-  background: var(--bg);
 }
 .ln-nav-wrap {
   display: flex;
@@ -1338,7 +1337,7 @@ body.hide-slogan .slogan-bar {
 .ln-nav {
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 20px;
   background: var(--glass);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -1350,14 +1349,16 @@ body.hide-slogan .slogan-bar {
   transition: border-radius 0.3s cubic-bezier(0.16, 1, 0.3, 1),
               padding 0.3s cubic-bezier(0.16, 1, 0.3, 1),
               max-width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              background 0.3s ease-out;
+              background 0.3s ease-out,
+              gap 0.3s ease-out;
 }
 .ln-nav-scrolled .ln-nav {
   border-radius: 14px;
-  padding: 8px 10px 8px 20px;
+  padding: 8px 16px 8px 20px;
   max-width: 100%;
   background: var(--solid);
   border-color: var(--border);
+  gap: 16px;
 }
 .ln-logo {
   color: var(--primary);
@@ -1389,7 +1390,7 @@ body.hide-slogan .slogan-bar {
   .ln-nav-sticky { padding: 8px 16px 0; }
   .ln-nav { padding: 5px 6px 5px 14px; gap: 10px; border-radius: 50px; }
   .ln-nav-links { display: none; }
-  .ln-nav-scrolled .ln-nav { border-radius: 14px; padding: 6px 6px 6px 14px; max-width: 100%; }
+  .ln-nav-scrolled .ln-nav { border-radius: 14px; padding: 6px 12px 6px 14px; max-width: 100%; gap: 10px; }
 }
 
 /* ── Eyebrow tag ───────────────────────────────────── */
