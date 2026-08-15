@@ -1339,12 +1339,12 @@ body.hide-slogan .slogan-bar {
   transition: padding 0.3s ease-out;
 }
 .ln-nav-scrolled .ln-nav-wrap {
-  padding: 10px 0 0;
+  padding: 0;
 }
 .ln-nav {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 12px;
   background: var(--glass);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -1367,7 +1367,7 @@ body.hide-slogan .slogan-bar {
   background: var(--solid);
   border: none;
   border-bottom: 1px solid var(--border);
-  gap: 16px;
+  gap: 12px;
   box-shadow: var(--shadow);
 }
 .ln-logo {
