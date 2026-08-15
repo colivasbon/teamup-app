@@ -1328,7 +1328,7 @@ body.hide-slogan .slogan-bar {
   position: sticky;
   top: 0;
   z-index: 100;
-  padding: 16px 28px 0;
+  padding: 12px 28px 0;
   background: var(--bg);
 }
 .ln-nav-wrap {
@@ -1339,20 +1339,25 @@ body.hide-slogan .slogan-bar {
   display: flex;
   align-items: center;
   gap: 28px;
-  background: var(--solid);
-  border: 1px solid var(--border);
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-edge);
   border-radius: 50px;
   padding: 5px 8px 5px 16px;
   width: 100%;
   max-width: 480px;
   transition: border-radius 0.3s cubic-bezier(0.16, 1, 0.3, 1),
               padding 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              max-width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+              max-width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.3s ease-out;
 }
 .ln-nav-scrolled .ln-nav {
   border-radius: 14px;
   padding: 8px 10px 8px 20px;
-  max-width: 680px;
+  max-width: 100%;
+  background: var(--solid);
+  border-color: var(--border);
 }
 .ln-logo {
   color: var(--primary);
@@ -1381,10 +1386,10 @@ body.hide-slogan .slogan-bar {
   flex-shrink: 0;
 }
 @media (max-width: 720px) {
-  .ln-nav-sticky { padding: 10px 16px 0; }
-  .ln-nav { padding: 5px 6px 5px 14px; gap: 10px; max-width: 100%; border-radius: 50px; }
+  .ln-nav-sticky { padding: 8px 16px 0; }
+  .ln-nav { padding: 5px 6px 5px 14px; gap: 10px; border-radius: 50px; }
   .ln-nav-links { display: none; }
-  .ln-nav-scrolled .ln-nav { max-width: 100%; border-radius: 14px; padding: 6px 6px 6px 14px; }
+  .ln-nav-scrolled .ln-nav { border-radius: 14px; padding: 6px 6px 6px 14px; max-width: 100%; }
 }
 
 /* ── Eyebrow tag ───────────────────────────────────── */
