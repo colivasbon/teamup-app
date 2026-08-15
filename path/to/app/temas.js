@@ -1,9 +1,0 @@
-const temas = [...
-// ... existing code ...
-
-  {
-    "nombre": "Azul Marino",
-    "descripcion": "Descripción del tema Azul Marino"
-  },
-
-  // ... rest of the file ...
