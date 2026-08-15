@@ -10,8 +10,7 @@ export default function ScrollHideNav({ children }) {
     if (!el) return
 
     const onScroll = () => {
-      const y = window.scrollY
-      if (y > 40) {
+      if (window.scrollY > 40) {
         el.classList.add('ln-nav-scrolled')
       } else {
         el.classList.remove('ln-nav-scrolled')

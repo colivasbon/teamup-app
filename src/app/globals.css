@@ -1328,7 +1328,8 @@ body.hide-slogan .slogan-bar {
   position: sticky;
   top: 0;
   z-index: 100;
-  padding: 20px 28px 12px;
+  padding: 16px 28px 0;
+  background: var(--bg);
 }
 .ln-nav-wrap {
   display: flex;
@@ -1338,7 +1339,7 @@ body.hide-slogan .slogan-bar {
   display: flex;
   align-items: center;
   gap: 28px;
-  background: var(--surface);
+  background: var(--solid);
   border: 1px solid var(--border);
   border-radius: 50px;
   padding: 5px 8px 5px 16px;
@@ -1380,10 +1381,10 @@ body.hide-slogan .slogan-bar {
   flex-shrink: 0;
 }
 @media (max-width: 720px) {
-  .ln-nav-sticky { padding: 12px 16px 8px; }
-  .ln-nav { padding: 5px 6px 5px 14px; gap: 10px; max-width: 100%; }
+  .ln-nav-sticky { padding: 10px 16px 0; }
+  .ln-nav { padding: 5px 6px 5px 14px; gap: 10px; max-width: 100%; border-radius: 50px; }
   .ln-nav-links { display: none; }
-  .ln-nav-scrolled .ln-nav { max-width: 100%; }
+  .ln-nav-scrolled .ln-nav { max-width: 100%; border-radius: 14px; padding: 6px 6px 6px 14px; }
 }
 
 /* ── Eyebrow tag ───────────────────────────────────── */
