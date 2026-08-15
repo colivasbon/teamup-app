@@ -22,8 +22,7 @@ export default function Auth() {
   const [acceptPrivacy,   setAcceptPrivacy]   = useState(false)
   const [acceptMarketing, setAcceptMarketing] = useState(false)
 
-  useEffect(() => { if (user) router.replace('/') }, [user])
-
+  useEffect(() => { if (user) router.replace('/start') }, [user])
   const reset = () => { setError(''); setSuccess('') }
 
   /* ── Registro / Login ── */
@@ -58,8 +57,7 @@ export default function Auth() {
       if (err) { setError(err.message); setLoading(false); return }
 
       if (data?.session) {
-        router.replace('/')
-      } else {
+          router.replace('/start')      } else {
         setSuccess('¡Cuenta creada! Revisa tu email y confirma tu cuenta para entrar.')
         setLoading(false)
       }
@@ -92,8 +90,7 @@ export default function Auth() {
     reset()
     const { error: err } = await sb.auth.signInWithOAuth({
       provider,
-      options: { redirectTo: window.location.origin },
-    })
+      options: { redirectTo: `${window.location.origin}/start` },    })
     if (err) {
       const notEnabled = err.message.includes('not enabled') || err.message.includes('provider')
       setError(notEnabled
