@@ -23,10 +23,7 @@ export default function ScrollHideNav({ children }) {
   }, [])
 
   return (
-    <div
-      ref={ref}
-      className="ln-nav-fixed"
-    >
+    <div ref={ref} className="ln-nav-sticky">
       {children}
     </div>
   )
