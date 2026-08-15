@@ -1237,6 +1237,7 @@ body.hide-slogan .slogan-bar {
   background-image: var(--bg-image);
   color: var(--text);
   position: relative;
+  padding-top: 60px;
 }
 
 .ln > * { position: relative; z-index: 2; }
@@ -1324,15 +1325,21 @@ body.hide-slogan .slogan-bar {
 .skip-link:focus { transform: none; outline: 2px solid var(--accent); }
 
 /* ── Navbar ────────────────────────────────────────── */
-.ln-nav-sticky {
-  position: sticky;
+.ln-nav-fixed {
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
-  padding: 12px 28px 0;
 }
 .ln-nav-wrap {
   display: flex;
   justify-content: center;
+  padding: 10px 28px 8px;
+  transition: padding 0.3s ease-out;
+}
+.ln-nav-scrolled .ln-nav-wrap {
+  padding: 10px 0 0;
 }
 .ln-nav {
   display: flex;
@@ -1350,15 +1357,18 @@ body.hide-slogan .slogan-bar {
               padding 0.3s cubic-bezier(0.16, 1, 0.3, 1),
               max-width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
               background 0.3s ease-out,
-              gap 0.3s ease-out;
+              gap 0.3s ease-out,
+              box-shadow 0.3s ease-out;
 }
 .ln-nav-scrolled .ln-nav {
-  border-radius: 14px;
-  padding: 8px 16px 8px 20px;
+  border-radius: 0;
+  padding: 8px 20px;
   max-width: 100%;
   background: var(--solid);
-  border-color: var(--border);
+  border: none;
+  border-bottom: 1px solid var(--border);
   gap: 16px;
+  box-shadow: var(--shadow);
 }
 .ln-logo {
   color: var(--primary);
@@ -1387,10 +1397,12 @@ body.hide-slogan .slogan-bar {
   flex-shrink: 0;
 }
 @media (max-width: 720px) {
-  .ln-nav-sticky { padding: 8px 16px 0; }
+  .ln { padding-top: 50px; }
+  .ln-nav-wrap { padding: 8px 16px 6px; }
   .ln-nav { padding: 5px 6px 5px 14px; gap: 10px; border-radius: 50px; }
   .ln-nav-links { display: none; }
-  .ln-nav-scrolled .ln-nav { border-radius: 14px; padding: 6px 12px 6px 14px; max-width: 100%; gap: 10px; }
+  .ln-nav-scrolled .ln-nav-wrap { padding: 0; }
+  .ln-nav-scrolled .ln-nav { border-radius: 0; padding: 6px 14px; max-width: 100%; gap: 10px; border-bottom: 1px solid var(--border); border-left: none; border-right: none; border-top: none; }
 }
 
 /* ── Eyebrow tag ───────────────────────────────────── */
@@ -1459,7 +1471,7 @@ body.hide-slogan .slogan-bar {
 
 /* ── Hero ──────────────────────────────────────────── */
 .ln-hero {
-  padding: clamp(60px, 10vw, 100px) 28px clamp(48px, 8vw, 80px);
+  padding: clamp(40px, 8vw, 80px) 28px clamp(48px, 8vw, 80px);
   text-align: center;
 }
 .ln-hero-inner {
