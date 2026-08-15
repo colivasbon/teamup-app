@@ -153,7 +153,7 @@ export default async function Landing() {
             </div>
             <div className="ln-nav-right">
               <ThemeButton />
-              <Link href="/start" className="ln-btn ln-btn-primary">
+              <Link href="/start" className="ln-btn ln-btn-primary ln-btn-nav">
                 Entrar
               </Link>
             </div>

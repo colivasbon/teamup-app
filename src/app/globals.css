@@ -1366,9 +1366,7 @@ body.hide-slogan .slogan-bar {
   max-width: 480px;
   transition: border-radius 0.3s cubic-bezier(0.16, 1, 0.3, 1),
               padding 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              max-width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
               background 0.3s ease-out,
-              gap 0.3s ease-out,
               box-shadow 0.3s ease-out;
 }
 .ln-nav-scrolled .ln-nav {
@@ -1478,6 +1476,13 @@ body.hide-slogan .slogan-bar {
   border-color: var(--primary);
   color: var(--primary);
   background: rgba(var(--primary-rgb), 0.06);
+}
+.ln-btn-nav {
+  height: 34px;
+  padding: 0 18px;
+  font-size: 13px;
+  border-radius: 100px;
+  font-weight: 700;
 }
 .ln-btn-lg { height: 52px; padding: 0 32px; font-size: 15px; border-radius: 14px; }
 .ln-btn-icon {
