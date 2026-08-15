@@ -1378,12 +1378,13 @@ body.hide-slogan .slogan-bar {
   background: var(--solid);
   border: none;
   border-bottom: 1px solid var(--border);
-  gap: 12px;
+  gap: 16px;
   box-shadow: var(--shadow);
+  justify-content: center;
 }
 .ln-nav-scrolled .ln-nav-links {
   flex: 0;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 28px;
 }
 .ln-logo {
