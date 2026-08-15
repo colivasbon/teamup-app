@@ -52,11 +52,14 @@ export default async function sitemap() {
   ]
 
   // Eventos y torneos dinámicos desde Supabase (contexto servidor)
+  // Nota: los perfiles (/profile/*) se excluyen del sitemap porque robots.txt
+  // los bloquea explícitamente (Disallow: /profile/), evitando así enviar a
+  // Google URLs que luego no podrá indexar (inconsistencia sitemap/robots).
   let dynamicRoutes = []
   try {
     const sb = getSupabaseServer()
     if (sb) {
-      const [eventsRes, tournamentsRes, profilesRes] = await Promise.all([
+      const [eventsRes, tournamentsRes] = await Promise.all([
         sb.from('events')
           .select('id, created_at, updated_at')
           .neq('status', 'cancelled')
@@ -67,16 +70,9 @@ export default async function sitemap() {
           .neq('status', 'cancelled')
           .order('created_at', { ascending: false })
           .limit(500),
-        sb.from('profiles')
-          .select('id, updated_at')
-          .not('id', 'is', null)
-          .limit(500),
       ])
-
       const events = eventsRes.data || []
       const tournaments = tournamentsRes.data || []
-      const profiles = profilesRes.data || []
-
       dynamicRoutes = [
         ...events.map((event) => ({
           url: `${baseUrl}/events/${event.id}`,
@@ -89,12 +85,6 @@ export default async function sitemap() {
           lastModified: t.updated_at ? new Date(t.updated_at) : (t.created_at ? new Date(t.created_at) : new Date()),
           changeFrequency: 'daily',
           priority: 0.7,
-        })),
-        ...profiles.map((p) => ({
-          url: `${baseUrl}/profile/${p.id}`,
-          lastModified: p.updated_at ? new Date(p.updated_at) : new Date(),
-          changeFrequency: 'weekly',
-          priority: 0.5,
         })),
       ]
     }
