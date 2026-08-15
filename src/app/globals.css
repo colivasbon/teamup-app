@@ -1237,7 +1237,6 @@ body.hide-slogan .slogan-bar {
   background-image: var(--bg-image);
   color: var(--text);
   position: relative;
-  overflow-x: hidden;
 }
 
 .ln > * { position: relative; z-index: 2; }
