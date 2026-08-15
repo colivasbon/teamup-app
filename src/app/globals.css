@@ -1344,7 +1344,7 @@ body.hide-slogan .slogan-bar {
 .ln-nav {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   background: var(--glass);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
