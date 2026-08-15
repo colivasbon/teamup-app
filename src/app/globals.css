@@ -181,27 +181,27 @@
   --button-contrast: #f8f9fa;
 }
 
-/* ─── TOKENS TEMA OSCURO ────────────────────────────── */
+/* ─── TOKENS TEMA OSCURO — Cala invertido ────────────── */
 [data-theme="dark"] {
-  /* Fondos — azul marino grisáceo del logo (#1f2a3a) */
-  --bg:           #0f1520;
-  --bg2:          #151d2b;
+  /* Fondos — crema oscura invertida */
+  --bg:           #1a2028;
+  --bg2:          #121820;
 
-  /* Superficies */
+  /* Superficies — crema sutil */
   --surface:      rgba(246,237,220,0.05);
   --surface2:     rgba(246,237,220,0.02);
-  --solid:        #1f2a3a;
+  --solid:        #232c38;
 
-  /* Texto — crema suave */
-  --text:         #f0ebe3;
-  --text2:        #b8c0cc;
-  --muted:        #6b7a8a;
+  /* Texto — crema del tema Cala */
+  --text:         #f6eddc;
+  --text2:        #b8b8c0;
+  --muted:        #7a8088;
 
   /* Bordes */
-  --border:       rgba(246,237,220,0.10);
-  --border2:      rgba(246,237,220,0.05);
+  --border:       rgba(246,237,220,0.12);
+  --border2:      rgba(246,237,220,0.06);
 
-  /* Color primario — crema del logo */
+  /* Color primario — crema del Cala */
   --primary:      #f6eddc;
   --primary-h:    #fff8f0;
   --primary-rgb:  246,237,220;
@@ -210,28 +210,28 @@
   --accent:       var(--primary);
   --accent-rgb:   var(--primary-rgb);
 
-  --navbar-glass: rgba(15,21,32,0.85);
+  --navbar-glass: rgba(26,32,40,0.88);
   --navbar-glass-edge: rgba(246,237,220,0.08);
 
   /* Glass */
-  --glass:        rgba(15,21,32,0.82);
+  --glass:        rgba(26,32,40,0.82);
   --glass-edge:   rgba(246,237,220,0.08);
   --nav-glass:    var(--glass);
   --nav-glass-edge: var(--glass-edge);
 
-  /* Sombras */
-  --shadow-sm:    0 1px 8px rgba(0,0,0,0.30);
-  --shadow:       0 4px 24px rgba(0,0,0,0.40);
-  --shadow-lg:    0 12px 48px rgba(0,0,0,0.50);
+  /* Sombras — cálidas */
+  --shadow-sm:    0 1px 8px rgba(18,24,32,0.50);
+  --shadow:       0 4px 24px rgba(18,24,32,0.60);
+  --shadow-lg:    0 12px 48px rgba(18,24,32,0.70);
 
   /* Gradiente principal */
-  --grad:         linear-gradient(135deg, #1f2a3a 0%, #2a3a4e 100%);
-  --grad-warm:    linear-gradient(135deg, #1f2a3a 0%, #2a3a4e 100%);
+  --grad:         linear-gradient(135deg, #1a2028 0%, #2a3038 100%);
+  --grad-warm:    linear-gradient(135deg, #1a2028 0%, #2a3038 100%);
 
   /* Background extras */
-  --bg-image: radial-gradient(ellipse 55% 45% at 12% 12%, rgba(31,42,58,0.4) 0%, transparent 58%),
-               radial-gradient(ellipse 42% 38% at 84% 84%, rgba(42,58,78,0.3) 0%, transparent 56%);
-  --button-contrast: #0f1520;
+  --bg-image: radial-gradient(ellipse 55% 45% at 12% 12%, rgba(26,32,40,0.6) 0%, transparent 58%),
+               radial-gradient(ellipse 42% 38% at 84% 84%, rgba(42,48,56,0.4) 0%, transparent 56%);
+  --button-contrast: #1a2028;
 }
 
 [data-theme="dark-emerald"] {
